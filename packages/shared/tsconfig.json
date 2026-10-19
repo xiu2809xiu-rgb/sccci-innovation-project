@@ -1,0 +1,8 @@
+{
+  "extends": "@huitong/tsconfig/node.json",
+  "compilerOptions": {
+    "rootDir": ".",
+    "noEmit": true
+  },
+  "include": ["src", "vitest.config.ts"]
+}

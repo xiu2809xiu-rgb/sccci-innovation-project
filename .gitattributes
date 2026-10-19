@@ -1,0 +1,17 @@
+# Normalise line endings to LF in the repository and working tree, so shell
+# scripts, Husky hooks and Docker builds behave the same on Windows and Linux.
+* text=auto eol=lf
+
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.webp binary
+*.ico binary
+*.gif binary
+*.glb binary
+*.blend binary
+*.woff binary
+*.woff2 binary
+*.xlsx binary
+*.pdf binary
+*.pptx binary

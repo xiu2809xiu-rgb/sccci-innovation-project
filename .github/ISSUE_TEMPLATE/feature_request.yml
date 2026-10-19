@@ -1,0 +1,46 @@
+name: Feature or task
+description: A new capability, improvement or piece of work.
+labels: [enhancement]
+body:
+  - type: dropdown
+    id: area
+    attributes:
+      label: Ownership area
+      options:
+        - 'Area 1: Integration Core + platform base'
+        - 'Area 2: Workflow automation'
+        - 'Area 3: Attendance, leave and reporting'
+        - 'Area 4: Governance, security and monitoring'
+    validations:
+      required: true
+  - type: textarea
+    id: story
+    attributes:
+      label: User story
+      placeholder: As an HR_SG user, I want ..., so that ...
+    validations:
+      required: true
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Acceptance criteria
+      placeholder: |
+        - Given ..., when ..., then ...
+    validations:
+      required: true
+  - type: dropdown
+    id: requirements
+    attributes:
+      label: Module requirements covered
+      multiple: true
+      options:
+        - M1 Design thinking
+        - M2 GRS by design
+        - M3 AI-assisted coding
+        - M4 Best practices
+        - M5 Team Git workflow
+        - M6 Deploy and monitor
+  - type: textarea
+    id: notes
+    attributes:
+      label: Notes, risks or open questions

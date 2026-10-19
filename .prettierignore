@@ -1,0 +1,14 @@
+pnpm-lock.yaml
+**/dist/
+**/coverage/
+**/node_modules/
+**/src/generated/
+**/test-results/
+**/playwright-report/
+docs/slides/dist/
+docs/diagrams/*.svg
+docs/design/screenshots/
+docs/ai/prompts/
+CLAUDE.md
+.claude/
+*.glb

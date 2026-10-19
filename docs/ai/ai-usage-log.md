@@ -1,0 +1,19 @@
+# AI usage log
+
+The one place where AI-assisted work on HuiTong is recorded (CLAUDE.md section 10). Every significant AI-assisted task gets a row: date, tool, task, prompt file, what was accepted or changed, and the human reviewer. Substantial prompts are stored in [`prompts/`](prompts/).
+
+Students own every line they submit: AI output is reviewed, tested and, where needed, rewritten before it is merged.
+
+## Log
+
+| Date       | Tool                                                       | Task                                                                                                                         | Prompt                                                 | Accepted / changed                                                                                                                                                                                                                                                                                                     | Human reviewer          |
+| ---------- | ---------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------- |
+| 2026-10-20 | Claude Code (Anthropic, Opus 5.5), run inside the Kiro IDE | Platform base, Phase 0: environment check, secret protection                                                                 | [`001-platform-base.md`](prompts/001-platform-base.md) | Accepted. `corepack enable` needed admin rights, so pnpm was installed with `npm i -g pnpm`.                                                                                                                                                                                                                           | Richie (pending review) |
+| 2026-10-20 | Claude Code (as above)                                     | Platform base, Phase 1: problem analysis, design thinking, GRS, client questions, ADRs, ownership, assumptions, traceability | [`001-platform-base.md`](prompts/001-platform-base.md) | In progress. The first run stopped at a usage limit with half the docs written; the rest is being completed against the existing docs so ids stay consistent.                                                                                                                                                          | Richie (pending review) |
+| 2026-10-20 | Claude Code (as above)                                     | Platform base, Phase 2: monorepo, tooling, CI, Docker, UI kit                                                                | [`001-platform-base.md`](prompts/001-platform-base.md) | Accepted with changes. Rejected the newest majors where tooling could not support them (TypeScript 7, Prisma 8 RC). Pinned packages younger than one day one release back. Accepted one dev-only audit advisory with a written reason. Verified every source with real installs and every container with healthchecks. | Richie (pending review) |
+
+## What the AI was not trusted to do
+
+- Decide on real client facts: everything about Organisation E's systems is an assumption until the client meeting (see [`../assumptions.md`](../assumptions.md)).
+- Handle secrets: the React Bits licence key was copied between git-ignored files without its value ever being printed, and every phase ends with a scan for it.
+- Mark work as done without evidence: each phase records the real command results in [`../BUILD_REPORT.md`](../BUILD_REPORT.md).

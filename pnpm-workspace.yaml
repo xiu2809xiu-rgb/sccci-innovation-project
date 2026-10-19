@@ -1,0 +1,30 @@
+packages:
+  - apps/*
+  - services/*
+  - packages/*
+
+# CLAUDE.md section 5: pin exact versions.
+savePrefix: ''
+
+# Supply-chain hardening: ignore versions published less than a day ago.
+minimumReleaseAge: 1440
+
+# eslint-plugin-jsx-a11y 6.10.2 predates ESLint 10 but its rules run correctly on
+# it (verified with probe files); allow the newer peer instead of downgrading ESLint.
+peerDependencyRules:
+  allowedVersions:
+    eslint-plugin-jsx-a11y>eslint: '10'
+
+# Dependency build scripts are denied unless reviewed here (pnpm fails the
+# install on unreviewed builds). Each entry was checked before allowing it.
+allowBuilds:
+  # Verifies and links the platform-specific binary (used by tsx).
+  esbuild: true
+
+# Accepted advisories. Each entry needs a reason and a review date.
+auditConfig:
+  ignoreGhsas:
+    # braces <=3.0.3 stack exhaustion on deeply nested, attacker-supplied glob patterns;
+    # no patched version exists. Reached only through the shadcn CLI (dev tooling that
+    # globs our own files); nothing from it ships in the web bundle. Review: 2026-12-01.
+    - GHSA-vfj7-8cjw-p6xm

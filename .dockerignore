@@ -1,0 +1,24 @@
+# Secrets never enter a build context.
+**/.env
+**/.env.*
+!**/.env.example
+
+# Dependencies and build output are rebuilt inside the image.
+**/node_modules
+**/dist
+**/coverage
+**/*.tsbuildinfo
+**/test-results
+**/playwright-report
+
+# Not needed to build or run any image.
+.git
+.github
+.husky
+.claude
+.mcp.json
+docs
+assets-src
+infra/aws
+**/*.log
+**/.DS_Store

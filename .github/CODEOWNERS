@@ -1,0 +1,31 @@
+# Code owners (placeholder).
+#
+# GitHub requests a review from the owner of every path a pull request touches.
+# Replace the handles below with each member's GitHub username once areas 2-4
+# are assigned (see docs/team/module-ownership.md), then uncomment the lines.
+# Later rules override earlier ones.
+
+# Area 1: Integration Core + platform base (default owner for shared code)
+# *                                        @richie-github-username
+
+# Area 2: Workflow automation
+# /apps/api/src/modules/workflows/         @area-2-github-username
+# /apps/web/src/features/workflows/        @area-2-github-username
+
+# Area 3: Attendance, leave and reporting
+# /apps/api/src/modules/attendance-leave/  @area-3-github-username
+# /apps/api/src/modules/reports/           @area-3-github-username
+# /apps/web/src/features/attendance-leave/ @area-3-github-username
+
+# Area 4: Governance, security and monitoring
+# /apps/api/src/modules/governance/        @area-4-github-username
+# /apps/api/src/modules/audit/             @area-4-github-username
+# /apps/api/src/modules/analytics/         @area-4-github-username
+# /apps/web/src/features/governance/       @area-4-github-username
+# /apps/web/src/features/analytics/        @area-4-github-username
+# /infra/aws/                              @area-4-github-username
+
+# Shared files: always reviewed by the platform owner
+# /pnpm-lock.yaml                          @richie-github-username
+# /apps/api/prisma/schema.prisma           @richie-github-username
+# /docker-compose.yml                      @richie-github-username

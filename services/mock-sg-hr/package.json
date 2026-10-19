@@ -1,0 +1,32 @@
+{
+  "name": "@huitong/mock-sg-hr",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Mock Singapore HR system (English keys, ISO dates) for HuiTong. Synthetic data only.",
+  "type": "module",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "dev": "tsx watch src/main.ts",
+    "start": "node dist/main.js",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "express": "5.3.0",
+    "pino": "10.4.0",
+    "pino-http": "11.0.0"
+  },
+  "devDependencies": {
+    "@huitong/tsconfig": "workspace:*",
+    "@types/express": "5.0.6",
+    "@types/node": "24.19.2",
+    "@types/supertest": "7.2.1",
+    "supertest": "7.3.1",
+    "tsx": "4.23.15",
+    "typescript": "6.0.3",
+    "vitest": "5.0.5"
+  }
+}
