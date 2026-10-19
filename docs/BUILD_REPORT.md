@@ -14,13 +14,13 @@ Legend: `[x]` done and verified, `[~]` in progress, `[ ]` not started, `[!]` blo
 
 ### Phase 1: Understand and document
 
-- [ ] `docs/problem-statement.md` (verbatim statement + structured analysis + success metrics)
-- [ ] `docs/design-thinking/` (personas, journey maps, HMW, hypotheses)
-- [ ] `docs/grs/grs-by-design.md` (governance, risk register, sustainability)
-- [ ] `docs/client/questions-for-client.md`
-- [ ] `docs/team/module-ownership.md`
-- [ ] `docs/assumptions.md`, `docs/requirements-traceability.md`
-- [ ] `docs/adr/0001` + one ADR per major stack choice
+- [x] `docs/problem-statement.md` (verbatim statement, checked paragraph by paragraph against the prompt; stakeholders, pain points, root cause, constraints, scope, success metrics)
+- [x] `docs/design-thinking/` (README, personas, journey maps with pain points PP-01 to PP-14, 14 HMW statements, hypotheses PH/SH with prioritisation, success metrics SM-01 to SM-09 and guardrails GR-01 to GR-09)
+- [x] `docs/grs/grs-by-design.md` (governance, risk register R-01 onwards with heat maps, sustainability, PDPA/PIPL/MAS considerations)
+- [x] `docs/client/questions-for-client.md` (56 prioritised questions, Q-01 to Q-56)
+- [x] `docs/team/module-ownership.md`
+- [x] `docs/assumptions.md` (A-01 to A-57), `docs/requirements-traceability.md`
+- [x] `docs/adr/0001` to `0017` + index; every relative link and anchor across 33 docs resolves
 
 ### Phase 2: Monorepo, tooling, CI, Docker, UI kit
 
