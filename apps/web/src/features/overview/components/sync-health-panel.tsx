@@ -6,10 +6,10 @@ import { EmptyState } from '@/components/common/empty-state';
 import { SectionCard } from '@/components/common/section-card';
 import { StatusBadge } from '@/components/common/status-badge';
 import { StatusMark } from '@/components/reactbits/status-mark';
+import { CONNECTOR_STATUS_TONE } from '@/features/connectors/connector-status';
 import { useFormatters } from '@/hooks/use-formatters';
 import { useNow } from '@/hooks/use-now';
 
-import { CONNECTOR_STATUS_TONE } from '../overview-labels';
 import { RunHistoryStrip } from './run-history-strip';
 
 function ConnectorRow({ connector }: { connector: ConnectorHealth }) {

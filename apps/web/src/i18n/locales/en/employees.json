@@ -1,6 +1,54 @@
 {
   "title": "Employees",
   "description": "The consolidated employee master, with the source of every field.",
+  "views": {
+    "label": "View",
+    "all": "All employees",
+    "conflicts": "Open conflicts"
+  },
+  "actions": {
+    "runSync": "Run sync",
+    "resolve": "Resolve",
+    "openRecord": "Open the record of {{name}}"
+  },
+  "filters": {
+    "label": "Filter employees",
+    "search": "Search by name, number or email",
+    "entity": "Entity",
+    "allEntities": "All entities",
+    "department": "Department",
+    "allDepartments": "All departments",
+    "status": "Employment status",
+    "allStatuses": "All statuses",
+    "conflictsOnly": "Only records with open conflicts",
+    "clear": "Clear filters",
+    "count_one": "{{count}} employee",
+    "count_other": "{{count}} employees"
+  },
+  "table": {
+    "caption": "Employee master",
+    "name": "Name",
+    "employeeNo": "Number",
+    "entity": "Entity",
+    "department": "Department",
+    "jobTitle": "Job title",
+    "status": "Status",
+    "sources": "Sources",
+    "conflicts": "Conflicts",
+    "conflictCount_one": "{{count}} open",
+    "conflictCount_other": "{{count}} open",
+    "noConflicts": "None"
+  },
+  "empty": {
+    "none": {
+      "title": "No employees yet",
+      "description": "The master fills from the connected HR systems. Run a sync to load their records."
+    },
+    "filtered": {
+      "title": "No employees match",
+      "description": "Try a different search, or clear the filters."
+    }
+  },
   "fields": {
     "employeeNo": "Employee number",
     "entityCode": "Entity",
@@ -24,7 +72,138 @@
     "costCenter": "Cost centre",
     "dateOfBirth": "Date of birth",
     "baseSalary": "Base salary",
+    "baseSalaryAmount": "Base salary amount",
+    "baseSalaryCurrency": "Base salary currency",
     "bankName": "Bank",
     "bankAccountLast4": "Bank account (last 4 digits)"
+  },
+  "groups": {
+    "identity": "Identity",
+    "contact": "Contact",
+    "job": "Job",
+    "employment": "Employment",
+    "personal": "Personal",
+    "pay": "Pay and bank"
+  },
+  "employmentType": {
+    "FULL_TIME": "Full time",
+    "PART_TIME": "Part time",
+    "CONTRACT": "Contract",
+    "INTERN": "Intern"
+  },
+  "employmentStatus": {
+    "ACTIVE": "Active",
+    "PROBATION": "On probation",
+    "ON_LEAVE": "On leave",
+    "TERMINATED": "Left",
+    "PRE_HIRE": "Joining soon"
+  },
+  "workLocation": {
+    "SG-SIN": "Singapore",
+    "CN-SHA": "Shanghai",
+    "CN-PEK": "Beijing",
+    "CN-SZX": "Shenzhen",
+    "MY-KUL": "Kuala Lumpur"
+  },
+  "sources": {
+    "sg-hr": "SG HR",
+    "cn-hq": "CN HQ",
+    "oa": "OA",
+    "excel-master": "Excel master",
+    "teams": "Teams",
+    "dingtalk": "DingTalk"
+  },
+  "value": {
+    "empty": "Not recorded",
+    "accountEnding": "Ending {{digits}}"
+  },
+  "drawer": {
+    "title": "Employee record",
+    "description": "{{employeeNo}} · {{entity}} · version {{version}}",
+    "tabs": {
+      "record": "Record",
+      "conflicts": "Conflicts",
+      "history": "History"
+    },
+    "auditTrail": "Audit trail",
+    "caption": "The record of {{name}}, with what each system holds",
+    "field": "Field",
+    "master": "HuiTong master",
+    "notHeld": "Not held",
+    "agrees": "Matches the master",
+    "differs": "Differs from the master",
+    "sourceOfTruth": {
+      "POLICY": "Source of truth: {{source}}",
+      "HR_DECISION": "Source of truth: {{source}}, chosen by HR",
+      "NONE": "No single owner: disagreements go to HR"
+    }
+  },
+  "conflicts": {
+    "caption": "Open conflicts between systems",
+    "employee": "Employee",
+    "field": "Field",
+    "values": "What each system says",
+    "detected": "Detected",
+    "actions": "Actions",
+    "none": "No conflicts on this record.",
+    "status": {
+      "OPEN": "Open",
+      "RESOLVED": "Resolved",
+      "DISMISSED": "Closed by a sync"
+    },
+    "resolution": {
+      "SOURCE_SELECTED": "Kept the value from {{source}}",
+      "MANUAL_VALUE": "Value entered by HR"
+    },
+    "empty": {
+      "title": "No open conflicts",
+      "description": "Every system agrees on every field it shares. New disagreements appear here after a sync."
+    }
+  },
+  "history": {
+    "empty": "No changes recorded yet.",
+    "to": "changed to",
+    "source": {
+      "SYNC": "Sync from {{source}}",
+      "CONFLICT_RESOLUTION": "Conflict resolved by {{name}}",
+      "MANUAL": "Edited by {{name}}",
+      "WORKFLOW": "Workflow step by {{name}}"
+    }
+  },
+  "resolve": {
+    "title": "Resolve: {{field}}",
+    "description": "The systems disagree on the {{field}} of {{name}}. Choose the value that is right for this record.",
+    "hidden": "Your role cannot see these values, so it cannot choose between them. Ask HR for the employee's own entity to resolve this conflict.",
+    "options": "Which value is right?",
+    "keep": "Keep the value from {{source}}",
+    "observed": "Last seen",
+    "manual": "Enter the correct value",
+    "choose": "Choose a value",
+    "note": "Note",
+    "noteOptional": "Note (optional)",
+    "noteRequired": "Say where the value comes from, in at least 3 characters.",
+    "consequence": {
+      "source": "{{source}} becomes the source of truth for this field on this record, and later syncs keep its value.",
+      "manual": "Your value replaces the master's. If a system later changes its value, the conflict opens again."
+    },
+    "confirm": "Hold to confirm",
+    "confirmed": "Saved",
+    "holdHint": "Press and hold for {{seconds}} seconds to confirm.",
+    "keepHolding": "Keep holding the button to confirm.",
+    "success": "Conflict resolved. The decision is in the audit log."
+  },
+  "explain": {
+    "action": "Explain this difference",
+    "label": "AI explanation",
+    "working": "Comparing the systems…",
+    "done": "Explained in",
+    "requiresDecision": "Requires your decision",
+    "adviceOnly": "Advice only: HuiTong never changes a record from an AI explanation.",
+    "model": "Generated by {{provider}} ({{model}}).",
+    "providers": {
+      "MOCK": "the offline demo model",
+      "BEDROCK": "AWS Bedrock",
+      "OPENAI": "OpenAI"
+    }
   }
 }

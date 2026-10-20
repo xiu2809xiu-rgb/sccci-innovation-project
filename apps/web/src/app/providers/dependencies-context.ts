@@ -1,11 +1,11 @@
 import type { RealtimeEvent } from '@huitong/shared';
 import type { QueryClient } from '@tanstack/react-query';
 import type { i18n } from 'i18next';
-import { createContext, useContext, useEffect, useEffectEvent } from 'react';
+import { createContext, useContext, useEffect, useEffectEvent, useSyncExternalStore } from 'react';
 
 import type { AnalyticsTracker } from '@/lib/analytics-tracker';
 import type { ApiClient } from '@/lib/api-client';
-import type { RealtimeClient } from '@/lib/realtime-client';
+import type { RealtimeClient, RealtimeState } from '@/lib/realtime-client';
 
 /** The long-lived services the app is built from, created once in bootstrap.ts and passed down. */
 export interface AppDependencies {
@@ -39,6 +39,15 @@ export function useAnalytics(): AnalyticsTracker {
 /** The shared live-event connection. */
 export function useRealtime(): RealtimeClient {
   return useDependencies().realtime;
+}
+
+/** The live connection's state, for indicators and for polling when live updates are down. */
+export function useRealtimeState(): RealtimeState {
+  const realtime = useRealtime();
+  return useSyncExternalStore(
+    (onChange) => realtime.onStateChange(onChange),
+    () => realtime.currentState,
+  );
 }
 
 /** Calls `listener` for every live event while the component is mounted (one shared connection). */

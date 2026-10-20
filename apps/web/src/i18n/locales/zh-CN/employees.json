@@ -1,6 +1,54 @@
 {
   "title": "员工",
   "description": "统一的员工主数据，每个字段均可追溯来源。",
+  "views": {
+    "label": "视图",
+    "all": "全部员工",
+    "conflicts": "待处理冲突"
+  },
+  "actions": {
+    "runSync": "运行同步",
+    "resolve": "处理",
+    "openRecord": "打开 {{name}} 的档案"
+  },
+  "filters": {
+    "label": "筛选员工",
+    "search": "按姓名、编号或邮箱搜索",
+    "entity": "法人实体",
+    "allEntities": "全部法人实体",
+    "department": "部门",
+    "allDepartments": "全部部门",
+    "status": "雇佣状态",
+    "allStatuses": "全部状态",
+    "conflictsOnly": "仅显示有待处理冲突的档案",
+    "clear": "清除筛选",
+    "count_one": "{{count}} 名员工",
+    "count_other": "{{count}} 名员工"
+  },
+  "table": {
+    "caption": "员工主数据",
+    "name": "姓名",
+    "employeeNo": "编号",
+    "entity": "法人实体",
+    "department": "部门",
+    "jobTitle": "职位",
+    "status": "状态",
+    "sources": "数据来源",
+    "conflicts": "冲突",
+    "conflictCount_one": "{{count}} 项待处理",
+    "conflictCount_other": "{{count}} 项待处理",
+    "noConflicts": "无"
+  },
+  "empty": {
+    "none": {
+      "title": "暂无员工",
+      "description": "主数据来自已连接的人事系统。运行一次同步即可载入档案。"
+    },
+    "filtered": {
+      "title": "没有匹配的员工",
+      "description": "请换个关键词搜索，或清除筛选条件。"
+    }
+  },
   "fields": {
     "employeeNo": "员工编号",
     "entityCode": "法人实体",
@@ -24,7 +72,138 @@
     "costCenter": "成本中心",
     "dateOfBirth": "出生日期",
     "baseSalary": "基本工资",
+    "baseSalaryAmount": "基本工资金额",
+    "baseSalaryCurrency": "基本工资币种",
     "bankName": "开户银行",
     "bankAccountLast4": "银行账号（后四位）"
+  },
+  "groups": {
+    "identity": "身份信息",
+    "contact": "联系方式",
+    "job": "岗位",
+    "employment": "雇佣",
+    "personal": "个人信息",
+    "pay": "薪酬与银行"
+  },
+  "employmentType": {
+    "FULL_TIME": "全职",
+    "PART_TIME": "兼职",
+    "CONTRACT": "合同制",
+    "INTERN": "实习"
+  },
+  "employmentStatus": {
+    "ACTIVE": "在职",
+    "PROBATION": "试用期",
+    "ON_LEAVE": "休假中",
+    "TERMINATED": "已离职",
+    "PRE_HIRE": "待入职"
+  },
+  "workLocation": {
+    "SG-SIN": "新加坡",
+    "CN-SHA": "上海",
+    "CN-PEK": "北京",
+    "CN-SZX": "深圳",
+    "MY-KUL": "吉隆坡"
+  },
+  "sources": {
+    "sg-hr": "新加坡人事系统",
+    "cn-hq": "总部 SAP",
+    "oa": "OA",
+    "excel-master": "Excel 主数据",
+    "teams": "Teams",
+    "dingtalk": "钉钉"
+  },
+  "value": {
+    "empty": "未记录",
+    "accountEnding": "尾号 {{digits}}"
+  },
+  "drawer": {
+    "title": "员工档案",
+    "description": "{{employeeNo}} · {{entity}} · 第 {{version}} 版",
+    "tabs": {
+      "record": "档案",
+      "conflicts": "冲突",
+      "history": "变更记录"
+    },
+    "auditTrail": "审计记录",
+    "caption": "{{name}} 的档案及各系统所存的值",
+    "field": "字段",
+    "master": "汇通主数据",
+    "notHeld": "未存储",
+    "agrees": "与主数据一致",
+    "differs": "与主数据不一致",
+    "sourceOfTruth": {
+      "POLICY": "权威来源：{{source}}",
+      "HR_DECISION": "权威来源：{{source}}（由人事指定）",
+      "NONE": "无单一权威来源：不一致时交由人事处理"
+    }
+  },
+  "conflicts": {
+    "caption": "系统间的待处理冲突",
+    "employee": "员工",
+    "field": "字段",
+    "values": "各系统的值",
+    "detected": "发现时间",
+    "actions": "操作",
+    "none": "此档案没有冲突。",
+    "status": {
+      "OPEN": "待处理",
+      "RESOLVED": "已处理",
+      "DISMISSED": "已由同步关闭"
+    },
+    "resolution": {
+      "SOURCE_SELECTED": "保留了{{source}}的值",
+      "MANUAL_VALUE": "由人事录入的值"
+    },
+    "empty": {
+      "title": "没有待处理冲突",
+      "description": "各系统在共有字段上完全一致。同步后出现的新不一致会显示在这里。"
+    }
+  },
+  "history": {
+    "empty": "暂无变更记录。",
+    "to": "改为",
+    "source": {
+      "SYNC": "来自{{source}}的同步",
+      "CONFLICT_RESOLUTION": "由{{name}}处理冲突",
+      "MANUAL": "由{{name}}编辑",
+      "WORKFLOW": "由{{name}}在流程中修改"
+    }
+  },
+  "resolve": {
+    "title": "处理：{{field}}",
+    "description": "各系统对 {{name}} 的{{field}}记录不一致。请选择此档案的正确值。",
+    "hidden": "您的角色无权查看这些值，因此无法在其中选择。请联系该员工所属法人实体的人事处理此冲突。",
+    "options": "哪个值是正确的？",
+    "keep": "保留{{source}}的值",
+    "observed": "最近读取",
+    "manual": "录入正确的值",
+    "choose": "请选择",
+    "note": "备注",
+    "noteOptional": "备注（选填）",
+    "noteRequired": "请说明该值的来源，至少 3 个字符。",
+    "consequence": {
+      "source": "{{source}}将成为此档案该字段的权威来源，之后的同步会沿用它的值。",
+      "manual": "您录入的值将替换主数据中的值。若之后某个系统的值发生变化，冲突会重新打开。"
+    },
+    "confirm": "长按确认",
+    "confirmed": "已保存",
+    "holdHint": "按住 {{seconds}} 秒以确认。",
+    "keepHolding": "请持续按住按钮以确认。",
+    "success": "冲突已处理，决定已记入审计日志。"
+  },
+  "explain": {
+    "action": "解释这一差异",
+    "label": "AI 解释",
+    "working": "正在比对各系统…",
+    "done": "解释用时",
+    "requiresDecision": "需由您决定",
+    "adviceOnly": "仅供参考：汇通绝不会根据 AI 解释修改档案。",
+    "model": "来源：{{provider}}（{{model}}）。",
+    "providers": {
+      "MOCK": "离线演示模型",
+      "BEDROCK": "AWS Bedrock",
+      "OPENAI": "OpenAI"
+    }
   }
 }

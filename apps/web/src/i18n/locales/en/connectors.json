@@ -23,5 +23,83 @@
     "SUCCEEDED": "Succeeded",
     "PARTIAL": "Partly succeeded",
     "FAILED": "Failed"
+  },
+  "sync": {
+    "title": "Choose a system to sync",
+    "titles": {
+      "preview": "Preview the sync from {{name}}",
+      "apply": "Sync from {{name}}"
+    },
+    "descriptions": {
+      "choose": "HuiTong first previews what would change, and writes nothing until you apply the preview.",
+      "preview": "Nothing has been written yet. Check the changes, then slide to apply them.",
+      "apply": "Writing exactly the previewed changes to the employee master. Every change is audited.",
+      "inSync": "The preview compared every record with the employee master.",
+      "applied": "The previewed changes are in the employee master, and each one is in the audit log.",
+      "partial": "Records with errors were skipped. The other changes are in the employee master and the audit log.",
+      "previewFailed": "The preview stopped, so nothing was written. You can preview again.",
+      "applyFailed": "The sync stopped early. Any changes it made are in the audit log; preview again to pick up the rest."
+    },
+    "choose": "System to sync",
+    "lastSync": "Last synced",
+    "neverSynced": "Not synced yet",
+    "failed": "The run stopped with an error.",
+    "errors": {
+      "MAPPING_FAILED": "Records could not be mapped to the employee master. Check the field mapping.",
+      "VALIDATION_FAILED": "Records failed the employee master's checks.",
+      "MISSING_EMPLOYEE_NO": "Records arrived without an employee number.",
+      "INCOMPLETE_RECORD": "New records were missing required details.",
+      "ENTITY_MISMATCH": "Records named a different entity from the one already on file.",
+      "INTERRUPTED": "The run was interrupted before it finished.",
+      "UPSTREAM_UNAVAILABLE": "The connected system did not respond."
+    },
+    "inSync": "Everything is already in sync: there is nothing to apply.",
+    "conflictsFound_one": "{{count}} new conflict needs a decision.",
+    "conflictsFound_other": "{{count}} new conflicts need a decision.",
+    "reviewConflicts": "Review conflicts",
+    "slide": "Slide to apply these changes",
+    "slideArmed": "Tap again to apply",
+    "applying": "Applying…",
+    "applied": "Applied",
+    "applyFailed": "Could not apply",
+    "waiting": "Waiting to start",
+    "progress": "{{mode}} progress",
+    "mode": {
+      "PREVIEW": "Preview",
+      "APPLY": "Sync"
+    },
+    "stage": {
+      "EXTRACT": "Reading records",
+      "MAP": "Mapping fields",
+      "VALIDATE": "Checking values",
+      "LOAD": "Comparing with the master",
+      "AUDIT": "Recording the audit trail"
+    },
+    "counts": {
+      "fetched": "Read",
+      "created": "New",
+      "updated": "Updated",
+      "unchanged": "Unchanged",
+      "conflicts": "Conflicts",
+      "errors": "Errors"
+    },
+    "preview": {
+      "action": "Preview changes",
+      "caption": "Changes the sync would make",
+      "employee": "Employee",
+      "change": "Change",
+      "field": "Field",
+      "value": "Value",
+      "kind": {
+        "CREATE": "New record",
+        "UPDATE": "Update",
+        "CONFLICT": "Conflict"
+      },
+      "wholeRecord": "Whole record",
+      "newRecord": "Added to the master",
+      "to": "becomes",
+      "truncated": "Showing the first {{count}} changes; the counts above cover all of them."
+    },
+    "previewAgain": "Preview again"
   }
 }

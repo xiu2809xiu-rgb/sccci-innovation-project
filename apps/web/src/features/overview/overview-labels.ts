@@ -1,9 +1,4 @@
-import {
-  EMPLOYEE_FIELDS,
-  type ConnectorStatus,
-  type EmployeeField,
-  type SyncRunStatus,
-} from '@huitong/shared';
+import { EMPLOYEE_FIELDS, type EmployeeField, type SyncRunStatus } from '@huitong/shared';
 import {
   Activity,
   CircleCheck,
@@ -15,8 +10,6 @@ import {
   UserPen,
   type LucideIcon,
 } from 'lucide-react';
-
-import type { StatusTone } from '@/components/common/status-badge';
 
 export type ActivityLabel =
   | 'syncCompleted'
@@ -52,15 +45,6 @@ export function activityPresentation(action: string): { label: ActivityLabel; ic
 export function isEmployeeField(field: string): field is EmployeeField {
   return (EMPLOYEE_FIELDS as readonly string[]).includes(field);
 }
-
-export const CONNECTOR_STATUS_TONE: Record<ConnectorStatus, StatusTone> = {
-  ACTIVE: 'success',
-  DEGRADED: 'warning',
-  ERROR: 'danger',
-  DISABLED: 'neutral',
-  DEPRECATED: 'neutral',
-  DRAFT: 'info',
-};
 
 /** Bar colour and height: worse outcomes are also shorter, so the strip does not rely on colour alone. */
 export const RUN_BAR: Record<SyncRunStatus, string> = {
