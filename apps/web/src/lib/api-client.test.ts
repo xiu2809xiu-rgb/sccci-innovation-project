@@ -54,6 +54,17 @@ describe('ApiClient', () => {
     expect((fetchImpl.mock.calls[1]?.[1] as RequestInit).body).toBe('{"name":"x"}');
   });
 
+  it('sends FormData as multipart, leaving the boundary to the browser', async () => {
+    const { api, fetchImpl } = client([json(201, { data: { message: 'stored' } })]);
+    const form = new FormData();
+    form.append('file', new Blob(['Staff ID\nE200101\n'], { type: 'text/csv' }), 'sample.csv');
+    await api.post('/uploads', greeting, { body: form });
+    const init = fetchImpl.mock.calls[0]?.[1] as RequestInit;
+    expect(init.body).toBe(form);
+    expect(headersOf(fetchImpl.mock.calls[0] ?? []).get('Content-Type')).toBeNull();
+    expect(headersOf(fetchImpl.mock.calls[0] ?? []).get('X-CSRF-Token')).toBe('abc123');
+  });
+
   it('turns the error envelope into an ApiError with code and trace id', async () => {
     const { api } = client([
       json(403, { error: { code: 'FORBIDDEN', message: 'No', traceId: 'trace-9' } }),
