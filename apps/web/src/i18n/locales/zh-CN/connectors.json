@@ -51,7 +51,8 @@
       "INCOMPLETE_RECORD": "新记录缺少必填信息。",
       "ENTITY_MISMATCH": "部分记录的所属实体与现有档案不一致。",
       "INTERRUPTED": "运行在完成前被中断。",
-      "UPSTREAM_UNAVAILABLE": "所连接的系统没有响应。"
+      "UPSTREAM_UNAVAILABLE": "所连接的系统没有响应。",
+      "SOURCE_CHANGED": "预览之后源系统的数据有变化，因此未写入任何内容。请重新预览，查看当前的变更。"
     },
     "inSync": "数据已完全同步，无需应用任何变更。",
     "conflictsFound_one": "有 {{count}} 项新冲突需要决定。",

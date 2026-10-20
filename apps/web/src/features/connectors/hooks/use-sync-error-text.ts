@@ -15,6 +15,7 @@ const TRANSLATED_CODES = [
   'ENTITY_MISMATCH',
   'INTERRUPTED',
   'UPSTREAM_UNAVAILABLE',
+  'SOURCE_CHANGED',
 ] as const;
 
 type TranslatedCode = (typeof TRANSLATED_CODES)[number];

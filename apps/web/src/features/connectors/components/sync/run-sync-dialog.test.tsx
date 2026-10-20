@@ -11,6 +11,7 @@ import { renderApp, sessionFor, type FakeRoutes } from '@/test/render-app';
 
 const NOW = '2026-10-20T08:00:00.000Z';
 const RUN_ID = '0199f0a0-0000-7000-8000-00000000e001';
+const APPLY_RUN_ID = '0199f0a0-0000-7000-8000-00000000e002';
 
 const SYNCABLE: ConnectorSummary[] = [
   {
@@ -68,13 +69,14 @@ function routesFor(result: SyncRunDetail): FakeRoutes {
 /** Opens Run sync from the employee master and previews Singapore HR. */
 async function previewSingaporeHr(result: SyncRunDetail) {
   const user = userEvent.setup();
-  renderApp('/employees', routesFor(result));
+  const routes = routesFor(result);
+  renderApp('/employees', routes);
   const [headerAction] = await screen.findAllByRole('button', { name: 'Run sync' });
   await user.click(headerAction as HTMLElement);
   const dialog = await screen.findByRole('dialog', { name: 'Choose a system to sync' });
   await user.click(await within(dialog).findByRole('radio', { name: /Singapore HR/ }));
   await user.click(within(dialog).getByRole('button', { name: 'Preview changes' }));
-  return { user, dialog };
+  return { user, dialog, routes };
 }
 
 describe('Run sync', () => {
@@ -201,5 +203,58 @@ describe('Run sync', () => {
     expect(within(preview).getByText('CN HQ:')).toBeInTheDocument();
     expect(within(preview).getByText('Head of Wealth Management')).toBeInTheDocument();
     expect(within(preview).queryByText(/connectorId/)).not.toBeInTheDocument();
+  });
+
+  it('explains an apply refused because the source changed after the preview', async () => {
+    const { user, dialog, routes } = await previewSingaporeHr(
+      run({
+        counts: { fetched: 12, created: 0, updated: 1, unchanged: 11, conflicts: 0, errors: 0 },
+        previewItems: [
+          {
+            employeeNo: 'E100021',
+            entityCode: 'SG01',
+            kind: 'UPDATE',
+            field: 'jobTitle',
+            before: 'HR Executive',
+            after: 'Senior HR Executive',
+          },
+        ],
+      }),
+    );
+    await within(dialog).findByRole('table', { name: 'Changes the sync would make' });
+
+    // The apply is its own run, which finds that SG HR changed after the preview.
+    routes['POST /connectors/sg-hr/sync'] = {
+      status: 202,
+      body: { data: run({ id: APPLY_RUN_ID, mode: 'APPLY', status: 'QUEUED' }) },
+    };
+    routes[`GET /sync-runs/${APPLY_RUN_ID}`] = {
+      body: {
+        data: run({
+          id: APPLY_RUN_ID,
+          mode: 'APPLY',
+          status: 'FAILED',
+          counts: { fetched: 12, created: 0, updated: 0, unchanged: 0, conflicts: 0, errors: 1 },
+          errors: [
+            {
+              externalId: null,
+              stage: 'LOAD',
+              code: 'SOURCE_CHANGED',
+              message: 'Attempt 1: The source changed after the preview, so nothing was written',
+            },
+          ],
+        }),
+      },
+    };
+    const slider = within(dialog).getByRole('slider', { name: 'Slide to apply these changes' });
+    slider.focus();
+    await user.keyboard('{Enter}');
+    await user.keyboard('{Enter}');
+
+    expect(await within(dialog).findByRole('alert')).toHaveTextContent(
+      'The source system changed after the preview, so nothing was written.',
+    );
+    expect(within(dialog).queryByText(/Attempt 1/)).not.toBeInTheDocument();
+    expect(within(dialog).getByRole('button', { name: 'Preview again' })).toBeEnabled();
   });
 });

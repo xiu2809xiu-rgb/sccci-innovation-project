@@ -5,7 +5,7 @@ import {
   type SyncProgressEvent,
   type SyncRunStatus,
 } from '@huitong/shared';
-import type { Job } from 'bullmq';
+import { UnrecoverableError, type Job } from 'bullmq';
 import { PinoLogger } from 'nestjs-pino';
 
 import { AppError } from '../../../common/errors/app-error.js';
@@ -17,7 +17,7 @@ import { MappingConfigsRepository } from '../../mapping/mapping-configs.reposito
 import { ConnectorFactory } from '../connector-factory.js';
 import { ConnectorsRepository } from '../connectors.repository.js';
 import { EmployeeSyncPipeline } from './employee-sync.pipeline.js';
-import type { SyncSummary } from './sync-pipeline.js';
+import { SourceChangedError, type SyncSummary } from './sync-pipeline.js';
 import { SyncProgressReporter } from './sync-progress.reporter.js';
 import { SyncRunsRepository } from './sync-runs.repository.js';
 import type { SyncJobData } from './sync.service.js';
@@ -80,22 +80,33 @@ export class SyncProcessor extends WorkerHost {
         meta,
         connector: this.factory.create(connector),
         mappings: mapping.mappings,
+        ...(run.previewRunId
+          ? { expectedChanges: await this.changesPreviewed(run.previewRunId) }
+          : {}),
       });
       const status = statusOf(summary);
       await this.runs.recordFailures(run.id, summary.failures);
+      const preview = run.mode === 'PREVIEW';
       await this.runs.finish(run.id, {
         status,
         counts: summary.counts,
-        preview: run.mode === 'PREVIEW' ? summary.preview.slice(0, MAX_PREVIEW_ITEMS) : null,
+        preview: preview ? summary.preview.slice(0, MAX_PREVIEW_ITEMS) : null,
         previewTruncated: summary.preview.length > MAX_PREVIEW_ITEMS,
+        changeDigest: preview ? summary.changeDigest : null,
       });
       this.announce(identity, status, summary.counts, status === 'FAILED');
     } catch (error) {
       await this.fail(job, identity, meta, attempt, error);
-      throw error;
+      // Retrying cannot bring back the data the preview saw: HR previews again.
+      throw error instanceof SourceChangedError ? new UnrecoverableError(error.message) : error;
     } finally {
       this.progress.forget(run.id);
     }
+  }
+
+  /** What the preview an apply follows found; null if it has no fingerprint, so nothing can match. */
+  private async changesPreviewed(previewRunId: string): Promise<string | null> {
+    return (await this.runs.findById(previewRunId))?.changeDigest ?? null;
   }
 
   private async fail(
@@ -105,14 +116,16 @@ export class SyncProcessor extends WorkerHost {
     attempt: number,
     error: unknown,
   ): Promise<void> {
-    const final = attempt >= (job.opts.attempts ?? 1);
-    const code = error instanceof AppError ? error.code : 'INTERNAL';
-    const message = error instanceof AppError ? error.message : 'The sync stopped unexpectedly';
+    const sourceChanged = error instanceof SourceChangedError;
+    const final = sourceChanged || attempt >= (job.opts.attempts ?? 1);
+    const code = sourceChanged ? error.code : error instanceof AppError ? error.code : 'INTERNAL';
+    const message =
+      sourceChanged || error instanceof AppError ? error.message : 'The sync stopped unexpectedly';
     this.logger.warn({ err: error, syncRunId: run.id, attempt, final }, 'sync attempt failed');
     await this.runs.recordFailures(run.id, [
       {
         externalId: null,
-        stage: 'EXTRACT',
+        stage: sourceChanged ? error.stage : 'EXTRACT',
         code,
         message: `Attempt ${String(attempt)}: ${message}`,
       },
@@ -128,6 +141,7 @@ export class SyncProcessor extends WorkerHost {
       counts,
       preview: null,
       previewTruncated: false,
+      changeDigest: null,
     });
     await this.audit.record(
       {

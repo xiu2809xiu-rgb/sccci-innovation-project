@@ -407,6 +407,39 @@ describe('Integration core: sync, master, conflicts (integration)', () => {
     expect(isMasked(audited?.newValue)).toBe(true);
   });
 
+  it('refuses to apply a preview once the source has changed since, and writes nothing', async () => {
+    await changeInSgHr('E100044', { mobile: '+65 8123 4501' });
+    const preview = await sync('sg-hr', { mode: 'PREVIEW' });
+    expect(preview.previewItems).toEqual([
+      expect.objectContaining({ employeeNo: 'E100044', field: 'workPhone' }),
+    ]);
+
+    // Another edit reaches SG HR after HR has read the preview.
+    await changeInSgHr('E100097', { mobile: '+65 8123 4502' });
+    const before = {
+      changes: await prisma.employeeChange.count(),
+      audit: await prisma.auditEvent.count({ where: { action: 'employee.updated' } }),
+    };
+    const refused = await sync('sg-hr', { mode: 'APPLY', previewRunId: preview.id });
+    expect(refused.status).toBe('FAILED');
+    expect(refused.errors).toEqual([
+      expect.objectContaining({ stage: 'LOAD', code: 'SOURCE_CHANGED' }),
+    ]);
+    expect(await prisma.employeeChange.count()).toBe(before.changes);
+    expect(await prisma.auditEvent.count({ where: { action: 'employee.updated' } })).toBe(
+      before.audit,
+    );
+
+    // A fresh preview shows both changes, and applying it writes them.
+    const { preview: fresh, applied } = await previewThenApply('sg-hr');
+    expect(fresh.previewItems.map((item) => item.employeeNo).sort()).toEqual([
+      'E100044',
+      'E100097',
+    ]);
+    expect(applied.status).toBe('SUCCEEDED');
+    expect(applied.counts).toMatchObject({ updated: 2 });
+  });
+
   it('explains a conflict in Chinese without applying anything, and records the AI usage', async () => {
     const conflict = await conflictFor('E100066', 'workEmail');
     const usageBefore = await prisma.aiUsageRecord.count({

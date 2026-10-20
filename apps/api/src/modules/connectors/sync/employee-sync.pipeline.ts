@@ -1,5 +1,3 @@
-import { createHash } from 'node:crypto';
-
 import { Injectable } from '@nestjs/common';
 import {
   canonicalEmployeePartialSchema,
@@ -10,11 +8,11 @@ import {
 } from '@huitong/shared';
 
 import { AuditLogService } from '../../../infrastructure/audit/audit-log.service.js';
-import { canonicalJson } from '../../../infrastructure/audit/canonical-json.js';
 import { RealtimeService } from '../../../infrastructure/events/realtime.service.js';
 import { EmployeeMasterService } from '../../employees/employee-master.service.js';
 import { MappingEngine } from '../../mapping/mapping-engine.js';
 import type { SystemConnector } from '../adapters/system-connector.js';
+import { contentHash } from './change-digest.js';
 import {
   SyncPipeline,
   type LoadOutcome,
@@ -79,7 +77,7 @@ export class EmployeeSyncPipeline extends SyncPipeline<
         items.push({
           externalId: record.externalId,
           payload: record.payload,
-          payloadHash: createHash('sha256').update(canonicalJson(record.payload)).digest('hex'),
+          payloadHash: contentHash(record.payload),
           observedAt,
         });
       }
@@ -171,6 +169,7 @@ export class EmployeeSyncPipeline extends SyncPipeline<
           kind: result.kind === 'recorded' ? 'unchanged' : result.kind,
           conflicts: result.conflicts.length,
           preview: result.preview,
+          ...(result.kind === 'created' ? { createdHash: contentHash(item.values) } : {}),
         };
       }
     }
