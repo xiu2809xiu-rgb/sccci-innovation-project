@@ -2,9 +2,8 @@
 # Image for one mock external system. Build from the repository root:
 #   docker build -f infra/docker/mock-service.Dockerfile --build-arg SERVICE=mock-sg-hr --build-arg PORT=4101 .
 
-ARG NODE_IMAGE=node:24.22.0-alpine3.24
-
-FROM ${NODE_IMAGE} AS build
+# Base images are pinned by tag and digest; Dependabot proposes updates.
+FROM node:24.22.0-alpine3.24@sha256:44fce696f38ba8c987c4db89954051000bbd05ffd8d8659ba15ed4a8602e937f AS build
 ARG SERVICE
 ENV HUSKY=0 \
     PUPPETEER_SKIP_DOWNLOAD=true
@@ -21,8 +20,12 @@ RUN pnpm --filter "@huitong/${SERVICE}..." build
 RUN --mount=type=cache,id=pnpm-store,target=/pnpm-store \
     pnpm --filter "@huitong/${SERVICE}" deploy --prod --store-dir /pnpm-store /out
 
-FROM ${NODE_IMAGE} AS runtime
+FROM node:24.22.0-alpine3.24@sha256:44fce696f38ba8c987c4db89954051000bbd05ffd8d8659ba15ed4a8602e937f AS runtime
 ARG PORT
+# Only node runs here. npm, npx, corepack and yarn ship with the base image but are never used,
+# so they go: fewer packages to patch, and nothing for an attacker to install with.
+RUN rm -rf /usr/local/lib/node_modules/npm /usr/local/lib/node_modules/corepack /opt/yarn-v* \
+      /usr/local/bin/npm /usr/local/bin/npx /usr/local/bin/corepack /usr/local/bin/yarn /usr/local/bin/yarnpkg
 ENV NODE_ENV=production \
     PORT=${PORT}
 WORKDIR /app

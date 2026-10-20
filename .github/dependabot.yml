@@ -1,0 +1,72 @@
+# Dependabot: security alerts are on for the repository; these entries add
+# weekly version updates. A seven-day cooldown keeps brand-new releases out,
+# like pnpm's minimumReleaseAge, and grouping keeps it to a few PRs a week.
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+      time: '06:00'
+      timezone: Asia/Singapore
+    cooldown:
+      default-days: 7
+    versioning-strategy: increase
+    open-pull-requests-limit: 5
+    groups:
+      production:
+        dependency-type: production
+        update-types: [minor, patch]
+      development:
+        dependency-type: development
+        update-types: [minor, patch]
+    labels: [dependencies, 'type: chore']
+    commit-message:
+      prefix: chore
+      include: scope
+
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+      time: '06:00'
+      timezone: Asia/Singapore
+    cooldown:
+      default-days: 7
+    groups:
+      actions:
+        patterns: ['*']
+    labels: [dependencies, 'type: chore']
+    commit-message:
+      prefix: ci
+
+  - package-ecosystem: docker
+    directories:
+      - /infra/docker
+    schedule:
+      interval: weekly
+      day: monday
+      time: '06:00'
+      timezone: Asia/Singapore
+    cooldown:
+      default-days: 7
+    labels: [dependencies, 'type: chore']
+    commit-message:
+      prefix: chore
+      include: scope
+
+  - package-ecosystem: docker-compose
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+      time: '06:00'
+      timezone: Asia/Singapore
+    cooldown:
+      default-days: 7
+    labels: [dependencies, 'type: chore']
+    commit-message:
+      prefix: chore
+      include: scope
