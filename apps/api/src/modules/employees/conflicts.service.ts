@@ -1,8 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import {
   canonicalEmployeeSchema,
-  DEPARTMENTS,
-  isWithinClearance,
   REALTIME_EVENTS,
   type Conflict,
   type ConflictEvent,
@@ -25,31 +23,15 @@ import { AuditLogService } from '../../infrastructure/audit/audit-log.service.js
 import { RealtimeService } from '../../infrastructure/events/realtime.service.js';
 import { FieldMasker } from '../access/field-masker.js';
 import { DiscrepancyExplainer } from '../ai/discrepancy/discrepancy-explainer.js';
-import { FIELD_WORDS } from '../ai/schema-mapping/field-vocabulary.js';
 import { conflictView } from './conflict.view.js';
 import { sameValue } from './domain/field-merger.js';
 import { canonicalOf, columnsOf } from './employee-record.js';
 import { ConflictsRepository } from './conflicts.repository.js';
 import { EmployeesRepository } from './employees.repository.js';
+import { explainerRequest } from './explainer-request.js';
 import { sourceChangedAt } from './source-timestamps.js';
 
 type SignedIn = RequestMeta & { actor: AuthenticatedUser };
-
-function label(field: EmployeeField, language: Locale): string {
-  const target = field === 'baseSalary' ? 'baseSalary.amount' : field;
-  return FIELD_WORDS.find((words) => words.target === target)?.label[language] ?? field;
-}
-
-/** A value as words for the explainer: department codes become their names. */
-function spoken(field: EmployeeField, value: unknown, language: Locale): string {
-  if (field === 'departmentCode') {
-    const department = DEPARTMENTS.find((candidate) => candidate.code === value);
-    if (department) return language === 'zh-CN' ? department.nameZh : department.nameEn;
-  }
-  return typeof value === 'string' || typeof value === 'number'
-    ? String(value)
-    : JSON.stringify(value);
-}
 
 /**
  * Conflicts between sources: HR lists them, asks the AI explainer for
@@ -177,14 +159,12 @@ export class ConflictsService {
     );
   }
 
-  /** The AI explainer's account of a conflict. Values above INTERNAL never reach the model. */
+  /** The AI explainer's account of a conflict, built by `explainerRequest` (no names, nothing above INTERNAL). */
   async explain(id: string, language: Locale, meta: SignedIn): Promise<ConflictExplanation> {
     const conflict = await this.conflicts.findForResolution(id);
     if (!conflict) throw new NotFoundError(`Conflict ${id}`);
     const field = conflict.field as EmployeeField;
     const { employee } = conflict;
-    const classification = this.masker.classification(field);
-    const shareable = isWithinClearance(classification, 'INTERNAL');
     const candidates = Array.isArray(conflict.candidates)
       ? (conflict.candidates as { connectorId: string; value: unknown }[])
       : [];
@@ -201,22 +181,18 @@ export class ConflictsService {
     );
 
     const result = await this.explainer.explain(
-      {
+      explainerRequest({
         language,
         employee: {
-          name:
-            language === 'zh-CN' && employee.fullNameLocal
-              ? employee.fullNameLocal
-              : employee.fullNameLatin,
+          employeeNo: employee.employeeNo,
           entityCode: employee.entityCode as EntityCode,
         },
-        field: { label: label(field, language), classification },
-        candidates: candidates.map((candidate) => ({
-          system: systems.get(candidate.connectorId) ?? candidate.connectorId,
-          value: shareable ? spoken(field, candidate.value, language) : null,
-          changedAt: changed.get(candidate.connectorId) ?? null,
-        })),
-      },
+        field,
+        classification: this.masker.classification(field),
+        candidates,
+        systems,
+        changedAt: changed,
+      }),
       { userId: meta.actor.id, requestId: meta.traceId },
     );
     return {
