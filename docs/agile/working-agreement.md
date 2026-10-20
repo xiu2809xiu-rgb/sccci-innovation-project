@@ -26,7 +26,7 @@ One sprint is one module week, Monday to Sunday, so every assessment falls at a 
 
 ## The board
 
-The **HuiTong delivery** project (GitHub Projects) shows every epic and story with its Sprint, Estimate, Area and Status.
+The **HuiTong delivery** project (GitHub Projects) shows every epic and story with its Sprint, Estimate, Area and Status. Two views come with it: **Sprint board**, the current sprint with a column per status, and **Backlog**, the full table. Group the Backlog by Sprint once in the browser (View options, then Group by), because GitHub's API cannot set grouping.
 
 | Status      | Means                                                                                                       | Limit        |
 | ----------- | ----------------------------------------------------------------------------------------------------------- | ------------ |

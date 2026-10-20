@@ -1,6 +1,7 @@
 // Sets up the GitHub Projects board for seed-backlog.mjs: a project linked to
 // the repository, with a Sprint iteration field (one week per module week), an
-// Estimate number field and an Area field, and every epic and story on it.
+// Estimate number field and an Area field, the Backlog and Sprint board views,
+// and every epic and story on it.
 // Needs a token with the `project` scope (gh auth refresh -s project).
 import { SPRINTS } from './backlog.mjs';
 import { api } from './gh.mjs';
@@ -162,6 +163,86 @@ function ensureFields(projectId) {
   return fields;
 }
 
+/**
+ * The views the team works from: the backlog table, and the current sprint as
+ * a board with a column per status. The API cannot set grouping, so the
+ * backlog is grouped by Sprint once in the browser (View options, Group by).
+ */
+const VIEWS = [
+  { name: 'Backlog', layout: 'TABLE_LAYOUT', renames: 'View 1' },
+  { name: 'Sprint board', layout: 'BOARD_LAYOUT', filter: 'sprint:@current' },
+];
+
+function viewsOf(projectId) {
+  const { node } = graphql(
+    `
+      query ($id: ID!) {
+        node(id: $id) {
+          ... on ProjectV2 {
+            views(first: 20) {
+              nodes {
+                id
+                name
+                filter
+              }
+            }
+          }
+        }
+      }
+    `,
+    { id: projectId },
+  );
+  return node.views.nodes;
+}
+
+function updateView(viewId, changes) {
+  graphql(
+    `
+      mutation ($input: UpdateProjectV2ViewInput!) {
+        updateProjectV2View(input: $input) {
+          projectV2View {
+            id
+          }
+        }
+      }
+    `,
+    { input: { viewId, ...changes } },
+  );
+}
+
+function ensureViews(projectId) {
+  const views = viewsOf(projectId);
+  for (const view of VIEWS) {
+    let existing = views.find((candidate) => candidate.name === view.name);
+    const placeholder = views.find((candidate) => candidate.name === view.renames);
+    if (!existing && placeholder) {
+      updateView(placeholder.id, { name: view.name });
+      existing = { ...placeholder, name: view.name };
+      console.log(`renamed view "${view.renames}" to "${view.name}"`);
+    }
+    if (!existing) {
+      const { createProjectV2View } = graphql(
+        `
+          mutation ($input: CreateProjectV2ViewInput!) {
+            createProjectV2View(input: $input) {
+              projectV2View {
+                id
+                filter
+              }
+            }
+          }
+        `,
+        { input: { projectId, name: view.name, layout: view.layout } },
+      );
+      existing = createProjectV2View.projectV2View;
+      console.log(`created view "${view.name}"`);
+    }
+    if (view.filter && existing.filter !== view.filter) {
+      updateView(existing.id, { filter: view.filter });
+    }
+  }
+}
+
 function setField(projectId, itemId, fieldId, value) {
   graphql(
     `
@@ -181,6 +262,7 @@ function setField(projectId, itemId, fieldId, value) {
 export function setUpProject({ repo, title, epics, stories }) {
   const project = findOrCreateProject(repo, title);
   const fields = ensureFields(project.id);
+  ensureViews(project.id);
   const sprint = fields.get('Sprint');
   const estimate = fields.get('Estimate');
   const area = fields.get('Area');
