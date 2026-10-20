@@ -59,7 +59,11 @@ export function ProposalRow({ column, target, retargeted, duplicate, onChange }:
         {prohibited ? (
           <span className="inline-flex items-center gap-1.5 text-sm text-danger">
             <Lock className="size-3.5" aria-hidden="true" />
-            {t('wizard.review.neverMapped')}
+            {t(
+              column.prohibitedKind === 'GENDER'
+                ? 'wizard.review.neverMappedGender'
+                : 'wizard.review.neverMapped',
+            )}
           </span>
         ) : (
           <Select

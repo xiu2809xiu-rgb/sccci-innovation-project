@@ -9,7 +9,7 @@ import {
 } from '@huitong/shared';
 
 import { CATEGORY_WORDS, FIELD_WORDS, normalise, type FieldWords } from './field-vocabulary.js';
-import type { MappingRequest, MappingRequestColumn } from './schema-mapping.prompt.js';
+import type { ModelColumn, ModelRequest } from './schema-mapping.prompt.js';
 
 type Column = AiMappingOutput['columns'][number];
 type Text = Record<Locale, string>;
@@ -32,7 +32,7 @@ function candidates(header: string): { words: FieldWords; score: number }[] {
 }
 
 /** Han values decide between the Latin and Chinese versions of a name or a title. */
-function fits(target: MappingTarget, column: MappingRequestColumn): boolean {
+function fits(target: MappingTarget, column: ModelColumn): boolean {
   const han = column.shape.includes('汉');
   if (target === 'fullNameLocal' || target === 'jobTitleZh') return han;
   if (
@@ -64,11 +64,7 @@ interface Choice {
   review: boolean;
 }
 
-function transformFor(
-  target: MappingTarget,
-  column: MappingRequestColumn,
-  request: MappingRequest,
-): Choice {
+function transformFor(target: MappingTarget, column: ModelColumn, request: ModelRequest): Choice {
   const none: Text = { en: '', 'zh-CN': '' };
   if (DATE_TARGETS.has(target)) {
     const { format, sure } = dateFormat(column.shape);
@@ -130,7 +126,7 @@ function transformFor(
 }
 
 /** Category columns become a value map from the categories the sample shows. */
-function valueMapFor(target: MappingTarget, column: MappingRequestColumn): Choice | null {
+function valueMapFor(target: MappingTarget, column: ModelColumn): Choice | null {
   const vocabulary = CATEGORY_WORDS[target];
   if (!vocabulary) return null;
   if (!column.categories) {
@@ -165,7 +161,7 @@ function valueMapFor(target: MappingTarget, column: MappingRequestColumn): Choic
 }
 
 function rationale(
-  column: MappingRequestColumn,
+  column: ModelColumn,
   words: FieldWords,
   score: number,
   choice: Choice,
@@ -178,10 +174,6 @@ function rationale(
   return `${match} ${choice.note[language]}`.trim();
 }
 
-const PROHIBITED: Text = {
-  en: 'This column holds national ID numbers. HuiTong never stores them, so it stays unmapped.',
-  'zh-CN': '此列为身份证件号码。汇通绝不存储此类数据，因此不予映射。',
-};
 const NO_MATCH: Text = {
   en: 'No canonical field matches this column; leave it unmapped or choose one.',
   'zh-CN': '没有匹配的标准字段；可保持不映射或手动选择。',
@@ -192,19 +184,9 @@ const NO_MATCH: Text = {
  * feature: header words in three languages, value shapes for transforms, and
  * the same answer every time, with no API key.
  */
-export function mockSchemaMapping(request: MappingRequest): AiMappingOutput {
+export function mockSchemaMapping(request: ModelRequest): AiMappingOutput {
   const used = new Set<MappingTarget>();
   const columns: Column[] = request.columns.map((column) => {
-    if (column.prohibited) {
-      return {
-        sourceColumn: column.header,
-        target: null,
-        transform: null,
-        confidence: 1,
-        rationale: PROHIBITED[request.language],
-        flags: ['PROHIBITED_FIELD'],
-      };
-    }
     const best = candidates(column.header).find(
       ({ words }) => !used.has(words.target) && fits(words.target, column),
     );

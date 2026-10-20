@@ -1,10 +1,13 @@
+import type { ProhibitedKind } from '@huitong/shared';
+
 /**
- * National ID numbers (NRIC/FIN, MyKad, PRC resident ID, passports) must never
- * be stored (CLAUDE.md data rules). A column is prohibited when its header
- * names one or when most of its values have the shape of one; it is then never
- * mapped, whatever the AI or a reviewer suggests.
+ * Data HuiTong must never store: national ID numbers (NRIC/FIN, MyKad, PRC
+ * resident ID, passports; CLAUDE.md data rules) and gender (ADR 0011). A column
+ * is prohibited when its header names one, or, for national IDs, when most of
+ * its values have the shape of one. It is then withheld from the model and
+ * never mapped, whatever the AI or a reviewer suggests.
  */
-const HEADERS: readonly RegExp[] = [
+const NATIONAL_ID_HEADERS: readonly RegExp[] = [
   /\bnric\b/i,
   /\bfin\s*(no|number)?\b/i,
   /\bi\/?c\s*(no|number)?\b/i,
@@ -18,7 +21,10 @@ const HEADERS: readonly RegExp[] = [
   /护照/,
 ];
 
-const VALUES: readonly RegExp[] = [
+/** Gender is decided by header only: values such as M and F mean too many other things. */
+const GENDER_HEADERS: readonly RegExp[] = [/\bgender\b/i, /\bsex\b/i, /\bjantina\b/i, /性别/];
+
+const NATIONAL_ID_VALUES: readonly RegExp[] = [
   /^[STFGM]\d{7}[A-Z]$/i, // Singapore NRIC / FIN
   /^\d{6}-?\d{2}-?\d{4}$/, // Malaysian MyKad
   /^\d{17}[\dX]$/i, // PRC resident identity card
@@ -26,21 +32,24 @@ const VALUES: readonly RegExp[] = [
 
 export interface ProhibitedCheck {
   prohibited: boolean;
+  kind: ProhibitedKind | null;
   reason: 'HEADER' | 'VALUES' | null;
 }
 
 export function checkProhibited(header: string, values: readonly unknown[]): ProhibitedCheck {
-  if (HEADERS.some((pattern) => pattern.test(header)))
-    return { prohibited: true, reason: 'HEADER' };
+  if (NATIONAL_ID_HEADERS.some((pattern) => pattern.test(header)))
+    return { prohibited: true, kind: 'NATIONAL_ID', reason: 'HEADER' };
+  if (GENDER_HEADERS.some((pattern) => pattern.test(header)))
+    return { prohibited: true, kind: 'GENDER', reason: 'HEADER' };
   const texts = values
     .filter(
       (value): value is string | number => typeof value === 'string' || typeof value === 'number',
     )
     .map(String);
   const matching = texts.filter((text) =>
-    VALUES.some((pattern) => pattern.test(text.trim())),
+    NATIONAL_ID_VALUES.some((pattern) => pattern.test(text.trim())),
   ).length;
   if (texts.length > 0 && matching / texts.length >= 0.5)
-    return { prohibited: true, reason: 'VALUES' };
-  return { prohibited: false, reason: null };
+    return { prohibited: true, kind: 'NATIONAL_ID', reason: 'VALUES' };
+  return { prohibited: false, kind: null, reason: null };
 }

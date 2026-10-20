@@ -13,10 +13,11 @@ const COUNTRY_DEFAULTS: Record<string, { location: string; phone: string }> = {
 };
 
 /**
- * What the model is told about a sample: each column's header and value
+ * What the server knows about a sample: each column's header and value
  * shapes, the distinct codes of a category column (never a personal value),
- * whether it is a prohibited national-ID column,
- * and the entity's currency, default location and phone country code.
+ * whether it holds data HuiTong never stores (national ID numbers, gender),
+ * and the entity's currency, default location and phone country code. The
+ * model is told all of it except the withheld columns (`modelRequestOf`).
  */
 export function buildMappingRequest(
   sample: SampleFile,
@@ -35,14 +36,18 @@ export function buildMappingRequest(
     },
     columns: sample.headers.map((header) => {
       const values = sample.rows.map((row) => row[header]);
-      const { prohibited } = checkProhibited(header, values);
-      const described = describeColumn(header, values, !prohibited && isCategoricalHeader(header));
+      const { kind } = checkProhibited(header, values);
+      const described = describeColumn(
+        header,
+        values,
+        kind === null && isCategoricalHeader(header),
+      );
       return {
         header,
-        // A prohibited column's shape is not shown either: nothing about it leaves the server.
-        shape: prohibited ? 'withheld' : described.shape,
-        categories: prohibited ? null : described.categories,
-        prohibited,
+        // Not even its shape is kept: nothing about a withheld column leaves the server.
+        shape: kind === null ? described.shape : 'withheld',
+        categories: kind === null ? described.categories : null,
+        withheld: kind,
       };
     }),
   };
