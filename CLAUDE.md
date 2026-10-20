@@ -377,7 +377,7 @@ All UI components are installed with the shadcn CLI, run from `apps/web` (where 
 - **Licence key:**
   - `REACTBITS_LICENSE_KEY` lives only in `apps/web/.env.local`, which is git-ignored.
   - Never print it, commit it, or copy it into docs, prompts or logs.
-- **Pro code is paid:** the repository must be private while it contains React Bits Pro code.
+- **Pro code is paid:** this rule asked for a private repository while it contains React Bits Pro code. On 20 Oct 2026 the team lead decided to keep the repository public and accepted the licence risk ([ADR 0017](docs/adr/0017-ui-component-registries.md#amendment-20-oct-2026-a-public-repository)); the licence-key rules above are unchanged.
 - **Variants:** always install the TypeScript + Tailwind variant (`-TS-TW` for free React Bits, `-tw` for Pro components).
 - **The React Bits skill is authoritative:** `.claude/skills/reactbits/SKILL.md` covers usage, props and animation parameters. Read it before using any React Bits item.
 - **Use React Bits extensively wherever it fits.** Installed but unused is a waste.
@@ -399,7 +399,7 @@ All UI components are installed with the shadcn CLI, run from `apps/web` (where 
   - Never commit to `main`; branch per task: `feat/<area>-<desc>`, `fix/...`, `docs/...`, `chore/...`.
   - Conventional Commits; small, reviewable commits.
 - **Pushing:** do not push or open PRs unless the user explicitly asks.
-- **Never commit:** secrets or licence keys, or real personal data. Client documents and NYP material marked Official (Closed) only while the repository is private.
+- **Never commit:** secrets or licence keys, or real personal data. The repository is public, so client documents and NYP material marked Official (Closed) are never committed.
 - **No AI attribution anywhere visible:** no "Co-Authored-By" trailers, no "Generated with ..." lines, no AI emojis or session links in commits, PR titles or descriptions, code comments or docs. `.claude/settings.json` turns off Claude Code's automatic attribution. AI use is documented in one place only: `docs/ai/ai-usage-log.md`, which the module assesses.
 - **AI usage log:** log significant AI-assisted work in `docs/ai/ai-usage-log.md` (date, tool, task, prompt file, what was accepted or changed, human reviewer). Store substantial prompts in `docs/ai/prompts/`.
 - **Honesty:** run the commands and report the real results. Never claim something works without verifying it. If something cannot be done, say so and propose the closest alternative.

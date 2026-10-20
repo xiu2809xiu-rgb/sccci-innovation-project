@@ -195,7 +195,7 @@ Each barrier in the statement, translated into what it costs someone on an ordin
 - **Everything external is mocked** until the client meeting (`mock-sg-hr`, `mock-cn-hq`, `mock-oa`), and every assumption is logged in [assumptions.md](assumptions.md).
 - **No access to client systems or networks** is assumed for the semester; a sandbox would let us test real contracts (Q-15).
 - **Cost.** The mock LLM provider is the default, so the demo needs no paid API key; cloud resources are sized for a demo.
-- **Licensing.** The repository stays private while it holds React Bits Pro code or client material.
+- **Licensing.** The repository is public by the team lead's decision of 20 Oct 2026, so no client material is ever committed, and React Bits Pro code stays only if its licence allows a public repository (ADR 0017).
 
 ### 2.5 Scope
 
