@@ -37,8 +37,12 @@ export interface StepperProps {
   onStepChange?: (step: number) => void;
   /** Steps after the furthest one reached cannot be chosen. */
   linear?: boolean;
-  /** Accessible name for a step indicator, e.g. "Step 2 of 3: Review". */
-  stepLabel: (step: number, total: number, title: string) => string;
+  /**
+   * Read after the title of a finished step, e.g. "(done)": the tick alone says it only
+   * visually. Each indicator is otherwise named by what it shows, its number and title
+   * (WCAG 2.5.3), and the ordered list gives its position.
+   */
+  doneLabel: string;
   /** Accessible name of the step list. */
   'aria-label': string;
   completedContent?: ReactNode;
@@ -75,7 +79,7 @@ export function Stepper({
   step,
   onStepChange,
   linear = true,
-  stepLabel,
+  doneLabel,
   'aria-label': ariaLabel,
   completedContent,
   disableStepIndicators = false,
@@ -173,7 +177,6 @@ export function Stepper({
                   'relative flex h-10 min-w-0 flex-1 items-center justify-center gap-2 rounded-md px-2.5 text-sm font-medium outline-none focus-visible:ring-3 focus-visible:ring-ring/50 enabled:cursor-pointer enabled:hover:bg-card/60 disabled:cursor-default',
                   status === 'upcoming' ? 'text-muted-foreground' : 'text-foreground',
                 )}
-                aria-label={stepLabel(number, total, entry.props.title)}
                 aria-current={number === current ? 'step' : undefined}
                 disabled={!reachable(number)}
                 onClick={() => {
@@ -187,13 +190,16 @@ export function Stepper({
                     status === 'active' && 'text-foreground ring-[1.5px] ring-foreground',
                     status === 'upcoming' && 'text-muted-foreground ring-1 ring-border-strong',
                   )}
-                  aria-hidden="true"
                 >
                   {status === 'complete' ? <AnimatedCheck still={reduce} /> : number}
-                </span>
-                <span className="truncate" aria-hidden="true">
-                  {entry.props.title}
-                </span>
+                </span>{' '}
+                <span className="truncate">{entry.props.title}</span>
+                {status === 'complete' ? (
+                  <>
+                    {' '}
+                    <span className="sr-only">{doneLabel}</span>
+                  </>
+                ) : null}
               </button>
             </li>
           );

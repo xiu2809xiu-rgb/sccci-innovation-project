@@ -132,7 +132,7 @@
     "unhealthyHint": "该系统未按预期响应。请确认系统正在运行，然后重试。",
     "checkFailed": "无法检查{{name}}。",
     "details": "详情",
-    "open": "打开{{name}}"
+    "detailsOf": "：{{name}}"
   },
   "proposals": {
     "title": "待审核的映射建议",
@@ -222,7 +222,7 @@
     "description": "上传新系统的导出文件。AI 会建议各列如何映射到员工主数据；在保存任何内容之前，由您审核并批准。",
     "steps": {
       "label": "映射步骤",
-      "indicator": "第 {{number}} 步，共 {{total}} 步：{{title}}",
+      "done": "（已完成）",
       "upload": "上传样本",
       "review": "审核建议",
       "approve": "批准"

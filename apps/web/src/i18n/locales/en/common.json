@@ -9,6 +9,7 @@
   },
   "nav": {
     "label": "Main navigation",
+    "mobileDescription": "The pages your role can open.",
     "groups": {
       "workspace": "Workspace",
       "automation": "Automation",
@@ -53,6 +54,7 @@
     },
     "language": {
       "label": "Language",
+      "current": "(language: {{language}})",
       "en": "English",
       "zh-CN": "简体中文"
     },

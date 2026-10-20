@@ -32,6 +32,7 @@ describe('routing and access', () => {
     renderApp('/', signedInAs('HR_SG'));
     expect(await screen.findByRole('heading', { level: 1, name: 'Overview' })).toBeInTheDocument();
     expect(screen.getByRole('main')).toBeInTheDocument();
+    expect(screen.getByRole('navigation', { name: 'Main navigation' })).toBeInTheDocument();
     expect(screen.getByRole('link', { name: 'Skip to main content' })).toHaveAttribute(
       'href',
       '#main',

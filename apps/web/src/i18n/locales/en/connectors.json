@@ -132,7 +132,7 @@
     "unhealthyHint": "It did not answer as expected. Check that the system is running, then try again.",
     "checkFailed": "Could not check {{name}}.",
     "details": "Details",
-    "open": "Open {{name}}"
+    "detailsOf": ": {{name}}"
   },
   "proposals": {
     "title": "Mapping proposals waiting for review",
@@ -222,7 +222,7 @@
     "description": "Upload an export from a new system. The AI proposes how its columns map to the employee master; you review and approve before anything is saved.",
     "steps": {
       "label": "Mapping steps",
-      "indicator": "Step {{number}} of {{total}}: {{title}}",
+      "done": "(done)",
       "upload": "Upload a sample",
       "review": "Review the proposal",
       "approve": "Approve"

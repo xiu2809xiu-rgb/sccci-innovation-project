@@ -19,7 +19,7 @@ function Wizard() {
       step={step}
       onStepChange={setStep}
       aria-label="Mapping steps"
-      stepLabel={(number, total, title) => `Step ${String(number)} of ${String(total)}: ${title}`}
+      doneLabel="(done)"
       completedContent={<p>Mapping approved</p>}
     >
       <Step title="Upload">
@@ -85,16 +85,18 @@ describe('Stepper', () => {
   it('lets people return to steps they reached, never skip ahead', async () => {
     const user = userEvent.setup();
     render(<Wizard />);
-    expect(indicator('Step 1 of 3: Upload')).toHaveAttribute('aria-current', 'step');
-    expect(indicator('Step 2 of 3: Review')).toBeDisabled();
+    expect(indicator('1 Upload')).toHaveAttribute('aria-current', 'step');
+    expect(indicator('2 Review')).toBeDisabled();
 
     await user.click(screen.getByRole('button', { name: 'Continue' }));
-    expect(indicator('Step 2 of 3: Review')).toHaveAttribute('aria-current', 'step');
+    expect(indicator('2 Review')).toHaveAttribute('aria-current', 'step');
+    // A finished step shows a tick, and says so to screen readers.
+    expect(indicator('Upload (done)')).toBeEnabled();
 
-    await user.click(indicator('Step 1 of 3: Upload'));
+    await user.click(indicator('Upload (done)'));
     expect(screen.getByRole('button', { name: 'Continue' })).toBeInTheDocument();
-    expect(indicator('Step 2 of 3: Review')).toBeEnabled();
-    expect(indicator('Step 3 of 3: Approve')).toBeDisabled();
+    expect(indicator('2 Review')).toBeEnabled();
+    expect(indicator('3 Approve')).toBeDisabled();
   });
 
   it('moves focus to the new step, and shows the completed content at the end', async () => {

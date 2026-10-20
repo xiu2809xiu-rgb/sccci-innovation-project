@@ -9,7 +9,7 @@
   "actions": {
     "runSync": "Run sync",
     "resolve": "Resolve",
-    "openRecord": "Open the record of {{name}}"
+    "opensRecord": "(opens the record)"
   },
   "filters": {
     "label": "Filter employees",

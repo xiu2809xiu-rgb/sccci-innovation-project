@@ -178,6 +178,17 @@ export function AnimatedList({
     );
     viewport.style.setProperty('--al-fade-top', `${top.toFixed(1)}px`);
     viewport.style.setProperty('--al-fade-bottom', `${bottom.toFixed(1)}px`);
+    // A list that scrolls must be reachable from the keyboard to scroll it (WCAG 2.1.1);
+    // one that fits needs no extra tab stop.
+    if (viewport.scrollHeight > viewport.clientHeight + 1) {
+      viewport.setAttribute('tabindex', '0');
+      viewport.setAttribute('role', 'region');
+      viewport.setAttribute('aria-label', ariaLabel);
+    } else {
+      viewport.removeAttribute('tabindex');
+      viewport.removeAttribute('role');
+      viewport.removeAttribute('aria-label');
+    }
   };
 
   useLayoutEffect(() => {

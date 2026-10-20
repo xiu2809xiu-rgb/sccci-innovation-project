@@ -114,8 +114,10 @@ export function ConnectorCard({ connector }: { connector: ConnectorSummary }) {
           <span />
         )}
         <Button asChild variant="outline" size="sm">
-          <Link to={`/connectors/${connector.id}`} aria-label={t('card.open', { name })}>
+          <Link to={`/connectors/${connector.id}`}>
             {t('card.details')}
+            {/* "Details" stays first in the accessible name (WCAG 2.5.3); the system's name follows. */}
+            <span className="sr-only">{t('card.detailsOf', { name })}</span>
             <ArrowRight aria-hidden="true" data-icon="inline-end" />
           </Link>
         </Button>

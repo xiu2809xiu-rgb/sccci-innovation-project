@@ -134,7 +134,7 @@ describe('EmployeesPage', () => {
     renderApp('/employees', routesFor());
     expect(await screen.findByText('2 employees')).toBeInTheDocument();
 
-    await user.click(screen.getByRole('button', { name: 'Open the record of Wang Fang' }));
+    await user.click(screen.getByRole('button', { name: 'Wang Fang 王芳 (opens the record)' }));
     const drawer = await screen.findByRole('dialog');
     const title = await within(drawer).findByRole('heading', { name: /Wang Fang/ });
     await waitFor(() => {
