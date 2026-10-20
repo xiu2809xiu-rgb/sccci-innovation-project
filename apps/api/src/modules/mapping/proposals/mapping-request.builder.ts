@@ -14,7 +14,8 @@ const COUNTRY_DEFAULTS: Record<string, { location: string; phone: string }> = {
 
 /**
  * What the model is told about a sample: each column's header and value
- * shapes (never the values), whether it is a prohibited national-ID column,
+ * shapes, the distinct codes of a category column (never a personal value),
+ * whether it is a prohibited national-ID column,
  * and the entity's currency, default location and phone country code.
  */
 export function buildMappingRequest(

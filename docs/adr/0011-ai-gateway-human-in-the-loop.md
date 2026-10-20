@@ -33,7 +33,7 @@ Forces:
 
 **3. Minimised, untrusted input.**
 
-- Uploads (`.csv` or `.xlsx`, within size and row limits) are parsed inside HuiTong. The prompt carries only column headers and computed profiles (type, format pattern, fill rate), never cell values.
+- Uploads (`.csv` or `.xlsx`, within size and row limits) are parsed inside HuiTong. The prompt carries only column headers and computed profiles (type, format pattern, fill rate), never cell values. (Amended on 21 Oct 2026: the distinct codes of a category column may be sent; see the end of this record.)
 - National ID columns (NRIC/FIN, PRC resident ID, MyKad; detected by header and by value pattern) and gender columns are blocked before the prompt is built and never imported. The wizard shows them as "Not ingested".
 - Explainer prompts use `employeeNo` instead of names and never include RESTRICTED values.
 - Uploaded content sits in delimited data fields of a fixed, versioned prompt template; the model has no tools, and nothing in its output is executed.
@@ -70,3 +70,15 @@ Forces:
 | Sample rows in the prompt                         | Better accuracy on ambiguous columns, but personal data would reach a third party (R-09)                                                  |
 | Rules only, no AI                                 | The mock's dictionary is exactly that, and it stays. It cannot handle headers it has never seen, which is what each new subsidiary brings |
 | Fine-tuning on mapping data                       | No client data may be used for training, and the volume would not justify it                                                              |
+
+## Amendment, 21 Oct 2026: category codes in the mapping prompt
+
+**Context.** The decision above says the mapping prompt carries column headers and computed profiles, never cell values. To propose a value map, for example from SAP status codes or department names to canonical codes, the assistant needs the codes a category column holds. The implementation sends them: for a column whose header names a category (department, status, location, grade and similar) and whose values repeat, the request includes its distinct values, at most 8 of up to 40 characters each (`describeColumn` in `sample-shapes.ts`). A column of names, emails, numbers or dates never qualifies: its header is not a category, or its values do not repeat. The wizard, the area 1 guide and story E-1 said that no value reaches the AI, which was wrong ([#67](https://github.com/xiu2809xiu-rgb/sccci-innovation-project/issues/67)).
+
+**Decision.** The distinct codes of a category column may reach the model, within those limits. No personal value does. Every other column is described by its header and value shapes only, and national ID columns are withheld entirely. The approved mapping keeps the codes in its value maps.
+
+**Consequences.**
+
+- Assumption A-17 now allows category codes, and client question Q-42 asks Organisation E to confirm it. If its policy forbids any cell value, `describeColumn` stops sending categories, and value maps are written by hand.
+- Prompt injection (R-08): category codes are untrusted text, like headers. They sit in the same delimited DATA block, which the prompt tells the model to treat as data; the output schema and HR's approval still apply.
+- The wizard says exactly what is sent, in English and Chinese.

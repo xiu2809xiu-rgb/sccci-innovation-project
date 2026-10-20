@@ -8,7 +8,7 @@ import {
 
 import { FIELD_WORDS } from './field-vocabulary.js';
 
-/** One column as the model sees it: its header and the shape of its values, never the values. */
+/** One column as the model sees it: its header, its value shapes and, for a category column, its distinct codes; never a personal value. */
 export interface MappingRequestColumn {
   header: string;
   shape: string;
