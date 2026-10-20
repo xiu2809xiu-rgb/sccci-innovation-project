@@ -156,7 +156,7 @@ As a China HQ HR partner, I want HQ records with Chinese field names and YYYY/MM
 
 **Acceptance criteria**
 
-- Given CN HQ, when a sync runs, then 年假, 部门 and SAP status codes become canonical values.
+- Given CN HQ, when a sync runs, then 部门 and SAP status codes become canonical values.
 - Given a field owned by SG HR, when HQ holds a different value, then the master keeps the owner's value and records HQ's as provenance.
 - Given a field with no single owner, when the systems disagree, then a conflict opens for HR.
 
@@ -394,6 +394,7 @@ As an HR executive, I want rules that map 年假 to Annual Leave, 病假 to Sick
 
 **Acceptance criteria**
 
+- Given CN HQ's 年假, 病假 and 调休, when records are consolidated, then they become Annual Leave, Sick Leave and time off in lieu.
 - Given a category with an approved rule, when records are consolidated, then they carry the canonical category.
 - Given a category with no rule, when it appears, then it is listed for HR to map, and nothing is guessed.
 
