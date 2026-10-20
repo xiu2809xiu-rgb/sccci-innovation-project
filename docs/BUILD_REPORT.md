@@ -198,6 +198,21 @@ Found by the review and fixed:
 - The new layout and orbit tests did not check visibility or motion; they now do, including the reduced-motion path.
 - The licence notes left out the licensed React Bits skill, tracked since Phase 2. M3-06, R-17 and manual step 1 now name it. R-17's heat-map cell, assumption A-47, the line on where the key lives and the M3-06 evidence were corrected, and `hero-33`'s description in the register was made accurate.
 
+### Licence-key guard (20 Oct 2026)
+
+The traceability matrix claimed a key scan before every commit, but only some commits had one, and the scan was a local script. `scripts/check-licence-key.mjs` now runs first in the pre-commit hook. It reads the key from the git-ignored `.env.local` files and refuses the commit if any added line contains it. It reports file names only, never the key. Checked in a throwaway repository with a fake key:
+
+| Case                                                    | Result              |
+| ------------------------------------------------------- | ------------------- |
+| Clean file staged                                       | Commit allowed      |
+| Text file containing the key                            | Refused, file named |
+| Binary file containing the key                          | Refused, file named |
+| `apps/web/.env.local` force-added                       | Refused, file named |
+| Key only in the root `.env.local`                       | Refused, file named |
+| No key configured (CI, or a teammate without a licence) | Commit allowed      |
+
+The guard checks only the lines a commit adds. The full repository and its history get the Phase 10 sweep.
+
 ## Manual steps for the owner
 
 Step 1 must be done before this branch is pushed. The others improve the local setup.
