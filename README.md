@@ -55,3 +55,7 @@ Override host ports for PostgreSQL and Redis with `POSTGRES_PORT` and `REDIS_POR
 ## Documentation
 
 Start with [`CLAUDE.md`](CLAUDE.md) (project context and standards), [`docs/problem-statement.md`](docs/problem-statement.md) and [`docs/team/module-ownership.md`](docs/team/module-ownership.md).
+
+## How we work
+
+One-week sprints, one task per branch, and a pull request for every change. [`CONTRIBUTING.md`](CONTRIBUTING.md) covers the mechanics, [`docs/agile/`](docs/agile/README.md) the working agreement, the Definition of Done, the backlog and the test plan, and [`SECURITY.md`](SECURITY.md) how to report a vulnerability and what the security checks cover.

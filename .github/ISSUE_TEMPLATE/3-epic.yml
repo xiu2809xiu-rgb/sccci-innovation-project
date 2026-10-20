@@ -1,0 +1,51 @@
+name: Epic
+description: A capability made of several user stories (one per capability A to G, plus the platform and team work).
+title: 'Epic: '
+labels: ['type: epic']
+body:
+  - type: dropdown
+    id: area
+    attributes:
+      label: Ownership area
+      options:
+        - 'Area 1: Integration Core + platform base'
+        - 'Area 2: Workflow automation'
+        - 'Area 3: Attendance, leave and reporting'
+        - 'Area 4: Governance, security and monitoring'
+        - 'Team: assessments and process'
+    validations:
+      required: true
+  - type: textarea
+    id: goal
+    attributes:
+      label: Goal and user value
+      description: The outcome for Organisation E's HR team, in one or two sentences.
+    validations:
+      required: true
+  - type: textarea
+    id: scope
+    attributes:
+      label: Scope
+      value: |
+        **In scope**
+        - …
+
+        **Out of scope**
+        - …
+    validations:
+      required: true
+  - type: textarea
+    id: measures
+    attributes:
+      label: How we know it worked
+      description: Measures from docs/design-thinking/success-metrics.md, or the evidence an assessor will see.
+  - type: textarea
+    id: stories
+    attributes:
+      label: Stories
+      description: Add each story as a sub-issue of this epic. List any not yet written here.
+  - type: textarea
+    id: risks
+    attributes:
+      label: Risks and dependencies
+      description: GRS risks (R-xx), assumptions (A-xx) and other epics this one depends on.

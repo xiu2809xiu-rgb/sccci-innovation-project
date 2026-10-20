@@ -1,0 +1,99 @@
+[
+  {
+    "name": "type: epic",
+    "color": "5319e7",
+    "description": "A capability made of several user stories"
+  },
+  {
+    "name": "type: story",
+    "color": "1d76db",
+    "description": "A user story with acceptance criteria"
+  },
+  { "name": "type: task", "color": "0e8a16", "description": "Technical work that serves a story" },
+  { "name": "type: bug", "color": "d73a4a", "description": "Something does not work as expected" },
+  {
+    "name": "type: spike",
+    "color": "fbca04",
+    "description": "Time-boxed research that ends in a decision"
+  },
+  { "name": "type: chore", "color": "c5def5", "description": "Tooling, dependencies or upkeep" },
+  { "name": "type: docs", "color": "0075ca", "description": "Documentation only" },
+  {
+    "name": "type: security",
+    "color": "b60205",
+    "description": "A vulnerability, finding or security control"
+  },
+
+  {
+    "name": "area: 1 integration core",
+    "color": "0b7a75",
+    "description": "Connectors, employee master, mapping, AI mapping, platform base"
+  },
+  {
+    "name": "area: 2 workflow automation",
+    "color": "2f6f9f",
+    "description": "OA approvals to recruitment, onboarding and admin preparation"
+  },
+  {
+    "name": "area: 3 attendance and reporting",
+    "color": "8a5a00",
+    "description": "Attendance and leave consolidation, report templates, exports"
+  },
+  {
+    "name": "area: 4 governance and monitoring",
+    "color": "6b3fa0",
+    "description": "RBAC admin, audit, PDPA/PIPL, observability, analytics, AI cost"
+  },
+  {
+    "name": "area: team",
+    "color": "5a5a5a",
+    "description": "Assessments, client sessions, design thinking and team process"
+  },
+
+  {
+    "name": "priority: must",
+    "color": "b60205",
+    "description": "MoSCoW: needed for the next assessment or the client's core goal"
+  },
+  {
+    "name": "priority: should",
+    "color": "d93f0b",
+    "description": "MoSCoW: important, but the demo works without it"
+  },
+  {
+    "name": "priority: could",
+    "color": "fef2c0",
+    "description": "MoSCoW: nice to have if time allows"
+  },
+
+  { "name": "req: M1 design thinking", "color": "bfd4f2", "description": "Module requirement 1" },
+  { "name": "req: M2 GRS by design", "color": "bfd4f2", "description": "Module requirement 2" },
+  {
+    "name": "req: M3 AI-assisted coding",
+    "color": "bfd4f2",
+    "description": "Module requirement 3"
+  },
+  {
+    "name": "req: M4 best practices",
+    "color": "bfd4f2",
+    "description": "Module requirement 4: security, performance, testing"
+  },
+  { "name": "req: M5 team Git workflow", "color": "bfd4f2", "description": "Module requirement 5" },
+  {
+    "name": "req: M6 deploy and monitor",
+    "color": "bfd4f2",
+    "description": "Module requirement 6"
+  },
+
+  {
+    "name": "status: blocked",
+    "color": "e11d21",
+    "description": "Waiting on something outside the team's control"
+  },
+  {
+    "name": "status: needs client input",
+    "color": "f9d0c4",
+    "description": "Waiting on an answer from Organisation E"
+  },
+  { "name": "dependencies", "color": "0366d6", "description": "Dependency updates (Dependabot)" }
+]

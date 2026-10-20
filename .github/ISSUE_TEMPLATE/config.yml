@@ -1,1 +1,8 @@
 blank_issues_enabled: false
+contact_links:
+  - name: Report a security vulnerability
+    url: https://github.com/xiu2809xiu-rgb/sccci-innovation-project/security/advisories/new
+    about: Report vulnerabilities privately, never in a public issue (see SECURITY.md).
+  - name: How the team works
+    url: https://github.com/xiu2809xiu-rgb/sccci-innovation-project/blob/main/docs/agile/README.md
+    about: Working agreement, Definition of Ready and Done, sprints and the test plan.

@@ -1,6 +1,14 @@
 ## What and why
 
-<!-- One or two sentences: the change and the problem it solves. Link the issue: Closes #123 -->
+<!-- One or two sentences: the change and the problem it solves. One task per pull request. -->
+
+Closes #
+
+## Acceptance criteria
+
+<!-- Copy the story's criteria and tick each one this PR meets, with its evidence: a test name, a screenshot, a log line. -->
+
+- [ ] …
 
 ## Ownership area
 
@@ -8,6 +16,7 @@
 - [ ] Area 2: Workflow automation
 - [ ] Area 3: Attendance, leave and reporting
 - [ ] Area 4: Governance, security and monitoring
+- [ ] Team: assessments and process
 
 ## Module requirements covered
 
@@ -43,3 +52,12 @@
 
 - [ ] Synthetic data only; no national ID numbers; no secrets or licence keys
 - [ ] New writes are audited; new endpoints have RBAC and input validation
+- [ ] No new CodeQL, dependency-review or Trivy findings, or each one is triaged in the Security tab
+
+## Definition of Done
+
+<!-- docs/agile/definition-of-ready-and-done.md -->
+
+- [ ] The branch holds one task, and every acceptance criterion above is met
+- [ ] CI and the security checks are green
+- [ ] Reviewed by the code owner or the team lead, then merged with a merge commit
