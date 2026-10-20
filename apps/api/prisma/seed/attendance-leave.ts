@@ -1,0 +1,189 @@
+import type { PrismaClient } from '../../src/generated/prisma/client.js';
+import { LeaveCategory } from '../../src/generated/prisma/client.js';
+
+/** Approved leave-category rules: each source system's categories mapped to the canonical set. */
+const MAPPINGS: {
+  connectorId: string;
+  sourceCategory: string;
+  sourceLabel: string;
+  canonicalCategory: LeaveCategory;
+}[] = [
+  {
+    connectorId: 'sg-hr',
+    sourceCategory: 'AL',
+    sourceLabel: 'Annual Leave',
+    canonicalCategory: LeaveCategory.ANNUAL,
+  },
+  {
+    connectorId: 'sg-hr',
+    sourceCategory: 'SL',
+    sourceLabel: 'Sick Leave (Outpatient)',
+    canonicalCategory: LeaveCategory.SICK,
+  },
+  {
+    connectorId: 'sg-hr',
+    sourceCategory: 'HL',
+    sourceLabel: 'Hospitalisation Leave',
+    canonicalCategory: LeaveCategory.HOSPITALISATION,
+  },
+  {
+    connectorId: 'sg-hr',
+    sourceCategory: 'CCL',
+    sourceLabel: 'Childcare Leave',
+    canonicalCategory: LeaveCategory.CHILDCARE,
+  },
+  {
+    connectorId: 'sg-hr',
+    sourceCategory: 'ML',
+    sourceLabel: 'Maternity Leave',
+    canonicalCategory: LeaveCategory.MATERNITY,
+  },
+  {
+    connectorId: 'sg-hr',
+    sourceCategory: 'PL',
+    sourceLabel: 'Paternity Leave',
+    canonicalCategory: LeaveCategory.PATERNITY,
+  },
+  {
+    connectorId: 'sg-hr',
+    sourceCategory: 'CL',
+    sourceLabel: 'Compassionate Leave',
+    canonicalCategory: LeaveCategory.COMPASSIONATE,
+  },
+  {
+    connectorId: 'sg-hr',
+    sourceCategory: 'TOIL',
+    sourceLabel: 'Time-off in Lieu',
+    canonicalCategory: LeaveCategory.TIME_OFF_IN_LIEU,
+  },
+  {
+    connectorId: 'sg-hr',
+    sourceCategory: 'NPL',
+    sourceLabel: 'No-pay Leave',
+    canonicalCategory: LeaveCategory.UNPAID,
+  },
+  {
+    connectorId: 'cn-hq',
+    sourceCategory: 'NJ',
+    sourceLabel: '年假',
+    canonicalCategory: LeaveCategory.ANNUAL,
+  },
+  {
+    connectorId: 'cn-hq',
+    sourceCategory: 'BJ',
+    sourceLabel: '病假',
+    canonicalCategory: LeaveCategory.SICK,
+  },
+  {
+    connectorId: 'cn-hq',
+    sourceCategory: 'SJ',
+    sourceLabel: '事假',
+    canonicalCategory: LeaveCategory.UNPAID,
+  },
+  {
+    connectorId: 'cn-hq',
+    sourceCategory: 'TX',
+    sourceLabel: '调休',
+    canonicalCategory: LeaveCategory.TIME_OFF_IN_LIEU,
+  },
+  {
+    connectorId: 'cn-hq',
+    sourceCategory: 'HJ',
+    sourceLabel: '婚假',
+    canonicalCategory: LeaveCategory.MARRIAGE,
+  },
+  {
+    connectorId: 'cn-hq',
+    sourceCategory: 'CJ',
+    sourceLabel: '产假',
+    canonicalCategory: LeaveCategory.MATERNITY,
+  },
+  {
+    connectorId: 'cn-hq',
+    sourceCategory: 'PCJ',
+    sourceLabel: '陪产假',
+    canonicalCategory: LeaveCategory.PATERNITY,
+  },
+  {
+    connectorId: 'cn-hq',
+    sourceCategory: 'SANG',
+    sourceLabel: '丧假',
+    canonicalCategory: LeaveCategory.COMPASSIONATE,
+  },
+  {
+    connectorId: 'cn-hq',
+    sourceCategory: 'YEJ',
+    sourceLabel: '育儿假',
+    canonicalCategory: LeaveCategory.CHILDCARE,
+  },
+  // Home leave has no column in the company template, so consolidation reports it as an exception (A-09).
+  {
+    connectorId: 'cn-hq',
+    sourceCategory: 'TQJ',
+    sourceLabel: '探亲假',
+    canonicalCategory: LeaveCategory.HOME_LEAVE,
+  },
+];
+
+const LEAVE_COLUMNS: [LeaveCategory, string, string][] = [
+  [LeaveCategory.ANNUAL, 'Annual leave (days)', '年假（天）'],
+  [LeaveCategory.SICK, 'Sick leave (days)', '病假（天）'],
+  [LeaveCategory.HOSPITALISATION, 'Hospitalisation leave (days)', '住院假（天）'],
+  [LeaveCategory.CHILDCARE, 'Childcare leave (days)', '育儿假（天）'],
+  [LeaveCategory.MATERNITY, 'Maternity leave (days)', '产假（天）'],
+  [LeaveCategory.PATERNITY, 'Paternity leave (days)', '陪产假（天）'],
+  [LeaveCategory.COMPASSIONATE, 'Compassionate leave (days)', '丧假（天）'],
+  [LeaveCategory.MARRIAGE, 'Marriage leave (days)', '婚假（天）'],
+  [LeaveCategory.TIME_OFF_IN_LIEU, 'Time-off in lieu (days)', '调休（天）'],
+  [LeaveCategory.UNPAID, 'Unpaid leave (days)', '无薪假（天）'],
+  [LeaveCategory.OTHER, 'Other leave (days)', '其他假期（天）'],
+];
+
+/** The company's monthly attendance and leave template (structure assumed until the client shares theirs, A-09). */
+const TEMPLATE_COLUMNS = [
+  { key: 'employeeNo', label: 'Employee No.', labelZh: '员工编号' },
+  { key: 'name', label: 'Name', labelZh: '姓名' },
+  { key: 'entity', label: 'Entity', labelZh: '法人实体' },
+  { key: 'department', label: 'Department', labelZh: '部门' },
+  { key: 'workingDays', label: 'Working days', labelZh: '应出勤天数' },
+  { key: 'daysPresent', label: 'Days present', labelZh: '实际出勤天数' },
+  { key: 'lateCount', label: 'Late arrivals', labelZh: '迟到次数' },
+  { key: 'absentDays', label: 'Absent days', labelZh: '缺勤天数' },
+  { key: 'overtimeHours', label: 'Overtime hours', labelZh: '加班时长' },
+  ...LEAVE_COLUMNS.map(([key, label, labelZh]) => ({ key, label, labelZh })),
+];
+
+export async function seedAttendanceLeave(prisma: PrismaClient): Promise<string> {
+  const columnFor = (category: LeaveCategory) =>
+    LEAVE_COLUMNS.find(([key]) => key === category)?.[1] ?? null;
+  for (const mapping of MAPPINGS) {
+    const data = { ...mapping, templateColumn: columnFor(mapping.canonicalCategory) };
+    await prisma.leaveCategoryMapping.upsert({
+      where: {
+        connectorId_sourceCategory_version: {
+          connectorId: mapping.connectorId,
+          sourceCategory: mapping.sourceCategory,
+          version: 1,
+        },
+      },
+      create: data,
+      update: data,
+    });
+  }
+  await prisma.reportTemplate.upsert({
+    where: { key_version: { key: 'company-monthly-attendance-leave', version: 1 } },
+    create: {
+      key: 'company-monthly-attendance-leave',
+      version: 1,
+      name: 'Monthly attendance and leave',
+      nameZh: '月度考勤与休假报表',
+      columns: TEMPLATE_COLUMNS,
+    },
+    update: {
+      name: 'Monthly attendance and leave',
+      nameZh: '月度考勤与休假报表',
+      columns: TEMPLATE_COLUMNS,
+    },
+  });
+  return `${String(MAPPINGS.length)} leave-category rules, 1 report template`;
+}

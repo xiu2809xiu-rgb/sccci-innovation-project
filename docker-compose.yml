@@ -82,9 +82,21 @@ services:
       dockerfile: infra/docker/api.Dockerfile
     environment:
       <<: *node-env
+      # A demo deployment: demo login on, synthetic data only. AWS sets APP_ENV=production.
+      APP_ENV: demo
+      DEMO_MODE: 'true'
       PORT: 3000
       DATABASE_URL: postgresql://huitong:${POSTGRES_PASSWORD:-huitong_local_only}@postgres:5432/huitong
       REDIS_URL: redis://redis:6379
+      JWT_ACCESS_SECRET: ${JWT_ACCESS_SECRET:-local-demo-only-jwt-secret-0123456789abcdef}
+      # Browsers accept Secure cookies on http://localhost; set false only for other plain-HTTP hosts.
+      COOKIE_SECURE: ${COOKIE_SECURE:-true}
+      CORS_ORIGINS: http://localhost:8080
+      # nginx in front: trust one proxy hop for client IPs and rate limiting.
+      TRUST_PROXY: 'true'
+      SG_HR_BASE_URL: http://mock-sg-hr:4101
+      CN_HQ_BASE_URL: http://mock-cn-hq:4102
+      OA_BASE_URL: http://mock-oa:4103
     ports:
       - '3000:3000'
     depends_on:

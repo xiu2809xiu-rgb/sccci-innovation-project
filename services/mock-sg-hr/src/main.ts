@@ -1,8 +1,9 @@
 import { createApp } from './app.js';
+import { loadConfig } from './config.js';
 import { logger } from './logger.js';
 
-const port = Number(process.env.PORT ?? 4101);
+const config = loadConfig();
 
-createApp().listen(port, () => {
-  logger.info({ port }, 'listening');
+createApp({ config }).listen(config.port, () => {
+  logger.info({ port: config.port }, 'mock SG HR listening');
 });

@@ -39,6 +39,8 @@ export const typescript = [
       '@typescript-eslint/switch-exhaustiveness-check': 'error',
       // NestJS modules are empty classes carrying a decorator.
       '@typescript-eslint/no-extraneous-class': ['error', { allowWithDecorator: true }],
+      // Conflicts with no-non-null-assertion (strict preset), which we keep: no `!` assertions.
+      '@typescript-eslint/non-nullable-type-assertion-style': 'off',
     },
   },
   {
@@ -46,6 +48,12 @@ export const typescript = [
     rules: {
       '@typescript-eslint/no-non-null-assertion': 'off',
       '@typescript-eslint/unbound-method': 'off',
+      // HTTP test clients type response bodies as `any`; tests assert on them directly.
+      '@typescript-eslint/no-unsafe-assignment': 'off',
+      '@typescript-eslint/no-unsafe-member-access': 'off',
+      '@typescript-eslint/no-unsafe-call': 'off',
+      '@typescript-eslint/no-unsafe-argument': 'off',
+      '@typescript-eslint/no-unsafe-return': 'off',
     },
   },
 ];
@@ -79,6 +87,18 @@ export const nest = [
     rules: {
       // Constructor parameter types must stay value imports for dependency injection.
       '@typescript-eslint/consistent-type-imports': 'off',
+      // Raw SQL only through the tagged templates, which Prisma parameterises (OWASP A03).
+      'no-restricted-properties': [
+        'error',
+        {
+          property: '$queryRawUnsafe',
+          message: 'Use the $queryRaw tagged template so values are sent as parameters.',
+        },
+        {
+          property: '$executeRawUnsafe',
+          message: 'Use the $executeRaw tagged template so values are sent as parameters.',
+        },
+      ],
     },
   },
 ];

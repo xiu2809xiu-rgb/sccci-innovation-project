@@ -1,0 +1,964 @@
+// HuiTong data model for all four ownership areas.
+// Enums mirror the zod enums in @huitong/shared (a unit test keeps them in step).
+// Every value in this database is synthetic demo data.
+
+generator client {
+  provider            = "prisma-client"
+  output              = "../src/generated/prisma"
+  moduleFormat        = "esm"
+  importFileExtension = "js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ─── Identity and access (area 1 baseline; administered by area 4) ──────────
+
+enum Role {
+  SYSTEM_ADMIN
+  HR_SG
+  HR_HQ
+  HIRING_MANAGER
+  ADMIN_OPS
+  MANAGEMENT
+  AUDITOR
+}
+
+enum DataClassificationLevel {
+  PUBLIC
+  INTERNAL
+  CONFIDENTIAL
+  RESTRICTED
+}
+
+enum MaskReason {
+  ROLE_CLEARANCE
+  ENTITY_SCOPE
+  CROSS_BORDER_NOT_APPROVED
+}
+
+model User {
+  id             String         @id @default(uuid(7))
+  email          String         @unique
+  displayName    String
+  displayNameZh  String?
+  passwordHash   String
+  role           Role
+  homeEntityCode String
+  homeEntity     LegalEntity    @relation(fields: [homeEntityCode], references: [code])
+  /// The person in the employee master, when the user is also an employee.
+  employeeNo     String?        @unique
+  locale         String         @default("en")
+  isActive       Boolean        @default(true)
+  lastLoginAt    DateTime?      @db.Timestamptz(3)
+  createdAt      DateTime       @default(now()) @db.Timestamptz(3)
+  updatedAt      DateTime       @updatedAt @db.Timestamptz(3)
+  refreshTokens  RefreshToken[]
+
+  @@index([role])
+  @@map("users")
+}
+
+/// Opaque refresh tokens, stored as SHA-256 hashes. Each rotation adds a row to
+/// the same family; presenting a rotated token again revokes the whole family.
+model RefreshToken {
+  id        String    @id @default(uuid(7))
+  userId    String
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  familyId  String
+  tokenHash String    @unique
+  expiresAt DateTime  @db.Timestamptz(3)
+  rotatedAt DateTime? @db.Timestamptz(3)
+  revokedAt DateTime? @db.Timestamptz(3)
+  userAgent String?
+  createdAt DateTime  @default(now()) @db.Timestamptz(3)
+
+  @@index([userId])
+  @@index([familyId])
+  @@map("refresh_tokens")
+}
+
+/// The role-permission matrix (seeded from @huitong/shared; area 4 edits it).
+model RolePermission {
+  role       Role
+  permission String
+  grantedAt  DateTime @default(now()) @db.Timestamptz(3)
+
+  @@id([role, permission])
+  @@map("role_permissions")
+}
+
+/// Highest classification a role may see for an entity's records.
+/// `entityCode` null is the role's rule for every other entity.
+model ClearanceRule {
+  id           String                  @id @default(uuid(7))
+  role         Role
+  entityCode   String?
+  maxLevel     DataClassificationLevel
+  deniedReason MaskReason?
+  updatedAt    DateTime                @updatedAt @db.Timestamptz(3)
+
+  @@unique([role, entityCode])
+  @@map("clearance_rules")
+}
+
+// ─── Organisation reference data ────────────────────────────────────────────
+
+model LegalEntity {
+  code      String     @id
+  name      String
+  nameZh    String
+  country   String
+  currency  String
+  timezone  String
+  isActive  Boolean    @default(true)
+  createdAt DateTime   @default(now()) @db.Timestamptz(3)
+  users     User[]
+  employees Employee[]
+
+  @@map("legal_entities")
+}
+
+model Department {
+  code      String     @id
+  nameEn    String
+  nameZh    String
+  createdAt DateTime   @default(now()) @db.Timestamptz(3)
+  employees Employee[]
+
+  @@map("departments")
+}
+
+// ─── Canonical employee master (area 1) ─────────────────────────────────────
+
+enum EmploymentType {
+  FULL_TIME
+  PART_TIME
+  CONTRACT
+  INTERN
+}
+
+enum EmploymentStatus {
+  ACTIVE
+  PROBATION
+  ON_LEAVE
+  TERMINATED
+  PRE_HIRE
+}
+
+enum ChangeSource {
+  SYNC
+  CONFLICT_RESOLUTION
+  MANUAL
+  WORKFLOW
+}
+
+enum ConflictStatus {
+  OPEN
+  RESOLVED
+  DISMISSED
+}
+
+enum ConflictResolution {
+  SOURCE_SELECTED
+  MANUAL_VALUE
+}
+
+model Employee {
+  id                 String            @id @default(uuid(7))
+  employeeNo         String            @unique
+  entityCode         String
+  entity             LegalEntity       @relation(fields: [entityCode], references: [code])
+  familyName         String
+  givenName          String
+  fullNameLatin      String
+  fullNameLocal      String?
+  preferredName      String?
+  workEmail          String            @unique
+  workPhone          String?
+  departmentCode     String
+  department         Department        @relation(fields: [departmentCode], references: [code])
+  jobTitle           String
+  jobTitleZh         String?
+  jobGrade           String?
+  /// Plain reference: source systems may name a manager the master has not loaded yet.
+  managerEmployeeNo  String?
+  employmentType     EmploymentType
+  employmentStatus   EmploymentStatus
+  hireDate           DateTime          @db.Date
+  terminationDate    DateTime?         @db.Date
+  workLocation       String
+  costCenter         String?
+  dateOfBirth        DateTime?         @db.Date
+  baseSalaryAmount   Decimal?          @db.Decimal(14, 2)
+  baseSalaryCurrency String?
+  bankName           String?
+  /// Data minimisation: the full account number stays in the payroll system.
+  bankAccountLast4   String?
+  /// Optimistic concurrency: incremented on every change.
+  version            Int               @default(1)
+  createdAt          DateTime          @default(now()) @db.Timestamptz(3)
+  updatedAt          DateTime          @updatedAt @db.Timestamptz(3)
+  sourceRecords      SourceRecord[]
+  provenance         FieldProvenance[]
+  changes            EmployeeChange[]
+  conflicts          Conflict[]
+
+  @@index([entityCode, departmentCode])
+  @@index([employmentStatus])
+  @@index([familyName, givenName])
+  @@index([managerEmployeeNo])
+  @@map("employees")
+}
+
+/// A record exactly as a connector fetched it (minus prohibited fields).
+model SourceRecord {
+  id          String    @id @default(uuid(7))
+  connectorId String
+  connector   Connector @relation(fields: [connectorId], references: [id])
+  externalId  String
+  employeeId  String?
+  employee    Employee? @relation(fields: [employeeId], references: [id])
+  payload     Json
+  /// SHA-256 of the canonical payload, for change detection.
+  payloadHash String
+  fetchedAt   DateTime  @db.Timestamptz(3)
+  syncRunId   String?
+  syncRun     SyncRun?  @relation(fields: [syncRunId], references: [id])
+
+  @@unique([connectorId, externalId])
+  @@index([employeeId])
+  @@index([syncRunId])
+  @@map("source_records")
+}
+
+/// The value each source holds for each field, and which source the master uses.
+model FieldProvenance {
+  id              String    @id @default(uuid(7))
+  employeeId      String
+  employee        Employee  @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+  field           String
+  connectorId     String
+  connector       Connector @relation(fields: [connectorId], references: [id])
+  value           Json?
+  observedAt      DateTime  @db.Timestamptz(3)
+  isSourceOfTruth Boolean   @default(false)
+
+  @@unique([employeeId, field, connectorId])
+  @@index([connectorId])
+  @@map("field_provenance")
+}
+
+model EmployeeChange {
+  id          String       @id @default(uuid(7))
+  employeeId  String
+  employee    Employee     @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+  field       String
+  oldValue    Json?
+  newValue    Json?
+  source      ChangeSource
+  connectorId String?
+  syncRunId   String?
+  actorUserId String?
+  createdAt   DateTime     @default(now()) @db.Timestamptz(3)
+
+  @@index([employeeId, createdAt])
+  @@index([syncRunId])
+  @@map("employee_changes")
+}
+
+/// Per entity and field: the connector that owns the value, or null when no
+/// single source does (disagreements then open a conflict for HR).
+model FieldSourcePolicy {
+  id          String     @id @default(uuid(7))
+  entityCode  String
+  field       String
+  connectorId String?
+  connector   Connector? @relation(fields: [connectorId], references: [id])
+
+  @@unique([entityCode, field])
+  @@map("field_source_policies")
+}
+
+model Conflict {
+  id                String              @id @default(uuid(7))
+  employeeId        String
+  employee          Employee            @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+  field             String
+  /// `employeeId:field` while OPEN, null afterwards: at most one open conflict per field.
+  openKey           String?             @unique
+  /// [{ connectorId, value, observedAt }]
+  candidates        Json
+  status            ConflictStatus      @default(OPEN)
+  detectedAt        DateTime            @default(now()) @db.Timestamptz(3)
+  detectedSyncRunId String?
+  resolution        ConflictResolution?
+  chosenConnectorId String?
+  resolvedValue     Json?
+  resolutionNote    String?
+  resolvedByUserId  String?
+  resolvedAt        DateTime?           @db.Timestamptz(3)
+
+  @@index([status, detectedAt])
+  @@index([employeeId])
+  @@map("conflicts")
+}
+
+// ─── Connector hub and mapping (area 1) ─────────────────────────────────────
+
+enum ConnectorType {
+  SG_HR_REST
+  CN_HQ_SAP
+  OA_WEBHOOK
+  FILE_IMPORT
+  NOTIFICATION
+  GENERIC_REST
+}
+
+enum ConnectorStatus {
+  ACTIVE
+  DEGRADED
+  ERROR
+  DISABLED
+  DEPRECATED
+  DRAFT
+}
+
+enum MappingConfigStatus {
+  DRAFT
+  ACTIVE
+  ARCHIVED
+}
+
+enum MappingProposalStatus {
+  PENDING_REVIEW
+  APPROVED
+  REJECTED
+}
+
+enum SyncTrigger {
+  MANUAL
+  SCHEDULED
+  WEBHOOK
+  BOOTSTRAP
+}
+
+enum SyncRunStatus {
+  QUEUED
+  RUNNING
+  SUCCEEDED
+  PARTIAL
+  FAILED
+}
+
+enum SyncStage {
+  EXTRACT
+  MAP
+  VALIDATE
+  LOAD
+  AUDIT
+}
+
+enum WebhookEventStatus {
+  RECEIVED
+  PROCESSED
+  FAILED
+  REJECTED
+}
+
+model Connector {
+  /// Stable slug, e.g. `sg-hr`, `cn-hq`, `oa`.
+  id                String              @id
+  name              String
+  nameZh            String
+  type              ConnectorType
+  region            String
+  entityCode        String?
+  baseUrl           String?
+  status            ConnectorStatus     @default(ACTIVE)
+  capabilities      String[]
+  /// Non-secret settings only.
+  config            Json                @default("{}")
+  /// Name of the environment variable or secret holding credentials; never the secret.
+  secretRef         String?
+  lastSyncAt        DateTime?           @db.Timestamptz(3)
+  lastHealthCheckAt DateTime?           @db.Timestamptz(3)
+  lastHealthStatus  String?
+  createdAt         DateTime            @default(now()) @db.Timestamptz(3)
+  updatedAt         DateTime            @updatedAt @db.Timestamptz(3)
+  mappingConfigs    MappingConfig[]
+  syncRuns          SyncRun[]
+  sourceRecords     SourceRecord[]
+  provenance        FieldProvenance[]
+  sourcePolicies    FieldSourcePolicy[]
+
+  @@map("connectors")
+}
+
+/// A versioned field mapping from a connector's schema to the canonical model.
+/// Only an approved config can become ACTIVE.
+model MappingConfig {
+  id               String              @id @default(uuid(7))
+  connectorId      String
+  connector        Connector           @relation(fields: [connectorId], references: [id])
+  version          Int
+  status           MappingConfigStatus
+  /// FieldMapping[] validated by @huitong/shared.
+  mappings         Json
+  notes            String?
+  createdByUserId  String?
+  approvedByUserId String?
+  approvedAt       DateTime?           @db.Timestamptz(3)
+  proposalId       String?             @unique
+  proposal         MappingProposal?    @relation(fields: [proposalId], references: [id])
+  createdAt        DateTime            @default(now()) @db.Timestamptz(3)
+
+  @@unique([connectorId, version])
+  @@index([connectorId, status])
+  @@map("mapping_configs")
+}
+
+/// An AI-proposed mapping for a new system's sample file, awaiting HR review.
+model MappingProposal {
+  id               String                @id @default(uuid(7))
+  connectorId      String?
+  sourceSystemName String
+  entityCode       String?
+  fileName         String
+  headers          String[]
+  sampleRowCount   Int
+  /// Per-column proposals with confidence, rationale and flags.
+  proposals        Json
+  status           MappingProposalStatus @default(PENDING_REVIEW)
+  aiUsageRecordId  String?
+  createdByUserId  String
+  reviewedByUserId String?
+  reviewedAt       DateTime?             @db.Timestamptz(3)
+  reviewNote       String?
+  createdAt        DateTime              @default(now()) @db.Timestamptz(3)
+  mappingConfig    MappingConfig?
+
+  @@index([status, createdAt])
+  @@map("mapping_proposals")
+}
+
+model SyncRun {
+  id                String         @id @default(uuid(7))
+  connectorId       String
+  connector         Connector      @relation(fields: [connectorId], references: [id])
+  trigger           SyncTrigger
+  idempotencyKey    String         @unique
+  status            SyncRunStatus  @default(QUEUED)
+  stage             SyncStage?
+  progress          Int            @default(0)
+  fetchedCount      Int            @default(0)
+  createdCount      Int            @default(0)
+  updatedCount      Int            @default(0)
+  unchangedCount    Int            @default(0)
+  conflictCount     Int            @default(0)
+  errorCount        Int            @default(0)
+  attempt           Int            @default(0)
+  jobId             String?
+  mappingConfigId   String?
+  triggeredByUserId String?
+  queuedAt          DateTime       @default(now()) @db.Timestamptz(3)
+  startedAt         DateTime?      @db.Timestamptz(3)
+  finishedAt        DateTime?      @db.Timestamptz(3)
+  errors            SyncError[]
+  sourceRecords     SourceRecord[]
+
+  @@index([connectorId, queuedAt])
+  @@index([status])
+  @@map("sync_runs")
+}
+
+model SyncError {
+  id         String    @id @default(uuid(7))
+  syncRunId  String
+  syncRun    SyncRun   @relation(fields: [syncRunId], references: [id], onDelete: Cascade)
+  externalId String?
+  stage      SyncStage
+  code       String
+  message    String
+  details    Json?
+  createdAt  DateTime  @default(now()) @db.Timestamptz(3)
+
+  @@index([syncRunId])
+  @@map("sync_errors")
+}
+
+/// Signed webhooks received from external systems; (source, eventId) dedupes replays.
+model InboundWebhookEvent {
+  id             String             @id @default(uuid(7))
+  source         String
+  eventId        String
+  eventType      String
+  signatureValid Boolean
+  payload        Json
+  status         WebhookEventStatus @default(RECEIVED)
+  receivedAt     DateTime           @default(now()) @db.Timestamptz(3)
+  processedAt    DateTime?          @db.Timestamptz(3)
+  error          String?
+
+  @@unique([source, eventId])
+  @@index([status, receivedAt])
+  @@map("inbound_webhook_events")
+}
+
+// ─── Workflow automation (area 2) ───────────────────────────────────────────
+
+enum WorkflowInstanceStatus {
+  RUNNING
+  WAITING
+  COMPLETED
+  FAILED
+  CANCELLED
+}
+
+enum WorkflowTaskStatus {
+  PENDING
+  IN_PROGRESS
+  DONE
+  BLOCKED
+  SKIPPED
+}
+
+enum NotificationChannel {
+  IN_APP
+  TEAMS
+  DINGTALK
+  EMAIL
+}
+
+enum NotificationStatus {
+  QUEUED
+  SENT
+  FAILED
+  READ
+}
+
+model WorkflowDefinition {
+  id        String             @id @default(uuid(7))
+  key       String
+  version   Int
+  name      String
+  nameZh    String
+  /// Step definitions: key, titles, assignee role, SLA hours.
+  steps     Json
+  isActive  Boolean            @default(true)
+  createdAt DateTime           @default(now()) @db.Timestamptz(3)
+  instances WorkflowInstance[]
+
+  @@unique([key, version])
+  @@map("workflow_definitions")
+}
+
+model WorkflowInstance {
+  id              String                 @id @default(uuid(7))
+  definitionId    String
+  definition      WorkflowDefinition     @relation(fields: [definitionId], references: [id])
+  status          WorkflowInstanceStatus @default(RUNNING)
+  currentStepKey  String?
+  sourceSystem    String?
+  sourceRequestId String?
+  /// One instance per triggering event (idempotency).
+  sourceEventId   String?                @unique
+  context         Json
+  startedAt       DateTime               @default(now()) @db.Timestamptz(3)
+  dueAt           DateTime?              @db.Timestamptz(3)
+  completedAt     DateTime?              @db.Timestamptz(3)
+  tasks           WorkflowTask[]
+  events          WorkflowEvent[]
+
+  @@index([status, startedAt])
+  @@index([sourceRequestId])
+  @@map("workflow_instances")
+}
+
+model WorkflowTask {
+  id                String             @id @default(uuid(7))
+  instanceId        String
+  instance          WorkflowInstance   @relation(fields: [instanceId], references: [id], onDelete: Cascade)
+  stepKey           String
+  title             String
+  titleZh           String?
+  assigneeRole      Role
+  assigneeUserId    String?
+  status            WorkflowTaskStatus @default(PENDING)
+  dueAt             DateTime?          @db.Timestamptz(3)
+  completedAt       DateTime?          @db.Timestamptz(3)
+  completedByUserId String?
+  payload           Json?
+  createdAt         DateTime           @default(now()) @db.Timestamptz(3)
+
+  @@index([assigneeRole, status])
+  @@index([instanceId])
+  @@index([status, dueAt])
+  @@map("workflow_tasks")
+}
+
+model WorkflowEvent {
+  id         String           @id @default(uuid(7))
+  instanceId String
+  instance   WorkflowInstance @relation(fields: [instanceId], references: [id], onDelete: Cascade)
+  type       String
+  payload    Json?
+  createdAt  DateTime         @default(now()) @db.Timestamptz(3)
+
+  @@index([instanceId, createdAt])
+  @@map("workflow_events")
+}
+
+model Notification {
+  id              String              @id @default(uuid(7))
+  channel         NotificationChannel
+  recipientUserId String?
+  recipientRole   Role?
+  title           String
+  titleZh         String?
+  body            String
+  bodyZh          String?
+  link            String?
+  status          NotificationStatus  @default(QUEUED)
+  relatedType     String?
+  relatedId       String?
+  createdAt       DateTime            @default(now()) @db.Timestamptz(3)
+  sentAt          DateTime?           @db.Timestamptz(3)
+  readAt          DateTime?           @db.Timestamptz(3)
+
+  @@index([recipientUserId, status])
+  @@index([recipientRole, status])
+  @@index([createdAt])
+  @@map("notifications")
+}
+
+// ─── Attendance, leave and reporting (area 3) ───────────────────────────────
+
+enum AttendanceStatus {
+  PRESENT
+  LATE
+  EARLY_LEAVE
+  ABSENT
+  ON_LEAVE
+  REMOTE
+  PUBLIC_HOLIDAY
+}
+
+enum LeaveCategory {
+  ANNUAL
+  SICK
+  HOSPITALISATION
+  CHILDCARE
+  MATERNITY
+  PATERNITY
+  COMPASSIONATE
+  MARRIAGE
+  TIME_OFF_IN_LIEU
+  UNPAID
+  HOME_LEAVE
+  OTHER
+}
+
+enum LeaveRecordStatus {
+  APPROVED
+  PENDING
+  CANCELLED
+}
+
+enum MappingRuleStatus {
+  DRAFT
+  ACTIVE
+}
+
+enum ConsolidationRunStatus {
+  QUEUED
+  RUNNING
+  SUCCEEDED
+  NEEDS_REVIEW
+  FAILED
+}
+
+enum ReportStatus {
+  DRAFT
+  GENERATED
+  PUBLISHED
+}
+
+/// Plain employee number reference: ingestion reports unknown employees as exceptions.
+model AttendanceRecord {
+  id              String           @id @default(uuid(7))
+  employeeNo      String
+  connectorId     String
+  workDate        DateTime         @db.Date
+  status          AttendanceStatus
+  sourceStatus    String
+  clockIn         String?
+  clockOut        String?
+  overtimeMinutes Int              @default(0)
+  importedAt      DateTime         @default(now()) @db.Timestamptz(3)
+
+  @@unique([employeeNo, workDate, connectorId])
+  @@index([workDate])
+  @@map("attendance_records")
+}
+
+model LeaveRecord {
+  id                String            @id @default(uuid(7))
+  employeeNo        String
+  connectorId       String
+  externalId        String
+  /// The source system's own category (e.g. `NJ` or `AL`).
+  sourceCategory    String
+  canonicalCategory LeaveCategory?
+  startDate         DateTime          @db.Date
+  endDate           DateTime          @db.Date
+  days              Decimal           @db.Decimal(5, 1)
+  halfDay           String?
+  status            LeaveRecordStatus
+  importedAt        DateTime          @default(now()) @db.Timestamptz(3)
+
+  @@unique([connectorId, externalId])
+  @@index([employeeNo, startDate])
+  @@map("leave_records")
+}
+
+model LeaveCategoryMapping {
+  id                String            @id @default(uuid(7))
+  connectorId       String
+  sourceCategory    String
+  sourceLabel       String
+  canonicalCategory LeaveCategory
+  templateColumn    String?
+  status            MappingRuleStatus @default(ACTIVE)
+  version           Int               @default(1)
+  createdByUserId   String?
+  approvedByUserId  String?
+  createdAt         DateTime          @default(now()) @db.Timestamptz(3)
+  updatedAt         DateTime          @updatedAt @db.Timestamptz(3)
+
+  @@unique([connectorId, sourceCategory, version])
+  @@map("leave_category_mappings")
+}
+
+model ConsolidationRun {
+  id                String                   @id @default(uuid(7))
+  /// `YYYY-MM`
+  period            String
+  entityCodes       String[]
+  status            ConsolidationRunStatus   @default(QUEUED)
+  employeeCount     Int                      @default(0)
+  recordCount       Int                      @default(0)
+  exceptionCount    Int                      @default(0)
+  reportId          String?                  @unique
+  report            Report?                  @relation(fields: [reportId], references: [id])
+  triggeredByUserId String?
+  startedAt         DateTime?                @db.Timestamptz(3)
+  finishedAt        DateTime?                @db.Timestamptz(3)
+  createdAt         DateTime                 @default(now()) @db.Timestamptz(3)
+  exceptions        ConsolidationException[]
+
+  @@index([period])
+  @@map("consolidation_runs")
+}
+
+model ConsolidationException {
+  id         String           @id @default(uuid(7))
+  runId      String
+  run        ConsolidationRun @relation(fields: [runId], references: [id], onDelete: Cascade)
+  employeeNo String?
+  type       String
+  message    String
+  details    Json?
+  resolved   Boolean          @default(false)
+  createdAt  DateTime         @default(now()) @db.Timestamptz(3)
+
+  @@index([runId])
+  @@map("consolidation_exceptions")
+}
+
+model ReportTemplate {
+  id        String   @id @default(uuid(7))
+  key       String
+  version   Int
+  name      String
+  nameZh    String
+  columns   Json
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now()) @db.Timestamptz(3)
+  reports   Report[]
+
+  @@unique([key, version])
+  @@map("report_templates")
+}
+
+model Report {
+  id                String            @id @default(uuid(7))
+  templateId        String?
+  template          ReportTemplate?   @relation(fields: [templateId], references: [id])
+  kind              String
+  title             String
+  period            String?
+  status            ReportStatus      @default(DRAFT)
+  /// Connector ids whose data fed the report.
+  sources           String[]
+  content           Json?
+  generatedAt       DateTime?         @db.Timestamptz(3)
+  generatedByUserId String?
+  createdAt         DateTime          @default(now()) @db.Timestamptz(3)
+  consolidationRun  ConsolidationRun?
+
+  @@index([kind, period])
+  @@map("reports")
+}
+
+// ─── Governance, security and monitoring (area 4) ───────────────────────────
+
+enum TransferStatus {
+  ACTIVE
+  PENDING_REVIEW
+  SUSPENDED
+  EXPIRED
+}
+
+enum RetentionAction {
+  DELETE
+  ANONYMISE
+  ARCHIVE
+}
+
+enum AiProvider {
+  MOCK
+  BEDROCK
+  OPENAI
+}
+
+enum AiOutcome {
+  SUCCESS
+  ERROR
+  INVALID_OUTPUT
+  REJECTED
+}
+
+/// Append-only (a database trigger blocks UPDATE, DELETE and TRUNCATE).
+/// Each row hashes the previous row's hash, so tampering breaks the chain.
+model AuditEvent {
+  id          BigInt   @id @default(autoincrement())
+  occurredAt  DateTime @default(now()) @db.Timestamptz(3)
+  actorUserId String?
+  actorRole   Role?
+  action      String
+  entityType  String
+  entityId    String?
+  before      Json?
+  after       Json?
+  metadata    Json?
+  ip          String?
+  userAgent   String?
+  traceId     String?
+  prevHash    String?
+  hash        String   @unique
+
+  @@index([entityType, entityId])
+  @@index([actorUserId, occurredAt])
+  @@index([action, occurredAt])
+  @@index([occurredAt])
+  @@map("audit_events")
+}
+
+model DataClassification {
+  id             String                  @id @default(uuid(7))
+  entityType     String
+  field          String
+  level          DataClassificationLevel
+  description    String
+  descriptionZh  String?
+  isPersonalData Boolean                 @default(true)
+  /// PIPL "sensitive personal information" (e.g. financial accounts).
+  isSensitive    Boolean                 @default(false)
+  updatedAt      DateTime                @updatedAt @db.Timestamptz(3)
+
+  @@unique([entityType, field])
+  @@map("data_classifications")
+}
+
+model CrossBorderTransfer {
+  id               String         @id @default(uuid(7))
+  name             String
+  nameZh           String?
+  fromEntityCode   String
+  toEntityCode     String
+  fromCountry      String
+  toCountry        String
+  dataCategories   String[]
+  purpose          String
+  legalBasis       String
+  mechanism        String
+  status           TransferStatus @default(PENDING_REVIEW)
+  approvedByUserId String?
+  approvedAt       DateTime?      @db.Timestamptz(3)
+  reviewDueAt      DateTime?      @db.Timestamptz(3)
+  notes            String?
+  createdAt        DateTime       @default(now()) @db.Timestamptz(3)
+  updatedAt        DateTime       @updatedAt @db.Timestamptz(3)
+
+  @@index([fromEntityCode, toEntityCode, status])
+  @@map("cross_border_transfers")
+}
+
+model RetentionPolicy {
+  id              String          @id @default(uuid(7))
+  dataCategory    String
+  entityCode      String?
+  retentionMonths Int
+  action          RetentionAction
+  legalReference  String?
+  lastAppliedAt   DateTime?       @db.Timestamptz(3)
+  createdAt       DateTime        @default(now()) @db.Timestamptz(3)
+  updatedAt       DateTime        @updatedAt @db.Timestamptz(3)
+
+  @@unique([dataCategory, entityCode])
+  @@map("retention_policies")
+}
+
+/// First-party analytics: route patterns and identifiers only, never personal data.
+model ClickstreamEvent {
+  id         String   @id @default(uuid(7))
+  sessionId  String
+  type       String
+  name       String
+  route      String
+  role       Role?
+  locale     String?
+  theme      String?
+  viewport   String?
+  properties Json?
+  occurredAt DateTime @db.Timestamptz(3)
+  receivedAt DateTime @default(now()) @db.Timestamptz(3)
+
+  @@index([occurredAt])
+  @@index([name, occurredAt])
+  @@index([sessionId])
+  @@map("clickstream_events")
+}
+
+model AiUsageRecord {
+  id              String     @id @default(uuid(7))
+  feature         String
+  provider        AiProvider
+  model           String
+  inputTokens     Int
+  outputTokens    Int
+  latencyMs       Int
+  costEstimateUsd Decimal    @db.Decimal(12, 6)
+  outcome         AiOutcome
+  userId          String?
+  requestId       String?
+  errorCode       String?
+  metadata        Json?
+  createdAt       DateTime   @default(now()) @db.Timestamptz(3)
+
+  @@index([feature, createdAt])
+  @@index([createdAt])
+  @@map("ai_usage_records")
+}

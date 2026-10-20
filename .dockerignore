@@ -22,3 +22,4 @@ assets-src
 infra/aws
 **/*.log
 **/.DS_Store
+**/src/generated
