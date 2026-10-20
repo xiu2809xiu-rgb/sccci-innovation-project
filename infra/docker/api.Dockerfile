@@ -3,7 +3,7 @@
 #   docker build -f infra/docker/api.Dockerfile .
 
 # Base images are pinned by tag and digest; Dependabot proposes updates.
-FROM node:24.22.0-alpine3.24@sha256:44fce696f38ba8c987c4db89954051000bbd05ffd8d8659ba15ed4a8602e937f AS build
+FROM node:26.11.1-alpine3.24@sha256:143494b1da2945f061539253adc65e4f1569ddf07da2d384c022c791a9d90a4a AS build
 ENV HUSKY=0 \
     PUPPETEER_SKIP_DOWNLOAD=true
 RUN npm install --global pnpm@12.14.0
@@ -19,7 +19,7 @@ RUN pnpm --filter "@huitong/api..." build
 RUN --mount=type=cache,id=pnpm-store,target=/pnpm-store \
     pnpm --filter @huitong/api deploy --prod --store-dir /pnpm-store /out
 
-FROM node:24.22.0-alpine3.24@sha256:44fce696f38ba8c987c4db89954051000bbd05ffd8d8659ba15ed4a8602e937f AS runtime
+FROM node:26.11.1-alpine3.24@sha256:143494b1da2945f061539253adc65e4f1569ddf07da2d384c022c791a9d90a4a AS runtime
 # Only node runs here. npm, npx, corepack and yarn ship with the base image but are never used,
 # so they go: fewer packages to patch, and nothing for an attacker to install with.
 RUN rm -rf /usr/local/lib/node_modules/npm /usr/local/lib/node_modules/corepack /opt/yarn-v* \

@@ -3,7 +3,7 @@
 #   docker build -f infra/docker/mock-service.Dockerfile --build-arg SERVICE=mock-sg-hr --build-arg PORT=4101 .
 
 # Base images are pinned by tag and digest; Dependabot proposes updates.
-FROM node:24.22.0-alpine3.24@sha256:44fce696f38ba8c987c4db89954051000bbd05ffd8d8659ba15ed4a8602e937f AS build
+FROM node:26.11.1-alpine3.24@sha256:143494b1da2945f061539253adc65e4f1569ddf07da2d384c022c791a9d90a4a AS build
 ARG SERVICE
 ENV HUSKY=0 \
     PUPPETEER_SKIP_DOWNLOAD=true
@@ -20,7 +20,7 @@ RUN pnpm --filter "@huitong/${SERVICE}..." build
 RUN --mount=type=cache,id=pnpm-store,target=/pnpm-store \
     pnpm --filter "@huitong/${SERVICE}" deploy --prod --store-dir /pnpm-store /out
 
-FROM node:24.22.0-alpine3.24@sha256:44fce696f38ba8c987c4db89954051000bbd05ffd8d8659ba15ed4a8602e937f AS runtime
+FROM node:26.11.1-alpine3.24@sha256:143494b1da2945f061539253adc65e4f1569ddf07da2d384c022c791a9d90a4a AS runtime
 ARG PORT
 # Only node runs here. npm, npx, corepack and yarn ship with the base image but are never used,
 # so they go: fewer packages to patch, and nothing for an attacker to install with.
