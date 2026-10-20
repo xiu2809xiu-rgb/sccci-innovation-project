@@ -73,6 +73,7 @@ export function renderSgEmployee(
     employeeNo: employee.employeeNo,
     firstName: employee.givenName,
     lastName: employee.familyName,
+    fullName: employee.fullNameLatin,
     preferredName: employee.preferredName,
     email: employee.workEmail,
     mobile: displayMobile(employee.workPhone),

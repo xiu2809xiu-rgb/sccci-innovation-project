@@ -1,0 +1,168 @@
+import { Processor, WorkerHost } from '@nestjs/bullmq';
+import {
+  MAX_PREVIEW_ITEMS,
+  REALTIME_EVENTS,
+  type SyncProgressEvent,
+  type SyncRunStatus,
+} from '@huitong/shared';
+import type { Job } from 'bullmq';
+import { PinoLogger } from 'nestjs-pino';
+
+import { AppError } from '../../../common/errors/app-error.js';
+import type { RequestMeta } from '../../../common/http/request-meta.js';
+import { AuditLogService } from '../../../infrastructure/audit/audit-log.service.js';
+import { RealtimeService } from '../../../infrastructure/events/realtime.service.js';
+import { QUEUES } from '../../../infrastructure/queues/queue-names.js';
+import { MappingConfigsRepository } from '../../mapping/mapping-configs.repository.js';
+import { ConnectorFactory } from '../connector-factory.js';
+import { ConnectorsRepository } from '../connectors.repository.js';
+import { EmployeeSyncPipeline } from './employee-sync.pipeline.js';
+import type { SyncSummary } from './sync-pipeline.js';
+import { SyncProgressReporter } from './sync-progress.reporter.js';
+import { SyncRunsRepository } from './sync-runs.repository.js';
+import type { SyncJobData } from './sync.service.js';
+
+const TERMINAL = new Set<SyncRunStatus>(['SUCCEEDED', 'PARTIAL', 'FAILED']);
+
+function statusOf(summary: SyncSummary): SyncRunStatus {
+  if (summary.counts.errors === 0) return 'SUCCEEDED';
+  const { created, updated, unchanged } = summary.counts;
+  return created + updated + unchanged > 0 ? 'PARTIAL' : 'FAILED';
+}
+
+/**
+ * Runs queued syncs, one at a time so two runs never merge into the same
+ * records at once. A failure is retried by BullMQ (three attempts with
+ * backoff); only the last attempt marks the run FAILED. A retry is safe:
+ * unchanged records are skipped and every write is an upsert.
+ */
+@Processor(QUEUES.sync, { concurrency: 1 })
+export class SyncProcessor extends WorkerHost {
+  constructor(
+    private readonly runs: SyncRunsRepository,
+    private readonly connectors: ConnectorsRepository,
+    private readonly mappings: MappingConfigsRepository,
+    private readonly factory: ConnectorFactory,
+    private readonly pipeline: EmployeeSyncPipeline,
+    private readonly progress: SyncProgressReporter,
+    private readonly audit: AuditLogService,
+    private readonly realtime: RealtimeService,
+    private readonly logger: PinoLogger,
+  ) {
+    super();
+    this.logger.setContext(SyncProcessor.name);
+  }
+
+  async process(job: Job<SyncJobData>): Promise<void> {
+    const run = await this.runs.findById(job.data.syncRunId);
+    // A job whose run already finished (a duplicate delivery) has nothing left to do.
+    if (!run || TERMINAL.has(run.status)) return;
+    const identity = { id: run.id, connectorId: run.connectorId, mode: run.mode };
+    const meta: RequestMeta = {
+      actor: job.data.actor,
+      ip: null,
+      userAgent: null,
+      traceId: job.data.traceId,
+    };
+    const attempt = job.attemptsMade + 1;
+    await this.runs.markRunning(run.id, attempt);
+
+    try {
+      const connector = await this.connectors.findById(run.connectorId);
+      const mapping = run.mappingConfigId
+        ? await this.mappings.findById(run.mappingConfigId)
+        : null;
+      if (!connector || !mapping)
+        throw new Error('The connector or its mapping version no longer exists');
+
+      const summary = await this.pipeline.run({
+        run: identity,
+        meta,
+        connector: this.factory.create(connector),
+        mappings: mapping.mappings,
+      });
+      const status = statusOf(summary);
+      await this.runs.recordFailures(run.id, summary.failures);
+      await this.runs.finish(run.id, {
+        status,
+        counts: summary.counts,
+        preview: run.mode === 'PREVIEW' ? summary.preview.slice(0, MAX_PREVIEW_ITEMS) : null,
+        previewTruncated: summary.preview.length > MAX_PREVIEW_ITEMS,
+      });
+      this.announce(identity, status, summary.counts, status === 'FAILED');
+    } catch (error) {
+      await this.fail(job, identity, meta, attempt, error);
+      throw error;
+    } finally {
+      this.progress.forget(run.id);
+    }
+  }
+
+  private async fail(
+    job: Job<SyncJobData>,
+    run: { id: string; connectorId: string; mode: 'PREVIEW' | 'APPLY' },
+    meta: RequestMeta,
+    attempt: number,
+    error: unknown,
+  ): Promise<void> {
+    const final = attempt >= (job.opts.attempts ?? 1);
+    const code = error instanceof AppError ? error.code : 'INTERNAL';
+    const message = error instanceof AppError ? error.message : 'The sync stopped unexpectedly';
+    this.logger.warn({ err: error, syncRunId: run.id, attempt, final }, 'sync attempt failed');
+    await this.runs.recordFailures(run.id, [
+      {
+        externalId: null,
+        stage: 'EXTRACT',
+        code,
+        message: `Attempt ${String(attempt)}: ${message}`,
+      },
+    ]);
+    const counts = { fetched: 0, created: 0, updated: 0, unchanged: 0, conflicts: 0, errors: 1 };
+    if (!final) {
+      await this.runs.markWaitingForRetry(run.id);
+      this.announce(run, 'QUEUED', counts, false);
+      return;
+    }
+    await this.runs.finish(run.id, {
+      status: 'FAILED',
+      counts,
+      preview: null,
+      previewTruncated: false,
+    });
+    await this.audit.record(
+      {
+        action: 'sync.run.failed',
+        entityType: 'SyncRun',
+        entityId: run.id,
+        metadata: { connectorId: run.connectorId, code, attempts: attempt },
+      },
+      meta,
+    );
+    this.announce(run, 'FAILED', counts, true);
+  }
+
+  /** Progress at 100 % plus the matching completion event, ids and counts only. */
+  private announce(
+    run: { id: string; connectorId: string; mode: 'PREVIEW' | 'APPLY' },
+    status: SyncRunStatus,
+    counts: SyncSummary['counts'],
+    failed: boolean,
+  ): void {
+    const event: SyncProgressEvent = {
+      syncRunId: run.id,
+      connectorId: run.connectorId,
+      mode: run.mode,
+      status,
+      stage: null,
+      progress: status === 'QUEUED' ? 0 : 100,
+      counts,
+    };
+    this.realtime.publish(REALTIME_EVENTS.syncProgress, event);
+    if (status !== 'QUEUED') {
+      this.realtime.publish(
+        failed ? REALTIME_EVENTS.syncFailed : REALTIME_EVENTS.syncCompleted,
+        event,
+      );
+    }
+  }
+}

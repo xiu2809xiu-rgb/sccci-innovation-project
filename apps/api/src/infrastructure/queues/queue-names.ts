@@ -5,6 +5,8 @@
 export const QUEUES = {
   /** Area 1: connector syncs into the employee master. */
   sync: 'sync',
+  /** Area 1: republishes stored webhooks whose domain event was never handled (outbox). */
+  webhooks: 'webhooks',
   /** Area 2: workflow steps triggered by domain events. */
   workflow: 'workflow',
   /** Area 2: Teams and DingTalk notifications (mocked). */

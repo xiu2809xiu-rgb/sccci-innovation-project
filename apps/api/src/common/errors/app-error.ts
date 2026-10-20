@@ -69,3 +69,15 @@ export class UpstreamUnavailableError extends AppError {
     super('UPSTREAM_UNAVAILABLE', `${system} did not respond as expected`, 502, details);
   }
 }
+
+export class WebhookSignatureInvalidError extends AppError {
+  constructor() {
+    super('WEBHOOK_SIGNATURE_INVALID', 'The webhook signature is missing, stale or wrong', 401);
+  }
+}
+
+export class AiOutputInvalidError extends AppError {
+  constructor() {
+    super('AI_OUTPUT_INVALID', 'The language model returned something HuiTong could not use', 502);
+  }
+}

@@ -72,6 +72,7 @@ describe('mock SG HR', () => {
     const meiLing = await get('/api/employees/E100003').expect(200);
     expect(meiLing.body.data.mobile.replace(/ /g, '')).not.toBe(phoneDrift?.value);
     expect(meiLing.body.data.firstName).toBe('Mei Ling');
+    expect(meiLing.body.data.fullName).toBe('Tan Mei Ling');
   });
 
   it('filters by updatedSince', async () => {

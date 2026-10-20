@@ -8,6 +8,7 @@ import { seedAccessPolicy } from './access.js';
 import { seedAttendanceLeave } from './attendance-leave.js';
 import { seedConnectors } from './connectors.js';
 import { seedGovernance } from './governance.js';
+import { seedIntegration } from './integration.js';
 import { seedReferenceData } from './reference-data.js';
 import { seedUsers } from './users.js';
 import { seedWorkflows } from './workflows.js';
@@ -30,6 +31,7 @@ async function main(): Promise<void> {
     ['access policy', () => seedAccessPolicy(prisma)],
     ['users', () => seedUsers(prisma)],
     ['connectors', () => seedConnectors(prisma, process.env)],
+    ['integration', () => seedIntegration(prisma)],
     ['governance', () => seedGovernance(prisma)],
     ['workflows', () => seedWorkflows(prisma)],
     ['attendance and leave', () => seedAttendanceLeave(prisma)],

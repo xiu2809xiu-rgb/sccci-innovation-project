@@ -206,8 +206,10 @@ model Employee {
   conflicts          Conflict[]
 
   @@index([entityCode, departmentCode])
+  @@index([departmentCode, fullNameLatin])
   @@index([employmentStatus])
-  @@index([familyName, givenName])
+  @@index([fullNameLatin])
+  @@index([hireDate])
   @@index([managerEmployeeNo])
   @@map("employees")
 }
@@ -352,6 +354,11 @@ enum SyncRunStatus {
   FAILED
 }
 
+enum SyncMode {
+  PREVIEW
+  APPLY
+}
+
 enum SyncStage {
   EXTRACT
   MAP
@@ -432,6 +439,8 @@ model MappingProposal {
   proposals        Json
   status           MappingProposalStatus @default(PENDING_REVIEW)
   aiUsageRecordId  String?
+  /// Language of the rationales, as the reviewer asked for them.
+  language         String                @default("en")
   createdByUserId  String
   reviewedByUserId String?
   reviewedAt       DateTime?             @db.Timestamptz(3)
@@ -448,6 +457,8 @@ model SyncRun {
   connectorId       String
   connector         Connector      @relation(fields: [connectorId], references: [id])
   trigger           SyncTrigger
+  /// PREVIEW runs every stage but writes nothing to the master.
+  mode              SyncMode       @default(APPLY)
   idempotencyKey    String         @unique
   status            SyncRunStatus  @default(QUEUED)
   stage             SyncStage?
@@ -465,6 +476,9 @@ model SyncRun {
   queuedAt          DateTime       @default(now()) @db.Timestamptz(3)
   startedAt         DateTime?      @db.Timestamptz(3)
   finishedAt        DateTime?      @db.Timestamptz(3)
+  /// What a PREVIEW run would change (up to MAX_PREVIEW_ITEMS), read back masked for the viewer.
+  previewItems      Json?
+  previewTruncated  Boolean        @default(false)
   errors            SyncError[]
   sourceRecords     SourceRecord[]
 

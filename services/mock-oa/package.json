@@ -4,6 +4,12 @@
   "private": true,
   "description": "Mock OA approvals platform with HMAC-signed webhooks for HuiTong. Synthetic data only.",
   "type": "module",
+  "exports": {
+    "./app": {
+      "types": "./dist/app.d.ts",
+      "default": "./dist/app.js"
+    }
+  },
   "files": [
     "dist"
   ],
@@ -12,7 +18,8 @@
     "dev": "tsx watch src/main.ts",
     "start": "node dist/main.js",
     "typecheck": "tsc -p tsconfig.json --noEmit",
-    "test": "vitest run"
+    "test": "vitest run",
+    "prepare": "tsc -p tsconfig.build.json"
   },
   "dependencies": {
     "@huitong/synthetic-data": "workspace:*",
