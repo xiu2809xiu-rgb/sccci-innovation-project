@@ -6,6 +6,7 @@ import { ApiError } from './api-error';
 type Method = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
 
 export interface RequestOptions {
+  /** Sent as JSON, except FormData, which goes as multipart with the boundary the browser sets. */
   body?: unknown;
   signal?: AbortSignal;
   /** Sent as `Idempotency-Key` on POSTs that start work, so retries never run it twice. */
@@ -100,7 +101,8 @@ export class ApiClient {
       Accept: 'application/json',
       'X-Request-Id': crypto.randomUUID(),
     });
-    if (options.body !== undefined) {
+    const form = options.body instanceof FormData ? options.body : null;
+    if (options.body !== undefined && !form) {
       headers.set('Content-Type', 'application/json');
     }
     const csrf = this.csrfToken();
@@ -115,7 +117,7 @@ export class ApiClient {
         method,
         headers,
         credentials: 'include',
-        ...(options.body === undefined ? {} : { body: JSON.stringify(options.body) }),
+        ...(options.body === undefined ? {} : { body: form ?? JSON.stringify(options.body) }),
         ...(options.signal ? { signal: options.signal } : {}),
       });
     } catch (error) {

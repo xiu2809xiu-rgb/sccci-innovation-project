@@ -101,5 +101,226 @@
       "truncated": "Showing the first {{count}} changes; the counts above cover all of them."
     },
     "previewAgain": "Preview again"
+  },
+  "actions": {
+    "newMapping": "New mapping from a sample file"
+  },
+  "list": {
+    "label": "Connected systems"
+  },
+  "empty": {
+    "title": "No systems connected yet",
+    "description": "Connected HR and approval systems appear here once they are configured."
+  },
+  "health": {
+    "OK": "Responding",
+    "FAILED": "Not responding"
+  },
+  "card": {
+    "health": "Health",
+    "checking": "Checking the connection",
+    "notChecked": "Not checked yet",
+    "lastSync": "Last sync",
+    "neverSynced": "Not synced yet",
+    "mapping": "Field mapping",
+    "mappingVersion": "Version {{version}}",
+    "noMapping": "No approved mapping",
+    "checkNow": "Check now",
+    "healthy": "{{name}} is responding.",
+    "unhealthy": "{{name}} is not responding.",
+    "respondedIn": "It answered in {{time}}.",
+    "unhealthyHint": "It did not answer as expected. Check that the system is running, then try again.",
+    "checkFailed": "Could not check {{name}}.",
+    "details": "Details",
+    "open": "Open {{name}}"
+  },
+  "proposals": {
+    "title": "Mapping proposals waiting for review",
+    "description": "AI suggestions from uploaded samples. Nothing is used until someone with approval rights approves it.",
+    "empty": "No proposals are waiting.",
+    "requiresApproval": "Requires approval",
+    "needReview_one": "{{count}} column to check",
+    "needReview_other": "{{count}} columns to check",
+    "review": "Review"
+  },
+  "detail": {
+    "syncNow": "Sync now",
+    "settings": {
+      "title": "Connection settings",
+      "description": "Non-secret settings only.",
+      "endpoint": "Endpoint",
+      "noEndpoint": "No live endpoint (imported by file)",
+      "credentials": "Credentials",
+      "credentialsRef": "Kept in {{ref}}",
+      "noCredentials": "None needed",
+      "secretsNote": "HuiTong never stores credentials in its database: they come from the environment or the secret store."
+    },
+    "health": {
+      "title": "Health",
+      "description": "The result of the last connection check."
+    },
+    "mappings": {
+      "title": "Field mapping versions",
+      "description": "How this system's fields become the employee master. Only an approved version is ever active.",
+      "empty": "No mapping has been approved for this system yet.",
+      "status": {
+        "ACTIVE": "Active",
+        "ARCHIVED": "Superseded",
+        "DRAFT": "Draft"
+      },
+      "approvedBy": "Approved by {{name}}",
+      "caption": "Field mapping, version {{version}}",
+      "target": "Master field",
+      "source": "From column",
+      "transform": "Transform",
+      "noSource": "Fixed value"
+    },
+    "runs": {
+      "title": "Sync history",
+      "caption": "Sync runs of this system",
+      "empty": "No syncs have run yet.",
+      "queued": "Started",
+      "mode": "Run",
+      "status": "Result",
+      "changes": "Changes",
+      "by": "By",
+      "version": "Mapping",
+      "summary": "{{created}} new · {{updated}} updated · {{conflicts}} conflicts · {{errors}} errors",
+      "system": "System",
+      "trigger": {
+        "MANUAL": "Started by a person",
+        "SCHEDULED": "Scheduled",
+        "WEBHOOK": "From a webhook",
+        "BOOTSTRAP": "First load"
+      }
+    }
+  },
+  "transform": {
+    "copy": "As it is",
+    "number": "Number",
+    "last-four-digits": "Last 4 digits only",
+    "lowercase": "Lower case",
+    "date": "Date ({{format}})",
+    "value-map_one": "Lookup table, {{count}} value",
+    "value-map_other": "Lookup table, {{count}} values",
+    "name-part": {
+      "family": "Family name from FAMILY Given",
+      "given": "Given name from FAMILY Given"
+    },
+    "name-full": {
+      "FAMILY_FIRST": "Full name, family first",
+      "GIVEN_FIRST": "Full name, given first"
+    },
+    "phone": "Phone number (+{{code}} when local)",
+    "contains-script": "Only if it has Chinese characters",
+    "constant": "Fixed value: {{value}}",
+    "rules_one": "{{count}} rule",
+    "rules_other": "{{count}} rules"
+  },
+  "wizard": {
+    "title": "New mapping from a sample file",
+    "description": "Upload an export from a new system. The AI proposes how its columns map to the employee master; you review and approve before anything is saved.",
+    "steps": {
+      "label": "Mapping steps",
+      "indicator": "Step {{number}} of {{total}}: {{title}}",
+      "upload": "Upload a sample",
+      "review": "Review the proposal",
+      "approve": "Approve"
+    },
+    "upload": {
+      "systemName": "Source system name",
+      "systemNameHint": "How HR refers to this system, e.g. Organisation E Malaysia HR.",
+      "systemNameInvalid": "Enter a name of 2 to 100 characters.",
+      "entity": "Legal entity",
+      "entityPlaceholder": "Choose the entity",
+      "entityHint": "The entity whose employees the file holds.",
+      "language": "Explanations in",
+      "languageHint": "The language of the AI's reasons for each mapping.",
+      "languages": {
+        "en": "English",
+        "zh-CN": "简体中文"
+      },
+      "file": "Sample file",
+      "fileHint": "A .csv or .xlsx export of up to 1 MB. Only the first 20 rows are read.",
+      "chosen": "{{name}} ({{size}} KB)",
+      "fileProblem": {
+        "missing": "Choose a sample file.",
+        "type": "Only .csv and .xlsx files can be read.",
+        "size": "The file is larger than 1 MB."
+      },
+      "useSample": "Use the synthetic Malaysia sample",
+      "sampleFailed": "The sample file could not be loaded.",
+      "privacy": "Only the column headers and the shape of their values (for example E######) go to the AI, never the values themselves. Columns with national ID numbers are withheld and can never be mapped.",
+      "assistant": "AI mapping assistant",
+      "call": {
+        "idle": "not started",
+        "running": "proposing mappings",
+        "done": "proposal ready",
+        "error": "failed",
+        "retry": "Try the AI proposal again"
+      },
+      "submit": "Get the AI proposal"
+    },
+    "review": {
+      "aiSuggestion": "AI suggestion",
+      "summary": "{{mapped}} of {{total}} columns mapped, {{flagged}} flagged for a closer look (from {{rows}} sample rows).",
+      "caption": "Proposed mapping for {{file}}",
+      "column": "Column in the file",
+      "target": "Maps to",
+      "transform": "Transform",
+      "confidence": "Confidence",
+      "rationale": "Reason",
+      "targetFor": "Master field for the column {{column}}",
+      "notMapped": "Not mapped",
+      "neverMapped": "Never mapped: national ID numbers",
+      "plainCopy": "Copied as it is: check the format",
+      "why": "Why this mapping",
+      "flags": {
+        "LOW_CONFIDENCE": "Low confidence",
+        "NO_MATCH": "No match",
+        "PROHIBITED_FIELD": "Prohibited data",
+        "REVIEW_TRANSFORM": "Check the transform"
+      },
+      "fixedTitle": "Values the file implies",
+      "fixedDescription": "Facts the export does not contain as a column, proposed as fixed values.",
+      "fixedValue": "{{field}}: {{value}}",
+      "problems": {
+        "title": "Fix these before approving",
+        "duplicate": "{{field}} is filled from more than one column.",
+        "missingEmployeeNo": "A column must map to the employee number.",
+        "salaryIncomplete": "Base salary needs both its amount and its currency.",
+        "invalid": "The mapping is not valid yet."
+      },
+      "back": "Back",
+      "continue": "Continue to approval"
+    },
+    "approve": {
+      "summary_one": "{{count}} field mapping will be saved, with {{edits}} changes to the AI suggestion.",
+      "summary_other": "{{count}} field mappings will be saved, with {{edits}} changes to the AI suggestion.",
+      "connector": "Which connector is this mapping for?",
+      "newConnector": "A new connector for this system",
+      "name": "Name",
+      "nameZh": "Name in Chinese",
+      "newHint": "The connector starts as a draft: it reads nothing until an administrator activates it.",
+      "needsApprover": "Your role can review this proposal but not approve it. It stays on the Connectors page, waiting for someone with approval rights.",
+      "existingConnector": "A new version for an existing file connector",
+      "chooseConnector": "Choose a connector",
+      "connectorOption": "{{name}} (now version {{version}})",
+      "note": "Note for the audit trail (optional)",
+      "confirm": "I have reviewed every mapping. I understand that nothing is imported until a sync runs.",
+      "submit": "Approve and save",
+      "reject": "Reject",
+      "rejectNote": "Why is this proposal rejected? (at least 3 characters)",
+      "keepReviewing": "Keep reviewing",
+      "confirmReject": "Reject the proposal"
+    },
+    "outcome": {
+      "approvedTitle": "Mapping version {{version}} saved",
+      "approvedDescription": "The mapping for {{system}} is approved and recorded in the audit log.",
+      "rejectedTitle": "Proposal rejected",
+      "rejectedDescription": "No mapping was saved. The decision is recorded in the audit log.",
+      "backToConnectors": "Back to connectors",
+      "openConnector": "Open the connector"
+    }
   }
 }

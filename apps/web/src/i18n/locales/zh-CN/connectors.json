@@ -101,5 +101,226 @@
       "truncated": "仅显示前 {{count}} 项变更；上方的统计涵盖全部变更。"
     },
     "previewAgain": "重新预览"
+  },
+  "actions": {
+    "newMapping": "用样本文件新建映射"
+  },
+  "list": {
+    "label": "已连接的系统"
+  },
+  "empty": {
+    "title": "尚未连接任何系统",
+    "description": "配置完成后，已连接的人事与审批系统会显示在这里。"
+  },
+  "health": {
+    "OK": "响应正常",
+    "FAILED": "无响应"
+  },
+  "card": {
+    "health": "运行状况",
+    "checking": "正在检查连接",
+    "notChecked": "尚未检查",
+    "lastSync": "最近同步",
+    "neverSynced": "尚未同步",
+    "mapping": "字段映射",
+    "mappingVersion": "第 {{version}} 版",
+    "noMapping": "没有已批准的映射",
+    "checkNow": "立即检查",
+    "healthy": "{{name}}响应正常。",
+    "unhealthy": "{{name}}没有响应。",
+    "respondedIn": "响应用时 {{time}}。",
+    "unhealthyHint": "该系统未按预期响应。请确认系统正在运行，然后重试。",
+    "checkFailed": "无法检查{{name}}。",
+    "details": "详情",
+    "open": "打开{{name}}"
+  },
+  "proposals": {
+    "title": "待审核的映射建议",
+    "description": "根据上传样本生成的 AI 建议。在有审批权限的人员批准之前，不会被使用。",
+    "empty": "没有待审核的建议。",
+    "requiresApproval": "需审批",
+    "needReview_one": "{{count}} 列需检查",
+    "needReview_other": "{{count}} 列需检查",
+    "review": "审核"
+  },
+  "detail": {
+    "syncNow": "立即同步",
+    "settings": {
+      "title": "连接设置",
+      "description": "仅显示非机密设置。",
+      "endpoint": "接口地址",
+      "noEndpoint": "无实时接口（通过文件导入）",
+      "credentials": "凭证",
+      "credentialsRef": "保存在 {{ref}}",
+      "noCredentials": "无需凭证",
+      "secretsNote": "汇通从不在数据库中保存凭证：凭证来自环境变量或密钥管理服务。"
+    },
+    "health": {
+      "title": "运行状况",
+      "description": "最近一次连接检查的结果。"
+    },
+    "mappings": {
+      "title": "字段映射版本",
+      "description": "此系统的字段如何转换为员工主数据。只有经批准的版本才会生效。",
+      "empty": "此系统尚无已批准的映射。",
+      "status": {
+        "ACTIVE": "生效中",
+        "ARCHIVED": "已被取代",
+        "DRAFT": "草稿"
+      },
+      "approvedBy": "由{{name}}批准",
+      "caption": "字段映射第 {{version}} 版",
+      "target": "主数据字段",
+      "source": "来源列",
+      "transform": "转换",
+      "noSource": "固定值"
+    },
+    "runs": {
+      "title": "同步记录",
+      "caption": "此系统的同步运行",
+      "empty": "尚未运行过同步。",
+      "queued": "开始时间",
+      "mode": "运行",
+      "status": "结果",
+      "changes": "变更",
+      "by": "发起人",
+      "version": "映射",
+      "summary": "新增 {{created}} · 更新 {{updated}} · 冲突 {{conflicts}} · 错误 {{errors}}",
+      "system": "系统",
+      "trigger": {
+        "MANUAL": "人工发起",
+        "SCHEDULED": "定时",
+        "WEBHOOK": "由 Webhook 触发",
+        "BOOTSTRAP": "首次载入"
+      }
+    }
+  },
+  "transform": {
+    "copy": "原样",
+    "number": "数字",
+    "last-four-digits": "仅保留后四位",
+    "lowercase": "小写",
+    "date": "日期（{{format}}）",
+    "value-map_one": "对照表，{{count}} 个值",
+    "value-map_other": "对照表，{{count}} 个值",
+    "name-part": {
+      "family": "从“姓 名”格式中取姓",
+      "given": "从“姓 名”格式中取名"
+    },
+    "name-full": {
+      "FAMILY_FIRST": "全名，姓在前",
+      "GIVEN_FIRST": "全名，名在前"
+    },
+    "phone": "电话号码（本地号码加 +{{code}}）",
+    "contains-script": "仅保留含中文字符的值",
+    "constant": "固定值：{{value}}",
+    "rules_one": "{{count}} 条规则",
+    "rules_other": "{{count}} 条规则"
+  },
+  "wizard": {
+    "title": "用样本文件新建映射",
+    "description": "上传新系统的导出文件。AI 会建议各列如何映射到员工主数据；在保存任何内容之前，由您审核并批准。",
+    "steps": {
+      "label": "映射步骤",
+      "indicator": "第 {{number}} 步，共 {{total}} 步：{{title}}",
+      "upload": "上传样本",
+      "review": "审核建议",
+      "approve": "批准"
+    },
+    "upload": {
+      "systemName": "来源系统名称",
+      "systemNameHint": "人事对此系统的称呼，例如 Organisation E Malaysia HR。",
+      "systemNameInvalid": "请输入 2 到 100 个字符的名称。",
+      "entity": "法人实体",
+      "entityPlaceholder": "选择法人实体",
+      "entityHint": "文件中员工所属的法人实体。",
+      "language": "说明语言",
+      "languageHint": "AI 对每项映射给出理由时使用的语言。",
+      "languages": {
+        "en": "English",
+        "zh-CN": "简体中文"
+      },
+      "file": "样本文件",
+      "fileHint": "不超过 1 MB 的 .csv 或 .xlsx 导出文件，只读取前 20 行。",
+      "chosen": "{{name}}（{{size}} KB）",
+      "fileProblem": {
+        "missing": "请选择样本文件。",
+        "type": "只能读取 .csv 和 .xlsx 文件。",
+        "size": "文件超过 1 MB。"
+      },
+      "useSample": "使用合成的马来西亚样本",
+      "sampleFailed": "无法载入样本文件。",
+      "privacy": "只有列标题和值的格式（例如 E######）会发送给 AI，值本身不会发送。含身份证件号码的列会被隐去，且永远不能映射。",
+      "assistant": "AI 映射助手",
+      "call": {
+        "idle": "未开始",
+        "running": "正在生成映射建议",
+        "done": "建议已生成",
+        "error": "失败",
+        "retry": "重新获取 AI 建议"
+      },
+      "submit": "获取 AI 建议"
+    },
+    "review": {
+      "aiSuggestion": "AI 建议",
+      "summary": "已映射 {{mapped}}/{{total}} 列，{{flagged}} 列需进一步检查（基于 {{rows}} 行样本）。",
+      "caption": "{{file}} 的映射建议",
+      "column": "文件中的列",
+      "target": "映射到",
+      "transform": "转换",
+      "confidence": "置信度",
+      "rationale": "理由",
+      "targetFor": "{{column}} 列对应的主数据字段",
+      "notMapped": "不映射",
+      "neverMapped": "永不映射：身份证件号码",
+      "plainCopy": "原样复制：请检查格式",
+      "why": "为何这样映射",
+      "flags": {
+        "LOW_CONFIDENCE": "置信度低",
+        "NO_MATCH": "无匹配",
+        "PROHIBITED_FIELD": "禁止的数据",
+        "REVIEW_TRANSFORM": "请检查转换"
+      },
+      "fixedTitle": "文件隐含的值",
+      "fixedDescription": "导出文件中没有作为列出现、但可以推断的事实，建议作为固定值。",
+      "fixedValue": "{{field}}：{{value}}",
+      "problems": {
+        "title": "批准前请先修正以下问题",
+        "duplicate": "{{field}}由多个列填充。",
+        "missingEmployeeNo": "必须有一列映射到员工编号。",
+        "salaryIncomplete": "基本工资需要同时映射金额和币种。",
+        "invalid": "映射尚不完整或有误。"
+      },
+      "back": "上一步",
+      "continue": "继续审批"
+    },
+    "approve": {
+      "summary_one": "将保存 {{count}} 项字段映射，相比 AI 建议改动了 {{edits}} 处。",
+      "summary_other": "将保存 {{count}} 项字段映射，相比 AI 建议改动了 {{edits}} 处。",
+      "connector": "此映射属于哪个连接？",
+      "newConnector": "为此系统新建连接",
+      "name": "名称",
+      "nameZh": "中文名称",
+      "newHint": "新连接以草稿状态开始：在管理员启用之前不会读取任何数据。",
+      "needsApprover": "您的角色可以审核此提案，但不能批准。它会留在连接器页面，等待有审批权限的人处理。",
+      "existingConnector": "为现有的文件连接新建版本",
+      "chooseConnector": "选择连接",
+      "connectorOption": "{{name}}（当前第 {{version}} 版）",
+      "note": "审计备注（选填）",
+      "confirm": "我已审核每一项映射，并了解在运行同步之前不会导入任何数据。",
+      "submit": "批准并保存",
+      "reject": "驳回",
+      "rejectNote": "驳回此建议的原因（至少 3 个字符）",
+      "keepReviewing": "继续审核",
+      "confirmReject": "驳回建议"
+    },
+    "outcome": {
+      "approvedTitle": "已保存映射第 {{version}} 版",
+      "approvedDescription": "{{system}} 的映射已批准，并记入审计日志。",
+      "rejectedTitle": "建议已驳回",
+      "rejectedDescription": "未保存任何映射。此决定已记入审计日志。",
+      "backToConnectors": "返回系统连接",
+      "openConnector": "打开此连接"
+    }
   }
 }
