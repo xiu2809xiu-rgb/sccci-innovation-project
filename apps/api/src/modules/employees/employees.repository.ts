@@ -21,15 +21,26 @@ export interface FieldChange {
   newValue: unknown;
 }
 
-const ORDER: Record<
-  EmployeeListQuery['sort'],
-  (direction: Prisma.SortOrder) => Prisma.EmployeeOrderByWithRelationInput[]
-> = {
-  name: (direction) => [{ fullNameLatin: direction }, { employeeNo: 'asc' }],
-  employeeNo: (direction) => [{ employeeNo: direction }],
-  department: (direction) => [{ departmentCode: direction }, { fullNameLatin: 'asc' }],
-  hireDate: (direction) => [{ hireDate: direction }, { employeeNo: 'asc' }],
-};
+/**
+ * The order behind each sort the list offers. A switch rather than a lookup
+ * table: the sort comes from the request, and a lookup could reach a method
+ * of Object.prototype if validation ever slipped.
+ */
+function orderBy(
+  sort: EmployeeListQuery['sort'],
+  direction: Prisma.SortOrder,
+): Prisma.EmployeeOrderByWithRelationInput[] {
+  switch (sort) {
+    case 'name':
+      return [{ fullNameLatin: direction }, { employeeNo: 'asc' }];
+    case 'employeeNo':
+      return [{ employeeNo: direction }];
+    case 'department':
+      return [{ departmentCode: direction }, { fullNameLatin: 'asc' }];
+    case 'hireDate':
+      return [{ hireDate: direction }, { employeeNo: 'asc' }];
+  }
+}
 
 /**
  * The employee master's data access: the merge reads and writes used by syncs
@@ -235,7 +246,7 @@ export class EmployeesRepository {
     const [items, total] = await this.prisma.$transaction([
       this.prisma.employee.findMany({
         where,
-        orderBy: ORDER[query.sort](query.direction),
+        orderBy: orderBy(query.sort, query.direction),
         skip: (query.page - 1) * query.pageSize,
         take: query.pageSize,
         include: {
