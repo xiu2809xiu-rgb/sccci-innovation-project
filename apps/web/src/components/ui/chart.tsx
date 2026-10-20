@@ -260,11 +260,13 @@ function ChartLegendContent({
   className,
   hideIcon = false,
   payload,
-  verticalAlign = 'bottom',
+  placement = 'bottom',
   nameKey,
 }: React.ComponentProps<'div'> & {
   hideIcon?: boolean;
   nameKey?: string;
+  /** Which side of the chart the legend sits on, for its spacing. Recharts 3.10 deprecated the `verticalAlign` this used to read. */
+  placement?: 'top' | 'bottom';
 } & RechartsPrimitive.DefaultLegendContentProps) {
   const { config } = useChart();
 
@@ -276,7 +278,7 @@ function ChartLegendContent({
     <div
       className={cn(
         'flex items-center justify-center gap-4',
-        verticalAlign === 'top' ? 'pb-3' : 'pt-3',
+        placement === 'top' ? 'pb-3' : 'pt-3',
         className,
       )}
     >
