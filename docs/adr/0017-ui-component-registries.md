@@ -1,6 +1,6 @@
 # ADR 0017: shadcn registries for UI components and React Bits licence handling
 
-- **Status:** Accepted
+- **Status:** Accepted; amended 2026-10-20 ([a public repository](#amendment-20-oct-2026-a-public-repository))
 - **Date:** 2026-10-20
 - **Traceability:** M1, M3, M4 · capabilities A–G (every screen)
 
@@ -12,7 +12,7 @@
 - one component per file, adapted to our design tokens, with a header comment stating its origin;
 - a record in `docs/design/reactbits-usage.md` (item, where it is used, why, and its reduced-motion behaviour), and every unused item deleted.
 
-React Bits Pro is paid. The licence key must never be printed, committed or copied into docs, prompts or logs, and the repository must stay private while it holds Pro code ([R-17](../grs/grs-by-design.md#32-register); M3-06).
+React Bits Pro is paid. The licence key must never be printed, committed or copied into docs, prompts or logs, and `CLAUDE.md` asked for the repository to stay private while it holds Pro code ([R-17](../grs/grs-by-design.md#32-register); M3-06). The [amendment](#amendment-20-oct-2026-a-public-repository) records that the team lead decided otherwise.
 
 Registry items are source code copied into our repository, together with the npm dependencies they declare, sometimes as caret ranges such as `gsap@^3`. That clashes with our exact pins and the one-day release-age rule ([ADR 0003](0003-pnpm-workspaces-monorepo.md#dependency-policy)).
 
@@ -45,7 +45,7 @@ Phase 2 verified all four registries with a test install from each, then removed
 - `REACTBITS_LICENSE_KEY` lives only in `apps/web/.env.local`, which is git-ignored. `components.json` holds the `${REACTBITS_LICENSE_KEY}` placeholder, which the CLI expands at install time.
 - The key has no `VITE_` prefix, so Vite never exposes it to client code. No build or CI step needs it: installed items are already source code in the repository.
 - A teammate who installs Pro items gets the key from the team lead and keeps it in their own `apps/web/.env.local`.
-- The Phase 10 sweep searches the repository and its history for the key. Before the repository is ever made public, the Pro code and the licensed skill are removed.
+- The Phase 10 sweep searches the repository and its history for the key, and so does a scan before every push. The repository is public (see the amendment), so these scans and the pre-commit guard are what keep the key out of it.
 
 **6. Tooling.** The React Bits skill at `.claude/skills/reactbits/SKILL.md` is authoritative for usage, props and animation parameters; it is licensed material too. The shadcn MCP server is configured in `.mcp.json` (`shadcn mcp --cwd apps/web`), so MCP-capable editors search and install from the same registries and the same `components.json`.
 
@@ -61,8 +61,21 @@ Phase 2 verified all four registries with a test install from each, then removed
 
 - Copied code has no `npm update` path: upgrading an item means adding it again and reviewing the diff ([ADR 0005](0005-web-stack.md)).
 - The re-pin and peer check after each install are manual steps.
-- Pro code ties the repository to private hosting. Publishing the project later means removing or replacing the Pro items first.
+- Pro code in a public repository relies on the licence allowing it. The team lead accepted that risk (see the amendment); if the licence does not allow it, the Pro items and the skill have to be removed and the history rewritten.
 - Motion-rich items can hurt performance and accessibility, so dense work surfaces get only subtle items (`CLAUDE.md` section 9).
+
+## Amendment, 20 Oct 2026: a public repository
+
+**Context.** The GitHub repository `xiu2809xiu-rgb/sccci-innovation-project` is public. The licensed React Bits skill has been in the history since `ff2ad33` and the Pro block `auth-4` since `458495d`, so pushing them publishes licensed material. The team now works through pull requests on GitHub, and public repositories get CodeQL code scanning, secret scanning with push protection, Dependabot, branch rules and a wiki at no cost.
+
+**Decision.** The team lead (Richie, who holds the React Bits Pro licence) decided to keep the repository public and set aside the private-repository rule of `CLAUDE.md` section 9.
+
+**Consequences.**
+
+- Whether the Pro licence allows source in a public repository is the licence holder's responsibility. GRS risk R-17 is accepted at a higher residual rating.
+- The licence key rules do not change: the key never enters git, docs, prompts or logs. The pre-commit guard, a history scan before every push and GitHub secret scanning enforce that.
+- Client documents and NYP material marked Official (Closed) are never committed, because the repository is public.
+- If the licence turns out not to allow a public repository, the Pro items (`split-auth-layout.tsx`, `trust-orbit.tsx`) and the skill are replaced with free items, and the history is rewritten or the repository made private.
 
 ## Alternatives considered
 
