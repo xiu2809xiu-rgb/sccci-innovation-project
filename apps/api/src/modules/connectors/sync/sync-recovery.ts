@@ -63,6 +63,7 @@ export class SyncRecovery {
       },
       preview: null,
       previewTruncated: false,
+      changeDigest: null,
     });
     await this.audit.record(
       {

@@ -42,6 +42,8 @@ export class SyncRunsRepository {
     idempotencyKey: string;
     triggeredByUserId: string | null;
     mappingConfigId: string;
+    /** For a manual APPLY: the preview it applies, whose changes it must reproduce. */
+    previewRunId: string | null;
   }) {
     return this.prisma.syncRun.create({ data: run });
   }
@@ -100,6 +102,8 @@ export class SyncRunsRepository {
       counts: SyncCounts;
       preview: readonly SyncPreviewItem[] | null;
       previewTruncated: boolean;
+      /** For a PREVIEW run: the fingerprint of everything it would change. */
+      changeDigest: string | null;
     },
   ): Promise<Date> {
     const finishedAt = new Date();
@@ -110,6 +114,7 @@ export class SyncRunsRepository {
         stage: null,
         progress: 100,
         finishedAt,
+        changeDigest: result.changeDigest,
         ...counted(result.counts),
         ...(result.preview
           ? { previewItems: jsonColumn(result.preview), previewTruncated: result.previewTruncated }

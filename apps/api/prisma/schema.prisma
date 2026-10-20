@@ -479,6 +479,10 @@ model SyncRun {
   /// What a PREVIEW run would change (up to MAX_PREVIEW_ITEMS), read back masked for the viewer.
   previewItems      Json?
   previewTruncated  Boolean        @default(false)
+  /// A PREVIEW run's fingerprint of everything it would change; the APPLY of it must find the same.
+  changeDigest      String?
+  /// For a manual APPLY: the preview it applies.
+  previewRunId      String?
   errors            SyncError[]
   sourceRecords     SourceRecord[]
 

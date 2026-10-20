@@ -51,7 +51,8 @@
       "INCOMPLETE_RECORD": "New records were missing required details.",
       "ENTITY_MISMATCH": "Records named a different entity from the one already on file.",
       "INTERRUPTED": "The run was interrupted before it finished.",
-      "UPSTREAM_UNAVAILABLE": "The connected system did not respond."
+      "UPSTREAM_UNAVAILABLE": "The connected system did not respond.",
+      "SOURCE_CHANGED": "The source system changed after the preview, so nothing was written. Preview again to see the current changes."
     },
     "inSync": "Everything is already in sync: there is nothing to apply.",
     "conflictsFound_one": "{{count}} new conflict needs a decision.",

@@ -96,6 +96,7 @@ export class SyncService {
       idempotencyKey,
       triggeredByUserId: meta.actor?.id ?? null,
       mappingConfigId: mapping.id,
+      previewRunId: request.mode === 'APPLY' ? (request.previewRunId ?? null) : null,
     });
     await this.audit.record(
       {
