@@ -1,0 +1,14 @@
+name: HuiTong CodeQL
+
+# The security-extended suite adds lower-precision security queries to the
+# default set; findings are triaged in the repository's Security tab.
+queries:
+  - uses: security-extended
+
+# Generated and third-party code is not ours to fix: the Prisma client is
+# generated from the schema, and build output is derived from scanned source.
+paths-ignore:
+  - '**/node_modules/**'
+  - '**/dist/**'
+  - apps/api/src/generated/**
+  - apps/web/public/**
