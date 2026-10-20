@@ -52,11 +52,11 @@ Legend: `[x]` done and verified, `[~]` in progress, `[ ]` not started, `[!]` blo
 
 ### Phase 5: Area 1 Integration Core
 
-- [ ] Connectors (Adapter + Factory) for SG HR and CN HQ; sync job (Template Method) on BullMQ
-- [ ] Mapping engine (Strategy transformers); canonical master with provenance; conflict detection + audited resolution
-- [ ] AI schema-mapping assistant with approval and versioned configs
-- [ ] Employees page; Connectors page + AI mapping wizard
-- [ ] Unit, integration and e2e tests; `docs/team/area-1-integration-core.md`
+- [x] Connectors (Adapter + Factory) for SG HR and CN HQ, and OA webhooks verified by HMAC with an outbox; the sync job (Template Method) on BullMQ with retries, idempotency keys, a server-side rule that an apply follows a recent preview, and recovery of runs that lost their job
+- [x] Mapping engine of twelve Strategy transformers with versioned mappings; the canonical master with per-field provenance and source-of-truth policies; conflict detection and audited resolution; the AI discrepancy explainer
+- [x] AI schema-mapping assistant: a sample CSV or Excel file with Chinese headers, national ID columns withheld, approval only with `mappings:approve`, a new mapping version on approval, every call recorded
+- [x] Employees page; connector list and detail pages; the Run sync dialog (preview, then apply); the AI mapping wizard; five more React Bits items
+- [x] Unit, integration and Playwright e2e tests with axe, and a CI job for them; [`docs/team/area-1-integration-core.md`](team/area-1-integration-core.md) and [`docs/architecture/patterns.md`](architecture/patterns.md)
 
 ### Phase 6: Head starts for areas 2-4
 
@@ -213,6 +213,35 @@ The traceability matrix claimed a key scan before every commit, but only some co
 
 The guard checks only the lines a commit adds. The full repository and its history get the Phase 10 sweep.
 
+### Phase 5 (20 and 21 Oct 2026)
+
+| Check                             | Result                                                                                                                                                                                                                                                  |
+| --------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `pnpm lint` / `pnpm format:check` | 0 problems / all files formatted                                                                                                                                                                                                                        |
+| `pnpm typecheck`                  | All 7 packages pass                                                                                                                                                                                                                                     |
+| `pnpm test`                       | 470 tests pass: shared 24, synthetic-data 23, mock-sg-hr 10, mock-cn-hq 8, mock-oa 9, web 249, api 147 (the API integration suites run against PostgreSQL and Redis, with the mock systems in-process)                                                  |
+| `pnpm build`                      | All packages build                                                                                                                                                                                                                                      |
+| Bundle budget                     | Initial JS 225.9 KB gzip against the 250 KB budget (213.7 KB after Phase 4). The growth is the employees and connectors strings: every namespace ships in the entry bundle, so areas 2 to 4 will need lazy namespaces before their strings push it over |
+| `pnpm test:e2e`                   | The smoke test passes against `docker compose up --build`: four consecutive runs on a running stack, axe clean at all seven steps                                                                                                                       |
+| Branch by branch                  | `feat/area1-employees-page` and `feat/area1-connectors-page` each passed format, lint, typecheck, the web tests and the build on their own, in a clean worktree                                                                                         |
+| `docker compose up --build`       | All seven services healthy with the Phase 5 images                                                                                                                                                                                                      |
+| Licence key                       | Absent from all 19 commits and 705 working-tree files (scan before the push; value never printed)                                                                                                                                                       |
+| actionlint                        | Every workflow passes, including the new End-to-end smoke job                                                                                                                                                                                           |
+
+Defects found and fixed while verifying:
+
+- A sync run whose queue job was lost stayed queued and blocked its connector; such runs now settle as `INTERRUPTED`. The Docker seed imported a file the image does not contain; it moved into `prisma/seed`.
+- HoldButton read its hint twice to screen readers, and HoldButton and ThoughtLine created runtime `<style>` elements, which ADR 0018 rules out; the styles moved to stylesheets.
+- The typed value in the conflict dialog had no label; the approve step was offered to roles without `mappings:approve`; a new draft kept the AI's target for a national ID column (it was never sent, but showed); connector names and health messages appeared in English in the Chinese UI, and run errors showed the server's English.
+- axe in the smoke test found visible labels missing from accessible names (WCAG 2.5.3) on the language and account buttons, the record links, the connector cards and the wizard steps; a sidebar that was not a navigation landmark, and its mobile sheet in English; view tabs without panels; inactive tabs below 4.5:1; and a scroll region out of keyboard reach. axe also reported low contrast on content still fading in, so the test runs with reduced motion.
+- Three components were over the 200-line limit and were split.
+
+Notes:
+
+- A six-lens review workflow and a docs workflow both stopped at the session limit before their agents reported, so the review checks were run by hand (locale parity, hard-coded strings, unused keys, ARIA references, permission gating against the API) and the area-1 guide was written directly, then checked against the code.
+- On Docker Desktop for Windows, the first page load after a container restart sometimes stalls or is reset, and recording a Playwright trace slowed the software-rendered 3D teaser enough to stall the sign-in page. Traces are now recorded only on the CI retry; CI runs on Linux, where neither problem has been seen.
+- No connector test feeds a malformed response yet (M4.1-08), and the screenshots for the masking and preview rows are still to be taken.
+
 ## Manual steps for the owner
 
 Step 1 records a decision already taken. The others improve the local setup.
@@ -225,3 +254,4 @@ Step 1 records a decision already taken. The others improve the local setup.
 6. **shadcn MCP server.** `.mcp.json` registers the shadcn MCP server (pointed at `apps/web`). It loads in the next Claude Code session; approve the `shadcn` server when prompted. If it fails to start on native Windows, register it locally with `claude mcp add shadcn -- cmd /c npx -y shadcn@4.22.0 mcp --cwd apps/web`.
 7. **CODEOWNERS.** Replace the placeholder handles in `.github/CODEOWNERS` with real GitHub usernames once areas 2-4 are assigned, then uncomment the rules.
 8. **Upgrade Node.js to 24.22.** This machine runs Node 24.15.0 from `C:\Program Files\nodejs`, while `.node-version`, CI and the Docker images use 24.22.0, and `package.json` now asks for 24.22 or newer. On 24.15.0 about one API integration test file in eight died with a silent native abort (`Worker exited unexpectedly with exit code 3221226505`, 0xC0000409) in both the forks and threads pools; on 24.22.0 there were none in 88 file runs (20 Oct 2026). Install 24.22 from nodejs.org (the installer needs admin rights).
+9. **Sign in to the GitHub CLI.** Run `gh auth login` once. The task branches are committed locally in order, and each needs pushing, a pull request, green CI and a merge before the next; that waits for the sign-in.
