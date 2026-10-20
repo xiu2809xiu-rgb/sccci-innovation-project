@@ -14,6 +14,10 @@ updates:
       default-days: 7
     versioning-strategy: increase
     open-pull-requests-limit: 5
+    ignore:
+      # Types follow the Node.js runtime (24, in .node-version); a new major is a deliberate upgrade.
+      - dependency-name: '@types/node'
+        update-types: ['version-update:semver-major']
     groups:
       production:
         dependency-type: production
@@ -52,6 +56,10 @@ updates:
       timezone: Asia/Singapore
     cooldown:
       default-days: 7
+    ignore:
+      # The images stay on Node.js 24 LTS, like .node-version and CI, until an ADR moves them.
+      - dependency-name: node
+        update-types: ['version-update:semver-major']
     labels: [dependencies, 'type: chore']
     commit-message:
       prefix: chore
