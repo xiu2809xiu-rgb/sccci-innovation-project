@@ -173,4 +173,33 @@ describe('Run sync', () => {
       '/employees?view=conflicts',
     );
   });
+
+  it('lists what each system says for a conflict, not the raw candidates', async () => {
+    const { dialog } = await previewSingaporeHr(
+      run({
+        counts: { fetched: 12, created: 0, updated: 0, unchanged: 11, conflicts: 1, errors: 0 },
+        previewItems: [
+          {
+            employeeNo: 'E100006',
+            entityCode: 'SG01',
+            kind: 'CONFLICT',
+            field: 'jobTitle',
+            before: 'Head of Wealth Management',
+            after: [
+              { connectorId: 'cn-hq', value: 'Head of Wealth Management' },
+              { connectorId: 'sg-hr', value: 'Managing Director, Wealth Management' },
+            ],
+          },
+        ],
+      }),
+    );
+    const preview = await within(dialog).findByRole('table', {
+      name: 'Changes the sync would make',
+    });
+    expect(within(preview).getByText('SG HR:')).toBeInTheDocument();
+    expect(within(preview).getByText('Managing Director, Wealth Management')).toBeInTheDocument();
+    expect(within(preview).getByText('CN HQ:')).toBeInTheDocument();
+    expect(within(preview).getByText('Head of Wealth Management')).toBeInTheDocument();
+    expect(within(preview).queryByText(/connectorId/)).not.toBeInTheDocument();
+  });
 });

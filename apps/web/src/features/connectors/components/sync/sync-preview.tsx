@@ -1,6 +1,13 @@
-import { employeeFieldSchema, type SyncPreviewItem, type SyncRunDetail } from '@huitong/shared';
+import {
+  conflictCandidateSchema,
+  employeeFieldSchema,
+  type EmployeeField,
+  type SyncPreviewItem,
+  type SyncRunDetail,
+} from '@huitong/shared';
 import { ArrowRight, GitCompareArrows, Plus, RefreshCw } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
+import { z } from 'zod';
 
 import { StatusBadge } from '@/components/common/status-badge';
 import { FieldValue } from '@/features/employees/components/field-value';
@@ -11,6 +18,43 @@ const KIND_STYLE = {
   UPDATE: { tone: 'info', icon: RefreshCw },
   CONFLICT: { tone: 'warning', icon: GitCompareArrows },
 } as const;
+
+/** A conflict has no single new value: its `after` holds what each system says. */
+const previewCandidatesSchema = z.array(
+  conflictCandidateSchema.pick({ connectorId: true, value: true }),
+);
+
+function ChangeValue({ item, field }: { item: SyncPreviewItem; field: EmployeeField }) {
+  const { t } = useTranslation('connectors');
+  const labels = useEmployeeLabels();
+  const candidates =
+    item.kind === 'CONFLICT' ? previewCandidatesSchema.safeParse(item.after) : undefined;
+  if (candidates?.success) {
+    return (
+      <dl className="space-y-1">
+        {candidates.data.map((candidate) => (
+          <div key={candidate.connectorId} className="flex flex-wrap gap-x-2">
+            <dt className="text-muted-foreground">{labels.source(candidate.connectorId)}:</dt>
+            <dd className="font-medium text-foreground">
+              <FieldValue field={field} value={candidate.value} />
+            </dd>
+          </div>
+        ))}
+      </dl>
+    );
+  }
+  return (
+    <span className="flex flex-wrap items-center gap-1.5">
+      <span className="text-muted-foreground">
+        <FieldValue field={field} value={item.before} />
+      </span>
+      <ArrowRight className="size-3.5 text-muted-foreground" aria-label={t('sync.preview.to')} />
+      <span className="font-medium text-foreground">
+        <FieldValue field={field} value={item.after} />
+      </span>
+    </span>
+  );
+}
 
 function PreviewRow({ item }: { item: SyncPreviewItem }) {
   const { t } = useTranslation('connectors');
@@ -30,18 +74,7 @@ function PreviewRow({ item }: { item: SyncPreviewItem }) {
       </td>
       <td className="px-3 py-2">
         {field.success ? (
-          <span className="flex flex-wrap items-center gap-1.5">
-            <span className="text-muted-foreground">
-              <FieldValue field={field.data} value={item.before} />
-            </span>
-            <ArrowRight
-              className="size-3.5 text-muted-foreground"
-              aria-label={t('sync.preview.to')}
-            />
-            <span className="font-medium text-foreground">
-              <FieldValue field={field.data} value={item.after} />
-            </span>
-          </span>
+          <ChangeValue item={item} field={field.data} />
         ) : (
           <span className="text-muted-foreground">{t('sync.preview.newRecord')}</span>
         )}
