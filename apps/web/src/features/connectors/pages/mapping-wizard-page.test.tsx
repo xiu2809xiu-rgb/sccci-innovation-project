@@ -16,7 +16,7 @@ function proposal(overrides: Partial<MappingProposal> = {}): MappingProposal {
     entityCode: 'MY01',
     connectorId: null,
     fileName: 'my-payroll-sample.csv',
-    headers: ['员工编号', '入职日期', '身份证号码'],
+    headers: ['员工编号', '入职日期', '身份证号码', '性别'],
     sampleRowCount: 12,
     columns: [
       {
@@ -45,6 +45,16 @@ function proposal(overrides: Partial<MappingProposal> = {}): MappingProposal {
         confidence: 0,
         rationale: 'Withheld: a national ID number.',
         flags: ['PROHIBITED_FIELD'],
+      },
+      {
+        sourceColumn: '性别',
+        sampleShape: 'withheld',
+        target: null,
+        transform: null,
+        confidence: 1,
+        rationale: 'This column holds gender. HuiTong never stores it, so it stays unmapped.',
+        flags: ['PROHIBITED_FIELD'],
+        prohibitedKind: 'GENDER',
       },
     ],
     fixedValues: [{ target: 'entityCode', value: 'MY01', rationale: 'Every row is MY01.' }],
@@ -105,6 +115,7 @@ describe('Mapping wizard', () => {
       name: 'Proposed mapping for my-payroll-sample.csv',
     });
     expect(within(review).getByText('Never mapped: national ID numbers')).toBeInTheDocument();
+    expect(within(review).getByText('Never mapped: gender')).toBeInTheDocument();
     expect(within(review).getByText('98%')).toBeInTheDocument();
     expect(screen.getByText('Requires approval')).toBeInTheDocument();
     await user.click(screen.getByRole('button', { name: 'Continue to approval' }));

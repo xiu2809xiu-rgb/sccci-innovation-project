@@ -66,12 +66,27 @@ describe('checkProhibited', () => {
   it('flags a column whose values look like ID numbers even under an innocent header', () => {
     expect(checkProhibited('Reference', ['S1234567D', 'T7654321A'])).toEqual({
       prohibited: true,
+      kind: 'NATIONAL_ID',
       reason: 'VALUES',
     });
     expect(checkProhibited('Reference', ['900101-14-5678', 'n/a'])).toEqual({
       prohibited: true,
+      kind: 'NATIONAL_ID',
       reason: 'VALUES',
     });
     expect(checkProhibited('Staff ID', ['E300101', 'E300102']).prohibited).toBe(false);
+  });
+
+  it('flags gender columns by header, in English, Malay and Chinese, but not words that contain "sex"', () => {
+    for (const header of ['Gender', 'Sex', 'Employee sex', 'Jantina', '性别']) {
+      expect(checkProhibited(header, ['M', 'F'])).toEqual({
+        prohibited: true,
+        kind: 'GENDER',
+        reason: 'HEADER',
+      });
+    }
+    for (const header of ['Sussex office', 'Essex branch', 'Status']) {
+      expect(checkProhibited(header, ['M', 'F']).prohibited).toBe(false);
+    }
   });
 });

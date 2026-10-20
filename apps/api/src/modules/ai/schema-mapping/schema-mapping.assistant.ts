@@ -4,7 +4,9 @@ import {
   LOW_CONFIDENCE_THRESHOLD,
   type AiMappingOutput,
   type AiProvider,
+  type Locale,
   type MappingTarget,
+  type ProhibitedKind,
   type ProposalColumn,
   type ProposalFixedValue,
   type ProposalFlag,
@@ -31,6 +33,18 @@ export interface MappingSuggestion {
 }
 
 const unique = (flags: readonly ProposalFlag[]) => [...new Set(flags)];
+
+/** Why a withheld column stays unmapped; the model never saw it, so the server says why. */
+const WITHHELD: Record<ProhibitedKind, Record<Locale, string>> = {
+  NATIONAL_ID: {
+    en: 'This column holds national ID numbers. HuiTong never stores them, so it stays unmapped.',
+    'zh-CN': '此列为身份证件号码。汇通绝不存储此类数据，因此不予映射。',
+  },
+  GENDER: {
+    en: 'This column holds gender. HuiTong never stores it, so it stays unmapped.',
+    'zh-CN': '此列为性别信息。汇通绝不存储此类数据，因此不予映射。',
+  },
+};
 
 /**
  * The AI schema-mapping assistant: asks the configured model (the mock by
@@ -94,8 +108,8 @@ export class SchemaMappingAssistant implements OnModuleInit {
 
   /**
    * Server-side rules on whatever the model said: one row per uploaded column
-   * (invented columns are dropped), national ID columns never mapped, each
-   * target at most once, and low confidence always flagged.
+   * (invented columns are dropped), withheld columns never mapped, each target
+   * at most once, and low confidence always flagged.
    */
   private static reconcile(
     output: AiMappingOutput,
@@ -106,14 +120,15 @@ export class SchemaMappingAssistant implements OnModuleInit {
     const columns = request.columns.map((column): ProposalColumn => {
       const suggestion = suggestions.get(column.header);
       const base = { sourceColumn: column.header, sampleShape: column.shape };
-      if (column.prohibited) {
+      if (column.withheld !== null) {
         return {
           ...base,
           target: null,
           transform: null,
           confidence: 1,
-          rationale: suggestion?.rationale ?? 'National ID numbers are never stored.',
+          rationale: WITHHELD[column.withheld][request.language],
           flags: ['PROHIBITED_FIELD'],
+          prohibitedKind: column.withheld,
         };
       }
       const target = suggestion?.target ?? null;

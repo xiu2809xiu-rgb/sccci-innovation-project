@@ -18,7 +18,11 @@ import { SampleFileReader } from '../../mapping/proposals/sample-file-reader.js'
 import { TransformerRegistry } from '../../mapping/transformers/transformer-registry.js';
 import { mockSchemaMapping } from './mock-schema-mapper.js';
 import { SchemaMappingAssistant } from './schema-mapping.assistant.js';
-import type { MappingRequest } from './schema-mapping.prompt.js';
+import {
+  buildSchemaMappingPrompt,
+  modelRequestOf,
+  type MappingRequest,
+} from './schema-mapping.prompt.js';
 
 const SAMPLE = new URL(
   '../../../../../web/public/samples/organisation-e-malaysia-hr-export.csv',
@@ -41,13 +45,16 @@ async function myRequest(): Promise<{ request: MappingRequest; rows: Record<stri
 }
 
 describe('mockSchemaMapping on the MY01 sample', () => {
-  it('maps English and Chinese headers, and never maps the national ID column', async () => {
+  it('maps English and Chinese headers, and never sees the national ID column', async () => {
     const { request } = await myRequest();
-    const output = mockSchemaMapping(request);
+    const output = mockSchemaMapping(modelRequestOf(request));
     const byColumn = new Map(output.columns.map((column) => [column.sourceColumn, column]));
 
-    expect(byColumn.get('IC No.')).toMatchObject({ target: null, flags: ['PROHIBITED_FIELD'] });
-    expect(request.columns.find((column) => column.header === 'IC No.')?.shape).toBe('withheld');
+    expect(byColumn.has('IC No.')).toBe(false);
+    expect(request.columns.find((column) => column.header === 'IC No.')).toMatchObject({
+      shape: 'withheld',
+      withheld: 'NATIONAL_ID',
+    });
     expect(byColumn.get('Staff ID')).toMatchObject({ target: 'employeeNo', confidence: 0.95 });
     expect(byColumn.get('中文姓名')).toMatchObject({
       target: 'fullNameLocal',
@@ -83,7 +90,7 @@ describe('mockSchemaMapping on the MY01 sample', () => {
 
   it('produces a mapping that HR could approve as it is: every sample row maps to a valid new employee', async () => {
     const { request, rows } = await myRequest();
-    const output = mockSchemaMapping(request);
+    const output = mockSchemaMapping(modelRequestOf(request));
     const mappings: FieldMapping[] = [
       ...output.columns.flatMap((column) =>
         column.target && column.transform
@@ -116,7 +123,7 @@ describe('mockSchemaMapping on the MY01 sample', () => {
 
   it('writes its rationales in Chinese when asked', async () => {
     const { request } = await myRequest();
-    const output = mockSchemaMapping({ ...request, language: 'zh-CN' });
+    const output = mockSchemaMapping(modelRequestOf({ ...request, language: 'zh-CN' }));
     expect(
       output.columns.find((column) => column.sourceColumn === '入职日期')?.rationale,
     ).toContain('表头“入职日期”即入职日期');
@@ -129,9 +136,9 @@ describe('SchemaMappingAssistant', () => {
     language: 'en',
     entity: { code: null, currency: null, defaultLocation: null, phoneCountryCode: null },
     columns: [
-      { header: 'Staff ID', shape: 'A######', categories: null, prohibited: false },
-      { header: 'NRIC', shape: 'withheld', categories: null, prohibited: true },
-      { header: 'Code', shape: 'A######', categories: null, prohibited: false },
+      { header: 'Staff ID', shape: 'A######', categories: null, withheld: null },
+      { header: 'NRIC', shape: 'withheld', categories: null, withheld: 'NATIONAL_ID' },
+      { header: 'Code', shape: 'A######', categories: null, withheld: null },
     ],
   };
 
@@ -201,6 +208,41 @@ describe('SchemaMappingAssistant', () => {
       ['NRIC', null, ['PROHIBITED_FIELD']],
       ['Code', null, ['NO_MATCH']],
     ]);
+    // Whatever the model says about a withheld column, the server's reason stands.
+    expect(suggestion.columns[1]).toMatchObject({
+      prohibitedKind: 'NATIONAL_ID',
+      rationale:
+        'This column holds national ID numbers. HuiTong never stores them, so it stays unmapped.',
+    });
+  });
+
+  it('leaves national ID and gender columns out of the prompt, and says why in the proposal', async () => {
+    const sample = {
+      headers: ['Staff ID', 'IC No.', '性别', 'Department'],
+      rows: [
+        { 'Staff ID': 'E300101', 'IC No.': '900101-14-5678', 性别: '男', Department: 'Finance' },
+        { 'Staff ID': 'E300102', 'IC No.': '910202-10-1234', 性别: '女', Department: 'Finance' },
+      ],
+    };
+    const mapping = buildMappingRequest(sample, {
+      systemName: 'Test',
+      language: 'zh-CN',
+      entityCode: 'MY01',
+    });
+    const prompt = buildSchemaMappingPrompt(mapping);
+    expect(prompt).toContain('Staff ID');
+    for (const hidden of ['IC No.', '性别', '900101', '男']) expect(prompt).not.toContain(hidden);
+
+    const { assistant } = assistantAnswering(JSON.stringify({ columns: [], fixedValues: [] }));
+    const suggestion = await assistant.propose(mapping, { userId: 'u', requestId: 'r' });
+    const withheld = suggestion.columns.filter((column) =>
+      column.flags.includes('PROHIBITED_FIELD'),
+    );
+    expect(withheld.map((column) => [column.sourceColumn, column.prohibitedKind])).toEqual([
+      ['IC No.', 'NATIONAL_ID'],
+      ['性别', 'GENDER'],
+    ]);
+    expect(withheld[1]?.rationale).toBe('此列为性别信息。汇通绝不存储此类数据，因此不予映射。');
   });
 
   it('records unusable output as INVALID_OUTPUT and refuses it', async () => {

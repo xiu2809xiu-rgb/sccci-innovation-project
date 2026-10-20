@@ -251,7 +251,7 @@
       },
       "useSample": "Use the synthetic Malaysia sample",
       "sampleFailed": "The sample file could not be loaded.",
-      "privacy": "Only the column headers, the shape of their values (for example E######) and the codes in category columns, such as departments or statuses, go to the AI. Personal values, such as names, emails or salaries, never do. Columns with national ID numbers are withheld and can never be mapped.",
+      "privacy": "Only the column headers, the shape of their values (for example E######) and the codes in category columns, such as departments or statuses, go to the AI. Personal values, such as names, emails or salaries, never do. Columns with national ID numbers or gender are withheld and can never be mapped.",
       "assistant": "AI mapping assistant",
       "call": {
         "idle": "not started",
@@ -274,6 +274,7 @@
       "targetFor": "Master field for the column {{column}}",
       "notMapped": "Not mapped",
       "neverMapped": "Never mapped: national ID numbers",
+      "neverMappedGender": "Never mapped: gender",
       "plainCopy": "Copied as it is: check the format",
       "why": "Why this mapping",
       "flags": {

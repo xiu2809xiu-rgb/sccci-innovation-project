@@ -13,6 +13,16 @@ export const mappingProposalStatusSchema = z.enum(MAPPING_PROPOSAL_STATUSES);
 export type MappingProposalStatus = z.infer<typeof mappingProposalStatusSchema>;
 
 /**
+ * Data HuiTong must never store (CLAUDE.md data rules, ADR 0011). A column that
+ * holds it is withheld from the model entirely and never mapped.
+ */
+export const PROHIBITED_KINDS = ['NATIONAL_ID', 'GENDER'] as const;
+
+export const prohibitedKindSchema = z.enum(PROHIBITED_KINDS);
+
+export type ProhibitedKind = z.infer<typeof prohibitedKindSchema>;
+
+/**
  * Why a proposed column needs a closer look. PROHIBITED_FIELD marks data
  * HuiTong must never store, such as national ID numbers: it is never mapped.
  */
@@ -33,13 +43,15 @@ export const LOW_CONFIDENCE_THRESHOLD = 0.7;
 /** The AI's suggestion for one column of the sample file. */
 export const proposalColumnSchema = z.object({
   sourceColumn: z.string().min(1).max(200),
-  /** What the values look like (`E######`, `YYYY/MM/DD`); the values themselves never reach the model. */
+  /** What the values look like (`E######`, `YYYY/MM/DD`), not the values. */
   sampleShape: z.string().max(200),
   target: mappingTargetSchema.nullable(),
   transform: transformSpecSchema.nullable(),
   confidence: z.number().min(0).max(1),
   rationale: z.string().max(600),
   flags: z.array(proposalFlagSchema),
+  /** For a PROHIBITED_FIELD column, what it holds. Proposals made before gender was blocked lack it. */
+  prohibitedKind: prohibitedKindSchema.optional(),
 });
 
 export type ProposalColumn = z.infer<typeof proposalColumnSchema>;
