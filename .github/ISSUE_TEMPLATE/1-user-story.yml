@@ -1,0 +1,88 @@
+name: User story
+description: Something a user can do once it ships, with testable acceptance criteria.
+title: 'Story: '
+labels: ['type: story']
+body:
+  - type: markdown
+    attributes:
+      value: |
+        A story is ready for a sprint when it meets the [Definition of Ready](../blob/main/docs/agile/definition-of-ready-and-done.md#definition-of-ready): a clear user and value, acceptance criteria that can be tested, an estimate, and no open blocker. Add it to its epic as a sub-issue.
+  - type: dropdown
+    id: area
+    attributes:
+      label: Ownership area
+      options:
+        - 'Area 1: Integration Core + platform base'
+        - 'Area 2: Workflow automation'
+        - 'Area 3: Attendance, leave and reporting'
+        - 'Area 4: Governance, security and monitoring'
+        - 'Team: assessments and process'
+    validations:
+      required: true
+  - type: textarea
+    id: story
+    attributes:
+      label: Story
+      description: Who wants it, what they want, and why. Use a persona from docs/design-thinking/personas.md.
+      placeholder: As a Singapore HR executive, I want …, so that …
+    validations:
+      required: true
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Acceptance criteria
+      description: Each criterion is one test. Write them so that a teammate can check them without asking you.
+      value: |
+        - [ ] Given …, when …, then …
+        - [ ] Given …, when …, then …
+    validations:
+      required: true
+  - type: dropdown
+    id: estimate
+    attributes:
+      label: Estimate (story points)
+      options: ['1', '2', '3', '5', '8', '13']
+    validations:
+      required: true
+  - type: dropdown
+    id: priority
+    attributes:
+      label: Priority (MoSCoW)
+      options: [Must, Should, Could]
+    validations:
+      required: true
+  - type: dropdown
+    id: requirements
+    attributes:
+      label: Module requirements covered
+      multiple: true
+      options:
+        - M1 Design thinking
+        - M2 GRS by design
+        - M3 AI-assisted coding
+        - M4 Best practices
+        - M5 Team Git workflow
+        - M6 Deploy and monitor
+  - type: textarea
+    id: tests
+    attributes:
+      label: How it will be tested
+      description: Which unit, integration or e2e tests prove the criteria (see docs/agile/test-plan.md).
+      placeholder: Integration test for the endpoint (happy path and an auth failure); a Playwright step for the screen.
+  - type: textarea
+    id: done
+    attributes:
+      label: Definition of Done
+      description: Tick these in the pull request that closes the story.
+      value: |
+        - [ ] Acceptance criteria met and demonstrated
+        - [ ] `pnpm lint`, `pnpm typecheck`, `pnpm test` and `pnpm build` pass; CI and security checks green
+        - [ ] Tests added: unit for domain logic, integration for endpoints, e2e for user journeys
+        - [ ] UI: every state, EN and 中文 strings, keyboard and reduced motion checked, screenshots in the PR
+        - [ ] Writes audited, endpoints guarded by RBAC, input validated, synthetic data only
+        - [ ] Traceability matrix, ADRs and the AI usage log updated where relevant
+        - [ ] Reviewed and merged into main through a pull request
+  - type: textarea
+    id: notes
+    attributes:
+      label: Notes, risks or open questions

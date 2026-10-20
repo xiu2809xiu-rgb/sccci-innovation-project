@@ -1,0 +1,28 @@
+name: Spike
+description: Time-boxed research that ends in a decision (an ADR, an assumption update or a story).
+title: 'Spike: '
+labels: ['type: spike']
+body:
+  - type: textarea
+    id: question
+    attributes:
+      label: Question to answer
+      placeholder: Can the CN HQ SAP export be pulled through an OData API instead of a CSV file?
+    validations:
+      required: true
+  - type: dropdown
+    id: timebox
+    attributes:
+      label: Time box
+      options: ['2 hours', '4 hours', '1 day', '2 days']
+    validations:
+      required: true
+  - type: textarea
+    id: output
+    attributes:
+      label: Output
+      value: |
+        - [ ] Findings written up (ADR, assumption A-xx or a note in the issue)
+        - [ ] Follow-up stories created, or a decision not to proceed
+    validations:
+      required: true

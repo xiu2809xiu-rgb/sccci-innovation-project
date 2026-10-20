@@ -1,6 +1,7 @@
 name: Bug report
-description: Something does not work as expected.
-labels: [bug]
+description: Something does not work as expected. Security problems go to the private report instead (see SECURITY.md).
+title: 'Bug: '
+labels: ['type: bug']
 body:
   - type: dropdown
     id: area
@@ -11,6 +12,17 @@ body:
         - 'Area 2: Workflow automation'
         - 'Area 3: Attendance, leave and reporting'
         - 'Area 4: Governance, security and monitoring'
+    validations:
+      required: true
+  - type: dropdown
+    id: severity
+    attributes:
+      label: Severity
+      options:
+        - 'S1: blocks a demo or loses data'
+        - 'S2: a feature does not work and there is no workaround'
+        - 'S3: a feature misbehaves, with a workaround'
+        - 'S4: cosmetic'
     validations:
       required: true
   - type: textarea

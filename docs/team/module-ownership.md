@@ -298,27 +298,7 @@ Area 2 starts where the connector hub stops. Area 1 verifies, stores and publish
 
 ## Shared definition of done (every PR, every area)
 
-This is CLAUDE.md section 11, plus the team rules above.
-
-- [ ] `pnpm lint`, `pnpm typecheck`, `pnpm test` and `pnpm build` pass, and `docker compose up --build` still works.
-- [ ] **Tests:** new domain logic has unit tests, keeping at least 80% line coverage on domain modules. New endpoints have Supertest tests for the happy path and an auth failure.
-- [ ] **API:**
-  - inputs are validated with the shared zod schemas
-  - list endpoints are paginated, and every new query path has an index
-  - every write is audited
-  - Swagger is current
-- [ ] **UI:**
-  - every state is handled: loading, empty, error (with retry and `traceId`), partial, success and permission-denied
-  - EN and 中文 strings are added, and the key-parity test passes
-  - keyboard use and reduced motion are checked
-  - the page uses at least one React Bits item, recorded in `docs/design/reactbits-usage.md`
-  - screenshots in both themes are in the PR
-- [ ] **Docs:**
-  - [requirements-traceability.md](../requirements-traceability.md) rows are updated
-  - an ADR is added if a decision changed
-  - [assumptions.md](../assumptions.md) is updated if an assumption was confirmed or broken
-  - the AI usage log has an entry if the work was AI-assisted
-- [ ] **Review:** at least one teammate approves. Changes to shared files are approved by the platform owner.
+The Definition of Ready and the Definition of Done are written once, in [docs/agile/definition-of-ready-and-done.md](../agile/definition-of-ready-and-done.md). They apply to every area and every pull request, and the pull request template repeats the Done checklist.
 
 ## Shared-files protocol
 
