@@ -1,9 +1,12 @@
 import type { ClassificationLevel, EntityCode, Locale } from '@huitong/shared';
 
-/** One conflict as the model sees it. Values above INTERNAL are withheld (null), never sent. */
+/**
+ * One conflict as the model sees it: the employee by number, never by name,
+ * and values above INTERNAL withheld (null), never sent (ADR 0011).
+ */
 export interface DiscrepancyRequest {
   language: Locale;
-  employee: { name: string; entityCode: EntityCode };
+  employee: { employeeNo: string; entityCode: EntityCode };
   field: { label: string; classification: ClassificationLevel };
   candidates: { system: string; value: string | null; changedAt: string | null }[];
 }
