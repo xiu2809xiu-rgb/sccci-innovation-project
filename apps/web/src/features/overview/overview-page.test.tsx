@@ -170,6 +170,57 @@ describe('OverviewPage', () => {
     expect(await screen.findByText('We could not load this')).toBeInTheDocument();
   });
 
+  it('warns that figures may be out of date while a live system needs attention', async () => {
+    const [sgHr, excel] = overview().connectors;
+    if (!sgHr || !excel) throw new Error('fixture changed');
+    const cnHq: Overview['connectors'][number] = {
+      ...sgHr,
+      id: 'cn-hq',
+      name: 'China HQ SAP',
+      nameZh: '集团总部 SAP',
+      type: 'CN_HQ_SAP',
+      region: 'CN',
+      recentRuns: [
+        {
+          id: 'run-9',
+          status: 'FAILED',
+          trigger: 'MANUAL',
+          queuedAt: NOW,
+          finishedAt: NOW,
+          conflictCount: 0,
+          errorCount: 1,
+        },
+      ],
+    };
+    // SG HR reports an error, CN HQ's last run failed, and the Excel master is retired, so not counted.
+    const data = overview({ connectors: [{ ...sgHr, status: 'ERROR' }, cnHq, excel] });
+    renderApp('/overview', routesFor('HR_SG', data));
+    expect(
+      await screen.findByText(
+        '2 connected systems need attention, so some figures may be out of date.',
+      ),
+    ).toBeInTheDocument();
+  });
+
+  it('says nothing about stale figures while every live system is healthy', async () => {
+    renderApp('/overview', routesFor('HR_SG', overview()));
+    await screen.findByRole('heading', { name: 'The employee master is empty' });
+    expect(screen.queryByText(/may be out of date/)).not.toBeInTheDocument();
+  });
+
+  it('warns in Chinese too', async () => {
+    const [sgHr, excel] = overview().connectors;
+    if (!sgHr || !excel) throw new Error('fixture changed');
+    renderApp(
+      '/overview',
+      routesFor('HR_HQ', overview({ connectors: [{ ...sgHr, status: 'DEGRADED' }, excel] })),
+      'zh-CN',
+    );
+    expect(
+      await screen.findByText('有 1 个连接系统需要处理，部分数据可能不是最新的。'),
+    ).toBeInTheDocument();
+  });
+
   it('speaks Chinese, including connector names', async () => {
     renderApp('/overview', routesFor('HR_HQ', overview()), 'zh-CN');
     expect(await screen.findByRole('heading', { level: 1, name: '概览' })).toBeInTheDocument();
