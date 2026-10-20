@@ -25,6 +25,7 @@ This folder records the significant technical decisions behind HuiTong 汇通, t
 | [0015](0015-i18n-and-fonts.md)                  | Runtime bilingual UI with namespaced translations and self-hosted fonts | Accepted | 2026-10-20 |
 | [0016](0016-observability-baseline.md)          | Observability baseline and first-party clickstream analytics            | Accepted | 2026-10-20 |
 | [0017](0017-ui-component-registries.md)         | shadcn registries for UI components and React Bits licence handling     | Accepted | 2026-10-20 |
+| [0018](0018-web-csp-inline-styles.md)           | Allow inline styles in the web content security policy                  | Accepted | 2026-10-20 |
 
 ## Statuses
 

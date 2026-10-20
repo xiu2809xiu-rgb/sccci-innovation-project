@@ -1,0 +1,203 @@
+{
+  "app": {
+    "name": "HuiTong",
+    "nameLocal": "汇通",
+    "fullName": "HuiTong 汇通",
+    "tagline": "HR integration for Singapore and China HQ",
+    "syntheticData": "Synthetic demo data",
+    "syntheticDataHint": "Every person, record and number in this demo is generated. No real employee data is used, and no national ID numbers are stored."
+  },
+  "nav": {
+    "label": "Main navigation",
+    "groups": {
+      "workspace": "Workspace",
+      "automation": "Automation",
+      "governance": "Governance"
+    },
+    "overview": "Overview",
+    "employees": "Employees",
+    "connectors": "Connectors",
+    "newMapping": "New mapping",
+    "integrationMap": "Integration map",
+    "workflows": "Workflows",
+    "tasks": "My tasks",
+    "workflowInstance": "Workflow",
+    "attendanceLeave": "Attendance and leave",
+    "leaveMappings": "Leave mappings",
+    "reportTemplate": "Report template",
+    "reports": "Reports",
+    "governance": "Governance",
+    "audit": "Audit log",
+    "analytics": "Analytics",
+    "settings": "Settings",
+    "connectorDetail": "Connector"
+  },
+  "shell": {
+    "skipToContent": "Skip to main content",
+    "toggleSidebar": "Toggle navigation",
+    "breadcrumb": "Breadcrumb",
+    "search": "Search or jump to…",
+    "commandPalette": {
+      "title": "Command palette",
+      "description": "Jump to a page or run an action",
+      "placeholder": "Type a page or an action…",
+      "empty": "Nothing matches that search.",
+      "groups": {
+        "navigate": "Go to",
+        "preferences": "Preferences",
+        "session": "Session"
+      },
+      "switchLanguage": "Switch language to {{language}}",
+      "switchTheme": "Switch to {{theme}} theme",
+      "signOut": "Sign out"
+    },
+    "language": {
+      "label": "Language",
+      "en": "English",
+      "zh-CN": "简体中文"
+    },
+    "theme": {
+      "label": "Theme",
+      "light": "Light",
+      "dark": "Dark",
+      "system": "System"
+    },
+    "roleSwitcher": {
+      "label": "Demo role",
+      "description": "Sign in as the seeded demo user for another role. Available in demo mode only.",
+      "switched": "Now signed in as {{name}} ({{role}})",
+      "failed": "Could not switch role"
+    },
+    "notifications": {
+      "label": "Notifications",
+      "title": "Notifications",
+      "empty": "You are all caught up.",
+      "unread_one": "{{count}} new notification",
+      "unread_other": "{{count}} new notifications",
+      "markAllRead": "Mark all as read",
+      "pendingApprovals": "Waiting for your approval",
+      "liveUpdates": "Live updates"
+    },
+    "userMenu": {
+      "label": "Account",
+      "signedInAs": "Signed in as",
+      "settings": "Settings",
+      "signOut": "Sign out"
+    },
+    "live": {
+      "connected": "Live updates on",
+      "reconnecting": "Reconnecting to live updates…"
+    }
+  },
+  "actions": {
+    "retry": "Try again",
+    "copy": "Copy",
+    "copied": "Copied",
+    "cancel": "Cancel",
+    "close": "Close",
+    "confirm": "Confirm",
+    "save": "Save",
+    "back": "Go back",
+    "viewAll": "View all",
+    "open": "Open",
+    "refresh": "Refresh",
+    "goToOverview": "Go to overview"
+  },
+  "states": {
+    "loading": "Loading…",
+    "updated": "Updated {{time}}",
+    "error": {
+      "title": "We could not load this",
+      "description": "Try again. If it keeps happening, quote the trace ID to support.",
+      "traceId": "Trace ID",
+      "copyTraceId": "Copy trace ID"
+    },
+    "permissionDenied": {
+      "title": "You do not have access to this page",
+      "description": "Your role ({{role}}) does not include this area. Ask a system administrator if you need it."
+    },
+    "partial": "Some sources did not respond. The figures below may be incomplete.",
+    "planned": {
+      "title": "Being built",
+      "description": "This area is part of the next release. It will appear here once it is ready."
+    },
+    "notFound": {
+      "title": "Page not found",
+      "description": "The page you asked for does not exist or has moved."
+    },
+    "crash": {
+      "title": "Something went wrong on this page",
+      "description": "The error has been logged. Reload the page, or go back to the overview."
+    }
+  },
+  "errors": {
+    "VALIDATION_FAILED": "Some details are not valid. Check the highlighted fields.",
+    "UNAUTHENTICATED": "Please sign in to continue.",
+    "INVALID_CREDENTIALS": "That email and password do not match.",
+    "SESSION_EXPIRED": "Your session has ended. Please sign in again.",
+    "FORBIDDEN": "Your role does not allow this action.",
+    "CSRF_INVALID": "Your session security token expired. Reload the page and try again.",
+    "NOT_FOUND": "We could not find that record.",
+    "CONFLICT": "Someone else changed this record. Reload to see the latest version.",
+    "IDEMPOTENCY_CONFLICT": "This request was already submitted with different details.",
+    "RATE_LIMITED": "Too many attempts. Wait a minute and try again.",
+    "PAYLOAD_TOO_LARGE": "That file or request is too large.",
+    "DEMO_MODE_DISABLED": "Demo sign-in is turned off on this server.",
+    "WEBHOOK_SIGNATURE_INVALID": "The webhook signature could not be verified.",
+    "UPSTREAM_UNAVAILABLE": "A connected system did not respond. Try again shortly.",
+    "AI_OUTPUT_INVALID": "The AI suggestion could not be used. Nothing was changed.",
+    "SERVICE_UNAVAILABLE": "HuiTong is temporarily unavailable. Try again shortly.",
+    "INTERNAL": "Something went wrong on our side.",
+    "NETWORK_ERROR": "We could not reach the server. Check your connection.",
+    "CONTRACT_MISMATCH": "The server sent something unexpected. Reload the page."
+  },
+  "masking": {
+    "hidden": "Hidden",
+    "whyHidden": "Why is this hidden?",
+    "reason": {
+      "ROLE_CLEARANCE": "Your role is not cleared for {{classification}} data.",
+      "ENTITY_SCOPE": "You can see {{classification}} data only for your own entity.",
+      "CROSS_BORDER_NOT_APPROVED": "This field may only leave Singapore under an approved cross-border transfer, and none covers it yet."
+    }
+  },
+  "classification": {
+    "label": "Data classification",
+    "PUBLIC": "Public",
+    "INTERNAL": "Internal",
+    "CONFIDENTIAL": "Confidential",
+    "RESTRICTED": "Restricted",
+    "description": {
+      "PUBLIC": "May be shared outside the company.",
+      "INTERNAL": "For employees with a business need.",
+      "CONFIDENTIAL": "Limited to HR and named roles.",
+      "RESTRICTED": "Payroll and banking data. HR of the employee's own entity only."
+    }
+  },
+  "roles": {
+    "SYSTEM_ADMIN": "System administrator",
+    "HR_SG": "HR, Singapore",
+    "HR_HQ": "HR, China HQ",
+    "HIRING_MANAGER": "Hiring manager",
+    "ADMIN_OPS": "Admin operations",
+    "MANAGEMENT": "Management",
+    "AUDITOR": "Auditor"
+  },
+  "entities": {
+    "SG01": "Singapore",
+    "CN01": "China HQ",
+    "MY01": "Malaysia"
+  },
+  "pagination": {
+    "label": "Pagination",
+    "previous": "Previous page",
+    "next": "Next page",
+    "range": "{{from}}–{{to}} of {{total}}",
+    "rowsPerPage": "Rows per page"
+  },
+  "table": {
+    "sortAscending": "Sort ascending",
+    "sortDescending": "Sort descending",
+    "sortedAscending": "sorted ascending",
+    "sortedDescending": "sorted descending"
+  }
+}

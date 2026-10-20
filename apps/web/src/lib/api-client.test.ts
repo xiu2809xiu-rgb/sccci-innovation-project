@@ -98,6 +98,15 @@ describe('ApiClient', () => {
     expect(onSessionExpired).toHaveBeenCalledOnce();
   });
 
+  it('does not try to refresh in a browser that never started a session', async () => {
+    const unauthenticated = json(401, {
+      error: { code: 'UNAUTHENTICATED', message: 'no session', traceId: 't1' },
+    });
+    const { api, fetchImpl } = client([unauthenticated], '');
+    await expect(api.get('/auth/me', greeting)).rejects.toMatchObject({ code: 'UNAUTHENTICATED' });
+    expect(fetchImpl).toHaveBeenCalledTimes(1);
+  });
+
   it('reports network failures without a trace id', async () => {
     const { api } = client([]);
     await expect(api.get('/a', greeting)).rejects.toMatchObject({

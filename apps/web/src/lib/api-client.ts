@@ -126,8 +126,15 @@ export class ApiClient {
     }
   }
 
-  /** One refresh at a time; concurrent 401s wait for the same attempt. */
+  /**
+   * One refresh at a time; concurrent 401s wait for the same attempt. Without a
+   * CSRF cookie no session was ever started in this browser, so there is
+   * nothing to refresh (and the CSRF guard would refuse the attempt anyway).
+   */
   private refreshOnce(): Promise<boolean> {
+    if (this.csrfToken() === undefined) {
+      return Promise.resolve(false);
+    }
     this.refreshing ??= this.send('POST', '/auth/refresh')
       .then((response) => response.ok)
       .catch(() => false)

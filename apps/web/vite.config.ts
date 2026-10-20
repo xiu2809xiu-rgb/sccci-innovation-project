@@ -22,4 +22,12 @@ export default defineConfig({
       '/health': API_ORIGIN,
     },
   },
+  build: {
+    // The import graph scripts/check-bundle-budget.mjs measures the initial-JS budget from.
+    manifest: true,
+    // The 3D chunk (three.js) is lazy and budgeted separately; the budget script guards the rest.
+    chunkSizeWarningLimit: 1000,
+    // Fonts stay files: inlined data: URIs would need `font-src data:` in the CSP.
+    assetsInlineLimit: (file) => (file.endsWith('.woff2') ? false : undefined),
+  },
 });

@@ -37,7 +37,13 @@ export default defineConfig([
   { files: ['apps/web/public/**/*.js'], extends: [browser] },
   { files: ['apps/api/**/*.ts'], extends: [nest] },
   {
-    files: ['services/**/*.ts', 'packages/**/*.{ts,js}', 'scripts/**/*.mjs', '*.js'],
+    files: [
+      'services/**/*.ts',
+      'packages/**/*.{ts,js}',
+      'scripts/**/*.mjs',
+      'apps/*/scripts/**/*.mjs',
+      '*.js',
+    ],
     extends: [node],
   },
   prettier,

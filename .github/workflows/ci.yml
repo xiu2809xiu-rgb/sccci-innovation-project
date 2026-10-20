@@ -65,6 +65,8 @@ jobs:
         run: pnpm test
       - name: Build
         run: pnpm build
+      - name: Web bundle budget (initial JS at most 250 KB gzip)
+        run: pnpm --filter @huitong/web budget
 
   docker:
     name: Docker images

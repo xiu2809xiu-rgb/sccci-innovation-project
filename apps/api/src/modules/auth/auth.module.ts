@@ -2,6 +2,7 @@ import { Module, type DynamicModule } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
 
 import { UsersModule } from '../users/users.module.js';
+import { AUTH_OPTIONS } from './auth-options.js';
 import { AuthController } from './auth.controller.js';
 import { AuthService } from './auth.service.js';
 import { DemoAuthController } from './demo-auth.controller.js';
@@ -19,6 +20,7 @@ export class AuthModule {
       imports: [JwtModule.register({}), UsersModule],
       controllers: options.demoMode ? [AuthController, DemoAuthController] : [AuthController],
       providers: [
+        { provide: AUTH_OPTIONS, useValue: options },
         AuthService,
         PasswordHasher,
         RefreshTokenRepository,

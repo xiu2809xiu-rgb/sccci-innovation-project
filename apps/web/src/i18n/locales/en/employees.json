@@ -1,0 +1,30 @@
+{
+  "title": "Employees",
+  "description": "The consolidated employee master, with the source of every field.",
+  "fields": {
+    "employeeNo": "Employee number",
+    "entityCode": "Entity",
+    "familyName": "Family name",
+    "givenName": "Given name",
+    "fullNameLatin": "Name",
+    "fullNameLocal": "Name in Chinese",
+    "preferredName": "Preferred name",
+    "workEmail": "Work email",
+    "workPhone": "Work phone",
+    "departmentCode": "Department",
+    "jobTitle": "Job title",
+    "jobTitleZh": "Job title in Chinese",
+    "jobGrade": "Job grade",
+    "managerEmployeeNo": "Manager",
+    "employmentType": "Employment type",
+    "employmentStatus": "Employment status",
+    "hireDate": "Hire date",
+    "terminationDate": "Termination date",
+    "workLocation": "Work location",
+    "costCenter": "Cost centre",
+    "dateOfBirth": "Date of birth",
+    "baseSalary": "Base salary",
+    "bankName": "Bank",
+    "bankAccountLast4": "Bank account (last 4 digits)"
+  }
+}

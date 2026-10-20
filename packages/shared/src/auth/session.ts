@@ -39,6 +39,13 @@ export const demoLoginRequestSchema = z.strictObject({
 
 export type DemoLoginRequest = z.infer<typeof demoLoginRequestSchema>;
 
+/** Public sign-in options (`GET /api/v1/auth/options`): the web app hides demo sign-in unless it is on. */
+export const authOptionsSchema = z.object({
+  demoMode: z.boolean(),
+});
+
+export type AuthOptions = z.infer<typeof authOptionsSchema>;
+
 /** Cookie and header names shared by the API and the web client. */
 export const AUTH_COOKIES = {
   access: 'ht_access',

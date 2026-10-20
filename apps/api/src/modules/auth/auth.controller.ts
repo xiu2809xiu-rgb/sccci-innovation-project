@@ -1,8 +1,9 @@
-import { Body, Controller, Get, HttpCode, Post, Req, Res } from '@nestjs/common';
+import { Body, Controller, Get, HttpCode, Inject, Post, Req, Res } from '@nestjs/common';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Throttle } from '@nestjs/throttler';
 import {
   AUTH_COOKIES,
+  authOptionsSchema,
   dataEnvelopeSchema,
   loginRequestSchema,
   sessionUserSchema,
@@ -16,6 +17,7 @@ import { CurrentUser } from '../../common/decorators/current-user.decorator.js';
 import { Public } from '../../common/decorators/route-metadata.js';
 import type { AuthenticatedUser } from '../../common/http/authenticated-user.js';
 import { requestMeta } from '../../common/http/request-meta.js';
+import { AUTH_OPTIONS, type AuthOptions } from './auth-options.js';
 import { AuthService } from './auth.service.js';
 import { createCsrfToken } from './csrf.js';
 import { readCookie, SessionCookies } from './session-cookies.js';
@@ -29,7 +31,16 @@ export class AuthController {
   constructor(
     private readonly auth: AuthService,
     private readonly cookies: SessionCookies,
+    @Inject(AUTH_OPTIONS) private readonly options: AuthOptions,
   ) {}
+
+  @Get('options')
+  @Public()
+  @ApiOperation({ summary: 'Public sign-in options, e.g. whether demo sign-in is available' })
+  @ApiOkResponse({ standardSchema: dataEnvelopeSchema(authOptionsSchema) })
+  getOptions(): DataEnvelope<AuthOptions> {
+    return { data: { demoMode: this.options.demoMode } };
+  }
 
   @Get('csrf')
   @Public()

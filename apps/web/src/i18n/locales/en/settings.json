@@ -1,0 +1,32 @@
+{
+  "title": "Settings",
+  "description": "Your language, appearance and privacy preferences, saved in this browser.",
+  "language": {
+    "title": "Language",
+    "description": "The interface language. Records keep the language they were entered in."
+  },
+  "theme": {
+    "title": "Appearance",
+    "description": "Light, dark, or follow your operating system."
+  },
+  "privacy": {
+    "title": "Privacy",
+    "description": "With your consent, HuiTong records which pages and features are used, never what you type or who you are.",
+    "consent": "Share anonymous usage analytics",
+    "gpc": "Your browser sends Global Privacy Control, so analytics stays off whatever you choose here.",
+    "saved": "Privacy preference saved"
+  },
+  "motion": {
+    "title": "Motion",
+    "description": "Animations follow your operating system’s reduced-motion setting.",
+    "reduced": "Reduced motion is on: animations are replaced by still states.",
+    "full": "Reduced motion is off: animations play briefly and only where they help."
+  },
+  "account": {
+    "title": "Account",
+    "name": "Name",
+    "email": "Email",
+    "role": "Role",
+    "entity": "Entity"
+  }
+}

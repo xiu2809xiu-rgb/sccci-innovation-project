@@ -136,7 +136,7 @@ describe('Auth (integration)', () => {
     }
   });
 
-  it('has no demo sign-in route when DEMO_MODE is off', async () => {
+  it('has no demo sign-in route when DEMO_MODE is off, and says so in its options', async () => {
     const productionLike = await createTestApp({ DEMO_MODE: 'false' });
     try {
       const client = await anonymousClient(productionLike);
@@ -145,8 +145,17 @@ describe('Auth (integration)', () => {
         .set(CSRF_HEADER, client.csrf)
         .send({ role: 'HR_SG' })
         .expect(404);
+      const options = await request(productionLike.getHttpServer())
+        .get('/api/v1/auth/options')
+        .expect(200);
+      expect(options.body).toEqual({ data: { demoMode: false } });
     } finally {
       await productionLike.close();
     }
+  });
+
+  it('advertises demo sign-in when DEMO_MODE is on', async () => {
+    const options = await request(app.getHttpServer()).get('/api/v1/auth/options').expect(200);
+    expect(options.body).toEqual({ data: { demoMode: true } });
   });
 });

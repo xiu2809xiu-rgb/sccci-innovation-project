@@ -44,10 +44,11 @@ Legend: `[x]` done and verified, `[~]` in progress, `[ ]` not started, `[!]` blo
 
 ### Phase 4: Design system and app shell
 
-- [ ] React Bits skill + catalogues read; `docs/design/reactbits-usage.md` plan; `docs/design/design-system.md`
-- [ ] Tokens, themes, i18n, layouts, shared composites
-- [ ] App shell (sidebar, breadcrumbs, command palette, language/theme toggles, role switcher, notifications)
-- [ ] Landing/login with Pro blocks + 3D teaser; Overview page
+- [x] React Bits skill read in full and catalogues reviewed; [`docs/design/reactbits-usage.md`](design/reactbits-usage.md) (13 items in use with their reduced-motion behaviour, 8 more planned, Pro blocks queued) and [`docs/design/design-system.md`](design/design-system.md)
+- [x] OKLCH tokens for light and dark themes (70 contrast checks in `tokens.test.ts`), a seven-size type scale, self-hosted Geist and Noto Sans SC, typed i18n in 12 namespaces with a parity test, layouts and shared composites (`PageHeader`, `SectionCard`, `QueryView`, `DataTable`, empty, error and permission states, status, classification, masking and synthetic-data badges)
+- [x] App shell: sidebar filtered by permission, breadcrumbs, ⌘K command palette, EN/中文 and theme menus, demo role switcher (shown only in demo mode, via `GET /api/v1/auth/options`), notifications with live updates over SSE, user menu, skip link
+- [x] Landing and sign-in page with a lazy React Three Fiber teaser of the integration map and five React Bits items; Overview page backed by a role-aware `GET /api/v1/overview`; Settings and 404 pages
+- [!] React Bits Pro blocks on the landing page: the registry proxy `proxy.collectui.pro` resets the TLS handshake from this network (worked in Phase 2); the free items stand in until it is reachable
 
 ### Phase 5: Area 1 Integration Core
 
@@ -134,6 +135,36 @@ Defects found and fixed while verifying:
 - The Prisma CLI called its update-check service from the container on every start and printed an upgrade banner; the runtime image sets `CHECKPOINT_DISABLE=1` and `PRISMA_HIDE_UPDATE_MESSAGE=1`.
 
 Incident: a quoting mistake in an inline shell command ran `docker compose down -v` mid-build, deleting the local databases (synthetic and reseedable) and garbling this report. The stack was rebuilt from empty volumes, which re-verified the migrations and seed (the compose row above), and this report was restored. Scripts are now written to files instead of being passed as inline shell strings.
+
+### Phase 4 (20 Oct 2026)
+
+| Check                                                   | Result                                                                                                                                                                                                                                   |
+| ------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `pnpm lint` / `pnpm format:check`                       | 0 problems / all files formatted                                                                                                                                                                                                         |
+| `pnpm typecheck`                                        | All 7 packages pass                                                                                                                                                                                                                      |
+| `pnpm test`                                             | 320 tests pass: shared 19, synthetic-data 23, mock-sg-hr 10, mock-cn-hq 8, mock-oa 9, web 174, api 77                                                                                                                                    |
+| `pnpm build`                                            | All packages build                                                                                                                                                                                                                       |
+| Bundle budget (`pnpm --filter @huitong/web budget`)     | Initial JS 213.7 KB gzip against the 250 KB budget. Totals for a first visit: sign-in page 306.6 KB, signed-in shell 256.0 KB, overview 327.9 KB. The 3D teaser and the other pages are separate chunks                                  |
+| Colour contrast (`tokens.test.ts`)                      | 70 checks across both themes: text pairs at least 4.5:1, focus rings, borders and chart colours at least 3:1                                                                                                                             |
+| Browser (Playwright against the built app behind nginx) | Landing, sign-in, overview, settings, 404, command palette and notifications in light/English and dark/中文: no CSP violations and no failed asset loads; the only console errors are the expected 401s from the anonymous session check |
+| `docker compose up --build`                             | All seven services healthy with the Phase 4 images                                                                                                                                                                                       |
+| Licence key                                             | Absent from every tracked and committable file (byte-for-byte scan before the commit; value never printed)                                                                                                                               |
+
+Defects found and fixed while verifying:
+
+- The current shadcn `CommandDialog` no longer wraps its children in cmdk's `<Command>`, so opening the palette crashed in the browser. The palette now wraps them, with a regression test.
+- The web CSP `style-src 'self'` blocked the inline styles that sonner and Radix inject at runtime. Styles may now be inline; scripts stay strict ([ADR 0018](adr/0018-web-csp-inline-styles.md)).
+- Vite inlined small font files as `data:` URIs, which `font-src 'self'` blocks; fonts are never inlined now.
+- On the landing page, the client tried `POST /auth/refresh` without a session and got 403 (no CSRF cookie). It now skips the refresh when no session was ever started.
+- `cn` dropped the custom `text-display` class as a colour conflict, so the headline rendered at body size; the merge config now knows the custom type sizes.
+- `space-y` margins reached the absolutely positioned layers of SpotlightCard and drew a double edge; the layers reset their margins.
+- FuzzyText passed CSS `var()` references to a canvas, which cannot resolve them; it now resolves token colours first.
+- The contrast test failed chart colour 3 at 2.53:1; it was darkened.
+- The top-bar separator and the sync-health columns were misaligned, and the Chinese headline animation was too slow; all three were adjusted after reviewing the screenshots.
+- React Router warned about a missing hydrate fallback; the root route now shows a boot splash.
+- Page tests timed out under the full parallel run; the async utility and test timeouts were raised (5 s and 15 s).
+
+Note: the React Bits Pro registry reset the TLS handshake throughout this phase, so the landing page uses free items. It answered again just after this verification run; the Pro blocks follow in a separate commit.
 
 ## Manual steps for the owner
 
