@@ -1,0 +1,16 @@
+{
+  "name": "@huitong/tsconfig",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Shared TypeScript configurations for the HuiTong monorepo.",
+  "type": "module",
+  "files": [
+    "*.json"
+  ],
+  "exports": {
+    "./base.json": "./base.json",
+    "./node.json": "./node.json",
+    "./nest.json": "./nest.json",
+    "./react.json": "./react.json"
+  }
+}

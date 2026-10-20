@@ -1,0 +1,198 @@
+/*
+ * HuiTong design tokens. See docs/design/design-system.md for how to use them.
+ *
+ * Components never use raw colours or magic numbers: they use the semantic
+ * tokens below through Tailwind utilities (bg-card, text-muted-foreground,
+ * border-input, text-success, ...). The palette steps exist only to define
+ * the semantic tokens. Contrast pairs are checked by tokens.test.ts.
+ */
+
+:root {
+  /* Palette: warm neutral grey (hue 75) */
+  --neutral-0: oklch(1 0 0);
+  --neutral-25: oklch(0.985 0.003 80);
+  --neutral-50: oklch(0.972 0.004 80);
+  --neutral-100: oklch(0.948 0.005 78);
+  --neutral-200: oklch(0.912 0.006 78);
+  --neutral-300: oklch(0.86 0.007 76);
+  --neutral-400: oklch(0.74 0.008 75);
+  --neutral-500: oklch(0.62 0.009 75);
+  --neutral-600: oklch(0.5 0.009 75);
+  --neutral-700: oklch(0.4 0.008 75);
+  --neutral-800: oklch(0.3 0.007 75);
+  --neutral-850: oklch(0.255 0.006 75);
+  --neutral-900: oklch(0.215 0.006 75);
+  --neutral-925: oklch(0.19 0.005 75);
+  --neutral-950: oklch(0.165 0.005 75);
+  --neutral-975: oklch(0.145 0.004 75);
+
+  /* Palette: deep jade, the one accent (hue 172) */
+  --jade-50: oklch(0.97 0.02 172);
+  --jade-100: oklch(0.93 0.04 172);
+  --jade-200: oklch(0.87 0.065 172);
+  --jade-300: oklch(0.8 0.09 172);
+  --jade-400: oklch(0.74 0.105 172);
+  --jade-500: oklch(0.62 0.1 172);
+  --jade-600: oklch(0.52 0.09 172);
+  --jade-700: oklch(0.46 0.082 172);
+  --jade-800: oklch(0.38 0.068 172);
+  --jade-900: oklch(0.3 0.052 172);
+  --jade-950: oklch(0.22 0.038 172);
+
+  /* Surfaces and text */
+  --background: var(--neutral-25);
+  --foreground: var(--neutral-900);
+  --card: var(--neutral-0);
+  --card-foreground: var(--neutral-900);
+  --popover: var(--neutral-0);
+  --popover-foreground: var(--neutral-900);
+  --muted: var(--neutral-100);
+  --muted-foreground: var(--neutral-600);
+  --subtle-foreground: oklch(0.545 0.009 75);
+  --accent: var(--neutral-100);
+  --accent-foreground: var(--neutral-900);
+  --secondary: var(--neutral-100);
+  --secondary-foreground: var(--neutral-900);
+
+  /* Actions */
+  --primary: var(--jade-600);
+  --primary-hover: var(--jade-700);
+  --primary-foreground: var(--neutral-0);
+  --primary-subtle: var(--jade-50);
+  --primary-subtle-foreground: var(--jade-800);
+
+  /* Lines: decorative borders vs. control boundaries (WCAG 1.4.11 needs 3:1) */
+  --border: var(--neutral-200);
+  --border-strong: var(--neutral-300);
+  --input: oklch(0.64 0.009 75);
+  --ring: var(--jade-600);
+
+  /* Status: text/icon colour, subtle background, border */
+  --success: oklch(0.5 0.11 152);
+  --success-subtle: oklch(0.962 0.03 152);
+  --success-border: oklch(0.86 0.06 152);
+  --warning: oklch(0.53 0.115 65);
+  --warning-subtle: oklch(0.966 0.04 85);
+  --warning-border: oklch(0.86 0.08 80);
+  --danger: oklch(0.53 0.17 27);
+  --danger-subtle: oklch(0.966 0.022 27);
+  --danger-border: oklch(0.86 0.06 27);
+  --info: oklch(0.5 0.12 250);
+  --info-subtle: oklch(0.965 0.02 250);
+  --info-border: oklch(0.86 0.05 250);
+  --destructive: oklch(0.55 0.19 27);
+  --destructive-foreground: var(--neutral-0);
+
+  /* Data classification (PUBLIC < INTERNAL < CONFIDENTIAL < RESTRICTED) */
+  --classification-public: var(--muted-foreground);
+  --classification-internal: var(--info);
+  --classification-confidential: var(--warning);
+  --classification-restricted: var(--danger);
+
+  /* Charts: jade, slate blue, amber, rose, sage */
+  --chart-1: oklch(0.56 0.095 172);
+  --chart-2: oklch(0.56 0.1 250);
+  --chart-3: oklch(0.65 0.13 70);
+  --chart-4: oklch(0.6 0.14 15);
+  --chart-5: oklch(0.66 0.07 135);
+
+  /* Navigation */
+  --sidebar: var(--neutral-50);
+  --sidebar-foreground: var(--neutral-800);
+  --sidebar-primary: var(--jade-600);
+  --sidebar-primary-foreground: var(--neutral-0);
+  --sidebar-accent: var(--neutral-100);
+  --sidebar-accent-foreground: var(--neutral-900);
+  --sidebar-border: var(--neutral-200);
+  --sidebar-ring: var(--jade-600);
+
+  /* Elevation (warm, soft) */
+  --elevation-xs: 0 1px 2px oklch(0.2 0.01 75 / 0.06);
+  --elevation-sm: 0 1px 3px oklch(0.2 0.01 75 / 0.08), 0 1px 2px oklch(0.2 0.01 75 / 0.04);
+  --elevation-md:
+    0 4px 12px -2px oklch(0.2 0.01 75 / 0.1), 0 2px 4px -2px oklch(0.2 0.01 75 / 0.06);
+  --elevation-lg:
+    0 12px 32px -8px oklch(0.2 0.01 75 / 0.16), 0 4px 8px -4px oklch(0.2 0.01 75 / 0.08);
+
+  /* Glass panels over the 3D scene only */
+  --glass: oklch(1 0 0 / 0.72);
+  --glass-border: oklch(1 0 0 / 0.6);
+
+  /* Layout */
+  --header-height: 3.5rem;
+  --content-max-width: 90rem;
+
+  /* Motion: 150-250 ms ease-out for UI; springs for spatial movement live in lib/motion.ts */
+  --duration-fast: 150ms;
+  --duration-base: 200ms;
+  --duration-slow: 250ms;
+
+  color-scheme: light;
+}
+
+.dark {
+  --background: var(--neutral-975);
+  --foreground: oklch(0.95 0.004 80);
+  --card: var(--neutral-925);
+  --card-foreground: oklch(0.95 0.004 80);
+  --popover: var(--neutral-925);
+  --popover-foreground: oklch(0.95 0.004 80);
+  --muted: var(--neutral-850);
+  --muted-foreground: oklch(0.73 0.008 75);
+  --subtle-foreground: oklch(0.66 0.008 75);
+  --accent: var(--neutral-850);
+  --accent-foreground: oklch(0.95 0.004 80);
+  --secondary: var(--neutral-850);
+  --secondary-foreground: oklch(0.95 0.004 80);
+
+  --primary: var(--jade-400);
+  --primary-hover: var(--jade-300);
+  --primary-foreground: var(--jade-950);
+  --primary-subtle: oklch(0.27 0.04 172);
+  --primary-subtle-foreground: var(--jade-200);
+
+  --border: var(--neutral-850);
+  --border-strong: var(--neutral-800);
+  --input: oklch(0.5 0.009 75);
+  --ring: var(--jade-400);
+
+  --success: oklch(0.78 0.12 152);
+  --success-subtle: oklch(0.26 0.04 152);
+  --success-border: oklch(0.4 0.07 152);
+  --warning: oklch(0.82 0.12 80);
+  --warning-subtle: oklch(0.27 0.04 75);
+  --warning-border: oklch(0.42 0.07 75);
+  --danger: oklch(0.76 0.13 25);
+  --danger-subtle: oklch(0.27 0.05 27);
+  --danger-border: oklch(0.42 0.09 27);
+  --info: oklch(0.78 0.1 250);
+  --info-subtle: oklch(0.26 0.04 250);
+  --info-border: oklch(0.42 0.07 250);
+  --destructive: oklch(0.55 0.17 27);
+  --destructive-foreground: var(--neutral-0);
+
+  --chart-1: oklch(0.74 0.105 172);
+  --chart-2: oklch(0.72 0.1 250);
+  --chart-3: oklch(0.8 0.12 78);
+  --chart-4: oklch(0.72 0.13 15);
+  --chart-5: oklch(0.76 0.07 135);
+
+  --sidebar: var(--neutral-950);
+  --sidebar-foreground: oklch(0.86 0.006 78);
+  --sidebar-primary: var(--jade-400);
+  --sidebar-primary-foreground: var(--jade-950);
+  --sidebar-accent: var(--neutral-850);
+  --sidebar-accent-foreground: oklch(0.95 0.004 80);
+  --sidebar-border: var(--neutral-850);
+  --sidebar-ring: var(--jade-400);
+
+  --elevation-xs: 0 1px 2px oklch(0 0 0 / 0.3);
+  --elevation-sm: 0 1px 3px oklch(0 0 0 / 0.35), 0 1px 2px oklch(0 0 0 / 0.2);
+  --elevation-md: 0 4px 12px -2px oklch(0 0 0 / 0.45), 0 2px 4px -2px oklch(0 0 0 / 0.3);
+  --elevation-lg: 0 12px 32px -8px oklch(0 0 0 / 0.55), 0 4px 8px -4px oklch(0 0 0 / 0.35);
+
+  --glass: oklch(0.19 0.005 75 / 0.7);
+  --glass-border: oklch(1 0 0 / 0.08);
+
+  color-scheme: dark;
+}

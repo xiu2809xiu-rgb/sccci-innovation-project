@@ -1,0 +1,27 @@
+{
+  "title": "系统连接",
+  "description": "汇通所连接的系统、其运行状态及字段映射。",
+  "type": {
+    "SG_HR_REST": "新加坡人事系统",
+    "CN_HQ_SAP": "中国总部 SAP",
+    "OA_WEBHOOK": "OA 审批",
+    "FILE_IMPORT": "文件导入",
+    "NOTIFICATION": "消息通知",
+    "GENERIC_REST": "REST 接口"
+  },
+  "status": {
+    "ACTIVE": "运行中",
+    "DEGRADED": "性能下降",
+    "ERROR": "错误",
+    "DISABLED": "已停用",
+    "DEPRECATED": "正在停用",
+    "DRAFT": "草稿"
+  },
+  "runStatus": {
+    "QUEUED": "排队中",
+    "RUNNING": "运行中",
+    "SUCCEEDED": "成功",
+    "PARTIAL": "部分成功",
+    "FAILED": "失败"
+  }
+}

@@ -1,0 +1,30 @@
+{
+  "title": "员工",
+  "description": "统一的员工主数据，每个字段均可追溯来源。",
+  "fields": {
+    "employeeNo": "员工编号",
+    "entityCode": "法人实体",
+    "familyName": "姓",
+    "givenName": "名",
+    "fullNameLatin": "姓名",
+    "fullNameLocal": "中文姓名",
+    "preferredName": "常用名",
+    "workEmail": "工作邮箱",
+    "workPhone": "工作电话",
+    "departmentCode": "部门",
+    "jobTitle": "职位",
+    "jobTitleZh": "中文职位",
+    "jobGrade": "职级",
+    "managerEmployeeNo": "直属上级",
+    "employmentType": "用工类型",
+    "employmentStatus": "雇佣状态",
+    "hireDate": "入职日期",
+    "terminationDate": "离职日期",
+    "workLocation": "工作地点",
+    "costCenter": "成本中心",
+    "dateOfBirth": "出生日期",
+    "baseSalary": "基本工资",
+    "bankName": "开户银行",
+    "bankAccountLast4": "银行账号（后四位）"
+  }
+}

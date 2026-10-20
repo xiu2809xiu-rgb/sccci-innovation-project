@@ -1,0 +1,60 @@
+/*
+ * LatticeLoader keyframes. They live in a stylesheet rather than an inline <style> element
+ * because the production Content-Security-Policy only allows styles from 'self'.
+ * One keyframe per lit share: a cell fades up, holds and fades back within that share of the cycle.
+ */
+@keyframes huitong-lattice-on-62 {
+  0%,
+  100% {
+    opacity: var(--ll-idle);
+  }
+  18%,
+  42% {
+    opacity: 1;
+  }
+  62% {
+    opacity: var(--ll-idle);
+  }
+}
+
+@keyframes huitong-lattice-on-45 {
+  0%,
+  100% {
+    opacity: var(--ll-idle);
+  }
+  13%,
+  31% {
+    opacity: 1;
+  }
+  45% {
+    opacity: var(--ll-idle);
+  }
+}
+
+@keyframes huitong-lattice-on-35 {
+  0%,
+  100% {
+    opacity: var(--ll-idle);
+  }
+  10%,
+  24% {
+    opacity: 1;
+  }
+  35% {
+    opacity: var(--ll-idle);
+  }
+}
+
+@keyframes huitong-lattice-on-25 {
+  0%,
+  100% {
+    opacity: var(--ll-idle);
+  }
+  7%,
+  17% {
+    opacity: 1;
+  }
+  25% {
+    opacity: var(--ll-idle);
+  }
+}

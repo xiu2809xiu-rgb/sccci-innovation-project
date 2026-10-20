@@ -1,0 +1,79 @@
+{
+  "title": "Overview",
+  "description": "Sync health, approvals and open conflicts across your connected systems.",
+  "firstRun": {
+    "title": "The employee master is empty",
+    "description": "Run the first sync from Connectors to bring in Singapore HR and China HQ records. Conflicts and activity appear here as data arrives.",
+    "action": "Go to connectors"
+  },
+  "partial_one": "{{count}} connected system needs attention, so some figures may be out of date.",
+  "partial_other": "{{count}} connected systems need attention, so some figures may be out of date.",
+  "kpis": {
+    "label": "Key figures",
+    "employees": {
+      "label": "Employees in the master",
+      "breakdown": "{{entity}}: {{count}}",
+      "empty": "No records yet"
+    },
+    "consistency": {
+      "label": "Records consistent",
+      "hint": "Target: 98% or more",
+      "empty": "Measured after the first sync"
+    },
+    "openConflicts": {
+      "label": "Open conflicts",
+      "hint": "Fields where systems disagree",
+      "link": "Review conflicts"
+    },
+    "connectors": {
+      "label": "Healthy connectors",
+      "value": "{{healthy}} of {{total}}",
+      "hint": "Live systems only; systems being retired are excluded"
+    }
+  },
+  "syncHealth": {
+    "title": "Sync health",
+    "description": "The latest runs for each connected system, oldest to newest.",
+    "lastSync": "Last sync {{time}}",
+    "neverSynced": "Not synced yet",
+    "runs": "Recent sync runs for {{name}}",
+    "run": "{{status}}, {{time}}",
+    "noRuns": "No runs yet",
+    "running": "Syncing now",
+    "empty": "No systems are connected yet."
+  },
+  "approvals": {
+    "title": "Waiting for you",
+    "description": "Work your role can approve or resolve.",
+    "mappingProposals": "AI mapping proposals to review",
+    "conflicts": "Data conflicts to resolve",
+    "crossBorderTransfers": "Cross-border transfers to review",
+    "workflowTasks": "Workflow tasks for your role",
+    "empty": "Nothing is waiting for you."
+  },
+  "conflicts": {
+    "title": "Open conflicts",
+    "description": "Fields where Singapore HR and China HQ disagree. HR chooses the source of truth.",
+    "viewAll": "Review all",
+    "empty": "No open conflicts. Every synced field agrees.",
+    "detected": "Detected {{time}}"
+  },
+  "activity": {
+    "title": "Recent activity",
+    "description": "What changed across the connected systems.",
+    "empty": "No activity yet. It appears here once data starts syncing.",
+    "by": "{{name}} · {{role}}",
+    "system": "HuiTong",
+    "actions": {
+      "syncCompleted": "Sync completed",
+      "syncFailed": "Sync failed",
+      "conflictDetected": "Conflict detected",
+      "conflictResolved": "Conflict resolved",
+      "mappingProposed": "Mapping proposed",
+      "mappingApproved": "Mapping approved",
+      "employeeUpdated": "Employee record updated",
+      "transferApproved": "Cross-border transfer approved",
+      "other": "System event"
+    }
+  }
+}

@@ -1,0 +1,72 @@
+# ADR 0011: LLM gateway with usage tracking and human approval
+
+- **Status:** Accepted
+- **Date:** 2026-10-20
+- **Traceability:** M1, M2, M6 · capabilities E, G
+
+## Context
+
+Capability E uses AI in two places:
+
+- **Schema-mapping assistant.** For a sample export from a new system, such as the MY01 Malaysia file with mixed English and 简体中文 headers, it proposes a canonical field per column with a confidence score and a rationale. HR approves before anything is used.
+- **Discrepancy explainer.** It explains a conflict between SG HR and CN HQ in plain English or 中文.
+
+Forces:
+
+- **Human in the loop.** AI never writes to a system of record without human approval (`CLAUDE.md` section 4); PIPL Art. 24 is another reason to keep automated decisions about people out of scope ([GRS 2.6](../grs/grs-by-design.md#26-ai-governance)).
+- **Risks** ([register](../grs/grs-by-design.md#32-register)): wrong mappings approved (R-07), prompt injection through uploads (R-08), personal data reaching a provider (R-09), national ID numbers in samples (R-13).
+- **Unknown policy.** Approved AI providers and regions are still open (A-17, Q-42).
+- **Cost and repeatability.** Demos, CI and development need no key and no cost, and tests need deterministic output.
+- **Measurement.** W16 requires AI token usage tracking; area 4 builds dashboards, budgets and alerts on area 1's records.
+
+## Decision
+
+**1. One gateway.** `LlmGateway` in `apps/api/src/infrastructure/llm/` is the only way to call a model. Providers sit behind an injection token (Strategy) and are chosen by configuration:
+
+| Provider         | Use                                                                                                                                                                                                                                                         |
+| ---------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `mock` (default) | Deterministic, with no key and no network. Matches headers against a bilingual synonym dictionary (for example 入职日期 → `hireDate`, 员工编号 → `employeeNo`), returns fixed confidences and estimates token counts, so the dashboards have realistic data |
+| `bedrock`        | AWS Bedrock through the Converse API, in the deployment region without cross-region inference, using the task's IAM role rather than keys. Token counts and latency come from the response                                                                  |
+| `openai`         | Optional. Off for client data unless Organisation E approves it in writing                                                                                                                                                                                  |
+
+**2. Every call is tracked.** `AiUsageTracker` wraps each provider call, failures included, and stores an `AiUsageRecord`: feature, user, provider, model, tokens in and out, latency, a cost estimate from a price table in configuration, and the outcome (success, invalid output, provider error or timeout). HR's later decision (accepted, edited or rejected) is added to the same record. Prompt and completion text are not stored.
+
+**3. Minimised, untrusted input.**
+
+- Uploads (`.csv` or `.xlsx`, within size and row limits) are parsed inside HuiTong. The prompt carries only column headers and computed profiles (type, format pattern, fill rate), never cell values.
+- National ID columns (NRIC/FIN, PRC resident ID, MyKad; detected by header and by value pattern) and gender columns are blocked before the prompt is built and never imported. The wizard shows them as "Not ingested".
+- Explainer prompts use `employeeNo` instead of names and never include RESTRICTED values.
+- Uploaded content sits in delimited data fields of a fixed, versioned prompt template; the model has no tools, and nothing in its output is executed.
+
+**4. Validated proposals.** Output must parse against a zod schema in `@huitong/shared`: one row per column with a target canonical field (or none), a transformer, a confidence from 0 to 1 and a length-capped rationale. Type-compatibility, duplicate-target and blocked-field checks follow. Invalid rows are dropped, and the outcome is recorded.
+
+**5. Approval enforced on the server.** A proposal is a draft. HR accepts, edits or rejects each row, and low-confidence rows start unselected. Only a separate, audited approval by the data steward of the connector's entity creates a new versioned mapping config; the AI is never recorded as an approver. An integration test proves that an unapproved mapping cannot be activated (M2-11). The explainer has no write path at all.
+
+**6. Efficiency.** All columns go in one request, an identical header set reuses the earlier proposal, and approved mappings become synonym rules that resolve known headers without a model call.
+
+## Consequences
+
+### Positive
+
+- The demo, CI and every laptop run the full feature with no key, no cost and no data leaving the API.
+- Providers can change (Bedrock, an approved domestic model for a China-side deployment, a self-hosted model) without touching features.
+- Every token is accounted for, so the W16 dashboards and the acceptance-rate target (at least 80% accepted without edits) rest on data.
+- Wrong or malicious output must pass validation and a person before it affects anything.
+
+### Negative
+
+- The mock provider is only as good as its synonym dictionary, so demos state which provider produced a proposal.
+- Cost estimates depend on a price table that must follow model and price changes.
+- Header-only prompts give the model less context, so ambiguous headers (部门 against 部门编码) get lower confidence and more HR review.
+- Bedrock's model availability and data-use terms must be checked for the region before it is enabled.
+
+## Alternatives considered
+
+| Option                                            | Why rejected                                                                                                                              |
+| ------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
+| Provider SDKs called directly from features       | Tracking and minimisation would rely on every caller remembering them, and providers would be hard to swap                                |
+| LangChain, LlamaIndex or a similar framework      | Large, fast-moving abstractions for two narrow calls; harder to explain and to pin                                                        |
+| Auto-apply proposals above a confidence threshold | Breaks human-in-the-loop; confidence is not correctness                                                                                   |
+| Sample rows in the prompt                         | Better accuracy on ambiguous columns, but personal data would reach a third party (R-09)                                                  |
+| Rules only, no AI                                 | The mock's dictionary is exactly that, and it stays. It cannot handle headers it has never seen, which is what each new subsidiary brings |
+| Fine-tuning on mapping data                       | No client data may be used for training, and the volume would not justify it                                                              |

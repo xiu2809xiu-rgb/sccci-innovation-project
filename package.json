@@ -1,0 +1,44 @@
+{
+  "name": "huitong",
+  "version": "0.1.0",
+  "private": true,
+  "description": "HuiTong 汇通: HR and administration integration and workflow-automation layer (IT2134, SCCCI x NYP AI Innovation Challenge, Problem Statement #17).",
+  "type": "module",
+  "packageManager": "pnpm@12.14.0",
+  "engines": {
+    "node": ">=24.15.0"
+  },
+  "scripts": {
+    "dev": "pnpm -r --parallel --stream dev",
+    "build": "pnpm -r build",
+    "lint": "eslint . --max-warnings 0",
+    "typecheck": "pnpm -r typecheck",
+    "test": "pnpm -r test",
+    "test:e2e": "pnpm --filter @huitong/web test:e2e",
+    "db:migrate": "pnpm --filter @huitong/api db:migrate",
+    "db:seed": "pnpm --filter @huitong/api db:seed",
+    "diagrams:build": "node scripts/build-diagrams.mjs",
+    "slides:build": "node scripts/build-slides.mjs",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "prepare": "husky"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "21.2.3",
+    "@commitlint/config-conventional": "21.2.3",
+    "@huitong/eslint-config": "workspace:*",
+    "eslint": "10.13.0",
+    "husky": "9.1.7",
+    "lint-staged": "17.6.0",
+    "prettier": "3.9.10",
+    "prettier-plugin-tailwindcss": "0.8.1",
+    "typescript": "6.0.3"
+  },
+  "lint-staged": {
+    "*.{ts,tsx,js,mjs,cjs}": [
+      "eslint --max-warnings 0 --no-warn-ignored",
+      "prettier --write"
+    ],
+    "*.{json,md,css,yml,yaml,html}": "prettier --write"
+  }
+}

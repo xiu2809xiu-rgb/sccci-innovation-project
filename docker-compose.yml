@@ -1,0 +1,127 @@
+# HuiTong local stack. Start everything with:  docker compose up --build
+# Ports and demo accounts are documented in README.md. All data is synthetic.
+name: huitong
+
+x-node-service: &node-service
+  restart: unless-stopped
+  environment: &node-env
+    NODE_ENV: production
+    LOG_LEVEL: ${LOG_LEVEL:-info}
+
+services:
+  postgres:
+    image: postgres:18.6-alpine3.24
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: huitong
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-huitong_local_only}
+      POSTGRES_DB: huitong
+    ports:
+      - '${POSTGRES_PORT:-5432}:5432'
+    volumes:
+      # PostgreSQL 18 images keep data under /var/lib/postgresql/<major>/docker.
+      - pgdata:/var/lib/postgresql
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U huitong -d huitong']
+      interval: 5s
+      timeout: 5s
+      retries: 12
+
+  redis:
+    image: redis:8.8.3-alpine3.23
+    restart: unless-stopped
+    # BullMQ needs keys to stay put: never evict under memory pressure.
+    command: ['redis-server', '--appendonly', 'yes', '--maxmemory-policy', 'noeviction']
+    ports:
+      - '${REDIS_PORT:-6379}:6379'
+    volumes:
+      - redisdata:/data
+    healthcheck:
+      test: ['CMD', 'redis-cli', 'ping']
+      interval: 5s
+      timeout: 5s
+      retries: 12
+
+  mock-sg-hr:
+    <<: *node-service
+    build:
+      context: .
+      dockerfile: infra/docker/mock-service.Dockerfile
+      args:
+        SERVICE: mock-sg-hr
+        PORT: 4101
+    ports:
+      - '4101:4101'
+
+  mock-cn-hq:
+    <<: *node-service
+    build:
+      context: .
+      dockerfile: infra/docker/mock-service.Dockerfile
+      args:
+        SERVICE: mock-cn-hq
+        PORT: 4102
+    ports:
+      - '4102:4102'
+
+  mock-oa:
+    <<: *node-service
+    build:
+      context: .
+      dockerfile: infra/docker/mock-service.Dockerfile
+      args:
+        SERVICE: mock-oa
+        PORT: 4103
+    ports:
+      - '4103:4103'
+
+  api:
+    <<: *node-service
+    build:
+      context: .
+      dockerfile: infra/docker/api.Dockerfile
+    environment:
+      <<: *node-env
+      # A demo deployment: demo login on, synthetic data only. AWS sets APP_ENV=production.
+      APP_ENV: demo
+      DEMO_MODE: 'true'
+      PORT: 3000
+      DATABASE_URL: postgresql://huitong:${POSTGRES_PASSWORD:-huitong_local_only}@postgres:5432/huitong
+      REDIS_URL: redis://redis:6379
+      JWT_ACCESS_SECRET: ${JWT_ACCESS_SECRET:-local-demo-only-jwt-secret-0123456789abcdef}
+      # Browsers accept Secure cookies on http://localhost; set false only for other plain-HTTP hosts.
+      COOKIE_SECURE: ${COOKIE_SECURE:-true}
+      CORS_ORIGINS: http://localhost:8080
+      # nginx in front: trust one proxy hop for client IPs and rate limiting.
+      TRUST_PROXY: 'true'
+      SG_HR_BASE_URL: http://mock-sg-hr:4101
+      CN_HQ_BASE_URL: http://mock-cn-hq:4102
+      OA_BASE_URL: http://mock-oa:4103
+    ports:
+      - '3000:3000'
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      mock-sg-hr:
+        condition: service_healthy
+      mock-cn-hq:
+        condition: service_healthy
+      mock-oa:
+        condition: service_healthy
+
+  web:
+    restart: unless-stopped
+    build:
+      context: .
+      dockerfile: infra/docker/web.Dockerfile
+    ports:
+      - '8080:8080'
+    depends_on:
+      api:
+        condition: service_healthy
+
+volumes:
+  pgdata:
+  redisdata:

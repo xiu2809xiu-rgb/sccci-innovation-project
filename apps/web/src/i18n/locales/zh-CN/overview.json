@@ -1,0 +1,79 @@
+{
+  "title": "概览",
+  "description": "查看各连接系统的同步状态、待审批事项和未解决冲突。",
+  "firstRun": {
+    "title": "员工主数据为空",
+    "description": "请在“系统连接”中运行首次同步，导入新加坡人事系统和中国总部的记录。数据导入后，冲突和动态会显示在这里。",
+    "action": "前往系统连接"
+  },
+  "partial_one": "有 {{count}} 个连接系统需要处理，部分数据可能不是最新的。",
+  "partial_other": "有 {{count}} 个连接系统需要处理，部分数据可能不是最新的。",
+  "kpis": {
+    "label": "关键指标",
+    "employees": {
+      "label": "主数据员工数",
+      "breakdown": "{{entity}}：{{count}}",
+      "empty": "暂无记录"
+    },
+    "consistency": {
+      "label": "记录一致率",
+      "hint": "目标：98% 及以上",
+      "empty": "首次同步后开始计算"
+    },
+    "openConflicts": {
+      "label": "未解决冲突",
+      "hint": "各系统数据不一致的字段",
+      "link": "处理冲突"
+    },
+    "connectors": {
+      "label": "运行正常的连接",
+      "value": "{{healthy}} / {{total}}",
+      "hint": "仅统计在用系统，不含正在停用的系统"
+    }
+  },
+  "syncHealth": {
+    "title": "同步状态",
+    "description": "各连接系统最近的同步记录，从旧到新排列。",
+    "lastSync": "上次同步：{{time}}",
+    "neverSynced": "尚未同步",
+    "runs": "{{name}}最近的同步记录",
+    "run": "{{status}}，{{time}}",
+    "noRuns": "暂无同步记录",
+    "running": "正在同步",
+    "empty": "尚未连接任何系统。"
+  },
+  "approvals": {
+    "title": "待您处理",
+    "description": "您的角色可以审批或处理的事项。",
+    "mappingProposals": "待审核的 AI 映射建议",
+    "conflicts": "待解决的数据冲突",
+    "crossBorderTransfers": "待审核的跨境传输",
+    "workflowTasks": "分配给您角色的工作流任务",
+    "empty": "暂无待处理事项。"
+  },
+  "conflicts": {
+    "title": "未解决冲突",
+    "description": "新加坡人事系统与中国总部数据不一致的字段，由人力资源确定以哪个系统为准。",
+    "viewAll": "查看全部",
+    "empty": "没有未解决的冲突，所有已同步字段均一致。",
+    "detected": "发现于 {{time}}"
+  },
+  "activity": {
+    "title": "最新动态",
+    "description": "各连接系统中发生的变化。",
+    "empty": "暂无动态。数据开始同步后会显示在这里。",
+    "by": "{{name}} · {{role}}",
+    "system": "汇通",
+    "actions": {
+      "syncCompleted": "同步完成",
+      "syncFailed": "同步失败",
+      "conflictDetected": "发现冲突",
+      "conflictResolved": "冲突已解决",
+      "mappingProposed": "已提交映射建议",
+      "mappingApproved": "映射已批准",
+      "employeeUpdated": "员工记录已更新",
+      "transferApproved": "跨境传输已批准",
+      "other": "系统事件"
+    }
+  }
+}

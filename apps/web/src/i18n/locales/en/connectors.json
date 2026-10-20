@@ -1,0 +1,27 @@
+{
+  "title": "Connectors",
+  "description": "The systems HuiTong connects, their health and their field mappings.",
+  "type": {
+    "SG_HR_REST": "Singapore HR",
+    "CN_HQ_SAP": "China HQ SAP",
+    "OA_WEBHOOK": "OA approvals",
+    "FILE_IMPORT": "File import",
+    "NOTIFICATION": "Notifications",
+    "GENERIC_REST": "REST API"
+  },
+  "status": {
+    "ACTIVE": "Active",
+    "DEGRADED": "Degraded",
+    "ERROR": "Error",
+    "DISABLED": "Disabled",
+    "DEPRECATED": "Being retired",
+    "DRAFT": "Draft"
+  },
+  "runStatus": {
+    "QUEUED": "Queued",
+    "RUNNING": "Running",
+    "SUCCEEDED": "Succeeded",
+    "PARTIAL": "Partly succeeded",
+    "FAILED": "Failed"
+  }
+}
