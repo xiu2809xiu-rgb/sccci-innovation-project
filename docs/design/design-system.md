@@ -63,23 +63,22 @@ Light and dark themes share the token names; `.dark` on `<html>` swaps the value
 
 Fonts are self-hosted: Google Fonts is unreachable from mainland China, and a third-party font CDN would weaken the content security policy. Noto Sans SC is split into unicode-range files, so browsers download only the characters a page uses.
 
-### Seven sizes, no more
+### Six sizes, no more
 
 Tailwind's default type scale is reset in [`globals.css`](../../apps/web/src/styles/globals.css), so only these utilities exist. A stray `text-3xl` renders as plain text and shows up in review.
 
-| Utility        | Size            | Line height | Use                                   |
-| -------------- | --------------- | ----------- | ------------------------------------- |
-| `text-xs`      | 12px            | 16px        | Captions, badges, meta                |
-| `text-sm`      | 13px            | 20px        | Controls, table cells, secondary text |
-| `text-base`    | 14px            | 22px        | Body text                             |
-| `text-md`      | 16px            | 24px        | Section titles, lead paragraphs       |
-| `text-lg`      | 20px            | 28px        | Card and dialog titles                |
-| `text-xl`      | 28px            | 36px        | Page titles (`h1`) and KPI figures    |
-| `text-display` | 36–52px (fluid) | 1.1         | The landing headline only             |
+| Utility     | Size | Line height | Use                                   |
+| ----------- | ---- | ----------- | ------------------------------------- |
+| `text-xs`   | 12px | 16px        | Captions, badges, meta                |
+| `text-sm`   | 13px | 20px        | Controls, table cells, secondary text |
+| `text-base` | 14px | 22px        | Body text                             |
+| `text-md`   | 16px | 24px        | Section titles, lead paragraphs       |
+| `text-lg`   | 20px | 28px        | Card and dialog titles                |
+| `text-xl`   | 28px | 36px        | Page titles (`h1`) and KPI figures    |
 
 - Weights: 400 for text, 500 for labels, 600 for headings. Headings use `tracking-tight`.
 - Numbers in tables and KPIs use tabular numerals (`tabular-nums`; tables get it by default).
-- Prose is capped at 60–80 characters with `max-w-prose` or `max-w-xl`.
+- Prose is capped at 60–80 characters, measured in Geist: `max-w-md` for `text-sm` (about 74 characters), `max-w-lg` for `text-base` (78) and `max-w-xl` for `text-md` (77). Not `max-w-prose`: it counts the width of the digit zero, which Geist draws wide, so it lets lines run to about 92 characters.
 - Chinese text gets slightly taller line heights at the same size, set under `html:lang(zh-CN)`, because CJK glyphs fill the whole em box. Font size stays the same, so a mixed-language screen keeps one visual rhythm.
 
 ## 4. Space and layout
@@ -103,11 +102,11 @@ Lucide only (`lucide-react`), never mixed with another set and never emoji. Icon
 
 ## 7. Motion
 
-| Kind             | Duration and easing                                                                       | Example                                         |
-| ---------------- | ----------------------------------------------------------------------------------------- | ----------------------------------------------- |
-| UI feedback      | 150–250ms, ease-out (`--duration-fast`, `--duration-base`, `--duration-slow`; `ease-out`) | Hover backgrounds, menu fades, colour changes   |
-| Spatial movement | Springs (Motion or a sampled `linear()` spring)                                           | Segmented-control thumb, activity rows settling |
-| Ambient          | Slow loops, one per viewport, paused off-screen                                           | Landing aurora, 3D teaser                       |
+| Kind             | Duration and easing                                                                             | Example                                         |
+| ---------------- | ----------------------------------------------------------------------------------------------- | ----------------------------------------------- |
+| UI feedback      | 150–250ms, ease-out (`--duration-fast`, `--duration-base`, `--duration-slow`; `ease-out`)       | Hover backgrounds, menu fades, colour changes   |
+| Spatial movement | Springs (Motion or a sampled `linear()` spring)                                                 | Segmented-control thumb, activity rows settling |
+| Ambient          | At most 5 s each time it comes into view, then holds still; one per viewport, paused off-screen | The 3D teaser on the sign-in page               |
 
 Rules:
 
@@ -115,6 +114,7 @@ Rules:
 - Tables and forms never animate while the user is working in them. `DataTable` rows do not animate at all.
 - **Reduced motion is respected everywhere,** in two layers. A global CSS rule in `globals.css` cuts every CSS animation and transition to almost zero. Every animated component also branches on `useReducedMotion()` and renders a calm still state: the final number, fully visible text, one still frame of a shader. Each React Bits item's reduced-motion behaviour is listed in [`reactbits-usage.md`](reactbits-usage.md) and covered by its tests.
 - Animation loops pause when their element is off-screen or the tab is hidden, and clean up on unmount.
+- **Self-started motion stops within five seconds** beside other content (WCAG 2.2.2 Pause, Stop, Hide). Decorative loops either play inside a five-second window each time they come into view (`useAutoplayWindow`, then the last frame stays) or settle on their own (the StarBorder star rests after four seconds). Hover and focus may start them again, because the user asked. Indicators of work still running, such as a sync in progress, are reviewed in the Phase 10 accessibility pass.
 
 ## 8. Components
 
@@ -122,16 +122,16 @@ Rules:
 
 Accessible primitives from shadcn/ui (Radix), installed into `src/components/ui/` with the shadcn CLI (`radix-nova` style). They are generated code that we own and have changed where they fell short:
 
-| Change                                                                | Why                                                                                                                                     |
-| --------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------- |
-| `SidebarInset` renders a `<div>`                                      | It rendered `<main>`, which put the top bar inside the main landmark; `AppLayout` renders the only `<main>`                             |
-| `CommandDialog` keeps its title inside the dialog                     | The sr-only title was rendered in the page even while the palette was closed                                                            |
-| `Button` and `Badge` hover with `--primary-hover`                     | `bg-primary/80` lowered text contrast on hover                                                                                          |
-| `Button`/`Toggle` small sizes use `text-sm`                           | Arbitrary `text-[0.8rem]` added an eighth type size                                                                                     |
-| `sonner` follows our theme hook                                       | It depended on `next-themes`, which this Vite app does not use                                                                          |
-| `InputGroupAddon` no longer focuses the input on click                | Mouse-only behaviour that broke two jsx-a11y rules; keyboard users reach the input directly                                             |
-| `chart`, `field`, `sidebar`, `progress`, `toggle-group`, `use-mobile` | Strict TypeScript and lint fixes (no `any`, no setState in effects)                                                                     |
-| Every primitive imports `cn` from `@/lib/utils`                       | The configured merge helper knows the custom sizes `text-md` and `text-display`; the stock one treated them as colours and dropped them |
+| Change                                                                | Why                                                                                                              |
+| --------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------- |
+| `SidebarInset` renders a `<div>`                                      | It rendered `<main>`, which put the top bar inside the main landmark; `AppLayout` renders the only `<main>`      |
+| `CommandDialog` keeps its title inside the dialog                     | The sr-only title was rendered in the page even while the palette was closed                                     |
+| `Button` and `Badge` hover with `--primary-hover`                     | `bg-primary/80` lowered text contrast on hover                                                                   |
+| `Button`/`Toggle` small sizes use `text-sm`                           | Arbitrary `text-[0.8rem]` added an eighth type size                                                              |
+| `sonner` follows our theme hook                                       | It depended on `next-themes`, which this Vite app does not use                                                   |
+| `InputGroupAddon` no longer focuses the input on click                | Mouse-only behaviour that broke two jsx-a11y rules; keyboard users reach the input directly                      |
+| `chart`, `field`, `sidebar`, `progress`, `toggle-group`, `use-mobile` | Strict TypeScript and lint fixes (no `any`, no setState in effects)                                              |
+| Every primitive imports `cn` from `@/lib/utils`                       | The configured merge helper knows the custom size `text-md`; the stock one treated it as a colour and dropped it |
 
 ### Shared composites: `src/components/common/`
 

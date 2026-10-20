@@ -2,9 +2,9 @@ import { createCn } from 'cn/config';
 
 /**
  * Tailwind class joining and conflict resolution (clsx + tailwind-merge in one).
- * It is taught HuiTong's custom type sizes: without this, `text-md` and
- * `text-display` read as colours and are dropped next to `text-foreground`.
+ * It is taught HuiTong's custom type size: without this, `text-md` reads as a
+ * colour and is dropped next to `text-foreground`.
  */
 export const cn = createCn({
-  extend: { classGroups: { 'font-size': [{ text: ['md', 'display'] }] } },
+  extend: { classGroups: { 'font-size': [{ text: ['md'] }] } },
 });

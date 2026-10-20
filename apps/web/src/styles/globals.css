@@ -9,9 +9,9 @@
 @custom-variant dark (&:is(.dark *));
 
 /*
- * Theme values Tailwind turns into utilities. Seven type sizes only (CLAUDE.md
- * section 8): the defaults are reset so a stray text-3xl renders as plain text
- * and shows up in review instead of quietly adding an eighth size.
+ * Theme values Tailwind turns into utilities. Six type sizes (CLAUDE.md section 8
+ * allows seven at most): the defaults are reset so a stray text-3xl renders as
+ * plain text and shows up in review instead of quietly adding another size.
  */
 @theme {
   --text-*: initial;
@@ -27,8 +27,6 @@
   --text-lg--line-height: 1.75rem;
   --text-xl: 1.75rem;
   --text-xl--line-height: 2.25rem;
-  --text-display: clamp(2.25rem, 1.6rem + 2.2vw, 3.25rem);
-  --text-display--line-height: 1.1;
 
   --font-sans: 'Geist Variable', 'Noto Sans SC Variable', ui-sans-serif, system-ui, sans-serif;
   --font-mono: 'Geist Mono Variable', ui-monospace, 'SFMono-Regular', monospace;

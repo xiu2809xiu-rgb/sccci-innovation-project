@@ -1,18 +1,22 @@
 import { useReducedMotion } from 'motion/react';
-import { lazy, Suspense, useEffect, useMemo, useRef, useState } from 'react';
+import { lazy, Suspense, useEffect, useMemo, useRef, useState, type ComponentType } from 'react';
+import { ErrorBoundary } from 'react-error-boundary';
 import { useTranslation } from 'react-i18next';
 
-import { Skeleton } from '@/components/ui/skeleton';
+import { useAutoplayWindow } from '@/hooks/use-autoplay-window';
 import { useTokenColor } from '@/hooks/use-token-color';
 import { cssColorToHex } from '@/lib/css-color';
+import { cn } from '@/lib/utils';
 
-import type { TeaserColors } from './integration-teaser-scene';
+import type { IntegrationTeaserSceneProps, TeaserColors } from './integration-teaser-scene';
 
-// three.js and React Three Fiber load only when the teaser is shown (their own chunk).
-const IntegrationTeaserScene = lazy(() =>
-  import('./integration-teaser-scene').then((module) => ({
-    default: module.IntegrationTeaserScene,
-  })),
+// three.js and React Three Fiber load only when the teaser is shown (their own chunk). The teaser
+// sits beside the sign-in form, so a chunk that fails to load (a flaky network, or a redeploy that
+// removed old files) falls back to the static drawing instead of taking the page down.
+const IntegrationTeaserScene = lazy<ComponentType<IntegrationTeaserSceneProps>>(() =>
+  import('./integration-teaser-scene')
+    .then((module) => ({ default: module.IntegrationTeaserScene }))
+    .catch(() => ({ default: TeaserFallback })),
 );
 
 function supportsWebGl(): boolean {
@@ -24,32 +28,47 @@ function supportsWebGl(): boolean {
   }
 }
 
-/** A static hub-and-spoke drawing for browsers without WebGL. */
+/**
+ * A static hub-and-spoke drawing: shown while the 3D scene loads, and in its place when there is
+ * no WebGL or the scene fails.
+ */
 function TeaserFallback() {
   const spokes = [0, 60, 120, 180, 240, 300];
   return (
-    <svg viewBox="0 0 200 120" className="size-full" role="presentation">
+    <svg viewBox="0 0 200 200" className="size-full" role="presentation">
       {spokes.map((angle, index) => {
-        const x = 100 + Math.cos((angle * Math.PI) / 180) * 70;
-        const y = 60 + Math.sin((angle * Math.PI) / 180) * 40;
+        const x = 100 + Math.cos((angle * Math.PI) / 180) * 72;
+        const y = 100 + Math.sin((angle * Math.PI) / 180) * 30;
         return (
           <g key={angle} className={index === 3 ? 'opacity-40' : undefined}>
-            <line x1={100} y1={60} x2={x} y2={y} className="stroke-border-strong" strokeWidth={1} />
+            <line
+              x1={100}
+              y1={100}
+              x2={x}
+              y2={y}
+              className="stroke-border-strong"
+              strokeWidth={1}
+            />
             <circle cx={x} cy={y} r={7} className="fill-chart-2" />
           </g>
         );
       })}
-      <circle cx={100} cy={60} r={12} className="fill-primary" />
+      <circle cx={100} cy={100} r={13} className="fill-primary" />
     </svg>
   );
 }
 
-/** The landing page's preview of the integration map, with a caption and a text equivalent. */
-export function IntegrationTeaser() {
+/**
+ * A 3D preview of the integration map: HuiTong at the hub, the connected systems around it.
+ * Decorative for sighted users; screen readers get the same picture as one sentence. It plays
+ * for at most five seconds each time it comes into view, then holds its last frame (WCAG 2.2.2).
+ */
+export function IntegrationTeaser({ className }: { className?: string }) {
   const { t } = useTranslation('auth');
   const reduce = useReducedMotion() === true;
   const [webGl] = useState(supportsWebGl);
-  const [active, setActive] = useState(false);
+  const [inView, setInView] = useState(false);
+  const playing = useAutoplayWindow(inView);
   const stage = useRef<HTMLDivElement>(null);
   const primary = useTokenColor('--primary');
   const chart2 = useTokenColor('--chart-2');
@@ -73,7 +92,7 @@ export function IntegrationTeaser() {
     const element = stage.current;
     if (!element) return undefined;
     const observer = new IntersectionObserver(([entry]) => {
-      setActive(entry?.isIntersecting ?? false);
+      setInView(entry?.isIntersecting ?? false);
     });
     observer.observe(element);
     return () => {
@@ -82,21 +101,20 @@ export function IntegrationTeaser() {
   }, []);
 
   return (
-    <figure className="overflow-hidden rounded-lg border border-border bg-card">
-      <div ref={stage} className="relative h-56 sm:h-64" aria-hidden="true">
+    <div ref={stage} className={cn('relative', className)}>
+      <div className="size-full" aria-hidden="true">
         {webGl ? (
-          <Suspense fallback={<Skeleton className="size-full rounded-none" />}>
-            <IntegrationTeaserScene colors={colors} animate={!reduce} active={active} />
-          </Suspense>
+          // A WebGL context can still fail to start (blocked GPU, lost context); keep the drawing.
+          <ErrorBoundary fallback={<TeaserFallback />}>
+            <Suspense fallback={<TeaserFallback />}>
+              <IntegrationTeaserScene colors={colors} animate={!reduce} active={playing} />
+            </Suspense>
+          </ErrorBoundary>
         ) : (
           <TeaserFallback />
         )}
       </div>
-      <figcaption className="space-y-1 border-t border-border p-4">
-        <p className="text-sm font-semibold text-foreground">{t('landing.teaser.title')}</p>
-        <p className="text-sm text-muted-foreground">{t('landing.teaser.caption')}</p>
-        <p className="sr-only">{t('landing.teaser.fallback')}</p>
-      </figcaption>
-    </figure>
+      <p className="sr-only">{t('landing.teaser.fallback')}</p>
+    </div>
   );
 }

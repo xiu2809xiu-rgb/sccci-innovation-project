@@ -19,7 +19,7 @@ export function FirstRunCallout({ canOpenConnectors }: { canOpenConnectors: bool
         <h2 id="first-run-title" className="text-md font-semibold text-foreground">
           {t('firstRun.title')}
         </h2>
-        <p className="max-w-prose text-sm text-muted-foreground">{t('firstRun.description')}</p>
+        <p className="max-w-md text-sm text-muted-foreground">{t('firstRun.description')}</p>
       </div>
       {canOpenConnectors ? (
         <Button asChild>

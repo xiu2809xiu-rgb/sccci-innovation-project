@@ -1,7 +1,8 @@
 /*
  * React Bits StarBorder (free registry item @react-bits/StarBorder-TS-TW from reactbits.dev, MIT + Commons Clause).
  * Adapted for HuiTong: token colours and radius that the canvas re-reads per theme, a still frame under reduced
- * motion, pausing off-screen and in hidden tabs, the global focus ring, and a named export.
+ * motion, pausing off-screen and in hidden tabs, a star that comes to rest after four seconds instead of
+ * circling forever (WCAG 2.2.2), the global focus ring, and a named export.
  */
 'use client';
 
@@ -19,6 +20,8 @@ import {
 import { useTokenColor } from '@/hooks/use-token-color';
 import { cssColorToRgb, readTokenColor, type Rgb } from '@/lib/css-color';
 import { cn } from '@/lib/utils';
+
+import { starVelocity } from './star-velocity';
 
 export type StarBorderHover = 'lap' | 'brighten' | 'reveal' | 'none';
 
@@ -38,6 +41,11 @@ export interface StarBorderOwnProps<T extends ElementType = 'button'> {
   trailColor?: string;
   /** Seconds per lap. */
   duration?: number;
+  /**
+   * Seconds the star travels on its own before it glides to rest; hover and focus still send it
+   * round once more. The default keeps self-started motion under five seconds (WCAG 2.2.2).
+   */
+  settleAfter?: number;
   /** Border thickness in pixels. */
   thickness?: number;
   radius?: StarBorderRadius;
@@ -111,6 +119,7 @@ interface Settings {
   color: string;
   trailColor: string;
   duration: number;
+  settleAfter: number;
   thickness: number;
   trailLength: number;
   stars: number;
@@ -267,6 +276,7 @@ export function StarBorder<T extends ElementType = 'button'>({
   color = 'var(--primary)',
   trailColor,
   duration = 4,
+  settleAfter = 4,
   thickness = 1,
   radius = 'md',
   trailLength = 0.3,
@@ -296,6 +306,7 @@ export function StarBorder<T extends ElementType = 'button'>({
     color,
     trailColor: trailColor ?? color,
     duration: Math.max(0.3, duration),
+    settleAfter: Math.max(0, settleAfter),
     thickness: Math.max(0.5, thickness),
     trailLength: clamp(trailLength, 0, 1),
     stars: clamp(Math.round(stars), 1, 6),
@@ -617,6 +628,7 @@ export function StarBorder<T extends ElementType = 'button'>({
 
       state.time += dt;
       const cruise = (s.direction * total) / s.duration;
+      const cruising = state.time < s.settleAfter;
       state.reveal +=
         (revealTarget - state.reveal) *
         (1 - Math.exp(-dt / (revealTarget > state.reveal ? 0.16 : 0.45)));
@@ -625,7 +637,7 @@ export function StarBorder<T extends ElementType = 'button'>({
         (1 - Math.exp(-dt / (boostTarget > state.boost ? 0.18 : 0.5)));
       state.flash *= Math.exp(-dt / 0.22);
 
-      state.velocity += (cruise - state.velocity) * (1 - Math.exp(-dt / 0.45));
+      state.velocity = starVelocity(state.velocity, cruise, state.time, s.settleAfter, dt);
       let extra = 0;
       if (state.lap >= 0) {
         const before = ease(Math.min(1, state.lap / LAP));
@@ -670,7 +682,7 @@ export function StarBorder<T extends ElementType = 'button'>({
         state.flash > 0.01 ||
         pulses.length > 0 ||
         dust.length > 0;
-      const moving = Math.abs(state.motion) > 0.05 || cruise !== 0 || state.lap >= 0;
+      const moving = Math.abs(state.motion) > 0.05 || (cruising && cruise !== 0) || state.lap >= 0;
       const showing = state.reveal > 0.002 || revealTarget > 0;
       if (running() && (settling || (moving && showing) || state.hovered)) {
         raf = requestAnimationFrame(frame);

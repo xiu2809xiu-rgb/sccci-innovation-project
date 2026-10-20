@@ -110,24 +110,25 @@ function Constellation({ colors, animate }: { colors: TeaserColors; animate: boo
   );
 }
 
+export interface IntegrationTeaserSceneProps {
+  colors: TeaserColors;
+  /** False under reduced motion: the packets hold still at mid-route. */
+  animate: boolean;
+  /** Renders frames only while true; otherwise the last frame stays on screen. */
+  active: boolean;
+}
+
 /**
  * The landing page's 3D teaser of the integration map: HuiTong at the centre,
- * connected systems around it, data packets flowing in. Renders only while on
- * screen (`active`); one still frame when motion is reduced.
+ * connected systems around it, data packets flowing in. Renders only while
+ * `active`; one still frame when motion is reduced.
  */
-export function IntegrationTeaserScene({
-  colors,
-  animate,
-  active,
-}: {
-  colors: TeaserColors;
-  animate: boolean;
-  active: boolean;
-}) {
+export function IntegrationTeaserScene({ colors, animate, active }: IntegrationTeaserSceneProps) {
   return (
     <Canvas
       dpr={[1, 2]}
-      camera={{ position: [0, 1.6, 6.4], fov: 40 }}
+      // Far enough back that the ring of systems fits a square stage with room to spare.
+      camera={{ position: [0, 2, 8.2], fov: 40 }}
       gl={{ antialias: true, alpha: true, powerPreference: 'low-power' }}
       frameloop={active && animate ? 'always' : 'demand'}
     >

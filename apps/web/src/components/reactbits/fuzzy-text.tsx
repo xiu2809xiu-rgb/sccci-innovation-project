@@ -37,7 +37,7 @@ const INSET = 5;
 /** Text drawn on a canvas in jittering slices, fuzzing harder under the pointer. */
 export function FuzzyText({
   children: text,
-  fontSize = 'var(--text-display)',
+  fontSize = 'var(--text-xl)',
   fontWeight = 800,
   fontFamily = 'inherit',
   color = 'currentColor',

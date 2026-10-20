@@ -1,16 +1,17 @@
+import { ShieldCheck } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useSearchParams } from 'react-router';
 
-import { Aurora } from '@/components/reactbits/aurora';
+import { SplitAuthLayout } from '@/components/reactbits/split-auth-layout';
 import { safeNextPath } from '@/app/session/route-guards';
 import { useDocumentTitle } from '@/hooks/use-document-title';
 
+import { LandingAside } from './components/landing-aside';
 import { LandingFooter } from './components/landing-footer';
-import { LandingHero } from './components/landing-hero';
 import { PublicHeader } from './components/public-header';
 import { SignInPanel } from './components/sign-in-panel';
 
-/** The signed-out landing page: what HuiTong is on the left, sign-in on the right. */
+/** The signed-out landing page: sign-in on one side, what HuiTong is on the other. */
 export function LoginPage() {
   const { t } = useTranslation('auth');
   const navigate = useNavigate();
@@ -22,27 +23,31 @@ export function LoginPage() {
   };
 
   return (
-    <div className="relative flex min-h-svh flex-col overflow-hidden bg-background">
-      {/* One ambient effect for the whole page, kept faint so text contrast is unaffected. */}
-      <div
-        className="pointer-events-none absolute inset-x-0 top-0 h-[34rem] opacity-50"
-        aria-hidden="true"
-      >
-        <Aurora amplitude={0.8} speed={0.6} />
-      </div>
+    <div className="flex min-h-svh flex-col bg-background">
       <PublicHeader />
       <main
         id="main"
-        className="relative z-10 mx-auto grid w-full max-w-(--content-max-width) flex-1 gap-10 px-4 pt-6 pb-16 md:px-8 lg:grid-cols-12 lg:gap-12 lg:pt-12"
+        className="mx-auto w-full max-w-(--content-max-width) flex-1 px-4 pt-2 pb-12 md:px-8 lg:pt-4"
       >
-        <div className="lg:col-span-7">
-          <LandingHero />
-        </div>
-        <div className="lg:col-span-5">
-          <div className="lg:sticky lg:top-8">
-            <SignInPanel expired={searchParams.get('reason') === 'expired'} onSignedIn={goOn} />
-          </div>
-        </div>
+        <SplitAuthLayout
+          heading={
+            <div className="space-y-2">
+              <h1 className="text-xl font-semibold tracking-tight text-foreground">
+                {t('form.heading')}
+              </h1>
+              <p className="text-sm text-muted-foreground">{t('form.lead')}</p>
+            </div>
+          }
+          footnote={
+            <p className="flex items-center gap-1.5 text-xs text-muted-foreground">
+              <ShieldCheck className="size-3.5 shrink-0" aria-hidden="true" />
+              {t('form.footnote')}
+            </p>
+          }
+          aside={<LandingAside />}
+        >
+          <SignInPanel expired={searchParams.get('reason') === 'expired'} onSignedIn={goOn} />
+        </SplitAuthLayout>
       </main>
       <LandingFooter />
     </div>

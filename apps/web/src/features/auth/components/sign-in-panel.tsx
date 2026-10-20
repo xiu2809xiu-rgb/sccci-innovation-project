@@ -1,6 +1,5 @@
 import { useTranslation } from 'react-i18next';
 
-import { SpotlightCard } from '@/components/reactbits/spotlight-card';
 import { useAuthOptions } from '@/app/session/use-auth-options';
 
 import { DemoRolePicker } from './demo-role-picker';
@@ -12,8 +11,7 @@ export function SignInPanel({ expired, onSignedIn }: { expired: boolean; onSigne
   const demoMode = useAuthOptions()?.demoMode === true;
 
   return (
-    <SpotlightCard className="space-y-6 p-6 sm:p-8" intensity={0.1} proximity={60}>
-      <h2 className="text-lg font-semibold text-foreground">{t('form.heading')}</h2>
+    <div className="space-y-6">
       {expired ? (
         <p role="status" className="rounded-md bg-info-subtle px-3 py-2 text-sm text-info">
           {t('form.expired')}
@@ -30,6 +28,6 @@ export function SignInPanel({ expired, onSignedIn }: { expired: boolean; onSigne
           <DemoRolePicker onSignedIn={onSignedIn} />
         </>
       ) : null}
-    </SpotlightCard>
+    </div>
   );
 }

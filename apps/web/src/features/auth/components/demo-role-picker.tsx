@@ -26,7 +26,7 @@ export function DemoRolePicker({ onSignedIn }: { onSignedIn: () => void }) {
             <Button
               type="button"
               variant="outline"
-              className="h-auto w-full flex-col items-start gap-0.5 px-3 py-2 text-left whitespace-normal"
+              className="h-full w-full flex-col items-start justify-start gap-0.5 px-3 py-2 text-left whitespace-normal"
               disabled={demoSignIn.isPending}
               onClick={() => {
                 demoSignIn.mutate(role, { onSuccess: onSignedIn });
