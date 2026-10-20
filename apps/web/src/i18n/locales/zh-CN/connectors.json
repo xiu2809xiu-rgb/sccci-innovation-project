@@ -23,5 +23,83 @@
     "SUCCEEDED": "成功",
     "PARTIAL": "部分成功",
     "FAILED": "失败"
+  },
+  "sync": {
+    "title": "选择要同步的系统",
+    "titles": {
+      "preview": "预览来自{{name}}的同步",
+      "apply": "来自{{name}}的同步"
+    },
+    "descriptions": {
+      "choose": "汇通会先预览将发生的变更，在您应用预览之前不会写入任何数据。",
+      "preview": "尚未写入任何数据。请检查变更，然后滑动以应用。",
+      "apply": "正在将预览中的变更原样写入员工主数据，每项变更都会记入审计日志。",
+      "inSync": "预览已将每条记录与员工主数据进行比对。",
+      "applied": "预览中的变更已写入员工主数据，每项变更都已记入审计日志。",
+      "partial": "出错的记录已跳过，其余变更已写入员工主数据并记入审计日志。",
+      "previewFailed": "预览已中止，未写入任何数据。您可以重新预览。",
+      "applyFailed": "同步提前中止。已做出的变更均已记入审计日志；请重新预览以处理其余记录。"
+    },
+    "choose": "要同步的系统",
+    "lastSync": "最近同步",
+    "neverSynced": "尚未同步",
+    "failed": "运行因错误而中止。",
+    "errors": {
+      "MAPPING_FAILED": "部分记录无法映射到员工主数据，请检查字段映射。",
+      "VALIDATION_FAILED": "部分记录未通过员工主数据的校验。",
+      "MISSING_EMPLOYEE_NO": "部分记录缺少员工编号。",
+      "INCOMPLETE_RECORD": "新记录缺少必填信息。",
+      "ENTITY_MISMATCH": "部分记录的所属实体与现有档案不一致。",
+      "INTERRUPTED": "运行在完成前被中断。",
+      "UPSTREAM_UNAVAILABLE": "所连接的系统没有响应。"
+    },
+    "inSync": "数据已完全同步，无需应用任何变更。",
+    "conflictsFound_one": "有 {{count}} 项新冲突需要决定。",
+    "conflictsFound_other": "有 {{count}} 项新冲突需要决定。",
+    "reviewConflicts": "查看冲突",
+    "slide": "滑动以应用这些变更",
+    "slideArmed": "再点一次以应用",
+    "applying": "正在应用…",
+    "applied": "已应用",
+    "applyFailed": "无法应用",
+    "waiting": "等待开始",
+    "progress": "{{mode}}进度",
+    "mode": {
+      "PREVIEW": "预览",
+      "APPLY": "同步"
+    },
+    "stage": {
+      "EXTRACT": "读取记录",
+      "MAP": "映射字段",
+      "VALIDATE": "校验数值",
+      "LOAD": "与主数据比对",
+      "AUDIT": "记录审计日志"
+    },
+    "counts": {
+      "fetched": "读取",
+      "created": "新增",
+      "updated": "更新",
+      "unchanged": "未变",
+      "conflicts": "冲突",
+      "errors": "错误"
+    },
+    "preview": {
+      "action": "预览变更",
+      "caption": "同步将产生的变更",
+      "employee": "员工",
+      "change": "变更",
+      "field": "字段",
+      "value": "值",
+      "kind": {
+        "CREATE": "新档案",
+        "UPDATE": "更新",
+        "CONFLICT": "冲突"
+      },
+      "wholeRecord": "整份档案",
+      "newRecord": "加入主数据",
+      "to": "变为",
+      "truncated": "仅显示前 {{count}} 项变更；上方的统计涵盖全部变更。"
+    },
+    "previewAgain": "重新预览"
   }
 }

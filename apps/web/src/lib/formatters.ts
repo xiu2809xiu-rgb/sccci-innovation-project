@@ -34,6 +34,34 @@ export class Formatters {
     return new Intl.NumberFormat(this.locale, options).format(value);
   }
 
+  /** An amount in its own currency, e.g. SGD 6,700.00 or CN¥6,700.00. */
+  money(amount: number, currency: string): string {
+    return new Intl.NumberFormat(this.locale, { style: 'currency', currency }).format(amount);
+  }
+
+  /** A duration in seconds with one decimal: 0.6 s or 0.6秒. */
+  seconds(value: number): string {
+    return new Intl.NumberFormat(this.locale, {
+      style: 'unit',
+      unit: 'second',
+      unitDisplay: 'narrow',
+      minimumFractionDigits: 1,
+      maximumFractionDigits: 1,
+    }).format(value);
+  }
+
+  /** A short elapsed time: whole milliseconds under ten seconds, then seconds. */
+  elapsed(milliseconds: number): string {
+    const whole = Math.round(milliseconds);
+    return whole < 10_000
+      ? new Intl.NumberFormat(this.locale, {
+          style: 'unit',
+          unit: 'millisecond',
+          unitDisplay: 'narrow',
+        }).format(whole)
+      : this.seconds(milliseconds / 1000);
+  }
+
   /** `ratio` between 0 and 1. */
   percent(ratio: number, maximumFractionDigits = 1): string {
     return new Intl.NumberFormat(this.locale, { style: 'percent', maximumFractionDigits }).format(

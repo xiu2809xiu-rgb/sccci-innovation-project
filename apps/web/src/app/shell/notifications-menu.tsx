@@ -1,6 +1,6 @@
 import type { RealtimeEvent } from '@huitong/shared';
 import { Bell } from 'lucide-react';
-import { useState, useSyncExternalStore } from 'react';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router';
 
@@ -12,7 +12,7 @@ import { Separator } from '@/components/ui/separator';
 import { useOverview } from '@/features/overview/api/use-overview';
 import { activityPresentation } from '@/features/overview/overview-labels';
 
-import { useRealtime, useRealtimeEvents } from '../providers/dependencies-context';
+import { useRealtimeEvents, useRealtimeState } from '../providers/dependencies-context';
 
 const MAX_LIVE = 8;
 
@@ -27,11 +27,7 @@ const QUEUE_LINKS = {
 export function NotificationsMenu() {
   const { t } = useTranslation();
   const { t: tOverview } = useTranslation('overview');
-  const realtime = useRealtime();
-  const liveState = useSyncExternalStore(
-    (onChange) => realtime.onStateChange(onChange),
-    () => realtime.currentState,
-  );
+  const liveState = useRealtimeState();
   const [live, setLive] = useState<RealtimeEvent[]>([]);
   const [unseen, setUnseen] = useState(0);
   const pending = useOverview().data?.pendingApprovals;

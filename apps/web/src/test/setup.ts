@@ -52,6 +52,33 @@ if (!('scrollIntoView' in Element.prototype)) {
   });
 }
 
+// The step and chip transitions call the Web Animations API. The stub sits on
+// HTMLElement and SVGElement, not Element: Motion detects WAAPI on
+// Element.prototype and must keep to its own animation loop in jsdom.
+for (const prototype of [HTMLElement.prototype, SVGElement.prototype]) {
+  if (!('animate' in prototype)) {
+    Object.defineProperty(prototype, 'animate', {
+      writable: true,
+      value: () => ({
+        cancel: () => undefined,
+        finish: () => undefined,
+        finished: Promise.resolve(),
+      }),
+    });
+  }
+}
+
+// HoldButton and SlideCommit capture the pointer on press.
+for (const [name, value] of [
+  ['setPointerCapture', () => undefined],
+  ['releasePointerCapture', () => undefined],
+  ['hasPointerCapture', () => false],
+] as const) {
+  if (!(name in Element.prototype)) {
+    Object.defineProperty(Element.prototype, name, { writable: true, value });
+  }
+}
+
 afterEach(() => {
   cleanup();
 });

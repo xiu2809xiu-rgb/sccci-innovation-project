@@ -1,0 +1,45 @@
+/*
+ * HoldButton's fill and wave crest. They live in a stylesheet rather than an inline <style>
+ * element (ADR 0018). The button sets the custom properties: --hb-p is the hold progress
+ * from 0 to 1, --hb-w and --hb-h its size, --hb-wave the crest width.
+ */
+.hb-fill {
+  clip-path: inset(
+    0 calc((1 - var(--hb-p)) * (100% + 0.75 * var(--hb-wave)) - var(--hb-p) * 0.25 * var(--hb-wave))
+      0 0
+  );
+}
+
+.hb-crest {
+  -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='200' viewBox='0 0 20 200' preserveAspectRatio='none'%3E%3Cpath d='M0 0H10C18 8 18 25.3 10 33.3S2 58.7 10 66.7S18 92 10 100S2 125.3 10 133.3S18 158.7 10 166.7S2 192 10 200H0Z'/%3E%3C/svg%3E");
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='200' viewBox='0 0 20 200' preserveAspectRatio='none'%3E%3Cpath d='M0 0H10C18 8 18 25.3 10 33.3S2 58.7 10 66.7S18 92 10 100S2 125.3 10 133.3S18 158.7 10 166.7S2 192 10 200H0Z'/%3E%3C/svg%3E");
+  -webkit-mask-repeat: repeat-y;
+  mask-repeat: repeat-y;
+  -webkit-mask-size: var(--hb-wave) calc(var(--hb-h) * 2);
+  mask-size: var(--hb-wave) calc(var(--hb-h) * 2);
+  -webkit-mask-position-x: calc(-1 * var(--hb-wave) + var(--hb-p) * (var(--hb-w) + var(--hb-wave)));
+  mask-position-x: calc(-1 * var(--hb-wave) + var(--hb-p) * (var(--hb-w) + var(--hb-wave)));
+  -webkit-mask-position-y: calc(-1 * var(--hb-p) * var(--hb-cycles) * var(--hb-h));
+  mask-position-y: calc(-1 * var(--hb-p) * var(--hb-cycles) * var(--hb-h));
+}
+
+/* Reduced motion: the fill fades in over the hold instead of a wave sweeping across. */
+.hb-root[data-motion='still'] .hb-fill {
+  clip-path: inset(0);
+  opacity: 0;
+  transition: opacity var(--hb-release) ease;
+}
+
+.hb-root[data-motion='still'] .hb-crest {
+  display: none;
+}
+
+.hb-root[data-motion='still'][data-phase='holding'] .hb-fill,
+.hb-root[data-motion='still'][data-phase='done'] .hb-fill {
+  opacity: 1;
+  transition: opacity var(--hb-hold) linear;
+}
+
+.hb-root[data-motion='still'] .hb-label > span {
+  filter: none;
+}
