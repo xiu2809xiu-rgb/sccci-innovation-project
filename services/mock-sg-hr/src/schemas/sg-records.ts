@@ -7,6 +7,8 @@ export const sgEmployeeSchema = z.strictObject({
   employeeNo: z.string().regex(/^E\d{6}$/),
   firstName: z.string().min(1),
   lastName: z.string().min(1),
+  /** The name as written in the person's culture, as on their identity card (family-first or given-first). */
+  fullName: z.string().min(1),
   preferredName: z.string().nullable(),
   email: z.email(),
   mobile: z.string().regex(/^\+65 \d{4} \d{4}$/),

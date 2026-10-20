@@ -72,6 +72,11 @@ services:
       args:
         SERVICE: mock-oa
         PORT: 4103
+    environment:
+      <<: *node-env
+      # Completed approvals are pushed to the API, signed with the shared secret.
+      OA_WEBHOOK_URL: http://api:3000/api/v1/webhooks/oa
+      OA_WEBHOOK_SECRET: ${OA_WEBHOOK_SECRET:-oa-local-webhook-secret}
     ports:
       - '4103:4103'
 
@@ -97,6 +102,9 @@ services:
       SG_HR_BASE_URL: http://mock-sg-hr:4101
       CN_HQ_BASE_URL: http://mock-cn-hq:4102
       OA_BASE_URL: http://mock-oa:4103
+      OA_WEBHOOK_SECRET: ${OA_WEBHOOK_SECRET:-oa-local-webhook-secret}
+      # A fresh stack loads the employee master from both HR systems on start.
+      BOOTSTRAP_SYNC: ${BOOTSTRAP_SYNC:-true}
     ports:
       - '3000:3000'
     depends_on:

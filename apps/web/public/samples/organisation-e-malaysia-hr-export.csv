@@ -1,0 +1,13 @@
+Staff ID,Full Name,Family Name,Given Name,中文姓名,Email,手机号码,部门,Position,Employment Type,状态,入职日期,Date of Birth,Basic Salary (MYR),Bank,Account No.,IC No.,Manager ID,Grade,成本中心
+E200101,Lee Mei Hua,Lee,Mei Hua,李美华,meihua.lee@orge.example,012-345 6701,财务部,Finance Manager,Permanent,在职,03/01/2022,14/05/1986,"12,800.00",Maybank,1140-2233-4501,XXXXXX-XX-XXXX,,M2,7101
+E200102,Nurul Izzah Ahmad,Ahmad,Nurul Izzah,,nurul.ahmad@orge.example,013-456 7802,财富管理部,Relationship Manager,Permanent,在职,15/03/2023,22/09/1991,"9,400.00",CIMB Bank,8002-1100-3345,XXXXXX-XX-XXXX,E200101,P4,7108
+E200103,Rajesh Kumar,Kumar,Rajesh,,rajesh.kumar@orge.example,016-789 0103,信息技术部,Systems Engineer,Contract,试用期,01/09/2026,30/01/1994,"8,100.00",Public Bank,3100-4455-6677,XXXXXX-XX-XXXX,E200101,P3,7106
+E200104,Tan Wei Ming,Tan,Wei Ming,陈伟明,weiming.tan@orge.example,017-222 3304,运营部,Operations Executive,Permanent,在职,20/06/2021,08/12/1989,"6,700.00",Maybank,1140-5566-7704,XXXXXX-XX-XXXX,E200101,P3,7107
+E200105,Siti Aminah Yusof,Yusof,Siti Aminah,,siti.yusof@orge.example,019-333 4405,人力资源部,HR Executive,Permanent,在职,11/04/2020,19/07/1990,"6,200.00",RHB Bank,2120-3344-5505,XXXXXX-XX-XXXX,E200110,P3,7103
+E200106,Wong Kar Yee,Wong,Kar Yee,黄嘉仪,karyee.wong@orge.example,012-444 5506,财富管理部,Senior Relationship Manager,Permanent,在职,02/11/2019,25/02/1985,"13,500.00",Hong Leong Bank,3300-1122-9906,XXXXXX-XX-XXXX,E200101,M1,7108
+E200107,Arun Pillai,Pillai,Arun,,arun.pillai@orge.example,011-5555 6607,财务部,Accountant,Permanent,在职,07/08/2024,03/03/1995,"7,300.00",CIMB Bank,8002-7788-1107,XXXXXX-XX-XXXX,E200101,P3,7101
+E200108,Lim Jia Hui,Lim,Jia Hui,林佳慧,jiahui.lim@orge.example,014-666 7708,信息技术部,IT Intern,Intern,试用期,01/07/2026,18/10/2003,"2,500.00",Maybank,1140-9900-2208,XXXXXX-XX-XXXX,E200103,P1,7106
+E200109,Muhammad Hafiz Rahman,Rahman,Muhammad Hafiz,,hafiz.rahman@orge.example,018-777 8809,运营部,Operations Analyst,Contract,在职,16/02/2025,27/06/1997,"5,900.00",Bank Islam,1401-2233-0909,XXXXXX-XX-XXXX,E200104,P2,7107
+E200110,Chong Li Ting,Chong,Li Ting,张丽婷,liting.chong@orge.example,012-888 9910,人力资源部,HR Manager,Permanent,在职,05/05/2018,12/11/1983,"11,900.00",Public Bank,3100-6677-8810,XXXXXX-XX-XXXX,E200101,M1,7103
+E200111,Kavitha Subramaniam,Subramaniam,Kavitha,,kavitha.s@orge.example,016-999 0011,财富管理部,Wealth Analyst,Permanent,在职,21/09/2022,09/04/1993,"8,800.00",Maybank,1140-3344-1111,XXXXXX-XX-XXXX,E200106,P3,7108
+E200112,Ooi Chee Keong,Ooi,Chee Keong,黄志强,cheekeong.ooi@orge.example,017-101 2212,财务部,Finance Executive,Permanent,在职,13/01/2026,02/02/1996,"6,000.00",Hong Leong Bank,3300-5544-1212,XXXXXX-XX-XXXX,E200101,P2,7101

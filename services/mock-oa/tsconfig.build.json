@@ -2,7 +2,8 @@
   "extends": "@huitong/tsconfig/node.json",
   "compilerOptions": {
     "rootDir": "src",
-    "outDir": "dist"
+    "outDir": "dist",
+    "declaration": true
   },
   "include": ["src"],
   "exclude": ["src/**/*.spec.ts"]

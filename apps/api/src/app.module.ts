@@ -20,7 +20,10 @@ import { RedisModule } from './infrastructure/redis/redis.module.js';
 import { AccessModule } from './modules/access/access.module.js';
 import { AnalyticsModule } from './modules/analytics/analytics.module.js';
 import { AuthModule } from './modules/auth/auth.module.js';
+import { ConnectorsModule } from './modules/connectors/connectors.module.js';
+import { EmployeesModule } from './modules/employees/employees.module.js';
 import { HealthModule } from './modules/health/health.module.js';
+import { MappingModule } from './modules/mapping/mapping.module.js';
 import { OverviewModule } from './modules/overview/overview.module.js';
 import { UsersModule } from './modules/users/users.module.js';
 
@@ -49,6 +52,9 @@ export class AppModule {
         HealthModule,
         AnalyticsModule,
         OverviewModule,
+        EmployeesModule,
+        MappingModule,
+        ConnectorsModule,
       ],
       providers: [
         { provide: APP_GUARD, useClass: ThrottlerGuard },

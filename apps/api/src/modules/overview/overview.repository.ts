@@ -3,6 +3,14 @@ import type { Role } from '@huitong/shared';
 
 import { PrismaService } from '../../infrastructure/prisma/prisma.service.js';
 
+/** Audited, but too frequent or too routine for the overview's activity feed. */
+const QUIET_ACTIONS = [
+  'employee.created',
+  'sync.run.requested',
+  'sync.preview.completed',
+  'connector.health-checked',
+] as const;
+
 /**
  * Read-only aggregate queries for the overview page. A read model across
  * areas: it only counts and lists, never writes, so it reads the tables
@@ -87,10 +95,15 @@ export class OverviewRepository {
     });
   }
 
-  /** Latest business events; sign-in and session events are not activity anyone needs to see. */
+  /**
+   * The activity feed: business events only. Sign-ins, per-record bulk loads and
+   * routine operations stay in the audit log but would drown the feed.
+   */
   recentBusinessEvents(take: number) {
     return this.prisma.auditEvent.findMany({
-      where: { NOT: { action: { startsWith: 'auth.' } } },
+      where: {
+        NOT: [{ action: { startsWith: 'auth.' } }, { action: { in: [...QUIET_ACTIONS] } }],
+      },
       orderBy: { occurredAt: 'desc' },
       take,
       select: {
