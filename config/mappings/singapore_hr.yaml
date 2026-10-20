@@ -1,0 +1,17 @@
+system_name: singapore_hr
+entity_type: employee
+source_id: Staff No
+fields:
+  employee_number: Staff No
+  display_name: Preferred Name
+  work_email: Work Email
+  department: Department
+  job_title: Job Title
+  employment_status: Employment Status
+  hire_date: Hire Date
+date_formats:
+  hire_date: "%d/%m/%Y"
+employment_status:
+  Active: active
+  Inactive: terminated
+  "On Leave": on_leave

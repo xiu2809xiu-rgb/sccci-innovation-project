@@ -1,0 +1,17 @@
+system_name: hq
+entity_type: employee
+source_id: 人员编号
+fields:
+  employee_number: 人员编号
+  display_name: 员工姓名
+  work_email: 邮箱地址
+  department: 组织
+  job_title: 岗位名称
+  employment_status: 人员状态
+  hire_date: 入职日期
+date_formats:
+  hire_date: "%Y-%m-%d"
+employment_status:
+  在职: active
+  离职: terminated
+  休假: on_leave

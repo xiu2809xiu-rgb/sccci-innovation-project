@@ -1,0 +1,21 @@
+Staff No,Preferred Name,Work Email,Department,Job Title,Employment Status,Hire Date,Local Event,local_code,Start Date,End Date,Units,Attendance Flag,Cost Centre
+SG-0081,Alex Tan,alex.tan@example.com,Finance,Finance Analyst,Active,15/03/2021,LEAVE,AL,03/04/2026,03/04/2026,1.0,,FIN-SG
+SG-0082,Mei Lin,mei.lin@example.com,Operations,Operations Associate,Active,01/07/2022,ATTENDANCE,,06/04/2026,06/04/2026,1.0,PRESENT,OPS-SG
+SG-0083,Li Wei,li.wei@example.com,Operations,Operations Lead,Active,23/11/2020,LEAVE,MC,07/04/2026,08/04/2026,2.0,,OPS-SG
+SG-0084,Emily Chen,emily.chen@example.com,Sales,Account Executive,Active,05/02/2023,LEAVE,AL,10/04/2026,10/04/2026,1.0,,SAL-SG
+SG-0085,Raj Kumar,raj.kumar@example.com,People & Culture,HR Officer,Active,06/09/2021,ATTENDANCE,,13/04/2026,13/04/2026,1.0,WFH,HR-SG
+SG-0086,Siti Rahman,siti.rahman@example.com,Operations,Operations Supervisor,Active,10/01/2022,ATTENDANCE,,14/04/2026,14/04/2026,1.0,PRESENT,OPS-SG
+SG-0087,Daniel Ng,daniel.ng@example.com,Finance,Accountant,Active,20/05/2019,LEAVE,CCL,15/04/2026,15/04/2026,1.0,,FIN-SG
+SG-0088,Wang Mei,wang.mei@example.com,People & Culture,Talent Acquisition Specialist,Active,17/06/2024,LEAVE,AL,16/04/2026,17/04/2026,2.0,,HR-SG
+SG-0089,Chen Hao,chen.hao@example.com,Operations,Customer Support Specialist,Active,01/12/2021,ATTENDANCE,,20/04/2026,20/04/2026,1.0,LATE,OPS-SG
+SG-0090,Grace Lim,grace.lim@example.com,Sales,Business Development Manager,Active,13/04/2020,LEAVE,UPL,21/04/2026,21/04/2026,1.0,,SAL-SG
+SG-0091,Farah Aziz,farah.aziz@example.com,Human Resources,HR Coordinator,Active,11/03/2022,ATTENDANCE,,22/04/2026,22/04/2026,1.0,PRESENT,HR-SG
+SG-0092,Marcus Goh,marcus.goh@example.com,Finance,Finance Associate,Active,09/08/2020,LEAVE,AL,23/04/2026,24/04/2026,2.0,,FIN-SG
+SG-0093,Joanne Koh,joanne.koh@example.com,Operations,Service Desk Analyst,Active,02/02/2021,LEAVE,MC,27/04/2026,27/04/2026,1.0,,OPS-SG
+SG-0094,Harish Menon,harish.menon@example.com,Finance,Financial Controller,Active,18/10/2018,ATTENDANCE,,28/04/2026,28/04/2026,1.0,WFH,FIN-SG
+SG-0095,Chloe Teo,chloe.teo@example.com,Human Resources,Learning Coordinator,Active,21/07/2023,LEAVE,AL,29/04/2026,30/04/2026,2.0,,HR-SG
+SG-0096,Nur Aisyah,nur.aisyah@example.com,Operations,Operations Analyst,Active,04/05/2020,ATTENDANCE,,04/05/2026,04/05/2026,1.0,PRESENT,OPS-SG
+SG-0097,Peter Ho,peter.ho@example.com,Finance,Payroll Specialist,Active,16/01/2019,LEAVE,PH,05/05/2026,05/05/2026,1.0,,FIN-SG
+SG-0098,Vanessa Lee,vanessa.lee@example.com,Human Resources,HR Business Partner,Active,25/09/2022,ATTENDANCE,,06/05/2026,06/05/2026,1.0,ABS,HR-SG
+SG-0099,Isaac Ong,isaac.ong@example.com,Sales,Sales Executive,Active,07/12/2021,LEAVE,AL,07/05/2026,08/05/2026,2.0,,SAL-SG
+SG-0100,Rebecca Yeo,rebecca.yeo@example.com,Operations,Operations Coordinator,Active,11/05/2024,ATTENDANCE,,11/05/2026,11/05/2026,1.0,PRESENT,OPS-SG
