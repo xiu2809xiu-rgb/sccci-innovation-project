@@ -368,7 +368,7 @@ export const EPICS = [
         acceptance: [
           'Given a sample CSV or Excel file with Chinese headers, when I upload it, then each column gets a proposed field, a transform, a confidence and a rationale.',
           'Given a column of national ID numbers, when the file is read, then it is flagged as prohibited and can never be mapped.',
-          'Given the AI call, when it completes, then its tokens, latency and cost are recorded, and no sample value is sent or stored.',
+          'Given the AI call, when it completes, then its tokens, latency and cost are recorded, and no personal value from the sample is sent or stored.',
         ],
       },
       {
