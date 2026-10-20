@@ -9,6 +9,7 @@
   },
   "nav": {
     "label": "主导航",
+    "mobileDescription": "您的角色可以打开的页面。",
     "groups": {
       "workspace": "工作台",
       "automation": "自动化",
@@ -53,6 +54,7 @@
     },
     "language": {
       "label": "语言",
+      "current": "（语言：{{language}}）",
       "en": "English",
       "zh-CN": "简体中文"
     },

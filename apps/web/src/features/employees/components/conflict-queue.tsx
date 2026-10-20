@@ -32,15 +32,15 @@ export function ConflictQueue({
         <button
           type="button"
           className="flex flex-col items-start rounded-md text-left outline-none hover:underline focus-visible:ring-3 focus-visible:ring-ring/50"
-          aria-label={t('actions.openRecord', { name: conflict.employeeName })}
           onClick={() => {
             onOpenRecord(conflict.employeeNo);
           }}
         >
-          <span className="font-medium text-foreground">{conflict.employeeName}</span>
+          <span className="font-medium text-foreground">{conflict.employeeName}</span>{' '}
           <span className="font-mono text-xs text-muted-foreground">
             {conflict.employeeNo} · {labels.entity(conflict.entityCode)}
-          </span>
+          </span>{' '}
+          <span className="sr-only">{t('actions.opensRecord')}</span>
         </button>
       ),
     },

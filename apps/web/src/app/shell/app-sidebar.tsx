@@ -45,29 +45,32 @@ export function AppSidebar() {
   const groups = visibleNavGroups(session.permissions);
 
   return (
-    <Sidebar collapsible="icon" aria-label={t('nav.label')}>
+    <Sidebar collapsible="icon">
       <SidebarHeader>
         <BrandMark className="h-10 px-1" nameClassName="group-data-[collapsible=icon]:hidden" />
       </SidebarHeader>
-      <SidebarContent>
-        {groups.map((group) => (
-          <SidebarGroup key={group.key}>
-            <SidebarGroupLabel>{t(`nav.groups.${group.key}`)}</SidebarGroupLabel>
-            <SidebarGroupContent>
-              <SidebarMenu>
-                {group.items.map((item) => (
-                  <NavEntry key={item.key} item={item} />
-                ))}
-              </SidebarMenu>
-            </SidebarGroupContent>
-          </SidebarGroup>
-        ))}
-      </SidebarContent>
-      <SidebarFooter>
-        <SidebarMenu>
-          <NavEntry item={SETTINGS_NAV_ITEM} />
-        </SidebarMenu>
-      </SidebarFooter>
+      {/* One navigation landmark for the menu and Settings; `contents` keeps the sidebar's flex layout. */}
+      <nav aria-label={t('nav.label')} className="contents">
+        <SidebarContent>
+          {groups.map((group) => (
+            <SidebarGroup key={group.key}>
+              <SidebarGroupLabel>{t(`nav.groups.${group.key}`)}</SidebarGroupLabel>
+              <SidebarGroupContent>
+                <SidebarMenu>
+                  {group.items.map((item) => (
+                    <NavEntry key={item.key} item={item} />
+                  ))}
+                </SidebarMenu>
+              </SidebarGroupContent>
+            </SidebarGroup>
+          ))}
+        </SidebarContent>
+        <SidebarFooter>
+          <SidebarMenu>
+            <NavEntry item={SETTINGS_NAV_ITEM} />
+          </SidebarMenu>
+        </SidebarFooter>
+      </nav>
       <SidebarRail />
     </Sidebar>
   );

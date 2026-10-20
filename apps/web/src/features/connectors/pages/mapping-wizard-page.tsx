@@ -90,7 +90,7 @@ export function MappingWizardPage() {
         step={current}
         onStepChange={setStep}
         aria-label={t('wizard.steps.label')}
-        stepLabel={(number, total, title) => t('wizard.steps.indicator', { number, total, title })}
+        doneLabel={t('wizard.steps.done')}
         disableStepIndicators={finished}
         completedContent={proposal ? <WizardOutcome proposal={proposal} /> : null}
       >

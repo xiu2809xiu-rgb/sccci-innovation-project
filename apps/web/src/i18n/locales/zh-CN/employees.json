@@ -9,7 +9,7 @@
   "actions": {
     "runSync": "运行同步",
     "resolve": "处理",
-    "openRecord": "打开 {{name}} 的档案"
+    "opensRecord": "（打开档案）"
   },
   "filters": {
     "label": "筛选员工",

@@ -36,10 +36,12 @@ export function UserMenu() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" size="icon" aria-label={`${t('shell.userMenu.label')}: ${name}`}>
+        {/* The visible initials start the accessible name, so speech users can say them (WCAG 2.5.3). */}
+        <Button variant="ghost" size="icon">
           <Avatar className="size-7">
             <AvatarFallback className="text-xs">{initials(session.displayName)}</AvatarFallback>
-          </Avatar>
+          </Avatar>{' '}
+          <span className="sr-only">{`${t('shell.userMenu.label')}: ${name}`}</span>
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-64">

@@ -37,6 +37,7 @@
         "required_status_checks": [
           { "context": "Lint, typecheck, test, build" },
           { "context": "Docker images" },
+          { "context": "End-to-end smoke" },
           { "context": "Analyze (javascript-typescript)" },
           { "context": "Analyze (actions)" },
           { "context": "Dependency review" },

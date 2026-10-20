@@ -8,7 +8,7 @@ import { SyntheticDataBadge } from '@/components/common/synthetic-data-badge';
 import type { SortState } from '@/components/common/data-table/data-table-types';
 import { FadeContent } from '@/components/reactbits/fade-content';
 import { Button } from '@/components/ui/button';
-import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useHasPermission } from '@/app/session/use-session';
 import { RunSyncDialog } from '@/features/connectors/components/sync/run-sync-dialog';
 
@@ -65,27 +65,26 @@ export function EmployeesPage() {
         meta={<SyntheticDataBadge />}
         actions={syncButton}
       />
-      <FadeContent trigger="mount" className="space-y-4">
-        <div className="flex flex-wrap items-center justify-between gap-3">
-          <Tabs
-            value={view}
-            onValueChange={(next) => {
-              update({ view: (next as EmployeesView) === 'conflicts' ? 'conflicts' : null });
-            }}
-          >
+      <FadeContent trigger="mount">
+        <Tabs
+          value={view}
+          onValueChange={(next) => {
+            update({ view: (next as EmployeesView) === 'conflicts' ? 'conflicts' : null });
+          }}
+          className="gap-4"
+        >
+          <div className="flex flex-wrap items-center justify-between gap-3">
             <TabsList aria-label={t('views.label')}>
               <TabsTrigger value="all">{t('views.all')}</TabsTrigger>
               <TabsTrigger value="conflicts">{t('views.conflicts')}</TabsTrigger>
             </TabsList>
-          </Tabs>
-          {view === 'all' && employees.data ? (
-            <p className="text-sm text-muted-foreground" aria-live="polite">
-              {t('filters.count', { count: employees.data.meta.total })}
-            </p>
-          ) : null}
-        </div>
-        {view === 'all' ? (
-          <>
+            {view === 'all' && employees.data ? (
+              <p className="text-sm text-muted-foreground" aria-live="polite">
+                {t('filters.count', { count: employees.data.meta.total })}
+              </p>
+            ) : null}
+          </div>
+          <TabsContent value="all" className="space-y-4">
             <EmployeeFilters query={query} onChange={update} />
             <EmployeeTable
               query={employees}
@@ -104,15 +103,16 @@ export function EmployeesPage() {
               }}
               onOpen={openRecord}
             />
-          </>
-        ) : (
-          <ConflictQueue
-            onOpenRecord={(no) => {
-              openRecord(no, 'conflicts');
-            }}
-            {...(onResolve ? { onResolve } : {})}
-          />
-        )}
+          </TabsContent>
+          <TabsContent value="conflicts">
+            <ConflictQueue
+              onOpenRecord={(no) => {
+                openRecord(no, 'conflicts');
+              }}
+              {...(onResolve ? { onResolve } : {})}
+            />
+          </TabsContent>
+        </Tabs>
       </FadeContent>
       <EmployeeDrawer
         employeeNo={employeeNo}

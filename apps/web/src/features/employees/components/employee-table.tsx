@@ -51,17 +51,18 @@ export function EmployeeTable({
         <button
           type="button"
           className="flex flex-col items-start rounded-md text-left outline-none hover:underline focus-visible:ring-3 focus-visible:ring-ring/50"
-          aria-label={t('actions.openRecord', { name: row.fullNameLatin })}
           onClick={() => {
             onOpen(row.employeeNo);
           }}
         >
-          <span className="font-medium text-foreground">{row.fullNameLatin}</span>
+          <span className="font-medium text-foreground">{row.fullNameLatin}</span>{' '}
           {row.fullNameLocal ? (
             <span className="text-xs text-muted-foreground" lang="zh-CN">
               {row.fullNameLocal}
             </span>
-          ) : null}
+          ) : null}{' '}
+          {/* The visible name leads the accessible name (WCAG 2.5.3); the action follows. */}
+          <span className="sr-only">{t('actions.opensRecord')}</span>
         </button>
       ),
     },

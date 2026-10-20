@@ -22,13 +22,13 @@ export function LanguageMenu() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button
-          variant="ghost"
-          size="sm"
-          aria-label={`${t('shell.language.label')}: ${t(`shell.language.${language}`)}`}
-        >
+        {/* The visible "EN" or "中" starts the accessible name, so speech users can say what they see (WCAG 2.5.3). */}
+        <Button variant="ghost" size="sm">
           <Languages aria-hidden="true" data-icon="inline-start" />
-          <span aria-hidden="true">{language === 'zh-CN' ? '中' : 'EN'}</span>
+          <span>{language === 'zh-CN' ? '中' : 'EN'}</span>{' '}
+          <span className="sr-only">
+            {t('shell.language.current', { language: t(`shell.language.${language}`) })}
+          </span>
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-44">
