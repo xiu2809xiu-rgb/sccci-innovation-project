@@ -14,7 +14,7 @@ docker compose up --build
 
 ## Quick start (local development)
 
-Requires Node.js 24 LTS (>= 24.15) and pnpm 12.
+Requires Node.js 24 LTS (24.22 or newer, the version in `.node-version`) and pnpm 12. On Windows, 24.15 crashed intermittently while running the API integration tests.
 
 ```bash
 pnpm install
