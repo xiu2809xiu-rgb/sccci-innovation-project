@@ -22,6 +22,8 @@ ENV API_UPSTREAM=http://api:3000
 COPY infra/docker/nginx/security-headers.conf /etc/nginx/snippets/security-headers.conf
 COPY infra/docker/nginx/default.conf.template /etc/nginx/templates/default.conf.template
 COPY --from=build /repo/apps/web/dist /usr/share/nginx/html
+# The base image already runs as nginx (uid 101); naming it here keeps that true if the base changes.
+USER 101
 EXPOSE 8080
 HEALTHCHECK --interval=10s --timeout=3s --start-period=10s --retries=5 \
   CMD wget -qO- http://127.0.0.1:8080/healthz > /dev/null || exit 1
