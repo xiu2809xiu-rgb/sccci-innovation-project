@@ -32,21 +32,33 @@ export const pageMetaSchema = z.object({
 
 export type PageMeta = z.infer<typeof pageMetaSchema>;
 
+/**
+ * Set on responses from a head-start route that serves typed sample data
+ * instead of the real implementation, so the UI can say so. The area's owner
+ * removes it when the real implementation lands (CLAUDE.md section 4).
+ */
+export const responseMetaSchema = z.object({
+  mock: z.literal(true).optional(),
+});
+
+export type ResponseMeta = z.infer<typeof responseMetaSchema>;
+
 /** `{ data }` wrapper for single resources. */
 export function dataEnvelopeSchema<T extends z.ZodType>(item: T) {
-  return z.object({ data: item });
+  return z.object({ data: item, meta: responseMetaSchema.optional() });
 }
 
 /** `{ data, meta }` wrapper for paginated lists. */
 export function listEnvelopeSchema<T extends z.ZodType>(item: T) {
-  return z.object({ data: z.array(item), meta: pageMetaSchema });
+  return z.object({ data: z.array(item), meta: pageMetaSchema.extend(responseMetaSchema.shape) });
 }
 
 export interface DataEnvelope<T> {
   data: T;
+  meta?: ResponseMeta;
 }
 
 export interface ListEnvelope<T> {
   data: T[];
-  meta: PageMeta;
+  meta: PageMeta & ResponseMeta;
 }

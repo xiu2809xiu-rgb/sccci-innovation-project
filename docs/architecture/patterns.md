@@ -80,6 +80,8 @@ The register CLAUDE.md section 7 asks for: each design pattern HuiTong uses, why
 
 **Where.** Every `*.repository.ts`, for example [`EmployeesRepository`](../../apps/api/src/modules/employees/employees.repository.ts), whose writes take the caller's transaction so a master change, its provenance, its history line and its conflict commit together, and [`SyncRunsRepository`](../../apps/api/src/modules/connectors/sync/sync-runs.repository.ts).
 
+**Head starts.** A repository can be an abstract class that the module binds, so a service does not know where its data comes from. [`WorkflowsRepository`](../../apps/api/src/modules/workflows/workflows.repository.ts) is bound to [`MockWorkflowsRepository`](../../apps/api/src/modules/workflows/mock/mock-workflows.repository.ts), which serves typed sample data, until area 2 binds its Prisma repository in [`WorkflowsModule`](../../apps/api/src/modules/workflows/workflows.module.ts). The controllers and the contract stay as they are.
+
 **Extend.** Never import another area's repository: depend on the service its module exports.
 
 ## Gateway
@@ -114,7 +116,7 @@ The register CLAUDE.md section 7 asks for: each design pattern HuiTong uses, why
 
 **Why here.** Authentication, CSRF protection, permission checks, masking and the error envelope must apply to every route, without each controller remembering them.
 
-**Where.** [`AuthGuard`](../../apps/api/src/common/guards/auth.guard.ts), [`CsrfGuard`](../../apps/api/src/common/guards/csrf.guard.ts) and [`PermissionsGuard`](../../apps/api/src/common/guards/permissions.guard.ts) run in that order after the rate limiter, registered globally in [`app.module.ts`](../../apps/api/src/app.module.ts); [`FieldMaskingInterceptor`](../../apps/api/src/common/interceptors/field-masking.interceptor.ts) masks responses by role and entity; [`GlobalExceptionFilter`](../../apps/api/src/common/filters/global-exception.filter.ts) returns `{ error: { code, message, details, traceId } }`. [`AuditLogService`](../../apps/api/src/infrastructure/audit/audit-log.service.ts), which services call for each write, keeps the append-only, hash-chained audit trail.
+**Where.** [`AuthGuard`](../../apps/api/src/common/guards/auth.guard.ts), [`CsrfGuard`](../../apps/api/src/common/guards/csrf.guard.ts) and [`PermissionsGuard`](../../apps/api/src/common/guards/permissions.guard.ts) run in that order after the rate limiter, registered globally in [`app.module.ts`](../../apps/api/src/app.module.ts); [`FieldMaskingInterceptor`](../../apps/api/src/common/interceptors/field-masking.interceptor.ts) masks responses by role and entity; [`MockDataInterceptor`](../../apps/api/src/common/interceptors/mock-data.interceptor.ts) adds `meta.mock` to the responses of routes marked `@ServesMockData()`, so the UI labels sample data; [`GlobalExceptionFilter`](../../apps/api/src/common/filters/global-exception.filter.ts) returns `{ error: { code, message, details, traceId } }`. [`AuditLogService`](../../apps/api/src/infrastructure/audit/audit-log.service.ts), which services call for each write, keeps the append-only, hash-chained audit trail.
 
 ## Injected services in the web app
 

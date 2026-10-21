@@ -64,6 +64,16 @@ export class ConflictError extends AppError {
   }
 }
 
+/**
+ * A head-start route whose behaviour belongs to an area's owner and is not
+ * built yet (CLAUDE.md section 4). The contract is fixed; nothing is changed.
+ */
+export class NotImplementedError extends AppError {
+  constructor(what: string, owner: string) {
+    super('NOT_IMPLEMENTED', `${what} is not built yet; ${owner} implements it`, 501);
+  }
+}
+
 export class UpstreamUnavailableError extends AppError {
   constructor(system: string, details?: unknown) {
     super('UPSTREAM_UNAVAILABLE', `${system} did not respond as expected`, 502, details);

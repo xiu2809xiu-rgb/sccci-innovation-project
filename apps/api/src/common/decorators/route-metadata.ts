@@ -28,6 +28,14 @@ export interface MaskFieldsSpec {
 export const MaskFields = Reflector.createDecorator<MaskFieldsSpec>();
 
 /**
+ * Marks a head-start route, or a whole controller, that serves typed sample
+ * data instead of the real implementation. Its responses carry `meta.mock`,
+ * so the UI labels them; the area's owner removes the decorator when the real
+ * implementation lands.
+ */
+export const ServesMockData = Reflector.createDecorator<true>({ transform: () => true });
+
+/**
  * Reads a decorator's metadata from the handler, falling back to its class.
  * Nest types the result as always present; it is undefined when the decorator
  * is absent, and this return type says so.
