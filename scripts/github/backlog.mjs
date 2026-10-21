@@ -160,15 +160,35 @@ export const EPICS = [
         key: 'P-8',
         title: 'Hardening and handover',
         sprint: 17,
-        points: 5,
+        points: 8,
         priority: 'must',
         labels: ['req: M4 best practices'],
         story:
-          'As the team, we want a final sweep for secrets, dead code and broken links, so that what we hand over is clean and honest.',
+          'As the team, we want a final sweep for secrets, dead code and broken links, and a demo that cannot let us down on the day, so that what we hand over and present is clean and honest.',
+        // The demo-reliability criteria are adopted from Azri's integrated plan (prompt 002).
         acceptance: [
           'Given the repository and its history, when they are scanned, then no secret or licence key is found.',
           'Given every page, when Lighthouse runs, then Performance, Accessibility and Best Practices score 90 or more.',
           'Given the build report, when it is read, then every claim links to a command result or a screenshot.',
+          'Given the one-click demo reset, when it runs, then it rebuilds only the synthetic demo data, and it refuses to run against a database that is not marked as a demo.',
+          'Given the timed full rehearsal, when it runs in sprint 17, then the whole demo fits the slot, and the reset and a regression run are repeated just before the presentation.',
+          'Given the live demo fails on the day, when we switch, then a recorded backup demo and a tested local Docker fallback are ready.',
+        ],
+      },
+      {
+        key: 'P-9',
+        title: 'Hero journey and proof points as end-to-end tests',
+        sprint: 11,
+        points: 5,
+        priority: 'must',
+        labels: ['req: M4 best practices'],
+        story:
+          'As the team, we want the hero journey and its two proof points to run end to end in CI, so that the demo we present is the product we test.',
+        acceptance: [
+          "Given E2E #1, when it runs, then an OA approval travels through the tasks, the draft record, activation, reconciliation with HQ, the leave mapping and HQ's report to the overview, each step named with its owning area.",
+          'Given E2E #2, when an unfamiliar subsidiary CSV is uploaded, then the AI suggestions approved by HR are saved as a mapping version and import the file with no code change.',
+          'Given E2E #3, when HQ HR asks for a field missing from its allowlist through the UI, the raw API or a report export, then it is refused each time and each refusal is audited.',
+          'Given a step whose story is not done, when the suite runs, then the step is marked fixme with the story key, never deleted.',
         ],
       },
     ],
@@ -274,6 +294,35 @@ export const EPICS = [
           'Given a keyboard user, when they tab beside the scene, then a list of nodes offers the same navigation.',
         ],
       },
+      {
+        key: 'A-7',
+        title: 'Read Chinese CSV encodings safely',
+        sprint: 1,
+        points: 3,
+        priority: 'must',
+        story:
+          'As a China HQ HR partner, I want files saved from Chinese Excel to read correctly whatever their encoding, so that headers and names are never garbled.',
+        acceptance: [
+          'Given a CSV in UTF-8, UTF-8 with a byte-order mark, GBK or GB18030, when it is uploaded, then its Chinese headers and values read correctly.',
+          'Given a file whose encoding cannot be told apart, when it is uploaded, then I see both readings and choose one before anything is proposed.',
+          'Given a new source, when a developer connects it, then the date formats, time zones and effective dates of every system are documented in one place.',
+        ],
+      },
+      {
+        key: 'A-8',
+        title: 'Label mocked systems and the mock AI',
+        sprint: 1,
+        points: 2,
+        priority: 'must',
+        labels: ['req: M2 GRS by design'],
+        story:
+          'As someone watching the demo, I want to see which systems are mocked and when the AI is the deterministic mock, so that nothing simulated passes for a live integration.',
+        acceptance: [
+          'Given a connector backed by a mock system, when it appears on the connectors pages or the overview, then it carries a "Mock" badge.',
+          'Given the mock AI provider, when the mapping wizard or the discrepancy explainer shows its output, then it is labelled "Mock AI".',
+          'Given a demo on a real model, when the team prepares it, then the docs say how to switch the provider and what changes.',
+        ],
+      },
     ],
   },
   {
@@ -346,6 +395,53 @@ export const EPICS = [
           'Given a sync that finds conflicts, when it finishes, then a link takes me to the conflicts queue.',
         ],
       },
+      {
+        key: 'B-5',
+        title: 'Possible matches for HR review, never name-only merges',
+        sprint: 1,
+        points: 5,
+        priority: 'must',
+        labels: ['req: M2 GRS by design'],
+        story:
+          'As an HR executive, I want look-alike names flagged as possible matches for me to decide, so that two different people are never merged and one person is never split by accident.',
+        acceptance: [
+          'Given two people whose Chinese or romanised names look alike, when their records sync, then they stay separate records.',
+          'Given a new record whose name looks like an existing employee, when I preview the sync, then that employee is shown as a possible match, and nothing is merged.',
+          'Given the same group employee number from two systems, when the records arrive, then they are confirmed as one person.',
+        ],
+      },
+      {
+        key: 'B-6',
+        title: 'Draft records and verified activation',
+        sprint: 9,
+        points: 5,
+        priority: 'must',
+        labels: ['req: M2 GRS by design'],
+        story:
+          'As an HR executive, I want an approved request to create only a draft record, which becomes active once onboarding and the verified HR record agree, so that nobody counts as an employee too early.',
+        acceptance: [
+          'Given an approved manpower request, when the hire is confirmed, then the master holds a PRE_HIRE draft linked to the request, and no active record exists.',
+          'Given a draft, when the verified SG HR record arrives before the onboarding milestones are met, then it stays a draft and shows what it is waiting for.',
+          'Given both conditions met, when the record becomes active, then the activation is audited with both pieces of evidence.',
+          "Given a write-back to a system of record, when it is requested, then it needs HR's explicit, audited approval, and runs only against a mock until the client approves it.",
+        ],
+      },
+      {
+        key: 'B-7',
+        title: 'Per-destination field allowlist, enforced by default deny',
+        sprint: 1,
+        points: 8,
+        priority: 'must',
+        labels: ['req: M2 GRS by design', 'type: security'],
+        story:
+          'As a data protection officer, I want each destination to receive only the fields allowlisted for it, so that HQ never sees Singapore data that no approved transfer covers.',
+        acceptance: [
+          "Given a field missing from HQ's allowlist, when HQ HR reads a Singapore record in the UI or through the raw API, then the field is withheld with the reason.",
+          'Given the allowlist, when it is worked out, then it comes from the ACTIVE entries of the cross-border transfer register, not from a second list.',
+          'Given a response that withholds fields from a destination, when it is sent, then the audit log records which fields were withheld and under which policy version.',
+          'Given a report export, when area 3 builds it, then the same allowlist service leaves out every field not listed.',
+        ],
+      },
     ],
   },
   {
@@ -415,6 +511,21 @@ export const EPICS = [
           'Given malformed model output, when it arrives, then it is rejected as AI_OUTPUT_INVALID and nothing is saved.',
         ],
       },
+      {
+        key: 'E-5',
+        title: 'No employee identifiers sent to an AI service',
+        sprint: 1,
+        points: 2,
+        priority: 'must',
+        labels: ['req: M2 GRS by design'],
+        story:
+          'As Organisation E, we want no employee identifier or sensitive HR value sent to an outside AI service without our written permission, so that using AI never becomes a data transfer we did not agree to.',
+        acceptance: [
+          'Given a conflict, when the explainer prompt is built, then it holds no employee number, name, email or phone number, and no value above INTERNAL.',
+          'Given the mapping assistant, when its prompt is built, then it holds headers and category codes only, never a personal value.',
+          'Given the rule, when anyone reads CLAUDE.md or the GRS register, then it is written there.',
+        ],
+      },
     ],
   },
   {
@@ -459,10 +570,10 @@ export const EPICS = [
         points: 5,
         priority: 'must',
         story:
-          'As an HR executive, I want the new hire created in the master and in SG HR from the approved data, so that I type it once.',
+          'As an HR executive, I want the new hire created from the approved data, as a draft in the master and in SG HR once I approve it, so that I type it once.',
         acceptance: [
-          'Given a completed hire step, when it runs, then the employee appears in the master with the workflow as the change source.',
-          'Given the SG HR mock, when the record is pushed, then the call is idempotent and audited.',
+          'Given a confirmed hire, when the step runs, then a draft (PRE_HIRE) record appears in the master with the workflow as the change source (B-6).',
+          "Given the SG HR mock, when the record is pushed after HR's explicit approval, then the call is idempotent, audited and labelled as a write-back to a mock.",
         ],
       },
       {
@@ -563,7 +674,7 @@ export const EPICS = [
           'As an HR executive, I want the month in the company reporting template as an Excel file, so that I can send it without reformatting.',
         acceptance: [
           'Given a consolidated month, when I export, then the .xlsx follows the template layout exactly.',
-          'Given masked fields, when a role exports, then its masking applies to the file too.',
+          'Given a destination such as HQ, when it exports, then the file holds only the fields on its allowlist (B-7), and the export is audited.',
         ],
       },
       {
@@ -637,6 +748,7 @@ export const EPICS = [
         acceptance: [
           'Given a pending transfer, when it is approved, then the fields it covers become visible to HQ roles, and the approval is audited.',
           'Given a field with no approved transfer, when HQ reads it, then it is masked as not approved.',
+          'Given a change to the fields a transfer covers, when it is saved, then the policy version goes up and the change is audited with who made it.',
         ],
       },
       {
@@ -757,7 +869,7 @@ export const EPICS = [
         story:
           'As the team, we want each of areas 2 to 4 to have one owner, so that every member owns, writes and explains distinct code.',
         acceptance: [
-          'Given the team agreement, when it is recorded, then docs/team/module-ownership.md names the owner of each area.',
+          'Given the team agreement, when it is recorded, then docs/team/module-ownership.md names the owner and the backup owner of each area.',
           'Given CODEOWNERS, when a pull request touches an area, then its owner is asked to review.',
         ],
       },
@@ -772,6 +884,7 @@ export const EPICS = [
         story:
           'As the team, we want the open questions answered by Organisation E, so that our assumptions become facts.',
         acceptance: [
+          'Given the three sample packs in docs/client/questions-for-client.md, when the session is arranged, then they are requested first.',
           'Given docs/client/questions-for-client.md, when the session ends, then each question has an answer or a follow-up.',
           'Given the answers, when they are recorded, then the affected assumptions are confirmed or changed.',
         ],
@@ -851,7 +964,7 @@ export const EPICS = [
         story:
           'As the team, we want a final presentation of the deployed product with its monitoring, so that we show the full journey.',
         acceptance: [
-          'Given the deployed demo, when it is presented, then the onboarding and consolidation journeys run live end to end.',
+          "Given the deployed demo, when it is presented, then the hero journey runs live end to end, and each member presents their own area's steps (docs/agile/hero-journey.md).",
         ],
       },
       {

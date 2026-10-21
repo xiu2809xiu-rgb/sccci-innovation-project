@@ -17,6 +17,21 @@ This file records who owns which part of HuiTong 汇通, what each area provides
 
 Areas 2 to 4 are shared out among Iok Teck, Azri and Angelyn. Once the team agrees who takes which, the names go into this table and into `.github/CODEOWNERS`. The working assumption is that this happens by the W3 project plan ([A-44](../assumptions.md)).
 
+## Backup owners
+
+Each area has a named backup who can explain its design, run its demo steps and review its pull requests when the owner is away. Backups are agreed together with the owners ([T-1](../agile/backlog.md#t-1-agree-area-owners-and-fill-codeowners)), so they stay TBD until then. Adopted from Azri's integrated plan.
+
+| Area                                   | Owner  | Backup owner |
+| -------------------------------------- | ------ | ------------ |
+| 1. Integration Core + platform base    | Richie | TBD          |
+| 2. Workflow automation                 | TBD    | TBD          |
+| 3. Attendance, leave and reporting     | TBD    | TBD          |
+| 4. Governance, security and monitoring | TBD    | TBD          |
+
+- **Cross-review.** Every member reviews at least one teammate's critical pull request, normally in the area they back up. A pull request is critical when it changes a domain rule, a contract between areas, access control or masking, or a migration.
+- **Shared deployment knowledge.** Area 4's backup takes part in one deployment rehearsal ([P-8](../agile/backlog.md#p-8-hardening-and-handover)), so the AWS setup is never known by one person only.
+- **Presenting.** If an owner cannot present at W18, their backup presents that area's steps of the [hero journey](../agile/hero-journey.md#presenter-plan-w5-proposal-and-w18-final).
+
 ## Ground rules
 
 1. **Area 1 owns the shared platform.** Auth, the app shell and layout, the design system, the API client, queues, logging, health checks and AI usage recording belong to area 1, whichever feature needs them.
