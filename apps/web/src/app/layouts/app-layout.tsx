@@ -30,7 +30,8 @@ export function AppLayout() {
         {t('shell.skipToContent')}
       </a>
       <AppSidebar />
-      <SidebarInset>
+      {/* min-w-0: wide content, such as the workflow board, scrolls inside its own region instead of widening the page. */}
+      <SidebarInset className="min-w-0">
         <TopBar />
         <main
           id="main"

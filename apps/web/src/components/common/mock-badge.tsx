@@ -1,4 +1,4 @@
-import { Bot, Drama } from 'lucide-react';
+import { Bot, Drama, FlaskConical } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
@@ -8,11 +8,13 @@ import { StatusBadge } from './status-badge';
 const KINDS = {
   system: { icon: Drama, label: 'mock.system', hint: 'mock.systemHint' },
   ai: { icon: Bot, label: 'mock.ai', hint: 'mock.aiHint' },
+  data: { icon: FlaskConical, label: 'mock.data', hint: 'mock.dataHint' },
 } as const;
 
 /**
- * Honesty label: a system simulated by a HuiTong mock, or output from the
- * deterministic mock AI. A mock is never shown as if it were live.
+ * Honesty label: a system simulated by a HuiTong mock, output from the
+ * deterministic mock AI, or a head-start route's typed sample data (`meta.mock`
+ * in the response). A mock is never shown as if it were live.
  */
 export function MockBadge({ kind }: { kind: keyof typeof KINDS }) {
   const { t } = useTranslation();
