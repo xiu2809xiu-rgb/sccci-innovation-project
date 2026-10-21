@@ -60,7 +60,7 @@ Legend: `[x]` done and verified, `[~]` in progress, `[ ]` not started, `[!]` blo
 
 ### Phase 6: Head starts for areas 2-4
 
-- [ ] Area 2 workflows: contracts, UI, test skeletons, guide
+- [x] Area 2 workflows: contracts and a mock-backed API with `meta.mock` (#113), the board, timeline, instance and task list (#114), the guide [`docs/team/area-2-workflow-automation.md`](team/area-2-workflow-automation.md); 47 named test skeletons for the owner
 - [ ] Area 3 attendance/leave/reporting: contracts, UI, test skeletons, guide
 - [ ] Area 4 governance/security/monitoring: contracts, UI, test skeletons, guide
 - [ ] Playwright screenshots of every page in both themes
