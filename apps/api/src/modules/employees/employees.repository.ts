@@ -70,6 +70,39 @@ export class EmployeesRepository {
     return new Map(rows.map((row) => [row.field, row.connectorId]));
   }
 
+  /**
+   * The identity details of every employee, in employee-number order, for a
+   * sync preview to compare new records with. Names are compared after
+   * normalising them, which an index cannot do, so the whole set is read
+   * once per preview rather than queried per record.
+   */
+  identityFacts() {
+    return this.prisma.employee.findMany({
+      select: {
+        employeeNo: true,
+        entityCode: true,
+        familyName: true,
+        givenName: true,
+        fullNameLatin: true,
+        fullNameLocal: true,
+        workEmail: true,
+      },
+      orderBy: { employeeNo: 'asc' },
+    });
+  }
+
+  /** The other employee who already has this work email, as stored or in lower case (the unique key). */
+  async workEmailHolder(workEmail: string, exceptEmployeeNo: string): Promise<string | null> {
+    const holder = await this.prisma.employee.findFirst({
+      where: {
+        employeeNo: { not: exceptEmployeeNo },
+        workEmail: { in: [...new Set([workEmail, workEmail.toLowerCase()])] },
+      },
+      select: { employeeNo: true },
+    });
+    return holder?.employeeNo ?? null;
+  }
+
   /** The record with everything a merge needs: provenance, open conflicts and HR's typed-in decisions. */
   findForMerge(employeeNo: string, tx: Tx | PrismaService = this.prisma) {
     return tx.employee.findUnique({

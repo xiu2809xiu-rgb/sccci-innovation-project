@@ -5,6 +5,7 @@ import {
   type CanonicalEmployeePartial,
   type EmployeeField,
   type EntityCode,
+  type PossibleMatch,
   type SyncMode,
   type SyncPreviewItem,
 } from '@huitong/shared';
@@ -12,6 +13,7 @@ import {
 import type { RequestMeta } from '../../common/http/request-meta.js';
 import { AuditLogService } from '../../infrastructure/audit/audit-log.service.js';
 import { mergeField, sameValue, type Observation } from './domain/field-merger.js';
+import { possibleMatchReasons, type IdentityFacts } from './domain/identity-matcher.js';
 import { canonicalOf, columnsOf, createColumnsOf } from './employee-record.js';
 import { EmployeesRepository, type FieldChange } from './employees.repository.js';
 
@@ -46,6 +48,17 @@ export type MergeResult =
 
 type MergeTarget = NonNullable<Awaited<ReturnType<EmployeesRepository['findForMerge']>>>;
 
+type IdentityRow = Awaited<ReturnType<EmployeesRepository['identityFacts']>>[number];
+
+/** The sync error for a work email another employee already has (the master's unique key). */
+function workEmailInUse(holder: string): MergeResult {
+  return {
+    kind: 'rejected',
+    code: 'WORK_EMAIL_IN_USE',
+    message: `The work email already belongs to ${holder}. Check whether this is the same person before adding the record again.`,
+  };
+}
+
 const isIdentity = (field: string) => (IDENTITY_FIELDS as readonly string[]).includes(field);
 
 function asObservation(row: {
@@ -75,6 +88,13 @@ function candidateKey(candidates: readonly Observation[]): unknown {
  */
 @Injectable()
 export class EmployeeMasterService {
+  /**
+   * Every employee's identity details, read once per sync run for the
+   * possible-match check. A preview writes nothing, so they stay current for
+   * the whole run; one run at a time per API instance keeps one slot enough.
+   */
+  private identityCache: { syncRunId: string; facts: IdentityRow[] } | null = null;
+
   constructor(
     private readonly employees: EmployeesRepository,
     private readonly audit: AuditLogService,
@@ -127,8 +147,24 @@ export class EmployeeMasterService {
       };
     }
     const entityCode = values.entityCode;
+    // An email is unique in the master: another holder means a sync error, never a merge.
+    const holder = values.workEmail
+      ? await this.employees.workEmailHolder(values.workEmail, employeeNo)
+      : null;
+    if (holder) return workEmailInUse(holder);
+    // Only a preview shows possible matches; an APPLY's own preview is not kept.
+    const possibleMatches =
+      mode === 'PREVIEW' ? await this.possibleMatches(record.syncRunId, employeeNo, values) : [];
     const preview: SyncPreviewItem[] = [
-      { employeeNo, entityCode, kind: 'CREATE', field: null, before: null, after: null },
+      {
+        employeeNo,
+        entityCode,
+        kind: 'CREATE',
+        field: null,
+        before: null,
+        after: null,
+        ...(possibleMatches.length > 0 ? { possibleMatches } : {}),
+      },
     ];
     const result = {
       kind: 'created' as const,
@@ -166,6 +202,42 @@ export class EmployeeMasterService {
       );
     });
     return result;
+  }
+
+  /**
+   * Existing employees a new record may duplicate, for HR to check in the
+   * preview: names compared after normalising them, and the same email in
+   * another case. The record is still created on its own; a look-alike never
+   * merges two people (story B-5).
+   */
+  private async possibleMatches(
+    syncRunId: string,
+    employeeNo: string,
+    values: SourceRecordInput['values'],
+  ): Promise<PossibleMatch[]> {
+    const facts: IdentityFacts = {
+      employeeNo,
+      familyName: values.familyName ?? null,
+      givenName: values.givenName ?? null,
+      fullNameLatin: values.fullNameLatin ?? null,
+      fullNameLocal: values.fullNameLocal ?? null,
+      workEmail: values.workEmail ?? null,
+    };
+    if (this.identityCache?.syncRunId !== syncRunId) {
+      this.identityCache = { syncRunId, facts: await this.employees.identityFacts() };
+    }
+    return this.identityCache.facts.flatMap((candidate) => {
+      const reasons = possibleMatchReasons(facts, candidate);
+      return reasons.length > 0
+        ? [
+            {
+              employeeNo: candidate.employeeNo,
+              entityCode: candidate.entityCode as EntityCode,
+              reasons,
+            },
+          ]
+        : [];
+    });
   }
 
   private async mergeInto(
@@ -278,6 +350,13 @@ export class EmployeeMasterService {
         after: item.candidates.map(({ connectorId, value }) => ({ connectorId, value })),
       })),
     ];
+    const newEmail = changes.find((change) => change.field === 'workEmail')?.newValue;
+    const holder =
+      typeof newEmail === 'string'
+        ? await this.employees.workEmailHolder(newEmail, employeeNo)
+        : null;
+    if (holder) return workEmailInUse(holder);
+
     const kind = changes.length > 0 ? 'updated' : 'recorded';
     const conflicts: OpenedConflict[] = toOpen.map((item) => ({
       conflictId: null,

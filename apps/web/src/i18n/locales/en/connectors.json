@@ -50,6 +50,7 @@
       "MISSING_EMPLOYEE_NO": "Records arrived without an employee number.",
       "INCOMPLETE_RECORD": "New records were missing required details.",
       "ENTITY_MISMATCH": "Records named a different entity from the one already on file.",
+      "WORK_EMAIL_IN_USE": "Records carried a work email another employee already has. Check whether they are the same person, then correct the email at the source.",
       "INTERRUPTED": "The run was interrupted before it finished.",
       "UPSTREAM_UNAVAILABLE": "The connected system did not respond.",
       "SOURCE_CHANGED": "The source system changed after the preview, so nothing was written. Preview again to see the current changes."
@@ -99,7 +100,20 @@
       "wholeRecord": "Whole record",
       "newRecord": "Added to the master",
       "to": "becomes",
-      "truncated": "Showing the first {{count}} changes; the counts above cover all of them."
+      "truncated": "Showing the first {{count}} changes; the counts above cover all of them.",
+      "possibleMatch": {
+        "title_one": "Possible match for HR to check",
+        "title_other": "{{count}} possible matches for HR to check",
+        "reason": {
+          "SAME_LOCAL_NAME": "same Chinese name",
+          "SAME_LATIN_NAME": "same name in Latin script",
+          "SAME_NAME_PARTS": "the same names in another order",
+          "SAME_WORK_EMAIL": "same work email"
+        },
+        "separator": ", ",
+        "newTab": "(opens the record in a new tab)",
+        "note": "A look-alike name never merges two people: this is added as its own record. Only the same employee number makes two records one person."
+      }
     },
     "previewAgain": "Preview again"
   },

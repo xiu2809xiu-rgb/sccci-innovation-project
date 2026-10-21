@@ -13,6 +13,7 @@ export * from './employees/canonical-employee.js';
 export * from './employees/conflict.js';
 export * from './employees/employee-view.js';
 export * from './employees/employment.js';
+export * from './employees/possible-match.js';
 export * from './events/domain-events.js';
 export * from './governance/classification.js';
 export * from './governance/masked-value.js';

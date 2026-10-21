@@ -195,7 +195,7 @@ Zhou Xinyi 周欣怡 · `HR_HQ` · Organisation E Group HQ (`CN01`), Shanghai
 
 ### Assumptions to validate
 
-- HQ holds SG01 staff as overseas staff, under an employee number shared with SG HR (A-04: an HQ-assigned `E1xxxxx` number, with work email as the fallback; A-05; Q-04, Q-05).
+- HQ holds SG01 staff as overseas staff, under an employee number shared with SG HR (A-04: an HQ-assigned `E1xxxxx` number, the only match key; A-05; Q-04, Q-05).
 - HQ needs only a subset of Singapore fields (Q-08).
 - HQ attendance comes from SAP or DingTalk (Q-09), and HQ notifications belong in DingTalk or WeChat Work (A-18: notification channels; Q-10).
 

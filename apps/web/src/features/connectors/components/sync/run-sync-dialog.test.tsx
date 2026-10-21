@@ -206,6 +206,37 @@ describe('Run sync', () => {
     expect(within(preview).queryByText(/connectorId/)).not.toBeInTheDocument();
   });
 
+  it('shows a look-alike employee as a possible match for HR to check, not as the same person', async () => {
+    const { dialog } = await previewSingaporeHr(
+      run({
+        counts: { fetched: 51, created: 1, updated: 0, unchanged: 50, conflicts: 0, errors: 0 },
+        previewItems: [
+          {
+            employeeNo: 'E100990',
+            entityCode: 'SG01',
+            kind: 'CREATE',
+            field: null,
+            before: null,
+            after: null,
+            possibleMatches: [
+              { employeeNo: 'E100003', entityCode: 'SG01', reasons: ['SAME_NAME_PARTS'] },
+            ],
+          },
+        ],
+      }),
+    );
+    const preview = await within(dialog).findByRole('table', {
+      name: 'Changes the sync would make',
+    });
+    expect(within(preview).getByText('Possible match for HR to check')).toBeInTheDocument();
+    expect(within(preview).getByRole('link', { name: /E100003/ })).toHaveAttribute(
+      'href',
+      '/employees?employee=E100003',
+    );
+    expect(within(preview).getByText(/the same names in another order/)).toBeInTheDocument();
+    expect(within(preview).getByText(/this is added as its own record/)).toBeInTheDocument();
+  });
+
   it('explains an apply refused because the source changed after the preview', async () => {
     const { user, dialog, routes } = await previewSingaporeHr(
       run({
