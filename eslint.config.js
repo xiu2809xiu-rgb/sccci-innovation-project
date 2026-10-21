@@ -42,6 +42,7 @@ export default defineConfig([
       'packages/**/*.{ts,js}',
       'scripts/**/*.mjs',
       'apps/*/scripts/**/*.mjs',
+      'assets-src/**/*.mjs',
       '*.js',
     ],
     extends: [node],
