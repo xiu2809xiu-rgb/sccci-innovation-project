@@ -160,7 +160,9 @@
     "system": "Mock",
     "systemHint": "A HuiTong mock service stands in for this system and serves synthetic data. It is not connected to Organisation E's live system.",
     "ai": "Mock AI",
-    "aiHint": "Deterministic rules stand in for a language model here. These suggestions demonstrate the workflow; they do not come from a real AI model."
+    "aiHint": "Deterministic rules stand in for a language model here. These suggestions demonstrate the workflow; they do not come from a real AI model.",
+    "data": "Sample data",
+    "dataHint": "Typed sample data stands in for this feature while its owner builds it. Nothing here is read from the database or saved."
   },
   "masking": {
     "hidden": "Hidden",

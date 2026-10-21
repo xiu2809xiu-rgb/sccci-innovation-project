@@ -1,4 +1,149 @@
 {
   "title": "工作流",
-  "description": "已批准的人员需求从招聘到入职的全流程。"
+  "description": "已批准的人员需求从招聘到入职的全流程。",
+  "actions": {
+    "myTasks": "我的任务",
+    "backToBoard": "全部工作流",
+    "markDone": "标记完成"
+  },
+  "views": {
+    "label": "视图",
+    "board": "看板",
+    "timeline": "时间线"
+  },
+  "search": {
+    "label": "搜索工作流",
+    "placeholder": "需求标题或 OA 编号"
+  },
+  "board": {
+    "label": "流程看板，每个步骤一列",
+    "count_one": "{{count}} 项需求",
+    "count_other": "{{count}} 项需求",
+    "columnEmpty": "此步骤暂无需求",
+    "more_one": "另有 {{count}} 项未显示",
+    "more_other": "另有 {{count}} 项未显示",
+    "recentlyCompleted": "近 30 天完成",
+    "noneCompleted": "近 30 天没有已完成的工作流。"
+  },
+  "card": {
+    "requestedBy": "申请人：{{name}}",
+    "positions_one": "{{count}} 个职位",
+    "positions_other": "{{count}} 个职位",
+    "progress": "第 {{done}} / {{total}} 步",
+    "next": "下一步：{{step}}",
+    "owner": "负责：{{role}}",
+    "dueLabel": "截止",
+    "dayOne": "入职日 {{date}}"
+  },
+  "timeline": {
+    "label": "工作流时间线：从 OA 批准到期望入职日",
+    "today": "今天",
+    "summary": "批准于 {{approved}}，期望入职日 {{dayOne}}，第 {{done}} / {{total}} 步"
+  },
+  "status": {
+    "RUNNING": "进行中",
+    "WAITING": "等待中",
+    "COMPLETED": "已完成",
+    "FAILED": "失败",
+    "CANCELLED": "已取消"
+  },
+  "taskStatus": {
+    "PENDING": "未开始",
+    "IN_PROGRESS": "进行中",
+    "DONE": "已完成",
+    "BLOCKED": "受阻",
+    "SKIPPED": "已跳过"
+  },
+  "sla": {
+    "ON_TRACK": "按时",
+    "DUE_SOON": "即将到期",
+    "OVERDUE": "已逾期"
+  },
+  "empty": {
+    "title": "暂无工作流",
+    "description": "人员需求在 OA 中获批后，其工作流会在这里开始。",
+    "noResults": "没有符合搜索条件的工作流。",
+    "clearSearch": "清除搜索"
+  },
+  "instance": {
+    "summary": "需求",
+    "requestedBy": "申请人",
+    "request": "OA 需求",
+    "entity": "法人实体",
+    "positions": "职位数",
+    "dayOne": "期望入职日",
+    "started": "开始于",
+    "steps": "步骤",
+    "stepsDescription": "每个步骤的负责人、截止时间与结果。",
+    "notStarted": "尚未开始",
+    "doneBy": "完成人：{{name}}",
+    "due": "截止 {{date}}",
+    "approval": "OA 审批",
+    "approvalDescription": "汇通启动工作流之前，该需求在 OA 中经过的审批步骤。",
+    "approvalAction": {
+      "SUBMIT": "已提交",
+      "APPROVE": "已批准",
+      "REJECT": "已驳回"
+    },
+    "record": "员工档案",
+    "recordDraft": "草稿档案 {{employeeNo}}",
+    "recordDraftHint": "草稿（PRE_HIRE）档案只有在完成入职里程碑并收到经核实的新加坡人力系统档案后才会生效。",
+    "recordNone": "尚未创建。员工档案步骤会在员工主数据中创建草稿（PRE_HIRE）档案。",
+    "history": "历史记录",
+    "historyDescription": "该需求的全部经过，按时间先后排列。",
+    "system": "汇通"
+  },
+  "event": {
+    "instance.started": "根据 OA 审批启动工作流",
+    "task.created": "已创建任务：{{step}}",
+    "task.completed": "已完成：{{step}}",
+    "task.blocked": "受阻：{{step}}",
+    "sla.reminder": "已发送提醒：{{step}}",
+    "sla.escalation": "已逾期并升级处理：{{step}}",
+    "notification.sent": "已通过{{channel}}发送消息",
+    "notification.failed": "未能通过{{channel}}发送消息",
+    "record.draft_created": "已创建草稿员工档案",
+    "instance.completed": "工作流已完成",
+    "instance.failed": "工作流失败",
+    "instance.cancelled": "工作流已取消"
+  },
+  "channel": {
+    "IN_APP": "汇通",
+    "TEAMS": "Teams（模拟）",
+    "DINGTALK": "钉钉（模拟）",
+    "EMAIL": "电子邮件"
+  },
+  "tasks": {
+    "title": "我的任务",
+    "description": "等待您所属角色处理的入职工作。",
+    "scope": {
+      "label": "任务范围",
+      "mine": "我的角色",
+      "all": "所有角色"
+    },
+    "state": {
+      "label": "显示",
+      "open": "未完成",
+      "done": "已完成",
+      "all": "全部"
+    },
+    "table": {
+      "caption": "工作流任务",
+      "task": "任务",
+      "request": "需求",
+      "owner": "负责人",
+      "due": "截止时间",
+      "status": "状态",
+      "actions": "操作"
+    },
+    "unassigned": "尚无人接手",
+    "markDoneSample": "完成任务的功能将随工作流引擎上线。此列表显示的是示例数据。",
+    "markedDone": "任务已标记为完成。",
+    "empty": {
+      "openTitle": "您的角色暂无未完成任务",
+      "doneTitle": "您的角色暂无已完成任务",
+      "description": "工作流进行到由您的角色负责的步骤时，任务会出现在这里。",
+      "seeAll": "查看所有角色的任务"
+    }
+  }
 }

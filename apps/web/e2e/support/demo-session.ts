@@ -4,6 +4,7 @@ import { expect, type Page } from '@playwright/test';
 export const DEMO_ROLES = {
   hrSingapore: /HR, Singapore/,
   hrChinaHq: /HR, China HQ/,
+  adminOps: /Admin operations/,
 } as const;
 
 /** Signs in with a demo account (demo mode, synthetic data) and waits for the overview. */

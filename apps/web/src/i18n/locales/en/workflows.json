@@ -1,4 +1,149 @@
 {
   "title": "Workflows",
-  "description": "Approved manpower requests moving from recruitment to day one."
+  "description": "Approved manpower requests moving from recruitment to day one.",
+  "actions": {
+    "myTasks": "My tasks",
+    "backToBoard": "All workflows",
+    "markDone": "Mark done"
+  },
+  "views": {
+    "label": "View",
+    "board": "Board",
+    "timeline": "Timeline"
+  },
+  "search": {
+    "label": "Search workflows",
+    "placeholder": "Request title or OA id"
+  },
+  "board": {
+    "label": "Pipeline board, one column per step",
+    "count_one": "{{count}} request",
+    "count_other": "{{count}} requests",
+    "columnEmpty": "Nothing at this step",
+    "more_one": "{{count}} more not shown",
+    "more_other": "{{count}} more not shown",
+    "recentlyCompleted": "Completed in the last 30 days",
+    "noneCompleted": "No workflow has completed in the last 30 days."
+  },
+  "card": {
+    "requestedBy": "Requested by {{name}}",
+    "positions_one": "{{count}} position",
+    "positions_other": "{{count}} positions",
+    "progress": "Step {{done}} of {{total}}",
+    "next": "Next: {{step}}",
+    "owner": "Owner: {{role}}",
+    "dueLabel": "Due",
+    "dayOne": "Day one {{date}}"
+  },
+  "timeline": {
+    "label": "Workflows on a timeline, from OA approval to the requested day one",
+    "today": "Today",
+    "summary": "Approved {{approved}}, requested day one {{dayOne}}, step {{done}} of {{total}}"
+  },
+  "status": {
+    "RUNNING": "Running",
+    "WAITING": "Waiting",
+    "COMPLETED": "Completed",
+    "FAILED": "Failed",
+    "CANCELLED": "Cancelled"
+  },
+  "taskStatus": {
+    "PENDING": "Not started",
+    "IN_PROGRESS": "In progress",
+    "DONE": "Done",
+    "BLOCKED": "Blocked",
+    "SKIPPED": "Skipped"
+  },
+  "sla": {
+    "ON_TRACK": "On track",
+    "DUE_SOON": "Due soon",
+    "OVERDUE": "Overdue"
+  },
+  "empty": {
+    "title": "No workflows yet",
+    "description": "When a manpower request is approved in OA, its workflow starts here.",
+    "noResults": "No workflow matches your search.",
+    "clearSearch": "Clear the search"
+  },
+  "instance": {
+    "summary": "Request",
+    "requestedBy": "Requested by",
+    "request": "OA request",
+    "entity": "Entity",
+    "positions": "Positions",
+    "dayOne": "Requested day one",
+    "started": "Started",
+    "steps": "Steps",
+    "stepsDescription": "Each step's owner, due time and outcome.",
+    "notStarted": "Not started yet",
+    "doneBy": "Done by {{name}}",
+    "due": "Due {{date}}",
+    "approval": "Approval in OA",
+    "approvalDescription": "The approval steps the request passed before HuiTong started the workflow.",
+    "approvalAction": {
+      "SUBMIT": "Submitted",
+      "APPROVE": "Approved",
+      "REJECT": "Rejected"
+    },
+    "record": "Employee record",
+    "recordDraft": "Draft record {{employeeNo}}",
+    "recordDraftHint": "A draft (PRE_HIRE) record becomes active only after the onboarding milestones and the verified SG HR record.",
+    "recordNone": "Not created yet. The employee record step creates a draft (PRE_HIRE) record in the employee master.",
+    "history": "History",
+    "historyDescription": "Everything that happened to this request, oldest first.",
+    "system": "HuiTong"
+  },
+  "event": {
+    "instance.started": "Workflow started from the OA approval",
+    "task.created": "Task opened: {{step}}",
+    "task.completed": "Done: {{step}}",
+    "task.blocked": "Blocked: {{step}}",
+    "sla.reminder": "Reminder sent: {{step}}",
+    "sla.escalation": "Escalated, past its due time: {{step}}",
+    "notification.sent": "Message sent through {{channel}}",
+    "notification.failed": "Message could not be sent through {{channel}}",
+    "record.draft_created": "Draft employee record created",
+    "instance.completed": "Workflow completed",
+    "instance.failed": "Workflow failed",
+    "instance.cancelled": "Workflow cancelled"
+  },
+  "channel": {
+    "IN_APP": "HuiTong",
+    "TEAMS": "Teams (mock)",
+    "DINGTALK": "DingTalk (mock)",
+    "EMAIL": "email"
+  },
+  "tasks": {
+    "title": "My tasks",
+    "description": "Onboarding work waiting for your role.",
+    "scope": {
+      "label": "Whose tasks",
+      "mine": "My role",
+      "all": "Every role"
+    },
+    "state": {
+      "label": "Show",
+      "open": "Open",
+      "done": "Done",
+      "all": "All"
+    },
+    "table": {
+      "caption": "Workflow tasks",
+      "task": "Task",
+      "request": "Request",
+      "owner": "Owner",
+      "due": "Due",
+      "status": "Status",
+      "actions": "Actions"
+    },
+    "unassigned": "Not picked up",
+    "markDoneSample": "Completing tasks arrives with the workflow engine. This list shows sample data.",
+    "markedDone": "Task marked as done.",
+    "empty": {
+      "openTitle": "No open tasks for your role",
+      "doneTitle": "No finished tasks for your role",
+      "description": "When a workflow reaches a step your role owns, the task appears here.",
+      "seeAll": "See every role's tasks"
+    }
+  }
 }
