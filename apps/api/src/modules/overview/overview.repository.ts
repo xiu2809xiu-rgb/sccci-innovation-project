@@ -9,6 +9,8 @@ const QUIET_ACTIONS = [
   'sync.run.requested',
   'sync.preview.completed',
   'connector.health-checked',
+  // An access log entry for every record another entity opens: an audit record, not news.
+  'access.fields_withheld',
 ] as const;
 
 /**
@@ -101,6 +103,16 @@ export class OverviewRepository {
    * The activity feed: business events only. Sign-ins, per-record bulk loads and
    * routine operations stay in the audit log but would drown the feed.
    */
+  /** The entity of each employee number, for scoping the activity feed. */
+  async entitiesOf(employeeNos: readonly string[]): Promise<Map<string, string>> {
+    if (employeeNos.length === 0) return new Map();
+    const rows = await this.prisma.employee.findMany({
+      where: { employeeNo: { in: [...employeeNos] } },
+      select: { employeeNo: true, entityCode: true },
+    });
+    return new Map(rows.map((row) => [row.employeeNo, row.entityCode]));
+  }
+
   recentBusinessEvents(take: number) {
     return this.prisma.auditEvent.findMany({
       where: {
