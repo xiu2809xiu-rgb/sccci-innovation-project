@@ -16,7 +16,7 @@ import bpy  # noqa: E402
 from lib import bevel, export_glb, output_path, principled, reset_scene, shade  # noqa: E402
 
 RADIUS = 1.0
-FACETS = 1  # icosphere subdivisions: 1 gives 80 crisp facets
+FACETS = 1  # icosphere subdivisions: 1 is the icosahedron, 20 crisp facets
 INNER = 0.3
 
 
@@ -26,8 +26,8 @@ def build() -> None:
     bpy.ops.mesh.primitive_ico_sphere_add(subdivisions=FACETS, radius=RADIUS)
     shell = bpy.context.active_object
     shell.name = "Core"
-    # Taller than wide, like a cut gem standing on its point.
-    shell.scale = (0.86, 1.08, 0.86)
+    # Taller than wide, like a cut gem standing on its point (Blender's up axis is Z).
+    shell.scale = (0.86, 0.86, 1.08)
     shade(shell, smooth=False)
     bevel(shell, width=0.025, segments=2)
     shell.data.materials.append(

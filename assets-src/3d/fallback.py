@@ -2,7 +2,7 @@
 
 It composes the three built models the way the live scene does (Singapore's
 systems on the left, China HQ's on the right, arcs to the core), every system
-synced except the Excel master on its way out, and renders it with a
+connected except the Excel master on its way out, and renders it with a
 transparent background so it sits on either theme.
 
 Run after the models are built:  blender -b --factory-startup -P fallback.py -- <out.webp>
@@ -23,17 +23,21 @@ from lib import output_path, principled, reset_scene  # noqa: E402
 MODELS = os.path.join(os.path.dirname(os.path.abspath(__file__)), "../../apps/web/src/assets/3d")
 
 # The web scene's layout (three.js is Y up; Blender is Z up, so (x, y, z) becomes (x, -z, y)).
+# Pods stand in id order, the first at the front, as map-model.ts places them.
 CLUSTERS = {"SG": (-3.4, -0.4), "CN": (3.4, -0.4)}
 PODS = {
-    "SG": [("sg-hr", "synced"), ("teams", "synced"), ("excel-master", "retiring")],
-    "CN": [("cn-hq", "synced"), ("dingtalk", "synced"), ("oa", "synced")],
+    "SG": [("excel-master", "retiring"), ("sg-hr", "connected"), ("teams", "connected")],
+    "CN": [("cn-hq", "connected"), ("dingtalk", "connected"), ("oa", "connected")],
 }
 POD_LIFT = 0.35
 POD_RADIUS = 1.05
+# The core floats at the arcs' meeting point, a little smaller than its model (core-model.tsx).
+CORE_CENTRE = (0.0, 0.0, 0.9)
+CORE_SCALE = 0.85
 
-# Approximations of the design tokens: success for synced, muted for retiring.
-STATE_COLOUR = {"synced": (0.12, 0.62, 0.47), "retiring": (0.45, 0.45, 0.43)}
-JADE = (0.18, 0.72, 0.58)
+# The live scene's state colours in linear RGB: the light theme's --success, oklch(0.5 0.11 152),
+# for connected, and a muted grey for retiring. Rings and arcs both take the state's colour.
+STATE_COLOUR = {"connected": (0.019, 0.177, 0.055), "retiring": (0.45, 0.45, 0.43)}
 
 
 def import_model(name: str, location) -> list:
@@ -84,7 +88,9 @@ def build() -> None:
     reset_scene()
     scene = bpy.context.scene
 
-    import_model("core", (0.0, 0.0, 0.0))
+    for obj in import_model("core", CORE_CENTRE):
+        if obj.parent is None:
+            obj.scale = obj.scale * CORE_SCALE
     for cluster, (cx, cy) in CLUSTERS.items():
         import_model("platform", (cx, cy, 0.0))
         members = PODS[cluster]
@@ -94,8 +100,9 @@ def build() -> None:
             position = (cx + math.cos(angle) * POD_RADIUS, cy - math.sin(angle) * POD_RADIUS, POD_LIFT)
             pod = import_model("node-pod", position)
             colour = STATE_COLOUR[state]
-            tint(pod, "PodStatus", colour, 2.5 if state == "synced" else 0.4)
-            arc(position, (0.0, 0.0, 0.0), JADE if state == "synced" else colour, 1.0 if state == "synced" else 0.25)
+            live = state == "connected"
+            tint(pod, "PodStatus", colour, 2.5 if live else 0.4)
+            arc(position, CORE_CENTRE, colour, 1.0 if live else 0.25)
 
     # A shadow catcher grounds the scene; the rest of the image stays transparent.
     bpy.ops.mesh.primitive_plane_add(size=40.0, location=(0.0, 0.0, -0.04))
