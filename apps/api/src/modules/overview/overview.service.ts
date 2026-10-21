@@ -58,6 +58,7 @@ export class OverviewService {
 
   async overview(user: AuthenticatedUser): Promise<Overview> {
     const can = (permission: Permission) => this.access.hasPermission(user.role, permission);
+    const listable: readonly string[] = this.access.listableEntities(user.homeEntityCode);
     const [
       byEntity,
       conflictedEmployees,
@@ -67,7 +68,7 @@ export class OverviewService {
       crossBorderTransfers,
       workflowTasks,
       recentConflicts,
-      events,
+      allEvents,
     ] = await Promise.all([
       this.repository.employeeCountsByEntity(),
       this.repository.conflictedEmployeeCount(),
@@ -76,9 +77,21 @@ export class OverviewService {
       can('mappings:approve') ? this.repository.pendingMappingProposalCount() : null,
       can('governance:manage') ? this.repository.pendingTransferCount() : null,
       can('workflows:tasks') ? this.repository.openTaskCountFor(user.role) : null,
-      this.repository.recentOpenConflicts(RECENT_CONFLICTS),
+      this.repository.recentOpenConflicts(RECENT_CONFLICTS, listable),
       this.repository.recentBusinessEvents(RECENT_ACTIVITY),
     ]);
+
+    // An employee of an entity the viewer may not list is not named in the feed (story B-7).
+    const entities = await this.repository.entitiesOf(
+      allEvents.flatMap((event) =>
+        event.entityType === 'Employee' && event.entityId ? [event.entityId] : [],
+      ),
+    );
+    const events = allEvents.filter((event) => {
+      if (event.entityType !== 'Employee' || !event.entityId) return true;
+      const entity = entities.get(event.entityId);
+      return entity !== undefined && listable.includes(entity);
+    });
 
     const actorIds = [
       ...new Set(events.flatMap((event) => (event.actorUserId ? [event.actorUserId] : []))),

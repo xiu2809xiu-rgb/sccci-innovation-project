@@ -915,6 +915,8 @@ model CrossBorderTransfer {
   legalBasis       String
   mechanism        String
   status           TransferStatus @default(PENDING_REVIEW)
+  /// Goes up with every change to what the entry covers; access decisions record the versions they used.
+  version          Int            @default(1)
   approvedByUserId String?
   approvedAt       DateTime?      @db.Timestamptz(3)
   reviewDueAt      DateTime?      @db.Timestamptz(3)

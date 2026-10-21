@@ -22,11 +22,16 @@ const EMPLOYEE = {
 export class ConflictsRepository {
   constructor(private readonly prisma: PrismaService) {}
 
-  async list(query: ConflictListQuery) {
+  /** One page of the queue, limited to employees of the entities the viewer may list. */
+  async list(query: ConflictListQuery, entities: readonly string[]) {
     const where: Prisma.ConflictWhereInput = {
       status: query.status,
       ...(query.field ? { field: query.field } : {}),
-      ...(query.entityCode ? { employee: { entityCode: query.entityCode } } : {}),
+      employee: {
+        entityCode: query.entityCode
+          ? { in: entities.includes(query.entityCode) ? [query.entityCode] : [] }
+          : { in: [...entities] },
+      },
     };
     const [items, total] = await this.prisma.$transaction([
       this.prisma.conflict.findMany({

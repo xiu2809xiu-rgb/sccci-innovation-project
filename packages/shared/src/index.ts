@@ -18,6 +18,7 @@ export * from './events/domain-events.js';
 export * from './governance/classification.js';
 export * from './governance/masked-value.js';
 export * from './governance/masking-policy.js';
+export * from './governance/transfer-categories.js';
 export * from './mapping/field-mapping.js';
 export * from './mapping/mapping-config.js';
 export * from './mapping/mapping-proposal.js';

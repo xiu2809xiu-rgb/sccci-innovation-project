@@ -206,6 +206,7 @@ As an HR executive, I want to import a new subsidiary's export with the mapping 
 - Given an approved mapping for a file connector, when I upload the full export, then I see a preview of the records it would create.
 - Given the preview, when I apply it, then the records join the master with that connector as their source.
 - Given a column with national ID numbers, when the file is read, then it is never stored.
+- Given the imported records, when HR in another entity reads them, then only the fields an ACTIVE transfer register entry shares with that entity are shown (B-7).
 
 ### A-6: 3D integration map driven by live sync events
 
@@ -241,15 +242,15 @@ As someone watching the demo, I want to see which systems are mocked and when th
 
 One trusted record per employee, with the source of every field, its history and the conflicts between systems.
 
-| Story                                                                  | Title                                                      | Sprint | Points | Priority | Status                               |
-| ---------------------------------------------------------------------- | ---------------------------------------------------------- | ------ | ------ | -------- | ------------------------------------ |
-| [B-1](#b-1-one-record-per-employee-with-field-provenance)              | One record per employee with field provenance              | 1      | 8      | Must     | Done (`feat/area1-integration-api`)  |
-| [B-2](#b-2-resolve-conflicts-between-systems-with-an-audited-decision) | Resolve conflicts between systems with an audited decision | 1      | 5      | Must     | Done (`feat/area1-employees-page`)   |
-| [B-3](#b-3-employees-page-search-filters-and-the-record-drawer)        | Employees page: search, filters and the record drawer      | 1      | 8      | Must     | Done (`feat/area1-employees-page`)   |
-| [B-4](#b-4-run-a-sync-from-the-employees-page-with-live-progress)      | Run a sync from the Employees page with live progress      | 1      | 5      | Must     | Done (`feat/area1-employees-page`)   |
-| [B-5](#b-5-possible-matches-for-hr-review-never-name-only-merges)      | Possible matches for HR review, never name-only merges     | 1      | 5      | Must     | Done (`feat/area1-possible-matches`) |
-| [B-6](#b-6-draft-records-and-verified-activation)                      | Draft records and verified activation                      | 9      | 5      | Must     | Planned                              |
-| [B-7](#b-7-per-destination-field-allowlist-enforced-by-default-deny)   | Per-destination field allowlist, enforced by default deny  | 1      | 8      | Must     | Planned                              |
+| Story                                                                  | Title                                                      | Sprint | Points | Priority | Status                                    |
+| ---------------------------------------------------------------------- | ---------------------------------------------------------- | ------ | ------ | -------- | ----------------------------------------- |
+| [B-1](#b-1-one-record-per-employee-with-field-provenance)              | One record per employee with field provenance              | 1      | 8      | Must     | Done (`feat/area1-integration-api`)       |
+| [B-2](#b-2-resolve-conflicts-between-systems-with-an-audited-decision) | Resolve conflicts between systems with an audited decision | 1      | 5      | Must     | Done (`feat/area1-employees-page`)        |
+| [B-3](#b-3-employees-page-search-filters-and-the-record-drawer)        | Employees page: search, filters and the record drawer      | 1      | 8      | Must     | Done (`feat/area1-employees-page`)        |
+| [B-4](#b-4-run-a-sync-from-the-employees-page-with-live-progress)      | Run a sync from the Employees page with live progress      | 1      | 5      | Must     | Done (`feat/area1-employees-page`)        |
+| [B-5](#b-5-possible-matches-for-hr-review-never-name-only-merges)      | Possible matches for HR review, never name-only merges     | 1      | 5      | Must     | Done (`feat/area1-possible-matches`)      |
+| [B-6](#b-6-draft-records-and-verified-activation)                      | Draft records and verified activation                      | 9      | 5      | Must     | Planned                                   |
+| [B-7](#b-7-per-destination-field-allowlist-enforced-by-default-deny)   | Per-destination field allowlist, enforced by default deny  | 1      | 8      | Must     | Done (`feat/area1-destination-allowlist`) |
 
 ### B-1: One record per employee with field provenance
 

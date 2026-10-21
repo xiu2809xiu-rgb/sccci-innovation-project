@@ -257,10 +257,13 @@ export class EmployeesRepository {
     return this.prisma.employee.count();
   }
 
-  async list(query: EmployeeListQuery) {
+  /** One page of the master, limited to the entities the viewer may list. */
+  async list(query: EmployeeListQuery, entities: readonly string[]) {
     const q = query.q?.trim();
     const where: Prisma.EmployeeWhereInput = {
-      ...(query.entityCode ? { entityCode: query.entityCode } : {}),
+      entityCode: query.entityCode
+        ? { in: entities.includes(query.entityCode) ? [query.entityCode] : [] }
+        : { in: [...entities] },
       ...(query.departmentCode ? { departmentCode: query.departmentCode } : {}),
       ...(query.employmentStatus ? { employmentStatus: query.employmentStatus } : {}),
       ...(query.conflicts === 'open' ? { conflicts: { some: { status: 'OPEN' } } } : {}),

@@ -19,6 +19,7 @@ function input(overrides: Partial<ExplainerInput> = {}): ExplainerInput {
     entityCode: 'SG01',
     field: 'workEmail',
     classification: 'INTERNAL',
+    visibleToViewer: true,
     candidates: [
       { connectorId: 'sg-hr', value: 'jiachenglee@orge.example' },
       { connectorId: 'cn-hq', value: 'jiacheng.lee@orge.example' },
@@ -96,6 +97,24 @@ describe('explainerRequest', () => {
       { system: 'Singapore HR', value: '财富管理部', changedAt: '2026-10-12T02:00:00.000Z' },
       { system: 'China HQ SAP HCM', value: '运营部', changedAt: null },
     ]);
+  });
+});
+
+describe('explainerRequest and the transfer register', () => {
+  it('withholds the values of a field the reader may not see, even an Internal one', () => {
+    const request = explainerRequest(
+      input({
+        field: 'departmentCode',
+        visibleToViewer: false,
+        candidates: [
+          { connectorId: 'sg-hr', value: 'WM' },
+          { connectorId: 'cn-hq', value: 'OPS' },
+        ],
+      }),
+    );
+    expect(request.field.withheld).toBe('NOT_SHARED');
+    expect(request.candidates.map((candidate) => candidate.value)).toEqual([null, null]);
+    expect(mockExplainDiscrepancy(request)).toContain('not shared with your entity');
   });
 });
 

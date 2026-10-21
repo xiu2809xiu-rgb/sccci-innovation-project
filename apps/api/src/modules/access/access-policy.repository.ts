@@ -16,4 +16,19 @@ export class AccessPolicyRepository {
       select: { role: true, entityCode: true, maxLevel: true, deniedReason: true },
     });
   }
+
+  /** The ACTIVE entries of the cross-border transfer register, which area 4 administers. */
+  activeTransfers() {
+    return this.prisma.crossBorderTransfer.findMany({
+      where: { status: 'ACTIVE' },
+      select: {
+        id: true,
+        fromEntityCode: true,
+        toEntityCode: true,
+        dataCategories: true,
+        version: true,
+      },
+      orderBy: { id: 'asc' },
+    });
+  }
 }
