@@ -4,6 +4,7 @@ import { useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { ErrorState } from '@/components/common/error-state';
+import { MockBadge } from '@/components/common/mock-badge';
 import { StatusBadge } from '@/components/common/status-badge';
 import { ThoughtLine } from '@/components/reactbits/thought-line';
 import { Button } from '@/components/ui/button';
@@ -63,7 +64,10 @@ export function ExplainPanel({ conflictId }: { conflictId: string }) {
           formatElapsed={formatElapsed}
           {...(durationMs === undefined ? {} : { elapsedMs: durationMs })}
         />
-        <StatusBadge tone="info">{t('explain.requiresDecision')}</StatusBadge>
+        <div className="flex flex-wrap items-center gap-1.5">
+          {explain.data?.provider === 'MOCK' ? <MockBadge kind="ai" /> : null}
+          <StatusBadge tone="info">{t('explain.requiresDecision')}</StatusBadge>
+        </div>
       </div>
       {explain.data ? (
         <p

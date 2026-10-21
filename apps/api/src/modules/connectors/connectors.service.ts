@@ -125,6 +125,7 @@ export class ConnectorsService {
         region: row.region,
         entityCode: (row.entityCode as EntityCode | null) ?? null,
         status: row.status,
+        isMock: row.isMock,
         capabilities: row.capabilities,
         syncable: this.factory.create(row).canFetchEmployees,
         lastSyncAt: row.lastSyncAt?.toISOString() ?? null,

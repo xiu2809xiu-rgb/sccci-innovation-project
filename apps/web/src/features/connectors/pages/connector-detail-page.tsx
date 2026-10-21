@@ -3,6 +3,7 @@ import { HeartPulse, KeyRound, RefreshCw } from 'lucide-react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
+import { MockBadge } from '@/components/common/mock-badge';
 import { PageHeader } from '@/components/common/page-header';
 import { QueryView } from '@/components/common/query-view';
 import { RelativeTime } from '@/components/common/relative-time';
@@ -88,9 +89,12 @@ export function ConnectorDetailPage({ connectorId }: { connectorId: string }) {
         {...(data ? { description: t(`type.${data.type}`) } : {})}
         meta={
           data ? (
-            <StatusBadge tone={CONNECTOR_STATUS_TONE[data.status]}>
-              {t(`status.${data.status}`)}
-            </StatusBadge>
+            <>
+              {data.isMock ? <MockBadge kind="system" /> : null}
+              <StatusBadge tone={CONNECTOR_STATUS_TONE[data.status]}>
+                {t(`status.${data.status}`)}
+              </StatusBadge>
+            </>
           ) : null
         }
         actions={

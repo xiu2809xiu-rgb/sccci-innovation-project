@@ -30,6 +30,7 @@ function toConnectorHealth(connector: ConnectorRow): ConnectorHealth {
     nameZh: connector.nameZh,
     type: connector.type,
     status: connector.status,
+    isMock: connector.isMock,
     region: connector.region,
     lastSyncAt: connector.lastSyncAt?.toISOString() ?? null,
     recentRuns: connector.syncRuns.map((run) => ({

@@ -19,6 +19,8 @@ export const connectorSummarySchema = z.object({
   region: z.string(),
   entityCode: entityCodeSchema.nullable(),
   status: connectorStatusSchema,
+  /** A HuiTong mock stands in for the client's system; every screen that shows the connector says so. */
+  isMock: z.boolean(),
   capabilities: z.array(z.string()),
   /** True when the connector can pull employees into the master. */
   syncable: z.boolean(),

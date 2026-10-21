@@ -482,10 +482,18 @@ describe('Integration core: sync, master, conflicts (integration)', () => {
     const connectors = dataEnvelopeSchema(connectorSummarySchema.array()).parse(response.body).data;
     expect(connectors.find((connector) => connector.id === 'sg-hr')).toMatchObject({
       syncable: true,
+      isMock: true,
       activeMappingVersion: 1,
       latestRun: expect.objectContaining({ connectorId: 'sg-hr' }) as unknown,
     });
     expect(connectors.find((connector) => connector.id === 'oa')?.syncable).toBe(false);
+    // Every system a HuiTong mock stands in for says so; the Excel file import is real.
+    expect(
+      connectors
+        .filter((connector) => connector.isMock)
+        .map((connector) => connector.id)
+        .sort(),
+    ).toEqual(['cn-hq', 'dingtalk', 'oa', 'sg-hr', 'teams']);
 
     const health = await hr.agent
       .post('/api/v1/connectors/cn-hq/health-check')

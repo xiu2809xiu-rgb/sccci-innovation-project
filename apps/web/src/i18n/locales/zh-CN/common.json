@@ -153,6 +153,12 @@
     "NETWORK_ERROR": "无法连接服务器，请检查网络连接。",
     "CONTRACT_MISMATCH": "服务器返回了意外的数据，请刷新页面。"
   },
+  "mock": {
+    "system": "模拟",
+    "systemHint": "此系统由 HuiTong 模拟服务代替，提供的是合成数据，并未连接 E 机构的真实系统。",
+    "ai": "模拟 AI",
+    "aiHint": "此处由确定性规则代替大语言模型。这些建议用于演示流程，并非来自真实的 AI 模型。"
+  },
   "masking": {
     "hidden": "已隐藏",
     "whyHidden": "为什么隐藏？",

@@ -18,6 +18,7 @@ function connector(
     region: 'SG',
     entityCode: 'SG01',
     status: 'ACTIVE',
+    isMock: true,
     capabilities: [],
     syncable: false,
     lastSyncAt: null,
@@ -37,6 +38,7 @@ const CONNECTORS = [
     nameZh: '旧版 Excel 员工主数据',
     type: 'FILE_IMPORT',
     status: 'DEPRECATED',
+    isMock: false,
     activeMappingVersion: 1,
   }),
   connector({
@@ -128,6 +130,22 @@ describe('Connector list', () => {
     ).not.toBeInTheDocument();
   });
 
+  it('labels every system a mock stands in for, and only those', async () => {
+    renderApp('/connectors', routesFor());
+    await screen.findByRole('region', { name: 'Connected systems' });
+    for (const name of [
+      'Singapore HR',
+      'China HQ SAP HCM',
+      'OA approvals platform',
+      'Microsoft Teams',
+    ]) {
+      expect(within(cardOf(name)).getByText('Mock')).toBeInTheDocument();
+    }
+    expect(
+      within(cardOf('Legacy Excel employee master')).queryByText('Mock'),
+    ).not.toBeInTheDocument();
+  });
+
   it('reports a health check in the UI language, not the server message', async () => {
     const user = userEvent.setup();
     renderApp(
@@ -180,7 +198,7 @@ describe('Connector detail', () => {
                 type: 'NOTIFICATION',
               }),
               baseUrl: null,
-              config: { mocked: true },
+              config: {},
               credentialsRef: null,
               mappingConfigs: [],
             },
@@ -189,6 +207,7 @@ describe('Connector detail', () => {
       }),
     );
     expect(await screen.findByText('Connection settings')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Mock' })).toBeInTheDocument();
     expect(screen.queryByText('Sync history')).not.toBeInTheDocument();
     expect(screen.queryByText('Field mapping versions')).not.toBeInTheDocument();
     expect(screen.queryByRole('button', { name: 'Sync now' })).not.toBeInTheDocument();

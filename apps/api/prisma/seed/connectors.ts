@@ -10,6 +10,8 @@ interface ConnectorSeed {
   entityCode: string | null;
   baseUrl: string | null;
   status: ConnectorStatus;
+  /** A HuiTong mock stands in for the client's system; the UI labels it "Mock". */
+  isMock: boolean;
   capabilities: string[];
   config: Record<string, string | number | boolean>;
   /** Environment variable names holding credentials; never the credentials. */
@@ -31,6 +33,7 @@ function connectors(env: NodeJS.ProcessEnv): ConnectorSeed[] {
       entityCode: 'SG01',
       baseUrl: env.SG_HR_BASE_URL ?? 'http://localhost:4101',
       status: ConnectorStatus.ACTIVE,
+      isMock: true,
       capabilities: ['employees.read', 'employees.write', 'attendance.read', 'leave.read'],
       config: { pageSize: 100, auth: 'api-key' },
       secretRef: 'SG_HR_API_KEY',
@@ -44,6 +47,7 @@ function connectors(env: NodeJS.ProcessEnv): ConnectorSeed[] {
       entityCode: 'CN01',
       baseUrl: env.CN_HQ_BASE_URL ?? 'http://localhost:4102',
       status: ConnectorStatus.ACTIVE,
+      isMock: true,
       capabilities: ['employees.read', 'attendance.read', 'leave.read', 'org-units.read'],
       config: { pageSize: 200, auth: 'basic' },
       secretRef: 'CN_HQ_USERNAME,CN_HQ_PASSWORD',
@@ -57,6 +61,7 @@ function connectors(env: NodeJS.ProcessEnv): ConnectorSeed[] {
       entityCode: null,
       baseUrl: env.OA_BASE_URL ?? 'http://localhost:4103',
       status: ConnectorStatus.ACTIVE,
+      isMock: true,
       capabilities: ['approvals.read', 'webhooks.receive'],
       config: { auth: 'bearer', webhookEvents: 'approval.completed' },
       secretRef: 'OA_API_TOKEN,OA_WEBHOOK_SECRET',
@@ -70,6 +75,7 @@ function connectors(env: NodeJS.ProcessEnv): ConnectorSeed[] {
       entityCode: 'SG01',
       baseUrl: null,
       status: ConnectorStatus.DEPRECATED,
+      isMock: false,
       capabilities: ['employees.import'],
       config: { formats: 'csv,xlsx', note: 'Being replaced by the canonical employee master' },
       secretRef: null,
@@ -83,8 +89,9 @@ function connectors(env: NodeJS.ProcessEnv): ConnectorSeed[] {
       entityCode: 'SG01',
       baseUrl: null,
       status: ConnectorStatus.ACTIVE,
+      isMock: true,
       capabilities: ['notifications.send'],
-      config: { mocked: true },
+      config: {},
       secretRef: null,
     },
     {
@@ -96,8 +103,9 @@ function connectors(env: NodeJS.ProcessEnv): ConnectorSeed[] {
       entityCode: 'CN01',
       baseUrl: null,
       status: ConnectorStatus.ACTIVE,
+      isMock: true,
       capabilities: ['notifications.send'],
-      config: { mocked: true },
+      config: {},
       secretRef: null,
     },
   ];

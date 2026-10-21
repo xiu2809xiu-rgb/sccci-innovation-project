@@ -154,7 +154,7 @@ Each of Organisation E's systems plugs in behind one connector interface, so dat
 | [A-5](#a-5-import-a-new-subsidiary-file-through-its-approved-mapping)           | Import a new subsidiary file through its approved mapping               | 6      | 8      | Should   | Planned                             |
 | [A-6](#a-6-3d-integration-map-driven-by-live-sync-events)                       | 3D integration map driven by live sync events                           | 4      | 8      | Should   | Planned                             |
 | [A-7](#a-7-read-chinese-csv-encodings-safely)                                   | Read Chinese CSV encodings safely                                       | 1      | 3      | Must     | Planned                             |
-| [A-8](#a-8-label-mocked-systems-and-the-mock-ai)                                | Label mocked systems and the mock AI                                    | 1      | 2      | Must     | Planned                             |
+| [A-8](#a-8-label-mocked-systems-and-the-mock-ai)                                | Label mocked systems and the mock AI                                    | 1      | 2      | Must     | Done (`feat/area1-mock-labels`)     |
 
 ### A-1: Sync SG HR employees into HuiTong
 

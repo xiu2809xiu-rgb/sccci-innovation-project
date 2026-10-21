@@ -3,6 +3,7 @@ import { ArrowRight, HeartPulse } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router';
 
+import { MockBadge } from '@/components/common/mock-badge';
 import { RelativeTime } from '@/components/common/relative-time';
 import { StatusBadge } from '@/components/common/status-badge';
 import { SpotlightCard } from '@/components/reactbits/spotlight-card';
@@ -38,9 +39,12 @@ export function ConnectorCard({ connector }: { connector: ConnectorSummary }) {
             {connector.entityCode ? ` · ${connector.entityCode}` : ''}
           </p>
         </div>
-        <StatusBadge tone={CONNECTOR_STATUS_TONE[connector.status]}>
-          {t(`status.${connector.status}`)}
-        </StatusBadge>
+        <div className="flex shrink-0 items-center gap-1.5">
+          {connector.isMock ? <MockBadge kind="system" /> : null}
+          <StatusBadge tone={CONNECTOR_STATUS_TONE[connector.status]}>
+            {t(`status.${connector.status}`)}
+          </StatusBadge>
+        </div>
       </div>
 
       <dl className="grid gap-2 text-sm">

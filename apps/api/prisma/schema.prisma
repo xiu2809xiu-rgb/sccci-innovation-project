@@ -384,6 +384,8 @@ model Connector {
   entityCode        String?
   baseUrl           String?
   status            ConnectorStatus     @default(ACTIVE)
+  /// True while a HuiTong mock stands in for the client's system; the UI labels it "Mock".
+  isMock            Boolean             @default(false)
   capabilities      String[]
   /// Non-secret settings only.
   config            Json                @default("{}")

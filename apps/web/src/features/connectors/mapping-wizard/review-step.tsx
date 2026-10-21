@@ -3,6 +3,7 @@ import { ArrowLeft, ArrowRight, Sparkles, TriangleAlert } from 'lucide-react';
 import { useId } from 'react';
 import { useTranslation } from 'react-i18next';
 
+import { MockBadge } from '@/components/common/mock-badge';
 import { StatusBadge } from '@/components/common/status-badge';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -55,6 +56,7 @@ export function ReviewStep({
         <StatusBadge tone="info" icon={<Sparkles aria-hidden="true" />}>
           {t('wizard.review.aiSuggestion')}
         </StatusBadge>
+        {proposal.provider === 'MOCK' ? <MockBadge kind="ai" /> : null}
         <StatusBadge tone="warning">{t('proposals.requiresApproval')}</StatusBadge>
         <p className="text-sm text-muted-foreground">
           {t('wizard.review.summary', {

@@ -314,6 +314,8 @@ export const EPICS = [
         sprint: 1,
         points: 2,
         priority: 'must',
+        done: true,
+        deliveredBy: 'feat/area1-mock-labels',
         labels: ['req: M2 GRS by design'],
         story:
           'As someone watching the demo, I want to see which systems are mocked and when the AI is the deterministic mock, so that nothing simulated passes for a live integration.',

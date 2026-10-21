@@ -23,6 +23,7 @@ function overview(overrides: Partial<Overview> = {}): Overview {
         nameZh: '新加坡人事系统',
         type: 'SG_HR_REST',
         status: 'ACTIVE',
+        isMock: true,
         region: 'SG',
         lastSyncAt: null,
         recentRuns: [],
@@ -33,6 +34,7 @@ function overview(overrides: Partial<Overview> = {}): Overview {
         nameZh: 'Excel 员工主数据',
         type: 'FILE_IMPORT',
         status: 'DEPRECATED',
+        isMock: false,
         region: 'SG',
         lastSyncAt: null,
         recentRuns: [],
@@ -99,6 +101,7 @@ describe('OverviewPage', () => {
           nameZh: '新加坡人事系统',
           type: 'SG_HR_REST',
           status: 'ACTIVE',
+          isMock: true,
           region: 'SG',
           lastSyncAt: NOW,
           recentRuns: [
@@ -154,6 +157,8 @@ describe('OverviewPage', () => {
     expect(
       screen.getByRole('list', { name: 'Recent sync runs for Singapore HR' }),
     ).toHaveTextContent('Failed');
+    // A mock stands in for SG HR, and the panel says so.
+    expect(screen.getByRole('button', { name: 'Mock' })).toBeInTheDocument();
     expect(screen.getByRole('status')).toHaveTextContent('1 connected system needs attention');
     expect(
       within(screen.getByRole('list', { name: 'Recent activity' })).getByText('Conflict detected'),
