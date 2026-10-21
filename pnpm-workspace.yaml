@@ -30,6 +30,9 @@ allowBuilds:
   msgpackr-extract: true
   # Install-time telemetry (via swagger-ui-dist); no functional effect.
   '@scarf/scarf': false
+  # Downloads Chrome for Puppeteer. The diagram build (scripts/build-diagrams.mjs)
+  # drives the Chromium that Playwright already installs, so no second browser.
+  puppeteer: false
 
 # Accepted advisories. Each entry needs a reason and a review date.
 auditConfig:
