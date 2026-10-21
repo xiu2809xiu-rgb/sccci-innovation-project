@@ -39,9 +39,14 @@ if (typeof window.matchMedia !== 'function') {
   });
 }
 
+// Configurable, so a test can stub one with an observer that reports what it needs.
 for (const name of ['ResizeObserver', 'IntersectionObserver'] as const) {
   if (!(name in window)) {
-    Object.defineProperty(window, name, { writable: true, value: NoopObserver });
+    Object.defineProperty(window, name, {
+      writable: true,
+      configurable: true,
+      value: NoopObserver,
+    });
   }
 }
 

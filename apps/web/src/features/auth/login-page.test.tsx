@@ -51,7 +51,9 @@ describe('LoginPage', () => {
 
   it('keeps sign-in working when the 3D teaser cannot load', async () => {
     vi.spyOn(HTMLCanvasElement.prototype, 'getContext').mockImplementation(((kind: string) =>
-      kind === 'webgl2' ? ({} as RenderingContext) : null) as HTMLCanvasElement['getContext']);
+      kind === 'webgl2'
+        ? ({ getExtension: () => null } as unknown as RenderingContext)
+        : null) as HTMLCanvasElement['getContext']);
     renderApp('/login', withDemoMode(false));
     await screen.findByRole('heading', { level: 1, name: 'Sign in to HuiTong' });
     await waitFor(() => {
