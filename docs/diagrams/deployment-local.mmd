@@ -1,0 +1,32 @@
+%% Deployment, locally: `docker compose up --build` runs the whole stack on one machine (ADR 0014).
+flowchart LR
+  browser("`**Browser**
+http://localhost:8080`"):::person
+
+  subgraph host ["Docker Compose, on a laptop or a CI runner"]
+    direction LR
+    web["`**web** :8080
+nginx: the app, a strict CSP, a proxy to the API`"]:::container
+    api["`**api** :3000
+NestJS and BullMQ workers; migrates and seeds on start`"]:::container
+    pg[("`**postgres** :5432
+PostgreSQL 18, volume pgdata`")]:::store
+    redis[("`**redis** :6379
+Redis 8, volume redisdata`")]:::store
+    sghr["`**mock-sg-hr** :4101
+English fields, ISO dates`"]:::mock
+    cnhq["`**mock-cn-hq** :4102
+Chinese keys, YYYY/MM/DD dates`"]:::mock
+    oa["`**mock-oa** :4103
+Approvals and signed webhooks`"]:::mock
+  end
+
+  browser --> web
+  web -->|"/api/"| api
+  api --> pg
+  api --> redis
+  api --> sghr
+  api --> cnhq
+  oa -->|"Signed webhooks"| api
+
+  class host boundary
