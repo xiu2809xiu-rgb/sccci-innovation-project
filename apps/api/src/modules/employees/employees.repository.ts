@@ -70,28 +70,14 @@ export class EmployeesRepository {
     return new Map(rows.map((row) => [row.field, row.connectorId]));
   }
 
-  /** The record with everything a merge needs: provenance, open conflicts and HR's typed-in decisions. */
   /**
-   * Other employees sharing a family name, a Chinese name or a work email with
-   * a new record: the candidates the identity rule checks for possible matches.
+   * The identity details of every employee, in employee-number order, for a
+   * sync preview to compare new records with. Names are compared after
+   * normalising them, which an index cannot do, so the whole set is read
+   * once per preview rather than queried per record.
    */
-  lookAlikeCandidates(facts: {
-    employeeNo: string;
-    familyName: string | null;
-    givenName: string | null;
-    fullNameLocal: string | null;
-    workEmail: string | null;
-  }) {
-    const shared: Prisma.EmployeeWhereInput[] = [
-      ...(facts.familyName ? [{ familyName: facts.familyName }] : []),
-      // A swapped order puts the family name where the given name belongs.
-      ...(facts.givenName ? [{ familyName: facts.givenName }] : []),
-      ...(facts.fullNameLocal ? [{ fullNameLocal: facts.fullNameLocal }] : []),
-      ...(facts.workEmail ? [{ workEmail: facts.workEmail.toLowerCase() }] : []),
-    ];
-    if (shared.length === 0) return Promise.resolve([]);
+  identityFacts() {
     return this.prisma.employee.findMany({
-      where: { employeeNo: { not: facts.employeeNo }, OR: shared },
       select: {
         employeeNo: true,
         entityCode: true,
@@ -102,10 +88,22 @@ export class EmployeesRepository {
         workEmail: true,
       },
       orderBy: { employeeNo: 'asc' },
-      take: 20,
     });
   }
 
+  /** The other employee who already has this work email, as stored or in lower case (the unique key). */
+  async workEmailHolder(workEmail: string, exceptEmployeeNo: string): Promise<string | null> {
+    const holder = await this.prisma.employee.findFirst({
+      where: {
+        employeeNo: { not: exceptEmployeeNo },
+        workEmail: { in: [...new Set([workEmail, workEmail.toLowerCase()])] },
+      },
+      select: { employeeNo: true },
+    });
+    return holder?.employeeNo ?? null;
+  }
+
+  /** The record with everything a merge needs: provenance, open conflicts and HR's typed-in decisions. */
   findForMerge(employeeNo: string, tx: Tx | PrismaService = this.prisma) {
     return tx.employee.findUnique({
       where: { employeeNo },

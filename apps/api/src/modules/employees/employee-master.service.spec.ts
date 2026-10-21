@@ -8,7 +8,7 @@ import type { EmployeesRepository } from './employees.repository.js';
 
 const META: RequestMeta = { actor: null, ip: null, userAgent: null, traceId: 'test-trace' };
 
-/** A new SG HR hire whose name is an existing employee's, in another order. */
+/** A new SG HR hire whose name is an existing employee's, written in the other order. */
 const NEW_HIRE: CanonicalEmployeePartial = {
   employeeNo: 'E100990',
   entityCode: 'SG01',
@@ -18,19 +18,19 @@ const NEW_HIRE: CanonicalEmployeePartial = {
   workEmail: 'weiming.tan2@orge.example',
   departmentCode: 'WM',
   jobTitle: 'Relationship Manager',
-  employmentType: 'PERMANENT',
+  employmentType: 'FULL_TIME',
   employmentStatus: 'ACTIVE',
   hireDate: '2026-12-01',
   workLocation: 'SG-SIN',
 };
 
-function record(values: CanonicalEmployeePartial): SourceRecordInput {
+function record(values: CanonicalEmployeePartial, syncRunId = 'run-1'): SourceRecordInput {
   return {
     connectorId: 'sg-hr',
-    syncRunId: 'run-1',
+    syncRunId,
     externalId: values.employeeNo ?? 'row-7',
     payload: {},
-    payloadHash: 'hash',
+    payloadHash: `hash-${values.employeeNo ?? 'none'}`,
     values,
     observedAt: new Date('2026-10-21T02:00:00Z'),
   };
@@ -40,7 +40,8 @@ function setUp() {
   const employees = {
     sourceRecordHash: vi.fn().mockResolvedValue(null),
     findForMerge: vi.fn().mockResolvedValue(null),
-    lookAlikeCandidates: vi.fn().mockResolvedValue([
+    workEmailHolder: vi.fn().mockResolvedValue(null),
+    identityFacts: vi.fn().mockResolvedValue([
       {
         employeeNo: 'E100003',
         entityCode: 'SG01',
@@ -66,7 +67,7 @@ describe('EmployeeMasterService identity rule', () => {
     const { employeeNo: _omitted, ...nameless } = NEW_HIRE;
     const result = await service.merge(record(nameless), 'APPLY', policies, META);
     expect(result).toMatchObject({ kind: 'rejected', code: 'MISSING_EMPLOYEE_NO' });
-    expect(employees.lookAlikeCandidates).not.toHaveBeenCalled();
+    expect(employees.identityFacts).not.toHaveBeenCalled();
     expect(employees.transaction).not.toHaveBeenCalled();
   });
 
@@ -85,10 +86,38 @@ describe('EmployeeMasterService identity rule', () => {
     ]);
     expect(employees.transaction).not.toHaveBeenCalled();
 
-    const applied = await service.merge(record(NEW_HIRE), 'APPLY', policies, META);
+    const applied = await service.merge(record(NEW_HIRE, 'run-2'), 'APPLY', policies, META);
     expect(applied).toMatchObject({ kind: 'created', employeeNo: 'E100990' });
     // Only the new number was looked up to merge into; E100003 is never touched.
     expect(employees.findForMerge.mock.calls).toEqual([['E100990'], ['E100990']]);
     expect(employees.transaction).toHaveBeenCalledTimes(1);
+    // An APPLY keeps no preview, so it does not compare identities at all.
+    expect(employees.identityFacts).toHaveBeenCalledTimes(1);
   });
+
+  it('reads the identity details once per preview run, however many records it creates', async () => {
+    const { service, employees, policies } = setUp();
+    const second = { ...NEW_HIRE, employeeNo: 'E100991', workEmail: 'other@orge.example' };
+    await service.merge(record(NEW_HIRE), 'PREVIEW', policies, META);
+    await service.merge(record(second), 'PREVIEW', policies, META);
+    expect(employees.identityFacts).toHaveBeenCalledTimes(1);
+    await service.merge(record(NEW_HIRE, 'run-3'), 'PREVIEW', policies, META);
+    expect(employees.identityFacts).toHaveBeenCalledTimes(2);
+  });
+
+  it.each(['PREVIEW', 'APPLY'] as const)(
+    'refuses a work email another employee already has, in a %s, instead of failing the run',
+    async (mode) => {
+      const { service, employees, policies } = setUp();
+      employees.workEmailHolder.mockResolvedValue('E100003');
+      const result = await service.merge(record(NEW_HIRE), mode, policies, META);
+      expect(result).toMatchObject({ kind: 'rejected', code: 'WORK_EMAIL_IN_USE' });
+      expect(result.kind === 'rejected' ? result.message : '').toContain('E100003');
+      expect(employees.workEmailHolder).toHaveBeenCalledWith(
+        'weiming.tan2@orge.example',
+        'E100990',
+      );
+      expect(employees.transaction).not.toHaveBeenCalled();
+    },
+  );
 });

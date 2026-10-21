@@ -78,7 +78,8 @@ describe('Integration core: sync, master, conflicts (integration)', () => {
       const run = runDetailEnvelope.parse(response.body).data;
       if (TERMINAL.has(run.status)) return run;
       if (Date.now() > deadline) throw new Error(`Sync run ${id} is still ${run.status}`);
-      await new Promise((resolve) => setTimeout(resolve, 100));
+      // Every request counts against the API's rate limit (300 a minute), so poll gently.
+      await new Promise((resolve) => setTimeout(resolve, 250));
     }
   }
 
@@ -569,5 +570,64 @@ describe('Integration core: sync, master, conflicts (integration)', () => {
     expect((await detail('E100003')).history.every((line) => line.syncRunId !== applied.id)).toBe(
       true,
     );
+  });
+
+  it('refuses a work email another employee has, as a sync error, on create and on update', async () => {
+    const holder = await prisma.employee.findUniqueOrThrow({
+      where: { employeeNo: 'E100003' },
+      select: { workEmail: true },
+    });
+    // A new SG HR hire typed in with E100003's email: refused, and the rest of the run goes on.
+    await request(systems.sgHr.url)
+      .post('/api/employees')
+      .set('X-API-Key', MOCK_CREDENTIALS.SG_HR_API_KEY)
+      .send({
+        employeeNo: 'E100991',
+        firstName: 'Jia Hui',
+        lastName: 'Ong',
+        fullName: 'Ong Jia Hui',
+        preferredName: null,
+        email: holder.workEmail,
+        mobile: '+65 8123 4991',
+        department: 'Operations',
+        departmentCode: 'SG-OPS',
+        jobTitle: 'Operations Analyst',
+        employmentType: 'Permanent',
+        status: 'Probation',
+        hireDate: '2026-12-01',
+        resignationDate: null,
+        dateOfBirth: '1997-05-20',
+        basicSalary: 5200,
+        currency: 'SGD',
+        bankName: 'DBS Bank',
+        bankAccountNo: '120-445566-2',
+        workLocation: 'Singapore',
+        reportsTo: null,
+      })
+      .expect(201);
+    const preview = await sync('sg-hr', { mode: 'PREVIEW' });
+    expect(preview.status).toBe('PARTIAL');
+    expect(preview.errors).toEqual([
+      expect.objectContaining({ externalId: 'E100991', code: 'WORK_EMAIL_IN_USE' }),
+    ]);
+    expect(preview.previewItems.some((item) => item.employeeNo === 'E100991')).toBe(false);
+    const applied = await sync('sg-hr', { mode: 'APPLY', previewRunId: preview.id });
+    expect(applied.status).toBe('PARTIAL');
+    expect(await prisma.employee.count({ where: { employeeNo: 'E100991' } })).toBe(0);
+
+    // HQ owns every CN01 field, so an email change applies directly: refused when it is taken.
+    const [first, second] = await prisma.employee.findMany({
+      where: { entityCode: 'CN01' },
+      orderBy: { employeeNo: 'asc' },
+      take: 2,
+      select: { employeeNo: true, workEmail: true },
+    });
+    if (!first || !second) throw new Error('The seed has CN01 employees');
+    await changeInCnHq(first.employeeNo, { 电子邮箱: second.workEmail });
+    const update = await sync('cn-hq', { mode: 'PREVIEW' });
+    expect(update.errors).toEqual([
+      expect.objectContaining({ externalId: first.employeeNo, code: 'WORK_EMAIL_IN_USE' }),
+    ]);
+    await changeInCnHq(first.employeeNo, { 电子邮箱: first.workEmail });
   });
 });

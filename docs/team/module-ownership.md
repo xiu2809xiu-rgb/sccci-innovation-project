@@ -214,12 +214,12 @@ Area 2 starts where the connector hub stops. Area 1 verifies, stores and publish
 
 **Consumes**
 
-| From                   | Interface                                                            | Use                                                                                        |
-| ---------------------- | -------------------------------------------------------------------- | ------------------------------------------------------------------------------------------ |
-| Area 1 connector hub   | `SystemConnector` adapters for `sg-hr` and `cn-hq`                   | Extract attendance and leave; no area-specific HTTP clients                                |
-| Area 1 employee master | Lookup by `employeeNo` (fallback `workEmail`), entity and department | Attach every record to a canonical employee                                                |
-| Area 1 mapping engine  | Field transformers for dates and enums                               | Reuse instead of re-implementing source formats                                            |
-| Platform               | Queues, audit writer, masking, RBAC guard                            | Consolidation runs as a job; mapping-rule approvals are audited; `MANAGEMENT` is read-only |
+| From                   | Interface                                                          | Use                                                                                        |
+| ---------------------- | ------------------------------------------------------------------ | ------------------------------------------------------------------------------------------ |
+| Area 1 connector hub   | `SystemConnector` adapters for `sg-hr` and `cn-hq`                 | Extract attendance and leave; no area-specific HTTP clients                                |
+| Area 1 employee master | Lookup by `employeeNo` (the only match key), entity and department | Attach every record to a canonical employee                                                |
+| Area 1 mapping engine  | Field transformers for dates and enums                             | Reuse instead of re-implementing source formats                                            |
+| Platform               | Queues, audit writer, masking, RBAC guard                          | Consolidation runs as a job; mapping-rule approvals are audited; `MANAGEMENT` is read-only |
 
 **Exposes**
 

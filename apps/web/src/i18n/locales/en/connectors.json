@@ -50,6 +50,7 @@
       "MISSING_EMPLOYEE_NO": "Records arrived without an employee number.",
       "INCOMPLETE_RECORD": "New records were missing required details.",
       "ENTITY_MISMATCH": "Records named a different entity from the one already on file.",
+      "WORK_EMAIL_IN_USE": "Records carried a work email another employee already has. Check whether they are the same person, then correct the email at the source.",
       "INTERRUPTED": "The run was interrupted before it finished.",
       "UPSTREAM_UNAVAILABLE": "The connected system did not respond.",
       "SOURCE_CHANGED": "The source system changed after the preview, so nothing was written. Preview again to see the current changes."

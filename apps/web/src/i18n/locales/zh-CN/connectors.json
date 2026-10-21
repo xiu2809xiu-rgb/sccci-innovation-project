@@ -50,6 +50,7 @@
       "MISSING_EMPLOYEE_NO": "部分记录缺少员工编号。",
       "INCOMPLETE_RECORD": "新记录缺少必填信息。",
       "ENTITY_MISMATCH": "部分记录的所属实体与现有档案不一致。",
+      "WORK_EMAIL_IN_USE": "记录中的工作邮箱已属于另一名员工。请先核实是否为同一人，再在源系统中更正邮箱。",
       "INTERRUPTED": "运行在完成前被中断。",
       "UPSTREAM_UNAVAILABLE": "所连接的系统没有响应。",
       "SOURCE_CHANGED": "预览之后源系统的数据有变化，因此未写入任何内容。请重新预览，查看当前的变更。"
