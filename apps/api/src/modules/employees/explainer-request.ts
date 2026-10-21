@@ -1,5 +1,6 @@
 import {
   DEPARTMENTS,
+  IDENTIFYING_EMPLOYEE_FIELDS,
   isWithinClearance,
   type ClassificationLevel,
   type EmployeeField,
@@ -7,7 +8,7 @@ import {
   type Locale,
 } from '@huitong/shared';
 
-import type { DiscrepancyRequest } from '../ai/discrepancy/discrepancy.prompt.js';
+import type { DiscrepancyRequest, WithheldReason } from '../ai/discrepancy/discrepancy.prompt.js';
 import { FIELD_WORDS } from '../ai/schema-mapping/field-vocabulary.js';
 
 function label(field: EmployeeField, language: Locale): string {
@@ -26,9 +27,20 @@ function spoken(field: EmployeeField, value: unknown, language: Locale): string 
     : JSON.stringify(value);
 }
 
+function withheldReason(
+  field: EmployeeField,
+  classification: ClassificationLevel,
+): WithheldReason | null {
+  if (!isWithinClearance(classification, 'INTERNAL')) return 'ABOVE_INTERNAL';
+  return (IDENTIFYING_EMPLOYEE_FIELDS as readonly string[]).includes(field)
+    ? 'IDENTIFIES_A_PERSON'
+    : null;
+}
+
 export interface ExplainerInput {
   language: Locale;
-  employee: { employeeNo: string; entityCode: EntityCode };
+  /** The employee's entity: the only thing the model learns about who the conflict concerns. */
+  entityCode: EntityCode;
   field: EmployeeField;
   classification: ClassificationLevel;
   candidates: readonly { connectorId: string; value: unknown }[];
@@ -40,19 +52,23 @@ export interface ExplainerInput {
 
 /**
  * What the discrepancy explainer may tell the model about a conflict
- * (ADR 0011): the employee number and entity, never a name, and no value
- * above INTERNAL, which is sent as null.
+ * (ADR 0011, story E-5): the entity, the field and each system's value, but
+ * no employee identifier. A value above INTERNAL, or one that identifies a
+ * person (a name, an email address, a manager's number), is sent as null.
  */
 export function explainerRequest(input: ExplainerInput): DiscrepancyRequest {
-  const shareable = isWithinClearance(input.classification, 'INTERNAL');
+  const withheld = withheldReason(input.field, input.classification);
   return {
     language: input.language,
-    // Picked field by field, so that a whole record passed in never adds its names.
-    employee: { employeeNo: input.employee.employeeNo, entityCode: input.employee.entityCode },
-    field: { label: label(input.field, input.language), classification: input.classification },
+    entityCode: input.entityCode,
+    field: {
+      label: label(input.field, input.language),
+      classification: input.classification,
+      withheld,
+    },
     candidates: input.candidates.map((candidate) => ({
       system: input.systems.get(candidate.connectorId) ?? candidate.connectorId,
-      value: shareable ? spoken(input.field, candidate.value, input.language) : null,
+      value: withheld ? null : spoken(input.field, candidate.value, input.language),
       changedAt: input.changedAt.get(candidate.connectorId) ?? null,
     })),
   };

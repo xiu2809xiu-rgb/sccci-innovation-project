@@ -54,3 +54,21 @@ export const EMPLOYEE_FIELD_CLASSIFICATION = {
 export type EmployeeField = keyof typeof EMPLOYEE_FIELD_CLASSIFICATION;
 
 export const EMPLOYEE_FIELDS = Object.keys(EMPLOYEE_FIELD_CLASSIFICATION) as EmployeeField[];
+
+/**
+ * Fields that identify a person on their own: the employee number, names,
+ * work contact details and the manager's number. Whatever their
+ * classification, their values are never sent to an AI service without the
+ * client's written permission (story E-5).
+ */
+export const IDENTIFYING_EMPLOYEE_FIELDS = [
+  'employeeNo',
+  'familyName',
+  'givenName',
+  'fullNameLatin',
+  'fullNameLocal',
+  'preferredName',
+  'workEmail',
+  'workPhone',
+  'managerEmployeeNo',
+] as const satisfies readonly EmployeeField[];

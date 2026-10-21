@@ -453,6 +453,9 @@ describe('Integration core: sync, master, conflicts (integration)', () => {
     const explanation = dataEnvelopeSchema(conflictExplanationSchema).parse(response.body).data;
     expect(explanation).toMatchObject({ conflictId: conflict.id, language: 'zh-CN' });
     expect(explanation.text).toMatch(/\p{Script=Han}/u);
+    // No identifier reaches the model, so none can come back: not the number, not either email.
+    expect(explanation.text).not.toContain('E100066');
+    expect(explanation.text).not.toContain('@');
     expect(await prisma.aiUsageRecord.count({ where: { feature: 'discrepancy-explainer' } })).toBe(
       usageBefore + 1,
     );
