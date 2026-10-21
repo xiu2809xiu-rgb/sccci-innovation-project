@@ -1,0 +1,26 @@
+%% The monthly attendance and leave consolidation (area 3's design; the screens exist on sample data).
+sequenceDiagram
+  actor HR as HR, Singapore
+  participant API as Area 3: consolidation service
+  participant Job as BullMQ: consolidation job
+  participant C as Area 1: SG HR and CN HQ adapters
+  participant R as Category mappers and validators
+  participant FM as Area 1: FieldMasker
+
+  HR->>API: POST /attendance-leave/runs (month, entities)
+  API->>Job: queue the run (QUEUED), audited
+  Job->>C: the month's attendance and leave
+  C-->>Job: records with each system's own codes (年假, 病假, 调休)
+  Job->>R: map to the group categories by the approved rules
+  R-->>Job: template rows, and exceptions (overlaps, pending, unknown codes)
+  alt exceptions are open
+    Job-->>API: NEEDS_REVIEW
+    HR->>API: settle each exception
+  else none
+    Job-->>API: SUCCEEDED
+  end
+  HR->>API: GET the template preview
+  API->>FM: the fields the transfer register withholds from this viewer
+  API-->>HR: the company template, exactly as it will export
+  HR->>API: POST /attendance-leave/runs/:id/export
+  API-->>HR: the .xlsx, audited with the fields it left out

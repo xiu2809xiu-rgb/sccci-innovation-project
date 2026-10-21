@@ -59,6 +59,8 @@ jobs:
         run: pnpm format:check
       - name: Lint
         run: pnpm lint
+      - name: Diagrams match their sources and schema.prisma
+        run: pnpm diagrams:check
       - name: Typecheck
         run: pnpm typecheck
       - name: Unit and integration tests

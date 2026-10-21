@@ -1,0 +1,25 @@
+%% A manpower request approved in OA, through to the new employee's first day (areas 1 and 2).
+%% Receiving the approval is built (area 1); the workflow is area 2's design, and the draft record
+%% and its activation are stories B-6 and C-3.
+sequenceDiagram
+  participant OA as OA (mock)
+  participant WH as Area 1: OA webhook
+  participant WF as Area 2: workflow
+  actor HR as HR, Singapore
+  participant M as Area 1: employee master
+  actor OPS as Admin operations
+  participant N as Teams and DingTalk (mock)
+
+  OA->>WH: approval.completed, HMAC-signed
+  WH->>WH: verify the signature and timestamp, then store it once by event id
+  WH-->>OA: 202 Accepted (a repeated delivery is ignored)
+  WH->>WF: oa.approval.completed (MANPOWER_REQUEST, APPROVED)
+  WF->>WF: start once per OA event id: the instance and the recruitment requisition, audited
+  HR->>WF: complete the requisition: the hire is confirmed
+  WF->>M: create a draft record (PRE_HIRE), linked to the request
+  WF->>OPS: laptop, desk and account tasks, each with a due date
+  WF->>N: reminders, then escalations once a task passes its SLA
+  OPS->>WF: complete the preparation tasks
+  WF-->>M: onboarding milestones met
+  Note over M: a later SG HR sync brings the verified record
+  M->>M: both conditions met: the record becomes active

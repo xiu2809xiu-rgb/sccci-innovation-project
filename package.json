@@ -18,6 +18,7 @@
     "db:migrate": "pnpm --filter @huitong/api db:migrate",
     "db:seed": "pnpm --filter @huitong/api db:seed",
     "diagrams:build": "node scripts/build-diagrams.mjs",
+    "diagrams:check": "node scripts/build-diagrams.mjs --check",
     "slides:build": "node scripts/build-slides.mjs",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
@@ -31,11 +32,13 @@
     "@gltf-transform/extensions": "4.5.1",
     "@gltf-transform/functions": "4.5.1",
     "@huitong/eslint-config": "workspace:*",
+    "@mermaid-js/mermaid-cli": "12.0.0",
     "eslint": "10.13.0",
     "husky": "9.1.7",
     "lint-staged": "17.6.0",
     "prettier": "3.9.10",
     "prettier-plugin-tailwindcss": "0.8.1",
+    "puppeteer": "25.14.0",
     "typescript": "6.0.3"
   },
   "lint-staged": {

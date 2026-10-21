@@ -1,0 +1,35 @@
+%% An employee sync with conflict resolution (area 1, built). A sync is always previewed first,
+%% and an apply writes exactly what HR saw.
+sequenceDiagram
+  actor HR as HR, Singapore
+  participant Web as Web app
+  participant API as API: SyncService
+  participant Job as BullMQ: SyncPipeline
+  participant SG as SG HR (mock)
+  participant M as Employee master
+
+  HR->>Web: Run sync: preview
+  Web->>API: POST /connectors/sg-hr/sync (PREVIEW, Idempotency-Key)
+  API->>Job: queue the run (job id = run id), audited
+  Job->>SG: GET employees, page by page
+  SG-->>Job: records in its own field names
+  Job->>Job: map with the active mapping version, then validate
+  Job-->>Web: sync.progress on the live stream (ids and counts, never values)
+  Job->>M: plan the creates, updates and conflicts, writing nothing
+  Job-->>API: preview done: the changes and their fingerprint
+  API-->>Web: what would change, with possible matches for HR
+  HR->>Web: Apply
+  Web->>API: POST /connectors/sg-hr/sync (APPLY, the preview's id)
+  API->>API: a successful preview of this connector, under 30 minutes old?
+  API->>Job: queue the apply
+  Job->>Job: plan again: does the fingerprint still match?
+  alt the source changed since the preview
+    Job-->>API: SOURCE_CHANGED: nothing written, preview again
+  else unchanged
+    Job->>M: merge each field by its source of truth
+    M->>M: sources disagree on an unowned field: open a conflict
+    Job-->>Web: sync.run.completed
+  end
+  HR->>Web: open the conflict, choose a source
+  Web->>API: POST /conflicts/:id/resolve (SOURCE_SELECTED)
+  API->>M: the value, its history line and the audit event, in one transaction

@@ -1,0 +1,44 @@
+%% Deployment, the AWS target (ADR 0014): ap-southeast-1, built by area 4. Not deployed yet.
+flowchart TB
+  browser("`**Browser**`"):::person
+  gha["`**GitHub Actions**
+Builds the images; deploys through OIDC`"]:::external
+
+  subgraph aws ["AWS, ap-southeast-1 (Singapore)"]
+    cf["`**CloudFront**
+HTTPS; routes /api/* to the load balancer`"]:::cloud
+    s3[("`**S3, a private bucket**
+The web app's files`")]:::cloud
+    ecr["`**ECR**
+Container images`"]:::cloud
+    secrets["`**Secrets Manager**
+Injected as environment variables`"]:::cloud
+    subgraph vpc ["VPC"]
+      alb["`**Application Load Balancer**
+Public subnets`"]:::cloud
+      ecs["`**ECS Fargate: the API**
+Private subnets; mocks in demo environments only`"]:::container
+      rds[("`**RDS for PostgreSQL 18**
+KMS encryption, TLS, backups, Multi-AZ`")]:::store
+      cache[("`**ElastiCache**
+Valkey or Redis, noeviction`")]:::store
+    end
+    bedrock["`**Amazon Bedrock**
+Called with the task's IAM role`"]:::cloud
+    watch["`**CloudWatch**
+Logs, metrics and alarms`"]:::cloud
+  end
+
+  browser --> cf
+  cf --> s3
+  cf -->|"/api/*"| alb
+  alb --> ecs
+  ecs --> rds
+  ecs --> cache
+  ecs -->|"Prompts without identifiers"| bedrock
+  ecs -.->|"pino JSON logs, metrics"| watch
+  secrets -.-> ecs
+  gha --> ecr
+  ecr -.-> ecs
+
+  class aws,vpc boundary

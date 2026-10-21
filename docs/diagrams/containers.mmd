@@ -1,0 +1,44 @@
+%% C4 level 2, containers: what HuiTong is made of, and what each part talks to.
+flowchart TB
+  user("`**HR, managers, admin, auditors**
+In a browser
+_Person_`"):::person
+
+  subgraph huitong ["HuiTong"]
+    web["`**Web app**
+React 19 single-page app, served by nginx
+_Container: static files_`"]:::container
+    api["`**API and job workers**
+NestJS 12 modules, with the BullMQ workers in the same process
+_Container: Node.js_`"]:::container
+    db[("`**Database**
+PostgreSQL 18: the employee master, workflows, the audit log
+_Container: data store_`")]:::store
+    redis[("`**Job queues**
+Redis 8: BullMQ jobs and their retries
+_Container: data store_`")]:::store
+  end
+
+  oa["`**OA platform**
+_Mocked_`"]:::mock
+  sghr["`**Singapore HR software**
+_Mocked_`"]:::mock
+  cnhq["`**China HQ HR and SAP**
+_Mocked_`"]:::mock
+  collab["`**Teams and DingTalk**
+_Mocked_`"]:::mock
+  ai["`**AI model provider**
+Mock, Bedrock or OpenAI
+_External service_`"]:::external
+
+  user -->|"HTTPS: pages, JSON API, live events"| web
+  web -->|"/api/* and /api/v1/events, same origin"| api
+  api -->|"Prisma: each change in one transaction"| db
+  api -->|"Jobs: sync, workflow, notifications, consolidation"| redis
+  oa -->|"Signed webhooks (HMAC)"| api
+  api --->|"REST: employees, attendance, leave"| sghr
+  api --->|"REST: employees, attendance, leave"| cnhq
+  api --->|"Messages"| collab
+  api --->|"Prompts without identifiers; usage recorded"| ai
+
+  class huitong boundary

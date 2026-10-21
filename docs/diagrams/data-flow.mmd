@@ -1,0 +1,53 @@
+%% Data flow, with each trust boundary and the GRS controls on every crossing.
+flowchart TB
+  subgraph device ["A user's device: untrusted"]
+    browser["`**Browser**
+Holds httpOnly session cookies only`"]:::person
+  end
+
+  subgraph edge ["Edge"]
+    proxy["`**nginx, or CloudFront**
+TLS, strict CSP, security headers`"]:::container
+  end
+
+  subgraph app ["HuiTong application: private network"]
+    api["`**API**
+Validation, CSRF check, RBAC guard, field masking, rate limit`"]:::container
+    audit["`**Audit writer**
+Every write; append-only, hash-chained`"]:::control
+    gateway["`**LlmGateway**
+Identifiers withheld; tokens and cost recorded`"]:::control
+  end
+
+  subgraph stores ["Data stores: private"]
+    pg[("`**PostgreSQL**
+Classified fields, retention rules, the transfer register`")]:::store
+    redis[("`**Redis**
+Run ids and who started them, never field values`")]:::store
+  end
+
+  subgraph sg ["Singapore entity (SG01): PDPA"]
+    sghr["`**SG HR**`"]:::mock
+    oa["`**OA**`"]:::mock
+  end
+
+  subgraph cn ["China HQ entity (CN01): PIPL"]
+    cnhq["`**CN HQ SAP**`"]:::mock
+  end
+
+  subgraph third ["Third party, outside the group"]
+    ai["`**AI model provider**`"]:::external
+  end
+
+  browser <-->|"HTTPS; SameSite=Strict cookies; live events carry ids and counts, never values"| proxy
+  proxy <-->|"/api/* only"| api
+  api --> audit
+  api --> gateway
+  api <--->|"Parameterised queries (Prisma)"| pg
+  api <--->|"BullMQ jobs"| redis
+  api <--->|"REST; no national ID numbers stored; write-back only on HR's approval"| sghr
+  api <--->|"Webhooks in (HMAC and timestamp, stored once); health checks out"| oa
+  api <--->|"REST; another entity's fields only through an ACTIVE register entry"| cnhq
+  gateway -->|"Headers, value shapes and category codes only"| ai
+
+  class device,edge,app,stores,sg,cn,third boundary

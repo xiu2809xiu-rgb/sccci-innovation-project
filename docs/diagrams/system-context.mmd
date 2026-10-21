@@ -1,0 +1,53 @@
+%% C4 level 1, system context: who uses HuiTong, and the systems it connects.
+%% Arrows run from the side that starts the exchange; dashed boxes are mocks for the PoC.
+flowchart LR
+  hr("`**HR teams**
+Singapore and China HQ
+_Person_`"):::person
+  ops("`**Hiring managers and admin operations**
+Requests and onboarding tasks
+_Person_`"):::person
+  mgmt("`**Management and auditors**
+Read-only reports and audit
+_Person_`"):::person
+  admin("`**System administrators**
+Connectors, access, retention
+_Person_`"):::person
+
+  huitong["`**HuiTong**
+Integration and workflow layer
+_Software system_`"]:::system
+
+  oa["`**OA platform**
+Approvals: manpower, expenses, purchases
+_External system, mocked_`"]:::mock
+  sghr["`**Singapore HR software**
+Attendance, leave, payroll
+_External system, mocked_`"]:::mock
+  cnhq["`**China HQ HR and SAP**
+Chinese field names, SAP codes
+_External system, mocked_`"]:::mock
+  newsub["`**A new subsidiary's HR system**
+Its own export file and headers
+_External system_`"]:::external
+  excel["`**Excel employee master**
+The old consolidated view
+_Legacy file, being retired_`"]:::planned
+  collab["`**Teams, OneDrive, DingTalk, WeChat Work**
+Where people already work
+_External system, mocked_`"]:::mock
+  ai["`**AI model provider**
+AWS Bedrock; a mock by default
+_External service_`"]:::external
+
+  hr -->|"Syncs records, settles conflicts, consolidates leave"| huitong
+  ops -->|"Works onboarding tasks"| huitong
+  mgmt -->|"Reads reports and the audit log"| huitong
+  admin -->|"Configures connectors and access"| huitong
+  oa -->|"Sends signed approval events"| huitong
+  huitong -->|"Reads employees, attendance and leave"| sghr
+  huitong -->|"Reads employees, attendance and leave"| cnhq
+  huitong -->|"Maps its export with AI; HR approves"| newsub
+  huitong -->|"Imports once"| excel
+  huitong -->|"Sends reminders and escalations"| collab
+  huitong -->|"Headers and value shapes, never identifiers"| ai
