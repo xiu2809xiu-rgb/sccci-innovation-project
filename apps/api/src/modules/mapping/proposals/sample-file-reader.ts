@@ -4,6 +4,7 @@ import { Injectable } from '@nestjs/common';
 import type { SampleEncoding } from '@huitong/shared';
 import { parse } from 'csv-parse/sync';
 import { readSheet } from 'read-excel-file/node';
+import { z } from 'zod';
 
 import {
   SampleEncodingUncertainError,
@@ -31,6 +32,9 @@ export const MAX_SAMPLE_BYTES = 1_000_000;
 const MAX_HEADER_LENGTH = 120;
 
 const ZIP_MAGIC = Buffer.from([0x50, 0x4b, 0x03, 0x04]);
+
+/** What csv-parse returns without column names: rows of text cells. */
+const csvRecords = z.array(z.array(z.string()));
 
 /** How many headers each reading shows HR when the encoding is uncertain. */
 const READING_HEADERS = 8;
@@ -134,11 +138,8 @@ export class SampleFileReader {
   /** The first record's cells, shortened, for HR to compare two readings. */
   private headerRow(text: string): string[] {
     try {
-      const [first = []] = parse<string[]>(text, {
-        bom: true,
-        relax_column_count: true,
-        to_line: 1,
-      });
+      const records: unknown = parse(text, { bom: true, relax_column_count: true, to_line: 1 });
+      const [first = []] = csvRecords.parse(records);
       return first.slice(0, READING_HEADERS).map((header) => header.trim().slice(0, 40));
     } catch {
       return [];
