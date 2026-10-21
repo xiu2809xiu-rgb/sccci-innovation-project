@@ -3,8 +3,8 @@ import { Check } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 
+import { UnavailableButton } from '@/components/common/unavailable-button';
 import { Button } from '@/components/ui/button';
-import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { ApiError } from '@/lib/api-error';
 
 import { useCompleteTask } from '../api/workflow-queries';
@@ -21,22 +21,13 @@ export function CompleteTaskButton({ task, sample }: { task: WorkflowTaskView; s
 
   if (sample) {
     return (
-      <Tooltip>
-        <TooltipTrigger asChild>
-          <Button
-            type="button"
-            variant="outline"
-            size="sm"
-            aria-disabled="true"
-            aria-label={label}
-            className="cursor-not-allowed opacity-60"
-          >
-            <Check aria-hidden="true" data-icon="inline-start" />
-            {t('actions.markDone')}
-          </Button>
-        </TooltipTrigger>
-        <TooltipContent className="max-w-xs">{t('tasks.markDoneSample')}</TooltipContent>
-      </Tooltip>
+      <UnavailableButton
+        label={t('actions.markDone')}
+        ariaLabel={label}
+        reason={t('tasks.markDoneSample')}
+        icon={Check}
+        size="sm"
+      />
     );
   }
 

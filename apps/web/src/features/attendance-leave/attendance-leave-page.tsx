@@ -1,9 +1,19 @@
-import { useTranslation } from 'react-i18next';
+import { useMatch } from 'react-router';
 
-import { PlannedPage } from '@/components/common/planned-page';
+import { CategoryRulesPage } from './pages/category-rules-page';
+import { ConsolidationRunsPage } from './pages/consolidation-runs-page';
+import { TemplatePreviewPage } from './pages/template-preview-page';
 
-/** Attendance and leave consolidation (area 3), head start in Phase 6. */
+/**
+ * Attendance, leave and consolidation (area 3): the runs, the category rules
+ * and the template preview. One lazy route module serves all three paths.
+ * The rules and the template are real; runs and rows are typed sample data
+ * until area 3 builds its engine, and the pages say so.
+ */
 export function AttendanceLeavePage() {
-  const { t } = useTranslation('attendanceLeave');
-  return <PlannedPage title={t('title')} description={t('description')} />;
+  const rules = useMatch('/attendance-leave/mappings');
+  const template = useMatch('/attendance-leave/template');
+  if (rules) return <CategoryRulesPage />;
+  if (template) return <TemplatePreviewPage />;
+  return <ConsolidationRunsPage />;
 }

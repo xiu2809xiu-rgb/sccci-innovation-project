@@ -1,4 +1,162 @@
 {
   "title": "Attendance and leave",
-  "description": "Consolidate attendance and leave from Singapore and China HQ into the company template."
+  "description": "Consolidate attendance and leave from Singapore and China HQ into the company template.",
+  "nav": {
+    "label": "Attendance and leave",
+    "runs": "Consolidation",
+    "rules": "Category rules",
+    "template": "Template preview"
+  },
+  "connector": {
+    "sg-hr": "SG HR",
+    "cn-hq": "CN HQ"
+  },
+  "category": {
+    "ANNUAL": "Annual leave",
+    "SICK": "Sick leave",
+    "HOSPITALISATION": "Hospitalisation leave",
+    "CHILDCARE": "Childcare leave",
+    "MATERNITY": "Maternity leave",
+    "PATERNITY": "Paternity leave",
+    "COMPASSIONATE": "Compassionate leave",
+    "MARRIAGE": "Marriage leave",
+    "TIME_OFF_IN_LIEU": "Time off in lieu",
+    "UNPAID": "Unpaid leave",
+    "HOME_LEAVE": "Home leave",
+    "OTHER": "Other leave"
+  },
+  "status": {
+    "QUEUED": "Queued",
+    "RUNNING": "Running",
+    "SUCCEEDED": "Done",
+    "NEEDS_REVIEW": "Needs review",
+    "FAILED": "Failed"
+  },
+  "runs": {
+    "description": "Each month's attendance and leave from SG HR and CN HQ, mapped to the group's categories and checked before it goes into the template.",
+    "start": "Run consolidation",
+    "startSample": "Consolidating a month arrives with the consolidation engine. These runs are sample data.",
+    "table": {
+      "caption": "Consolidation runs",
+      "period": "Month",
+      "entities": "Entities",
+      "status": "Status",
+      "employees": "Employees",
+      "records": "Records",
+      "exceptions": "Open exceptions",
+      "finished": "Finished",
+      "by": "Run by"
+    },
+    "empty": {
+      "title": "No consolidation yet",
+      "description": "Run the first consolidation once a month's attendance and leave are in."
+    }
+  },
+  "run": {
+    "title": "{{period}}",
+    "choose": "Choose a run to see its sources and exceptions.",
+    "sources": "Sources",
+    "attendanceRows_one": "{{count}} attendance row",
+    "attendanceRows_other": "{{count}} attendance rows",
+    "leaveRecords_one": "{{count}} leave record",
+    "leaveRecords_other": "{{count}} leave records",
+    "noSources": "Nothing was read.",
+    "exceptions": "Exceptions",
+    "exceptionsDescription": "What the run flagged for you instead of guessing.",
+    "noExceptions": "No exceptions for your entity.",
+    "withheld_one": "{{count}} exception for another entity is not shown: no cross-border transfer shares attendance and leave with your entity.",
+    "withheld_other": "{{count}} exceptions for another entity are not shown: no cross-border transfer shares attendance and leave with your entity.",
+    "failed": "This run stopped before it finished, and kept nothing it read. Run the month again.",
+    "resolved": "Settled: {{resolution}}",
+    "export": "Export .xlsx",
+    "exportSample": "Exporting the company template arrives with the report renderer. This run is sample data.",
+    "exportNotReady": "Settle the open exceptions before you export the month."
+  },
+  "exceptionType": {
+    "UNMAPPED_CATEGORY": "No rule",
+    "NO_TEMPLATE_COLUMN": "No template column",
+    "LEAVE_PENDING": "Pending leave",
+    "OVERLAPPING_LEAVE": "Overlapping leave",
+    "LEAVE_ON_NON_WORKING_DAY": "Non-working day",
+    "UNKNOWN_EMPLOYEE": "Unknown employee",
+    "TOTALS_MISMATCH": "Totals differ"
+  },
+  "exception": {
+    "UNMAPPED_CATEGORY": "No rule maps {{code}} from {{connector}} yet. Add one before the month is reported.",
+    "NO_TEMPLATE_COLUMN": "{{code}} has no column in the company template: {{days}} days this month. Decide where to report them.",
+    "LEAVE_PENDING": "{{code}} from {{start}} to {{end}} is still waiting for approval, so it is left out of the totals.",
+    "OVERLAPPING_LEAVE": "Two leave records overlap from {{start}} to {{end}}.",
+    "LEAVE_ON_NON_WORKING_DAY": "{{code}} on {{start}}, which is not a working day for this entity.",
+    "UNKNOWN_EMPLOYEE": "A record from {{connector}} names an employee who is not in the master.",
+    "TOTALS_MISMATCH": "The days present and on leave do not add up to the working days."
+  },
+  "startDialog": {
+    "title": "Run a consolidation",
+    "description": "Read a month's attendance and leave from SG HR and CN HQ, map the categories and check them. Nothing is exported.",
+    "month": "Month",
+    "entities": "Entities",
+    "entitiesRequired": "Choose at least one entity.",
+    "submit": "Run consolidation",
+    "submitting": "Starting…",
+    "queued": "{{period}} is queued for consolidation."
+  },
+  "rules": {
+    "title": "Leave-category rules",
+    "description": "How each system's leave codes count in the group's categories. A change takes effect only once it is approved.",
+    "filter": {
+      "label": "System",
+      "all": "All systems"
+    },
+    "table": {
+      "caption": "Leave-category rules",
+      "system": "System",
+      "code": "Code",
+      "label": "Name in the system",
+      "category": "Counts as",
+      "column": "Template column",
+      "status": "Status",
+      "version": "Version",
+      "actions": "Actions"
+    },
+    "noColumn": "None: reported as an exception",
+    "ruleStatus": {
+      "ACTIVE": "Approved",
+      "DRAFT": "Waiting for approval"
+    },
+    "change": "Propose a change",
+    "changeLabel": "Propose a change to {{code}}",
+    "empty": {
+      "title": "No rules yet",
+      "description": "Rules map each system's leave codes to the group's categories."
+    }
+  },
+  "changeDialog": {
+    "title": "Change the rule for {{code}}",
+    "description": "The change waits for approval, and both steps are audited.",
+    "category": "Counts as",
+    "column": "Template column",
+    "noColumn": "No column (report as an exception)",
+    "reason": "Why it changes",
+    "reasonHint": "Kept with the audit record.",
+    "reasonRequired": "Say why the rule changes.",
+    "submit": "Propose change",
+    "submitting": "Proposing…",
+    "proposed": "Change proposed. It applies once approved."
+  },
+  "template": {
+    "title": "Template preview",
+    "description": "A month in the company's reporting template, before anything is exported.",
+    "period": "Month",
+    "entityNote": "Showing {{entity}}, your entity. Another entity's people appear only when a cross-border transfer shares their attendance and leave.",
+    "caption": "{{template}}, {{period}}",
+    "exceptions_one": "{{count}} open exception on this row",
+    "exceptions_other": "{{count}} open exceptions on this row",
+    "export": "Export .xlsx",
+    "exportSample": "Exporting arrives with the report renderer. These rows are sample data.",
+    "empty": {
+      "title": "Nothing consolidated for this month",
+      "description": "Run a consolidation for the month, then preview it here.",
+      "action": "Go to consolidation"
+    }
+  }
 }

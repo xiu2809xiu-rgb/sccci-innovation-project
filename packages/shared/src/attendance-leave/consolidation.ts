@@ -51,6 +51,8 @@ export const consolidationExceptionSchema = z.object({
     connectorId: z.string(),
     sourceRecordId: z.string().nullable(),
     sourceCategory: z.string().nullable(),
+    /** The source system's own name for the category, e.g. 年假 or Annual Leave. */
+    sourceLabel: z.string().nullable(),
     startDate: z.iso.date().nullable(),
     endDate: z.iso.date().nullable(),
     /** Working days of the record that fall in the run's month. */

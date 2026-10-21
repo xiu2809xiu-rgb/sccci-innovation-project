@@ -1,4 +1,22 @@
 {
   "title": "报表",
-  "description": "基于授权数据源生成的管理报表。"
+  "description": "基于授权数据源生成的管理报表。",
+  "period": "月份",
+  "readOnly": "只读",
+  "headcount": "在职人数",
+  "attendanceRate": "出勤率",
+  "overtime": "加班时长（小时）",
+  "workingDays_one": "{{count}} 个工作日",
+  "workingDays_other": "{{count}} 个工作日",
+  "sources": "数据来源：{{sources}}",
+  "leave": "休假天数",
+  "leaveTable": "{{entity}} 各类假期天数",
+  "category": "类别",
+  "days": "天数",
+  "noLeave": "本月无人休假。",
+  "empty": {
+    "title": "该月尚无报表",
+    "description": "某月汇总完成后才会生成该月报表。请选择其他月份。"
+  },
+  "generatedLabel": "生成于"
 }
