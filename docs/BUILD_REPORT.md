@@ -87,7 +87,9 @@ Frame rate, measured in Chromium (ANGLE on Direct3D 11) on the team lead's lapto
 
 ### Phase 8: Diagrams
 
-- [ ] Mermaid sources + SVGs; `docs/architecture/README.md`; `docs/architecture/patterns.md`
+- [x] Mermaid sources + SVGs in [`docs/diagrams/`](diagrams/): C4 system context and containers, the local and AWS deployments, three sequences (an employee sync with conflict resolution, a manpower request through to onboarding, the attendance and leave consolidation), the data flow with its trust boundaries and controls, and an ER diagram per schema section, generated from `schema.prisma`. `pnpm diagrams:build` renders all 15 with Mermaid CLI 12, driving the Chromium Playwright installs, with colours from the design tokens and the Geist font embedded (2.0 MB in all); `pnpm diagrams:check` runs in CI and fails when an ER diagram no longer matches the schema or an SVG is older than its source (shown failing on a hand-edited ER source and an edited diagram, and passing once rebuilt)
+- [x] [`docs/architecture/README.md`](architecture/README.md): every diagram explained, with what is built and what is designed, the API's modules by area, and a table of each trust-boundary crossing with its controls
+- [x] [`docs/architecture/patterns.md`](architecture/patterns.md): current, each pattern with why it is used and where it lives (written in Phase 5, extended by the head starts)
 
 ### Phase 9: Slides
 
