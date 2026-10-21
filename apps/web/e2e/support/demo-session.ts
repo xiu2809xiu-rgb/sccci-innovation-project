@@ -5,6 +5,7 @@ export const DEMO_ROLES = {
   hrSingapore: /HR, Singapore/,
   hrChinaHq: /HR, China HQ/,
   adminOps: /Admin operations/,
+  management: /Management/,
 } as const;
 
 /** Signs in with a demo account (demo mode, synthetic data) and waits for the overview. */

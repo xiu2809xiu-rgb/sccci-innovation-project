@@ -1,4 +1,162 @@
 {
   "title": "考勤与假期",
-  "description": "将新加坡与中国总部的考勤和假期数据汇总为公司报表模板。"
+  "description": "将新加坡与集团总部的考勤和假期数据汇总到公司报表模板。",
+  "nav": {
+    "label": "考勤与假期",
+    "runs": "汇总",
+    "rules": "假期类别规则",
+    "template": "模板预览"
+  },
+  "connector": {
+    "sg-hr": "新加坡人力系统",
+    "cn-hq": "总部人力系统"
+  },
+  "category": {
+    "ANNUAL": "年假",
+    "SICK": "病假",
+    "HOSPITALISATION": "住院假",
+    "CHILDCARE": "育儿假",
+    "MATERNITY": "产假",
+    "PATERNITY": "陪产假",
+    "COMPASSIONATE": "丧假",
+    "MARRIAGE": "婚假",
+    "TIME_OFF_IN_LIEU": "调休",
+    "UNPAID": "无薪假",
+    "HOME_LEAVE": "探亲假",
+    "OTHER": "其他假期"
+  },
+  "status": {
+    "QUEUED": "排队中",
+    "RUNNING": "进行中",
+    "SUCCEEDED": "已完成",
+    "NEEDS_REVIEW": "待核查",
+    "FAILED": "失败"
+  },
+  "runs": {
+    "description": "每月来自新加坡人力系统与总部人力系统的考勤和假期，先映射到集团类别并完成核查，再写入模板。",
+    "start": "运行汇总",
+    "startSample": "汇总月份的功能将随汇总引擎上线。这些记录是示例数据。",
+    "table": {
+      "caption": "汇总记录",
+      "period": "月份",
+      "entities": "法人实体",
+      "status": "状态",
+      "employees": "员工数",
+      "records": "记录数",
+      "exceptions": "未处理异常",
+      "finished": "完成时间",
+      "by": "运行人"
+    },
+    "empty": {
+      "title": "尚未进行汇总",
+      "description": "某月的考勤与假期数据到齐后，即可运行第一次汇总。"
+    }
+  },
+  "run": {
+    "title": "{{period}}",
+    "choose": "选择一次汇总，查看其数据来源与异常。",
+    "sources": "数据来源",
+    "attendanceRows_one": "{{count}} 条考勤记录",
+    "attendanceRows_other": "{{count}} 条考勤记录",
+    "leaveRecords_one": "{{count}} 条假期记录",
+    "leaveRecords_other": "{{count}} 条假期记录",
+    "noSources": "未读取任何数据。",
+    "exceptions": "异常",
+    "exceptionsDescription": "汇总时标记出来、留待您决定而非自行推断的问题。",
+    "noExceptions": "您所属的法人实体没有异常。",
+    "withheld_one": "另有 {{count}} 项其他法人实体的异常未显示：没有跨境传输条目将考勤和假期数据共享给您的法人实体。",
+    "withheld_other": "另有 {{count}} 项其他法人实体的异常未显示：没有跨境传输条目将考勤和假期数据共享给您的法人实体。",
+    "failed": "此次汇总未能完成，读取的数据均未保留。请重新汇总该月。",
+    "resolved": "已处理：{{resolution}}",
+    "export": "导出 .xlsx",
+    "exportSample": "导出公司模板的功能将随报表生成器上线。此次汇总是示例数据。",
+    "exportNotReady": "请先处理未完成的异常，再导出该月。"
+  },
+  "exceptionType": {
+    "UNMAPPED_CATEGORY": "无规则",
+    "NO_TEMPLATE_COLUMN": "模板无对应列",
+    "LEAVE_PENDING": "假期待批",
+    "OVERLAPPING_LEAVE": "假期重叠",
+    "LEAVE_ON_NON_WORKING_DAY": "非工作日",
+    "UNKNOWN_EMPLOYEE": "未知员工",
+    "TOTALS_MISMATCH": "合计不符"
+  },
+  "exception": {
+    "UNMAPPED_CATEGORY": "{{connector}} 的 {{code}} 尚无映射规则。请在报送该月前补充规则。",
+    "NO_TEMPLATE_COLUMN": "{{code}} 在公司模板中没有对应列：本月 {{days}} 天。请决定如何报送。",
+    "LEAVE_PENDING": "{{start}} 至 {{end}} 的 {{code}} 仍待审批，因此未计入合计。",
+    "OVERLAPPING_LEAVE": "{{start}} 至 {{end}} 有两条假期记录重叠。",
+    "LEAVE_ON_NON_WORKING_DAY": "{{start}} 的 {{code}} 不在该法人实体的工作日内。",
+    "UNKNOWN_EMPLOYEE": "{{connector}} 的一条记录所属员工不在员工主数据中。",
+    "TOTALS_MISMATCH": "出勤天数与假期天数之和与应出勤天数不符。"
+  },
+  "startDialog": {
+    "title": "运行汇总",
+    "description": "读取某月来自新加坡人力系统与总部人力系统的考勤和假期，映射类别并完成核查。不会导出任何内容。",
+    "month": "月份",
+    "entities": "法人实体",
+    "entitiesRequired": "请至少选择一个法人实体。",
+    "submit": "运行汇总",
+    "submitting": "正在启动…",
+    "queued": "{{period}} 已加入汇总队列。"
+  },
+  "rules": {
+    "title": "假期类别规则",
+    "description": "各系统的假期代码如何计入集团的假期类别。修改须经批准后才会生效。",
+    "filter": {
+      "label": "系统",
+      "all": "全部系统"
+    },
+    "table": {
+      "caption": "假期类别规则",
+      "system": "系统",
+      "code": "代码",
+      "label": "系统内名称",
+      "category": "计为",
+      "column": "模板列",
+      "status": "状态",
+      "version": "版本",
+      "actions": "操作"
+    },
+    "noColumn": "无：作为异常报送",
+    "ruleStatus": {
+      "ACTIVE": "已批准",
+      "DRAFT": "待批准"
+    },
+    "change": "提议修改",
+    "changeLabel": "提议修改 {{code}}",
+    "empty": {
+      "title": "暂无规则",
+      "description": "规则将各系统的假期代码映射到集团的假期类别。"
+    }
+  },
+  "changeDialog": {
+    "title": "修改 {{code}} 的规则",
+    "description": "修改须经批准，两个步骤都会记录审计日志。",
+    "category": "计为",
+    "column": "模板列",
+    "noColumn": "无对应列（作为异常报送）",
+    "reason": "修改原因",
+    "reasonHint": "会随审计记录一起保存。",
+    "reasonRequired": "请说明修改规则的原因。",
+    "submit": "提议修改",
+    "submitting": "正在提交…",
+    "proposed": "已提议修改，批准后生效。"
+  },
+  "template": {
+    "title": "模板预览",
+    "description": "某月数据在公司报表模板中的样子，导出之前先行预览。",
+    "period": "月份",
+    "entityNote": "显示 {{entity}}，即您所属的法人实体。只有当跨境传输条目共享了考勤和假期数据时，才会显示其他法人实体的员工。",
+    "caption": "{{template}}，{{period}}",
+    "exceptions_one": "此行有 {{count}} 项未处理异常",
+    "exceptions_other": "此行有 {{count}} 项未处理异常",
+    "export": "导出 .xlsx",
+    "exportSample": "导出功能将随报表生成器上线。这些行是示例数据。",
+    "empty": {
+      "title": "该月尚未汇总",
+      "description": "先对该月运行汇总，然后在此预览。",
+      "action": "前往汇总"
+    }
+  }
 }

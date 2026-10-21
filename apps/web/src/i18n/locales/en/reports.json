@@ -1,4 +1,22 @@
 {
   "title": "Reports",
-  "description": "Management reports drawn from authorised sources."
+  "description": "Management reports drawn from authorised sources.",
+  "period": "Month",
+  "readOnly": "Read only",
+  "headcount": "Headcount",
+  "attendanceRate": "Attendance rate",
+  "overtime": "Overtime hours",
+  "workingDays_one": "{{count}} working day",
+  "workingDays_other": "{{count}} working days",
+  "sources": "From {{sources}}",
+  "leave": "Leave taken, in days",
+  "leaveTable": "Leave days by category for {{entity}}",
+  "category": "Category",
+  "days": "Days",
+  "noLeave": "No leave taken this month.",
+  "empty": {
+    "title": "No report for this month yet",
+    "description": "A month's report appears once its consolidation is done. Choose another month."
+  },
+  "generatedLabel": "Generated"
 }
