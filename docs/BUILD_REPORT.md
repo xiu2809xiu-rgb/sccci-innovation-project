@@ -67,7 +67,7 @@ Legend: `[x]` done and verified, `[~]` in progress, `[ ]` not started, `[!]` blo
 
 ### Phase 7: 3D integration map
 
-- [ ] Blender scripts -> GLB -> gltf-transform (<= 1.5 MB)
+- [x] Blender scripts -> GLB -> gltf-transform (<= 1.5 MB): [`assets-src/3d/`](../assets-src/3d/README.md), built headless with Blender 5.2.1 LTS. The core is 16.6 KB, the node pod 28.5 KB and the platform 51.0 KB; with the fallback still (55.2 KB), that is 151.3 KB of the 1.5 MB budget. Quantised rather than Draco-compressed, because the CSP allows no WebAssembly ([ADR 0020](adr/0020-3d-assets-without-wasm-decoders.md))
 - [ ] R3F scene with postprocessing, live status, interaction, accessibility fallbacks
 
 ### Phase 8: Diagrams

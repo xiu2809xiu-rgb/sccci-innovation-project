@@ -27,6 +27,7 @@ This folder records the significant technical decisions behind HuiTong 汇通, t
 | [0017](0017-ui-component-registries.md)          | shadcn registries for UI components and React Bits licence handling     | Accepted | 2026-10-20 |
 | [0018](0018-web-csp-inline-styles.md)            | Allow inline styles in the web content security policy                  | Accepted | 2026-10-20 |
 | [0019](0019-ideas-not-adopted-from-azri-plan.md) | Parts of Azri's integrated plan we did not adopt                        | Accepted | 2026-10-21 |
+| [0020](0020-3d-assets-without-wasm-decoders.md)  | 3D assets without WebAssembly decoders                                  | Accepted | 2026-10-22 |
 
 ## Statuses
 

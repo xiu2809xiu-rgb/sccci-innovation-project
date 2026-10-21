@@ -21,11 +21,15 @@
     "slides:build": "node scripts/build-slides.mjs",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "prepare": "husky"
+    "prepare": "husky",
+    "assets:3d": "node assets-src/3d/build.mjs"
   },
   "devDependencies": {
     "@commitlint/cli": "21.2.3",
     "@commitlint/config-conventional": "21.2.3",
+    "@gltf-transform/core": "4.5.1",
+    "@gltf-transform/extensions": "4.5.1",
+    "@gltf-transform/functions": "4.5.1",
     "@huitong/eslint-config": "workspace:*",
     "eslint": "10.13.0",
     "husky": "9.1.7",
