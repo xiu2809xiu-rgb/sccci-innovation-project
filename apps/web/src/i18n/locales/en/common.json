@@ -74,8 +74,8 @@
       "label": "Notifications",
       "title": "Notifications",
       "empty": "You are all caught up.",
-      "unread_one": "{{count}} new notification",
-      "unread_other": "{{count}} new notifications",
+      "unread_one": "{{shown}} new notification",
+      "unread_other": "{{shown}} new notifications",
       "markAllRead": "Mark all as read",
       "pendingApprovals": "Waiting for your approval",
       "liveUpdates": "Live updates"
