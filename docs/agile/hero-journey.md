@@ -1,0 +1,53 @@
+# Hero journey
+
+One story runs through all four ownership areas. It is the spine of the W5 proposal and the W18 final presentation, and Playwright automates it as **E2E #1**. Two proof points sit beside it: a new subsidiary joining without code changes (**E2E #2**), and HQ being refused fields it may not hold (**E2E #3**).
+
+Adopted from Azri's integrated plan (v3). The journey uses the personas in [personas.md](../design-thinking/personas.md) and follows the future-state journey maps in [journey-maps.md](../design-thinking/journey-maps.md). Everything in it is synthetic demo data from mocked systems.
+
+## The story
+
+Arjun Menon, a hiring manager in Wealth Management, raises a manpower request in OA for one Relationship Manager in Singapore (SG01). Every approver signs it off. This is the mock OA's demo request (`POST /openapi/v1/_simulate/manpower-request`).
+
+| Step | What happens                                                                                                                                                | Owning area                                                                       | Status today                                                                                                                          |
+| ---- | ----------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------- |
+| 1    | OA's signed `approval.completed` webhook arrives. HuiTong verifies it and stores it once; a repeated delivery is ignored.                                   | Area 1 receives it; area 2 handles it                                             | Receiving is built ([A-3](backlog.md#a-3-receive-oa-approval-webhooks-safely)); handling is C-1                                       |
+| 2    | A recruitment requisition, the onboarding checklist and the IT and admin preparation tasks appear on the workflow board, each with an owner and a due date. | Area 2                                                                            | Planned: C-1, C-2, C-4                                                                                                                |
+| 3    | Once the hire is confirmed, the master holds a **draft** (`PRE_HIRE`) record linked to the request. An approval never creates an active employee.           | Area 1 (the master), triggered by area 2                                          | Planned: B-6 with C-3                                                                                                                 |
+| 4    | Later, the verified SG HR record arrives through a sync. With the onboarding milestones met, it activates the draft.                                        | Area 1                                                                            | Sync built ([A-1](backlog.md#a-1-sync-sg-hr-employees-into-huitong)); activation rule planned (B-6)                                   |
+| 5    | The record is reconciled with China HQ's: matched on the group employee number. A look-alike name is only ever shown as a possible match for HR to decide.  | Area 1                                                                            | Matching on the employee number is built ([A-2](backlog.md#a-2-sync-cn-hq-sap-records-with-chinese-fields)); possible matches are B-5 |
+| 6    | Months later, the employee's Singapore leave is imported and mapped to the group categories (年假 Annual Leave, 病假 Sick Leave, 调休 time off in lieu).    | Area 3                                                                            | Planned: D-1, D-2                                                                                                                     |
+| 7    | HQ's monthly report is exported. It holds only the fields on HQ's allowlist; everything else is left out, and the export is audited.                        | Areas 3 and 4 (report and policy); area 1 enforces the allowlist                  | Planned: D-4, F-4, B-7                                                                                                                |
+| 8    | The overview shows the journey's history and any exceptions: the record's changes, the sync runs, open conflicts, leave exceptions and the audit trail.     | All: overview and history by area 1, exceptions by area 3, audit viewer by area 4 | Overview and history built; D-3 and F-2 planned                                                                                       |
+
+Step 6 is deliberately a later stage of the employee's life, not leave taken on day one. The demo compresses the months with seeded leave records.
+
+## Automated scenarios
+
+Each scenario is a Playwright spec in `apps/web/e2e/` that runs on every pull request with axe checks ([test plan](test-plan.md#test-levels)). Each step is a named `test.step` that carries its owning area, so a failure points to an owner. A step whose story is not done yet is marked `fixme` with the story key, and is switched on in the pull request that delivers the story ([P-9](backlog.md#p-9-hero-journey-and-proof-points-as-end-to-end-tests)).
+
+| Scenario                         | Steps                                                                                                                                                                                                              | Areas         | Depends on                                              |
+| -------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------- | ------------------------------------------------------- |
+| **E2E #1** Hero journey          | Steps 1 to 8 above, from the simulated OA approval to the overview                                                                                                                                                 | 1, 2, 3 and 4 | A-3, B-5, B-6, C-1 to C-4, D-1, D-2, D-4, F-2, F-4, B-7 |
+| **E2E #2** A new subsidiary      | Upload an unfamiliar subsidiary CSV (the Malaysia sample) → the AI suggests mappings, labelled with their confidence → HR approves → the mapping is saved as a version → the full file imports with no code change | 1             | E-1, E-2 (built), A-5                                   |
+| **E2E #3** HQ is refused a field | Signed in as HQ HR, a Singapore field missing from HQ's allowlist cannot be read in the UI, through the raw API or in a report export, and each refusal is in the audit log                                        | 1, 3 and 4    | B-7, D-4, F-2                                           |
+
+## Presenter plan (W5 proposal and W18 final)
+
+Each area presents its own steps, so every member demonstrates code they wrote. The backup presenter is the area's backup owner ([module-ownership.md](../team/module-ownership.md#backup-owners)). Timings are set once the lecturer confirms the length of the slot.
+
+| Segment                   | Presenter       | What they show                                                                                                                                           |
+| ------------------------- | --------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Opening and impact        | All             | Today's fragmentation, the problem, and the three measured outcomes ([measurement protocol](../design-thinking/success-metrics.md#measurement-protocol)) |
+| OA and workflow           | Area 2 owner    | Steps 1 to 3: the approval arrives once, the tasks appear, the draft record is linked                                                                    |
+| Employee master and AI    | Area 1 (Richie) | Steps 4 and 5: activation from the verified SG HR record and reconciliation with HQ; then E2E #2, the new subsidiary mapped by the AI and approved by HR |
+| Leave and reporting       | Area 3 owner    | Steps 6 and 7: the leave mapping, the exceptions and HQ's report                                                                                         |
+| Governance and monitoring | Area 4 owner    | E2E #3, the field HQ cannot get, with its audit trail; then the observability, clickstream and AI-cost dashboards                                        |
+| Closing                   | All             | The evidence, privacy boundaries, how a new subsidiary plugs in, and the limits of a PoC on synthetic data                                               |
+
+At the W5 proposal the same spine is walked through on the prototype, and each member presents their own area ([T-5](backlog.md#t-5-proposal-presentation-w5-25)).
+
+## Rules for the demo
+
+- **Honest labels.** Every mocked system shows a "Mock" badge, and suggestions from the deterministic mock AI say so. A mock is never presented as a live integration.
+- **Synthetic data only**, labelled as such on every screen.
+- **Rehearsed with a fallback.** A one-click reset, a timed rehearsal, a recorded backup demo and a tested Docker fallback are part of [P-8](backlog.md#p-8-hardening-and-handover).

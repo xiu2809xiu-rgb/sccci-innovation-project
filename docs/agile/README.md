@@ -2,14 +2,15 @@
 
 HuiTong is built in one-week sprints that follow the module weeks, with the backlog, the board and the pull requests all in GitHub.
 
-| Document                                                           | What it covers                                                                      |
-| ------------------------------------------------------------------ | ----------------------------------------------------------------------------------- |
-| [working-agreement.md](working-agreement.md)                       | Roles, ceremonies, the board, and the path from a story to `main`                   |
-| [definition-of-ready-and-done.md](definition-of-ready-and-done.md) | When a story may enter a sprint, and when it counts as done                         |
-| [backlog.md](backlog.md)                                           | Every epic and story with its acceptance criteria, sprint, estimate and priority    |
-| [test-plan.md](test-plan.md)                                       | Test levels, environments, traceability, entry and exit criteria, schedule, defects |
-| [../security/security-testing.md](../security/security-testing.md) | SAST and the other security checks, and how findings are triaged                    |
-| [../team/module-ownership.md](../team/module-ownership.md)         | The four ownership areas and their interfaces                                       |
+| Document                                                           | What it covers                                                                                                        |
+| ------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------- |
+| [working-agreement.md](working-agreement.md)                       | Roles, ceremonies, the board, and the path from a story to `main`                                                     |
+| [definition-of-ready-and-done.md](definition-of-ready-and-done.md) | When a story may enter a sprint, and when it counts as done                                                           |
+| [backlog.md](backlog.md)                                           | Every epic and story with its acceptance criteria, sprint, estimate and priority                                      |
+| [hero-journey.md](hero-journey.md)                                 | The one journey across all four areas: the demo spine, E2E #1 to #3, presenter plan                                   |
+| [test-plan.md](test-plan.md)                                       | Test levels, environments, traceability, the failure and edge-case matrix, entry and exit criteria, schedule, defects |
+| [../security/security-testing.md](../security/security-testing.md) | SAST and the other security checks, and how findings are triaged                                                      |
+| [../team/module-ownership.md](../team/module-ownership.md)         | The four ownership areas and their interfaces                                                                         |
 
 ## In GitHub
 
