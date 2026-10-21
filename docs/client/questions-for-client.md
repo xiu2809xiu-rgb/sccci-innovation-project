@@ -46,19 +46,19 @@ All we know about Organisation E's systems comes from the problem statement; eve
 
 **If we only get 15 minutes,** ask Q-01, Q-02, Q-05, Q-12, Q-13, Q-28, Q-37 and Q-48.
 
-| #   | Topic                                                                                                  | Questions    | P1     | P2     | P3     |
-| --- | ------------------------------------------------------------------------------------------------------ | ------------ | ------ | ------ | ------ |
-| 1   | [Systems and vendors](#1-systems-and-vendors)                                                          | Q-01 to Q-11 | 6      | 4      | 1      |
-| 2   | [APIs and exports](#2-apis-and-exports)                                                                | Q-12 to Q-18 | 2      | 4      | 1      |
-| 3   | [Data volumes](#3-data-volumes)                                                                        | Q-19 to Q-22 | 0      | 3      | 1      |
-| 4   | [Leave categories](#4-leave-categories)                                                                | Q-23 to Q-27 | 0      | 4      | 1      |
-| 5   | [Company reporting template](#5-company-reporting-template)                                            | Q-28 to Q-31 | 1      | 2      | 1      |
-| 6   | [Approval flows](#6-approval-flows)                                                                    | Q-32 to Q-36 | 2      | 2      | 1      |
-| 7   | [Data residency, cross-border rules and AI policy](#7-data-residency-cross-border-rules-and-ai-policy) | Q-37 to Q-43 | 2      | 4      | 1      |
-| 8   | [SSO and identity](#8-sso-and-identity)                                                                | Q-44 to Q-46 | 0      | 2      | 1      |
-| 9   | [Success measurement](#9-success-measurement)                                                          | Q-47 to Q-49 | 2      | 0      | 1      |
-| 10  | [Logistics](#10-logistics)                                                                             | Q-50 to Q-56 | 4      | 2      | 1      |
-|     | **Total**                                                                                              | **56**       | **19** | **27** | **10** |
+| #   | Topic                                                                                                  | Questions          | P1     | P2     | P3     |
+| --- | ------------------------------------------------------------------------------------------------------ | ------------------ | ------ | ------ | ------ |
+| 1   | [Systems and vendors](#1-systems-and-vendors)                                                          | Q-01 to Q-11       | 6      | 4      | 1      |
+| 2   | [APIs and exports](#2-apis-and-exports)                                                                | Q-12 to Q-18       | 2      | 4      | 1      |
+| 3   | [Data volumes](#3-data-volumes)                                                                        | Q-19 to Q-22       | 0      | 3      | 1      |
+| 4   | [Leave categories](#4-leave-categories)                                                                | Q-23 to Q-27, Q-57 | 0      | 5      | 1      |
+| 5   | [Company reporting template](#5-company-reporting-template)                                            | Q-28 to Q-31       | 1      | 2      | 1      |
+| 6   | [Approval flows](#6-approval-flows)                                                                    | Q-32 to Q-36       | 2      | 2      | 1      |
+| 7   | [Data residency, cross-border rules and AI policy](#7-data-residency-cross-border-rules-and-ai-policy) | Q-37 to Q-43       | 2      | 4      | 1      |
+| 8   | [SSO and identity](#8-sso-and-identity)                                                                | Q-44 to Q-46       | 0      | 2      | 1      |
+| 9   | [Success measurement](#9-success-measurement)                                                          | Q-47 to Q-49       | 2      | 0      | 1      |
+| 10  | [Logistics](#10-logistics)                                                                             | Q-50 to Q-56       | 4      | 2      | 1      |
+|     | **Total**                                                                                              | **57**             | **19** | **28** | **10** |
 
 ## Questions
 
@@ -106,6 +106,7 @@ All we know about Organisation E's systems comes from the problem statement; eve
 | Q-23 | P2   | Could you share the leave category lists from SG HR and HQ (codes and names only)?                                                                                                            | Leave-category mapping rules for capability D; tests A-08                                                            | SG HR, HQ HR             |        |
 | Q-24 | P2   | How should categories without a counterpart be reported, such as 探亲假 (home leave) at HQ, or National Service leave and Shared Parental Leave in Singapore? Who signs off the category map? | Exception rules in the template, whether to extend the canonical category list, and who approves mapping rules (D-2) | SG HR, HQ HR             |        |
 | Q-25 | P2   | Are HQ leave entitlements group-wide or city-specific (local rules in Shanghai, Beijing and Shenzhen differ for 婚假, 产假, 陪产假 and 育儿假)?                                               | Whether mapping and validation depend on work location                                                               | HQ HR                    |        |
+| Q-57 | P2   | How should leave still waiting for approval at month end be reported: left out of the month, counted, or shown separately?                                                                    | Whether pending leave is an exception in the consolidation, as the head start assumes (D-3)                          | SG HR, HQ HR             |
 | Q-26 | P2   | In which unit is leave recorded (days, half-days, hours)? How is 调休 (time-off in lieu) earned and tracked?                                                                                  | Unit conversion and validation in consolidation                                                                      | SG HR, HQ HR             |        |
 | Q-27 | P3   | Are sick-leave reasons, diagnoses or medical certificates stored with leave records?                                                                                                          | We plan to ingest category and dates only, because health data is sensitive personal information under PIPL Art. 28  | SG HR, HQ HR, Compliance |        |
 

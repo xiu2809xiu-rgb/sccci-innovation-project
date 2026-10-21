@@ -8,12 +8,12 @@ This file records who owns which part of HuiTong 汇通, what each area provides
 
 ## Areas at a glance
 
-| Area                                   | Owner                          | Capabilities (CLAUDE.md section 4)                                                                                          | Implementation guide                                           |
-| -------------------------------------- | ------------------------------ | --------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------- |
-| 1. Integration Core + platform base    | Richie (team lead)             | A Connector hub, B Canonical employee master, E AI assistance, plus the shared base that F and G build on                   | [area-1-integration-core.md](area-1-integration-core.md)       |
-| 2. Workflow automation                 | TBD: Iok Teck, Azri or Angelyn | C Workflow automation                                                                                                       | [area-2-workflow-automation.md](area-2-workflow-automation.md) |
-| 3. Attendance, leave and reporting     | TBD: Iok Teck, Azri or Angelyn | D Attendance and leave consolidation, and management reports                                                                | `docs/team/area-3-attendance-leave-reporting.md` (Phase 6)     |
-| 4. Governance, security and monitoring | TBD: Iok Teck, Azri or Angelyn | F Governance and compliance (administration), G Monitoring and analytics (telemetry and dashboards), and the AWS deployment | `docs/team/area-4-governance-security-monitoring.md` (Phase 6) |
+| Area                                   | Owner                          | Capabilities (CLAUDE.md section 4)                                                                                          | Implementation guide                                                         |
+| -------------------------------------- | ------------------------------ | --------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------- |
+| 1. Integration Core + platform base    | Richie (team lead)             | A Connector hub, B Canonical employee master, E AI assistance, plus the shared base that F and G build on                   | [area-1-integration-core.md](area-1-integration-core.md)                     |
+| 2. Workflow automation                 | TBD: Iok Teck, Azri or Angelyn | C Workflow automation                                                                                                       | [area-2-workflow-automation.md](area-2-workflow-automation.md)               |
+| 3. Attendance, leave and reporting     | TBD: Iok Teck, Azri or Angelyn | D Attendance and leave consolidation, and management reports                                                                | [area-3-attendance-leave-reporting.md](area-3-attendance-leave-reporting.md) |
+| 4. Governance, security and monitoring | TBD: Iok Teck, Azri or Angelyn | F Governance and compliance (administration), G Monitoring and analytics (telemetry and dashboards), and the AWS deployment | `docs/team/area-4-governance-security-monitoring.md` (Phase 6)               |
 
 Areas 2 to 4 are shared out among Iok Teck, Azri and Angelyn. Once the team agrees who takes which, the names go into this table and into `.github/CODEOWNERS`. The working assumption is that this happens by the W3 project plan ([A-44](../assumptions.md)).
 
