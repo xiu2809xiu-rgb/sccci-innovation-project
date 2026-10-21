@@ -26,7 +26,10 @@ import workflowsZh from './locales/zh-CN/workflows.json';
 /**
  * One namespace per feature area, so each owner edits only their own files
  * (facts sheet section 9). English is the source language; resources.test.ts
- * keeps the Chinese files in step with it.
+ * keeps the Chinese files in step with it. This full catalogue feeds the
+ * typed keys and the tests only: the app bundles the core namespaces
+ * (bundled-resources.ts) and loads the others with their routes
+ * (lazy-namespaces.ts).
  */
 export const resources = {
   en: {

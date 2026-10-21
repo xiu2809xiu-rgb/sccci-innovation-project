@@ -70,3 +70,13 @@ The namespaces are `common`, `auth`, `overview`, `employees`, `connectors`, `int
 | Google Fonts or another font CDN                            | Unreachable or slow from mainland China, and adds third-party origins to the CSP                                                |
 | System fonts only (PingFang SC, Microsoft YaHei)            | No download, but rendering differs by operating system and the Geist look and figures are lost. They stay in the fallback stack |
 | FormatJS (react-intl) or Lingui                             | Strong ICU message support, but `CLAUDE.md` fixes react-i18next, which can add ICU formatting later through a plugin            |
+
+## Amendment, 21 Oct 2026: areas 2 to 4 load their namespaces with their routes
+
+Every namespace was bundled into the entry chunk, so the first render always had its strings. Phase 5 noted that this could not last. As areas 2 to 4 fill their namespaces, their strings land in the initial JS, which has a 250 KB budget: area 2's workflow strings alone took it from 226.6 KB to 231.1 KB gzip.
+
+- **Bundled:** the shell's and area 1's namespaces (`common`, `auth`, `overview`, `employees`, `connectors`, `integrationMap`, `settings`), in [`bundled-resources.ts`](../../apps/web/src/i18n/bundled-resources.ts). Every session needs them at first paint.
+- **Loaded with their routes:** `workflows`, `attendanceLeave`, `reports`, `governance` and `analytics`, through a small i18next backend in [`lazy-namespaces.ts`](../../apps/web/src/i18n/lazy-namespaces.ts). Each file and language is its own chunk, fetched by dynamic import when a page first asks for it, and again for the new language when the language changes. The component suspends inside the route's Suspense boundary meanwhile, so no untranslated key ever shows.
+- **Unchanged:** the full catalogue, [`resources.ts`](../../apps/web/src/i18n/resources.ts), still types every key and feeds the parity test. A new test checks that each namespace is either bundled or lazy, never both. No dependency is added; `i18next-resources-to-backend` would do the same in a package.
+
+A new area namespace goes into `LAZY_NAMESPACES`, unless the shell needs it at first paint.
