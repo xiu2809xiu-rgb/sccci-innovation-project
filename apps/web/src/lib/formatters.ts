@@ -77,6 +77,29 @@ export class Formatters {
     }).format(new Date(value));
   }
 
+  /** A short day and month for chart axes: 21 Oct or 10月21日. */
+  dayMonth(value: string | Date): string {
+    const dateOnly = typeof value === 'string' && DATE_ONLY.test(value);
+    return new Intl.DateTimeFormat(this.locale, {
+      day: 'numeric',
+      month: 'short',
+      ...(dateOnly ? { timeZone: 'UTC' } : {}),
+    }).format(new Date(value));
+  }
+
+  /** A large number made short for axis ticks and tiles: 12K or 1.2万. */
+  compact(value: number): string {
+    return new Intl.NumberFormat(this.locale, {
+      notation: 'compact',
+      maximumFractionDigits: 1,
+    }).format(value);
+  }
+
+  /** Items joined the way the language joins them: "Singapore and China HQ", "新加坡和中国总部". */
+  list(items: readonly string[]): string {
+    return new Intl.ListFormat(this.locale, { type: 'conjunction' }).format(items);
+  }
+
   dateTime(value: string | Date): string {
     return new Intl.DateTimeFormat(this.locale, { dateStyle: 'medium', timeStyle: 'short' }).format(
       new Date(value),

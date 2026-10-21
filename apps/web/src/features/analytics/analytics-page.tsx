@@ -1,9 +1,18 @@
-import { useTranslation } from 'react-i18next';
+import { useMatch } from 'react-router';
 
-import { PlannedPage } from '@/components/common/planned-page';
+import { AiUsagePage } from './pages/ai-usage-page';
+import { ClickstreamPage } from './pages/clickstream-page';
+import { ObservabilityPage } from './pages/observability-page';
 
-/** Observability, clickstream and AI usage (area 4), head start in Phase 6. */
+/**
+ * The monitoring dashboards (area 4): observability, clickstream and AI usage.
+ * One lazy route module, so Recharts loads only with these pages. The figures
+ * are typed sample data until area 4 builds the aggregations, and say so.
+ */
 export function AnalyticsPage() {
-  const { t } = useTranslation('analytics');
-  return <PlannedPage title={t('title')} description={t('description')} />;
+  const clickstream = useMatch('/analytics/clickstream');
+  const aiUsage = useMatch('/analytics/ai-usage');
+  if (clickstream) return <ClickstreamPage />;
+  if (aiUsage) return <AiUsagePage />;
+  return <ObservabilityPage />;
 }

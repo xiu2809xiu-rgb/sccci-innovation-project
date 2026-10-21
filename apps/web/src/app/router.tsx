@@ -111,10 +111,31 @@ export function createAppRoutes(
       handle: { crumb: 'governance', requires: 'governance:read' } satisfies RouteHandle,
       children: [
         child('governance', undefined, {}, governance),
+        child(
+          'governance/classification',
+          'classification',
+          { crumb: 'classification' },
+          governance,
+        ),
+        child('governance/transfers', 'transfers', { crumb: 'transfers' }, governance),
+        child('governance/retention', 'retention', { crumb: 'retention' }, governance),
         child('governance/audit', 'audit', { crumb: 'audit', requires: 'audit:read' }, governance),
       ],
     },
-    child('analytics', 'analytics', { crumb: 'analytics', requires: 'analytics:read' }, analytics),
+    {
+      path: 'analytics',
+      handle: { crumb: 'analytics', requires: 'analytics:read' } satisfies RouteHandle,
+      children: [
+        child('analytics', undefined, {}, analytics),
+        child('analytics/clickstream', 'clickstream', { crumb: 'clickstream' }, analytics),
+        child(
+          'analytics/ai-usage',
+          'ai-usage',
+          { crumb: 'aiUsage', requires: 'ai-usage:read' },
+          analytics,
+        ),
+      ],
+    },
     child('settings', 'settings', { crumb: 'settings' }, settings),
     { id: '*', path: '*', Component: NotFoundPage },
   ];

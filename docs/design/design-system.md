@@ -139,6 +139,7 @@ Accessible primitives from shadcn/ui (Radix), installed into `src/components/ui/
 | ----------------------------------------- | --------------------------------------------------------------------------------------------------------- |
 | `PageHeader`                              | Title, purpose, badges and page actions: the top of every page                                            |
 | `SectionCard`                             | A titled, labelled region of a page (Gestalt common region)                                               |
+| `SectionNav`                              | Links between the pages of one area, each with its own address and breadcrumb                             |
 | `QueryView`                               | Renders a query's loading, error, empty and success states the same way everywhere                        |
 | `DataTable` (+ `DataTablePagination`)     | The one table for server-paginated lists: sortable headers with `aria-sort`, skeleton rows, shared states |
 | `EmptyState`                              | Calm placeholder with a next step                                                                         |
@@ -155,7 +156,7 @@ Accessible primitives from shadcn/ui (Radix), installed into `src/components/ui/
 
 ### Motion and visual components: React Bits
 
-Thirteen React Bits items are installed in `src/components/reactbits/`, each adapted to the tokens, the reduced-motion policy, strict lint rules and accessibility. [`reactbits-usage.md`](reactbits-usage.md) lists every item, where it is used, why, and its reduced-motion behaviour. Vendored sources keep their structure, so they are exempt from the 200-line component guideline; app components are not.
+Nineteen React Bits components are installed in `src/components/reactbits/` (eighteen items: seventeen free items and the Pro block `auth-4`, adapted as two components), each adapted to the tokens, the reduced-motion policy, strict lint rules and accessibility. [`reactbits-usage.md`](reactbits-usage.md) lists every item, where it is used, why, and its reduced-motion behaviour. Vendored sources keep their structure, so they are exempt from the 200-line component guideline; app components are not.
 
 ## 9. States every data view handles
 

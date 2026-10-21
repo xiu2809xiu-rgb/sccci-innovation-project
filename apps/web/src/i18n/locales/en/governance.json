@@ -1,4 +1,265 @@
 {
-  "title": "Governance",
-  "description": "Access, data classification, cross-border transfers and retention."
+  "nav": {
+    "label": "Governance sections",
+    "access": "Access",
+    "classification": "Classification",
+    "transfers": "Transfers",
+    "retention": "Retention",
+    "audit": "Audit log"
+  },
+  "yes": "Yes",
+  "no": "No",
+  "access": {
+    "title": "Access and permissions",
+    "description": "What each role may do, and how far it may see into classified data. This is the policy the API enforces right now.",
+    "permissions": "Permissions by role",
+    "permissionsCaption": "Permissions each role holds",
+    "permission": "Permission",
+    "allowed": "Allowed",
+    "notAllowed": "Not allowed",
+    "separation": "Separation of duties: system administrators configure the platform but cannot approve mappings or resolve HR conflicts.",
+    "clearance": "Clearance by entity",
+    "clearanceDescription": "The highest classification each role may see on a record, by the entity the record belongs to. Another entity's fields also need an active transfer entry.",
+    "clearanceCaption": "Highest classification each role may see, by the record's entity",
+    "role": "Role",
+    "adminNote": "Changing permissions and clearance arrives with access administration. Every change will be audited."
+  },
+  "permissionGroups": {
+    "integration": "Employee master and integration",
+    "workflows": "Workflows",
+    "attendance": "Attendance, leave and reports",
+    "oversight": "Governance and monitoring"
+  },
+  "permissions": {
+    "employees": {
+      "read": "Read employee records",
+      "write": "Change employee records",
+      "sync": "Run employee syncs"
+    },
+    "conflicts": {
+      "resolve": "Resolve data conflicts"
+    },
+    "connectors": {
+      "read": "View connectors",
+      "manage": "Manage connectors"
+    },
+    "mappings": {
+      "propose": "Propose field mappings",
+      "approve": "Approve field mappings"
+    },
+    "workflows": {
+      "read": "View workflows",
+      "manage": "Manage workflows",
+      "tasks": "Work on assigned tasks"
+    },
+    "manpower": {
+      "request": "Request manpower"
+    },
+    "attendance": {
+      "read": "View attendance and leave",
+      "consolidate": "Run consolidations"
+    },
+    "leave-mappings": {
+      "manage": "Change leave-category rules"
+    },
+    "reports": {
+      "read": "Read reports",
+      "export": "Export reports"
+    },
+    "governance": {
+      "read": "View the governance registers",
+      "manage": "Administer governance"
+    },
+    "audit": {
+      "read": "Read the audit log"
+    },
+    "analytics": {
+      "read": "View analytics"
+    },
+    "ai-usage": {
+      "read": "View AI usage and cost"
+    },
+    "users": {
+      "manage": "Manage users"
+    }
+  },
+  "classification": {
+    "title": "Data classification",
+    "description": "Every classified field, with its level and why. Masking and the transfer register follow this register.",
+    "caption": "Classified fields",
+    "field": "Field",
+    "level": "Level",
+    "why": "Why",
+    "personal": "Personal data",
+    "sensitive": "Sensitive",
+    "sensitiveNote": "Sensitive means sensitive personal information under PIPL, such as financial accounts.",
+    "visibleTo": "Who may see it",
+    "allRoles": "Every role",
+    "empty": {
+      "title": "No field is classified yet",
+      "description": "A field is classified before it can be masked, mapped or shared."
+    },
+    "roleOn": "{{role}}: {{entities}} only",
+    "noRole": "No role",
+    "visibleUnknown": "Not available: the access policy did not load",
+    "transferNote": "A field of another entity's records also needs an active transfer entry before it reaches you."
+  },
+  "transfers": {
+    "title": "Cross-border transfer register",
+    "description": "Each flow of personal data between entities, with its legal basis and approval. Only active entries share fields; everything else is withheld.",
+    "status": {
+      "ACTIVE": "Active",
+      "PENDING_REVIEW": "Pending review",
+      "SUSPENDED": "Suspended",
+      "EXPIRED": "Expired"
+    },
+    "route": "{{from}} to {{to}}",
+    "version": "Version {{version}}",
+    "purpose": "Purpose",
+    "legalBasis": "Legal basis",
+    "mechanism": "Mechanism",
+    "approvedAt": "Approved",
+    "notApproved": "Not approved",
+    "reviewDueAt": "Review due",
+    "overdue": "Overdue",
+    "noReview": "No date set",
+    "notes": "Notes",
+    "categories": "Data it covers",
+    "fieldsShared": "Fields it shares",
+    "fieldsWhenActive": "Fields it shares once active",
+    "noFields": "None of its categories names a known field, so it shares nothing.",
+    "category": {
+      "identity": "Identity",
+      "job-and-organisation": "Job and organisation",
+      "work-contact": "Work contact"
+    },
+    "change": "Change status",
+    "changeLabel": "Change status of {{name}}",
+    "empty": {
+      "title": "No transfer is registered",
+      "description": "Until an entry is approved, no entity receives another entity's employee data."
+    }
+  },
+  "changeDialog": {
+    "title": "Change the status of {{name}}",
+    "description": "Approving shares the entry's fields with the destination on the next request. Suspending or expiring it withholds them at once. The change and its reason are audited.",
+    "status": "New status",
+    "reason": "Reason",
+    "reasonHint": "Recorded in the audit log with your name.",
+    "reasonRequired": "Give a reason for the change.",
+    "submit": "Change status",
+    "submitting": "Changing…",
+    "changed": "Status changed",
+    "chooseStatus": "Choose a status",
+    "statusRequired": "Choose the new status.",
+    "willShare": "{{to}} will receive these fields on its next request:",
+    "willWithhold": "{{to}} stops receiving these fields at once:",
+    "sharesNothing": "Nothing is shared before or after this change.",
+    "legalBasis": "Legal basis: {{basis}}"
+  },
+  "retention": {
+    "title": "Retention",
+    "description": "How long each kind of data is kept, and what happens to it then.",
+    "caption": "Retention rules",
+    "data": "Data",
+    "appliesTo": "Applies to",
+    "groupWide": "The whole group",
+    "keptFor": "Kept for",
+    "years_one": "{{count}} year",
+    "years_other": "{{count}} years",
+    "months_one": "{{count}} month",
+    "months_other": "{{count}} months",
+    "then": "Then",
+    "action": {
+      "DELETE": "Deleted",
+      "ANONYMISE": "Anonymised",
+      "ARCHIVE": "Archived"
+    },
+    "legalReference": "Legal reference",
+    "lastApplied": "Last applied",
+    "never": "Never",
+    "purgeNote": "Nothing is purged yet: the scheduled purge arrives with retention administration, and will record what each run did.",
+    "category": {
+      "audit_events": "Audit log",
+      "clickstream_events": "Clickstream events",
+      "source_records": "Source-system records",
+      "terminated_employees": "Former employees' records",
+      "ai_usage_records": "AI usage records",
+      "refresh_tokens": "Sign-in sessions"
+    },
+    "empty": {
+      "title": "No retention rule is set",
+      "description": "Until one is, data is kept with no end date."
+    }
+  },
+  "audit": {
+    "title": "Audit log",
+    "description": "Every change and sign-in, newest first: who did what to which record, and which fields changed. The values stay behind each record's masking rules.",
+    "readOnly": "Read only",
+    "filters": {
+      "label": "Filter the audit log",
+      "entityType": "Record type",
+      "allTypes": "All records",
+      "entityId": "Record ID",
+      "entityIdPlaceholder": "For example E100030",
+      "action": "Action",
+      "allActions": "All actions",
+      "from": "From",
+      "to": "To",
+      "toBeforeFrom": "The end date must be on or after the start date.",
+      "apply": "Apply filters",
+      "clear": "Clear filters",
+      "person": "Person: {{name}}",
+      "selectedPerson": "the selected person",
+      "removeFilter": "(remove this filter)"
+    },
+    "entityType": {
+      "Employee": "Employee",
+      "Conflict": "Conflict",
+      "Connector": "Connector",
+      "SyncRun": "Sync run",
+      "MappingProposal": "Mapping proposal",
+      "MappingConfig": "Mapping version",
+      "InboundWebhookEvent": "OA webhook",
+      "user": "User account"
+    },
+    "actionFamily": {
+      "auth": "Sign-in and sessions",
+      "employee": "Employee records",
+      "conflict": "Conflicts",
+      "mapping": "Mappings",
+      "connector": "Connectors",
+      "sync": "Syncs",
+      "webhook": "OA webhooks",
+      "access": "Access decisions"
+    },
+    "table": {
+      "caption": "Audit events",
+      "when": "When",
+      "who": "Who",
+      "action": "Action",
+      "record": "Record",
+      "changed": "Fields changed",
+      "trace": "Trace ID"
+    },
+    "system": "System or anonymous",
+    "byPerson": "Show only events by {{name}}",
+    "noFields": "None",
+    "moreFields": "+{{count}} more",
+    "copyTrace": "Copy trace ID {{traceId}}",
+    "empty": {
+      "title": "No event matches these filters",
+      "description": "Widen the dates or clear a filter."
+    },
+    "chain": {
+      "title": "Integrity",
+      "description": "Each event stores the hash of the one before it, so an edited or deleted event breaks the chain. The database also refuses changes to the log.",
+      "check": "Check the chain",
+      "checking": "Checking…",
+      "valid_one": "Intact: {{count}} event checked {{time}}.",
+      "valid_other": "Intact: {{count}} events checked {{time}}.",
+      "broken": "Broken at event {{id}}: an event was changed or removed after it was written. Report it to the data protection officer.",
+      "notChecked": "Not checked in this session."
+    }
+  }
 }

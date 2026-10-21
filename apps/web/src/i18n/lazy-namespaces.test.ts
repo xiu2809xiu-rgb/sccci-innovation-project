@@ -25,6 +25,6 @@ describe('namespace loading', () => {
     const i18n = createI18n('en');
     await i18n.loadNamespaces('governance');
     await i18n.changeLanguage('zh-CN');
-    expect(i18n.t('title', { ns: 'governance' })).toBe(resources['zh-CN'].governance.title);
+    expect(i18n.t('nav.label', { ns: 'governance' })).toBe(resources['zh-CN'].governance.nav.label);
   });
 });

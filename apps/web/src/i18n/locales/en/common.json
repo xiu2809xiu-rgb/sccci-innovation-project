@@ -29,7 +29,12 @@
     "reports": "Reports",
     "governance": "Governance",
     "audit": "Audit log",
+    "classification": "Data classification",
+    "transfers": "Transfer register",
+    "retention": "Retention",
     "analytics": "Analytics",
+    "clickstream": "Clickstream",
+    "aiUsage": "AI usage",
     "settings": "Settings",
     "connectorDetail": "Connector"
   },

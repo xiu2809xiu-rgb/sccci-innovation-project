@@ -1,4 +1,265 @@
 {
-  "title": "治理",
-  "description": "访问权限、数据分级、跨境传输与数据保留。"
+  "nav": {
+    "label": "治理栏目",
+    "access": "访问权限",
+    "classification": "数据分级",
+    "transfers": "跨境传输",
+    "retention": "数据保留",
+    "audit": "审计日志"
+  },
+  "yes": "是",
+  "no": "否",
+  "access": {
+    "title": "访问与权限",
+    "description": "每个角色可以执行的操作，以及可查看的数据分级上限。这是 API 当前执行的策略。",
+    "permissions": "各角色的权限",
+    "permissionsCaption": "各角色拥有的权限",
+    "permission": "权限",
+    "allowed": "允许",
+    "notAllowed": "不允许",
+    "separation": "职责分离：系统管理员负责配置平台，但不能批准字段映射或解决人力资源数据冲突。",
+    "clearance": "按实体划分的查看级别",
+    "clearanceDescription": "按记录所属实体，每个角色可查看的最高数据分级。其他实体的字段还需要一条生效的跨境传输条目。",
+    "clearanceCaption": "按记录所属实体，各角色可查看的最高数据分级",
+    "role": "角色",
+    "adminNote": "修改权限和查看级别的功能将随访问权限管理一同提供。每项修改都会被审计记录。"
+  },
+  "permissionGroups": {
+    "integration": "员工主数据与集成",
+    "workflows": "工作流",
+    "attendance": "考勤、假期与报表",
+    "oversight": "治理与监控"
+  },
+  "permissions": {
+    "employees": {
+      "read": "查看员工记录",
+      "write": "修改员工记录",
+      "sync": "运行员工同步"
+    },
+    "conflicts": {
+      "resolve": "解决数据冲突"
+    },
+    "connectors": {
+      "read": "查看连接器",
+      "manage": "管理连接器"
+    },
+    "mappings": {
+      "propose": "提出字段映射",
+      "approve": "批准字段映射"
+    },
+    "workflows": {
+      "read": "查看工作流",
+      "manage": "管理工作流",
+      "tasks": "处理分配的任务"
+    },
+    "manpower": {
+      "request": "提交人力需求"
+    },
+    "attendance": {
+      "read": "查看考勤与假期",
+      "consolidate": "运行考勤汇总"
+    },
+    "leave-mappings": {
+      "manage": "修改假期类别规则"
+    },
+    "reports": {
+      "read": "查看报表",
+      "export": "导出报表"
+    },
+    "governance": {
+      "read": "查看治理登记册",
+      "manage": "管理治理设置"
+    },
+    "audit": {
+      "read": "查看审计日志"
+    },
+    "analytics": {
+      "read": "查看分析"
+    },
+    "ai-usage": {
+      "read": "查看 AI 用量与成本"
+    },
+    "users": {
+      "manage": "管理用户"
+    }
+  },
+  "classification": {
+    "title": "数据分级",
+    "description": "每个已分级字段的级别及理由。字段遮蔽和跨境传输登记册均以此登记册为准。",
+    "caption": "已分级字段",
+    "field": "字段",
+    "level": "级别",
+    "why": "理由",
+    "personal": "个人数据",
+    "sensitive": "敏感",
+    "sensitiveNote": "“敏感”指《个人信息保护法》规定的敏感个人信息，例如金融账户。",
+    "visibleTo": "可查看的角色",
+    "allRoles": "所有角色",
+    "empty": {
+      "title": "尚无已分级的字段",
+      "description": "字段必须先完成分级，才能被遮蔽、映射或共享。"
+    },
+    "roleOn": "{{role}}：仅限{{entities}}",
+    "noRole": "没有角色",
+    "visibleUnknown": "暂不可用：访问策略未能加载",
+    "transferNote": "其他实体记录中的字段，还需要一条生效的跨境传输条目才会提供给您。"
+  },
+  "transfers": {
+    "title": "跨境传输登记册",
+    "description": "实体之间的每一项个人数据流动，及其法律依据和审批情况。只有生效的条目才会共享字段，其余一律不予提供。",
+    "status": {
+      "ACTIVE": "生效",
+      "PENDING_REVIEW": "待审核",
+      "SUSPENDED": "已暂停",
+      "EXPIRED": "已过期"
+    },
+    "route": "{{from}} 至 {{to}}",
+    "version": "第 {{version}} 版",
+    "purpose": "目的",
+    "legalBasis": "法律依据",
+    "mechanism": "传输机制",
+    "approvedAt": "批准日期",
+    "notApproved": "未批准",
+    "reviewDueAt": "复核日期",
+    "overdue": "已逾期",
+    "noReview": "未设定日期",
+    "notes": "备注",
+    "categories": "涵盖的数据",
+    "fieldsShared": "共享的字段",
+    "fieldsWhenActive": "生效后共享的字段",
+    "noFields": "其数据类别均不对应已知字段，因此不共享任何内容。",
+    "category": {
+      "identity": "身份信息",
+      "job-and-organisation": "职务与组织",
+      "work-contact": "工作联系方式"
+    },
+    "change": "更改状态",
+    "changeLabel": "更改状态：{{name}}",
+    "empty": {
+      "title": "尚未登记任何跨境传输",
+      "description": "在条目获批之前，任何实体都不会收到其他实体的员工数据。"
+    }
+  },
+  "changeDialog": {
+    "title": "更改“{{name}}”的状态",
+    "description": "批准后，目标实体将在下一次请求时获得该条目的字段；暂停或使其过期则会立即停止提供。此项更改及其理由都会被审计记录。",
+    "status": "新状态",
+    "reason": "理由",
+    "reasonHint": "将连同您的姓名记入审计日志。",
+    "reasonRequired": "请填写更改的理由。",
+    "submit": "更改状态",
+    "submitting": "正在更改…",
+    "changed": "状态已更改",
+    "chooseStatus": "选择状态",
+    "statusRequired": "请选择新状态。",
+    "willShare": "{{to}}将在下一次请求时收到以下字段：",
+    "willWithhold": "{{to}}将立即停止收到以下字段：",
+    "sharesNothing": "此项更改前后均不共享任何数据。",
+    "legalBasis": "法律依据：{{basis}}"
+  },
+  "retention": {
+    "title": "数据保留",
+    "description": "各类数据的保留期限，以及到期后的处理方式。",
+    "caption": "数据保留规则",
+    "data": "数据",
+    "appliesTo": "适用范围",
+    "groupWide": "全集团",
+    "keptFor": "保留期限",
+    "years_one": "{{count}} 年",
+    "years_other": "{{count}} 年",
+    "months_one": "{{count}} 个月",
+    "months_other": "{{count}} 个月",
+    "then": "到期处理",
+    "action": {
+      "DELETE": "删除",
+      "ANONYMISE": "匿名化",
+      "ARCHIVE": "归档"
+    },
+    "legalReference": "法律依据",
+    "lastApplied": "上次执行",
+    "never": "从未",
+    "purgeNote": "目前尚未清理任何数据：定期清理功能将随数据保留管理一同提供，并记录每次执行的内容。",
+    "category": {
+      "audit_events": "审计日志",
+      "clickstream_events": "点击流事件",
+      "source_records": "源系统记录",
+      "terminated_employees": "离职员工记录",
+      "ai_usage_records": "AI 用量记录",
+      "refresh_tokens": "登录会话"
+    },
+    "empty": {
+      "title": "尚未设定数据保留规则",
+      "description": "在设定之前，数据将无限期保留。"
+    }
+  },
+  "audit": {
+    "title": "审计日志",
+    "description": "所有更改与登录记录，按时间倒序排列：谁对哪条记录做了什么，以及更改了哪些字段。字段值仍受各记录的遮蔽规则保护。",
+    "readOnly": "只读",
+    "filters": {
+      "label": "筛选审计日志",
+      "entityType": "记录类型",
+      "allTypes": "所有记录",
+      "entityId": "记录编号",
+      "entityIdPlaceholder": "例如 E100030",
+      "action": "操作",
+      "allActions": "所有操作",
+      "from": "从",
+      "to": "至",
+      "toBeforeFrom": "结束日期不能早于开始日期。",
+      "apply": "应用筛选",
+      "clear": "清除筛选",
+      "person": "人员：{{name}}",
+      "selectedPerson": "所选人员",
+      "removeFilter": "（移除此筛选）"
+    },
+    "entityType": {
+      "Employee": "员工",
+      "Conflict": "数据冲突",
+      "Connector": "连接器",
+      "SyncRun": "同步运行",
+      "MappingProposal": "映射提议",
+      "MappingConfig": "映射版本",
+      "InboundWebhookEvent": "OA 回调",
+      "user": "用户账户"
+    },
+    "actionFamily": {
+      "auth": "登录与会话",
+      "employee": "员工记录",
+      "conflict": "数据冲突",
+      "mapping": "字段映射",
+      "connector": "连接器",
+      "sync": "同步",
+      "webhook": "OA 回调",
+      "access": "访问决定"
+    },
+    "table": {
+      "caption": "审计事件",
+      "when": "时间",
+      "who": "操作人",
+      "action": "操作",
+      "record": "记录",
+      "changed": "更改的字段",
+      "trace": "追踪编号"
+    },
+    "system": "系统或匿名",
+    "byPerson": "只显示{{name}}的事件",
+    "noFields": "无",
+    "moreFields": "另有 {{count}} 个",
+    "copyTrace": "复制追踪编号 {{traceId}}",
+    "empty": {
+      "title": "没有符合筛选条件的事件",
+      "description": "请放宽日期范围或清除某项筛选。"
+    },
+    "chain": {
+      "title": "完整性",
+      "description": "每个事件都保存前一个事件的哈希值，因此任何被修改或删除的事件都会使链条断裂。数据库也会拒绝对日志的任何修改。",
+      "check": "校验哈希链",
+      "checking": "正在校验…",
+      "valid_one": "完整：已校验 {{count}} 个事件（{{time}}）。",
+      "valid_other": "完整：已校验 {{count}} 个事件（{{time}}）。",
+      "broken": "在事件 {{id}} 处断裂：有事件在写入后被修改或删除。请报告数据保护官。",
+      "notChecked": "本次会话尚未校验。"
+    }
+  }
 }

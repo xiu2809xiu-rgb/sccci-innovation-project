@@ -62,7 +62,7 @@ test.describe('E2E #3: HQ is refused a field missing from its allowlist', () => 
   test('with each refusal listed in the audit-log viewer (area 4)', () => {
     test.fixme(
       true,
-      'F-2 builds the audit-log viewer; the API already writes access.fields_withheld',
+      'The viewer lists access.fields_withheld events; F-2 shows the fields each one withheld',
     );
   });
 });

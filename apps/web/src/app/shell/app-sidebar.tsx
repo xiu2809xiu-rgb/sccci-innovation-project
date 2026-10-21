@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import { NavLink } from 'react-router';
+import { Link, useLocation } from 'react-router';
 
 import {
   Sidebar,
@@ -17,23 +17,21 @@ import {
 import { BrandMark } from '@/components/common/brand-mark';
 import { useSession } from '@/app/session/use-session';
 
-import { SETTINGS_NAV_ITEM, visibleNavGroups, type NavItem } from '../navigation';
+import { activeNavItem, SETTINGS_NAV_ITEM, visibleNavGroups, type NavItem } from '../navigation';
 
-function NavEntry({ item }: { item: NavItem }) {
+function NavEntry({ item, active }: { item: NavItem; active: boolean }) {
   const { t } = useTranslation();
   const label = t(`nav.${item.key}`);
   return (
     <SidebarMenuItem>
-      <NavLink to={item.to} end={item.to === '/workflows'}>
-        {({ isActive }) => (
-          <SidebarMenuButton isActive={isActive} tooltip={label} asChild>
-            <span>
-              <item.icon aria-hidden="true" />
-              <span>{label}</span>
-            </span>
-          </SidebarMenuButton>
-        )}
-      </NavLink>
+      <Link to={item.to} aria-current={active ? 'page' : undefined}>
+        <SidebarMenuButton isActive={active} tooltip={label} asChild>
+          <span>
+            <item.icon aria-hidden="true" />
+            <span>{label}</span>
+          </span>
+        </SidebarMenuButton>
+      </Link>
     </SidebarMenuItem>
   );
 }
@@ -43,6 +41,11 @@ export function AppSidebar() {
   const { t } = useTranslation();
   const session = useSession();
   const groups = visibleNavGroups(session.permissions);
+  // One item is current: a page inside another item's path, such as the audit log, is its own.
+  const active = activeNavItem(useLocation().pathname, [
+    ...groups.flatMap((group) => group.items),
+    SETTINGS_NAV_ITEM,
+  ]);
 
   return (
     <Sidebar collapsible="icon">
@@ -58,7 +61,7 @@ export function AppSidebar() {
               <SidebarGroupContent>
                 <SidebarMenu>
                   {group.items.map((item) => (
-                    <NavEntry key={item.key} item={item} />
+                    <NavEntry key={item.key} item={item} active={item.key === active?.key} />
                   ))}
                 </SidebarMenu>
               </SidebarGroupContent>
@@ -67,7 +70,7 @@ export function AppSidebar() {
         </SidebarContent>
         <SidebarFooter>
           <SidebarMenu>
-            <NavEntry item={SETTINGS_NAV_ITEM} />
+            <NavEntry item={SETTINGS_NAV_ITEM} active={active?.key === 'settings'} />
           </SidebarMenu>
         </SidebarFooter>
       </nav>
