@@ -14,11 +14,8 @@ import {
   type WorkflowTaskView,
 } from '@huitong/shared';
 
-import {
-  WorkflowsRepository,
-  type Page,
-  type WorkflowTaskFilter,
-} from '../workflows.repository.js';
+import type { Page } from '../../../common/http/page.js';
+import { WorkflowsRepository, type WorkflowTaskFilter } from '../workflows.repository.js';
 import { MOCK_WORKFLOW_INSTANCES, type MockInstance } from './workflow-mock-data.js';
 
 const URGENCY: Readonly<Record<SlaState, number>> = { OVERDUE: 0, DUE_SOON: 1, ON_TRACK: 2 };
