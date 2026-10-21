@@ -1,7 +1,7 @@
 import { DEFAULT_ROLE_PERMISSIONS, type MappingProposal, type Permission } from '@huitong/shared';
 import { screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 
 import { renderApp, sessionFor, type FakeRoutes } from '@/test/render-app';
 
@@ -128,6 +128,55 @@ describe('Mapping wizard', () => {
     expect(approve).toBeEnabled();
     await user.click(approve);
     expect(await screen.findByText('Mapping version 1 saved')).toBeInTheDocument();
+  });
+
+  it('asks which encoding reads the file correctly, then sends that choice', async () => {
+    const user = userEvent.setup();
+    const appended = vi.spyOn(FormData.prototype, 'append');
+    const routes: FakeRoutes = {
+      ...routesFor(HR),
+      'POST /mapping-proposals': {
+        status: 422,
+        body: {
+          error: {
+            code: 'SAMPLE_ENCODING_UNCERTAIN',
+            message: 'The file could be read in more than one encoding',
+            traceId: 'test-trace',
+            details: {
+              readings: [
+                { encoding: 'gb18030', headers: ['员工编号', '姓名'] },
+                { encoding: 'utf-8', headers: ['Ô±¹¤±àºÅ', 'ÐÕÃû'] },
+              ],
+            },
+          },
+        },
+      },
+    };
+    renderApp('/connectors/new-mapping', routes);
+    await user.type(await screen.findByLabelText('Source system name'), 'HQ payroll export');
+    await user.upload(
+      screen.getByLabelText('Sample file'),
+      new File(['x'], 'hq-export.csv', { type: 'text/csv' }),
+    );
+    await user.click(screen.getByRole('button', { name: 'Get the AI proposal' }));
+
+    const question = await screen.findByRole('region', {
+      name: 'Which reading of the file looks right?',
+    });
+    expect(screen.queryByRole('alert')).not.toBeInTheDocument();
+    const read = within(question).getByRole('button', { name: 'Read the file this way' });
+    expect(read).toBeDisabled();
+    await user.click(
+      within(question).getByRole('radio', { name: /GB18030 or GBK.*员工编号 · 姓名/ }),
+    );
+
+    routes['POST /mapping-proposals'] = { status: 201, body: { data: proposal() } };
+    await user.click(read);
+    expect(
+      await screen.findByRole('table', { name: 'Proposed mapping for my-payroll-sample.csv' }),
+    ).toBeInTheDocument();
+    expect(appended).toHaveBeenCalledWith('encoding', 'gb18030');
+    appended.mockRestore();
   });
 
   it('does not label a proposal from a real model as mock AI', async () => {

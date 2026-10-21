@@ -148,6 +148,8 @@
     "WEBHOOK_SIGNATURE_INVALID": "The webhook signature could not be verified.",
     "UPSTREAM_UNAVAILABLE": "A connected system did not respond. Try again shortly.",
     "AI_OUTPUT_INVALID": "The AI suggestion could not be used. Nothing was changed.",
+    "SAMPLE_ENCODING_UNCERTAIN": "This file can be read in more than one text encoding. Choose the reading that looks right.",
+    "SAMPLE_ENCODING_UNSUPPORTED": "We could not read this file’s text. In Excel, save it as \"CSV UTF-8 (Comma delimited)\" and upload it again.",
     "SERVICE_UNAVAILABLE": "HuiTong is temporarily unavailable. Try again shortly.",
     "INTERNAL": "Something went wrong on our side.",
     "NETWORK_ERROR": "We could not reach the server. Check your connection.",

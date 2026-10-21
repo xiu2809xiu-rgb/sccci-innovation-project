@@ -274,7 +274,18 @@
         "error": "failed",
         "retry": "Try the AI proposal again"
       },
-      "submit": "Get the AI proposal"
+      "submit": "Get the AI proposal",
+      "encoding": {
+        "title": "Which reading of the file looks right?",
+        "description": "This file can be read in two text encodings. Choose the one whose column headers look correct; the assistant then reads the file that way.",
+        "names": {
+          "utf-8": "UTF-8 (Unicode)",
+          "gb18030": "GB18030 or GBK (Simplified Chinese Excel)"
+        },
+        "separator": " · ",
+        "noHeaders": "No readable headers",
+        "use": "Read the file this way"
+      }
     },
     "review": {
       "aiSuggestion": "AI suggestion",

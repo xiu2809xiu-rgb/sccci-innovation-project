@@ -148,6 +148,8 @@
     "WEBHOOK_SIGNATURE_INVALID": "无法验证 Webhook 签名。",
     "UPSTREAM_UNAVAILABLE": "所连接的系统未响应，请稍后再试。",
     "AI_OUTPUT_INVALID": "无法使用此 AI 建议，未做任何更改。",
+    "SAMPLE_ENCODING_UNCERTAIN": "此文件可以按多种文本编码读取。请选择看起来正确的一种。",
+    "SAMPLE_ENCODING_UNSUPPORTED": "无法读取此文件的文本。请在 Excel 中另存为“CSV UTF-8（逗号分隔）”后重新上传。",
     "SERVICE_UNAVAILABLE": "汇通暂时不可用，请稍后再试。",
     "INTERNAL": "我们这边出现了问题。",
     "NETWORK_ERROR": "无法连接服务器，请检查网络连接。",

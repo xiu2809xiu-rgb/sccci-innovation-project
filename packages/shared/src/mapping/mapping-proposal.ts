@@ -96,12 +96,41 @@ export const mappingProposalSchema = z.object({
 
 export type MappingProposal = z.infer<typeof mappingProposalSchema>;
 
+/**
+ * Text encodings a CSV sample may use. GB18030 is a superset of GBK and
+ * GB2312, so files saved from Chinese-locale Excel read correctly as GB18030.
+ */
+export const SAMPLE_ENCODINGS = ['utf-8', 'gb18030'] as const;
+
+export const sampleEncodingSchema = z.enum(SAMPLE_ENCODINGS);
+
+export type SampleEncoding = z.infer<typeof sampleEncodingSchema>;
+
+/**
+ * Details of a SAMPLE_ENCODING_UNCERTAIN error: the file's header row as each
+ * encoding reads it, so HR can choose the reading that looks right.
+ */
+export const sampleEncodingReadingsSchema = z.object({
+  readings: z
+    .array(
+      z.object({
+        encoding: sampleEncodingSchema,
+        headers: z.array(z.string().max(40)).max(8),
+      }),
+    )
+    .min(2),
+});
+
+export type SampleEncodingReadings = z.infer<typeof sampleEncodingReadingsSchema>;
+
 /** The form fields sent with the sample file (multipart). */
 export const createProposalFieldsSchema = z.object({
   sourceSystemName: z.string().trim().min(2).max(100),
   entityCode: entityCodeSchema.optional(),
   connectorId: z.string().trim().min(1).max(60).optional(),
   language: localeSchema.default('en'),
+  /** Set only when HR chose a reading after SAMPLE_ENCODING_UNCERTAIN; otherwise detected. */
+  encoding: sampleEncodingSchema.optional(),
 });
 
 export type CreateProposalFields = z.infer<typeof createProposalFieldsSchema>;

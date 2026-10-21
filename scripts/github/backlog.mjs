@@ -300,6 +300,8 @@ export const EPICS = [
         sprint: 1,
         points: 3,
         priority: 'must',
+        done: true,
+        deliveredBy: 'feat/area1-csv-encodings',
         story:
           'As a China HQ HR partner, I want files saved from Chinese Excel to read correctly whatever their encoding, so that headers and names are never garbled.',
         acceptance: [

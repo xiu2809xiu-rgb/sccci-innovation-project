@@ -6,6 +6,7 @@ import {
   type EntityCode,
   type Locale,
   type MappingProposalStatus,
+  type SampleEncoding,
 } from '@huitong/shared';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
@@ -25,6 +26,8 @@ export interface ProposeMappingInput {
   entityCode?: EntityCode | undefined;
   connectorId?: string | undefined;
   language: Locale;
+  /** Only after HR chose a reading of a file whose encoding was uncertain. */
+  encoding?: SampleEncoding | undefined;
 }
 
 export function useMappingProposals(status?: MappingProposalStatus) {
@@ -59,6 +62,7 @@ export function useProposeMapping() {
       form.append('language', input.language);
       if (input.entityCode) form.append('entityCode', input.entityCode);
       if (input.connectorId) form.append('connectorId', input.connectorId);
+      if (input.encoding) form.append('encoding', input.encoding);
       form.append('file', input.file, input.file.name);
       return (await api.post('/mapping-proposals', proposalEnvelope, { body: form })).data;
     },
