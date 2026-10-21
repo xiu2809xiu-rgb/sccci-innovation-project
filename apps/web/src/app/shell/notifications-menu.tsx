@@ -43,6 +43,8 @@ export function NotificationsMenu() {
     return count !== null && count > 0 ? [{ key, count }] : [];
   });
   const badge = unseen + queues.reduce((sum, queue) => sum + queue.count, 0);
+  // The name says what the badge shows, so a spoken name always contains the visible text (WCAG 2.5.3).
+  const shown = badge > 9 ? '9+' : String(badge);
 
   return (
     <Popover
@@ -57,7 +59,7 @@ export function NotificationsMenu() {
           className="relative"
           aria-label={
             badge > 0
-              ? `${t('shell.notifications.label')}: ${t('shell.notifications.unread', { count: badge })}`
+              ? `${t('shell.notifications.label')}: ${t('shell.notifications.unread', { count: badge, shown })}`
               : t('shell.notifications.label')
           }
         >
@@ -67,7 +69,7 @@ export function NotificationsMenu() {
               aria-hidden="true"
               className="absolute top-1 right-1 grid min-w-4 place-items-center rounded-full bg-primary px-1 text-xs leading-4 font-semibold text-primary-foreground tabular-nums"
             >
-              {badge > 9 ? '9+' : badge}
+              {shown}
             </span>
           ) : null}
         </Button>

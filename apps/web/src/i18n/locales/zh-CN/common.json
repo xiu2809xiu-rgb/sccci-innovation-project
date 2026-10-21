@@ -74,8 +74,8 @@
       "label": "通知",
       "title": "通知",
       "empty": "暂无新通知。",
-      "unread_one": "{{count}} 条新通知",
-      "unread_other": "{{count}} 条新通知",
+      "unread_one": "{{shown}} 条新通知",
+      "unread_other": "{{shown}} 条新通知",
       "markAllRead": "全部标为已读",
       "pendingApprovals": "等待您审批",
       "liveUpdates": "实时动态"
