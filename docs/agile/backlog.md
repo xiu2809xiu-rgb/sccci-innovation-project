@@ -326,13 +326,13 @@ As a data protection officer, I want each destination to receive only the fields
 
 AI proposes and explains; HR decides. No AI output reaches a system of record without approval, and every call is costed.
 
-| Story                                                          | Title                                              | Sprint | Points | Priority | Status                              |
-| -------------------------------------------------------------- | -------------------------------------------------- | ------ | ------ | -------- | ----------------------------------- |
-| [E-1](#e-1-ai-schema-mapping-assistant)                        | AI schema-mapping assistant                        | 1      | 8      | Must     | Done (`feat/area1-integration-api`) |
-| [E-2](#e-2-mapping-wizard-with-explicit-approval-and-versions) | Mapping wizard with explicit approval and versions | 1      | 8      | Must     | Done (`feat/area1-connectors-page`) |
-| [E-3](#e-3-ai-discrepancy-explainer-in-english-and-chinese)    | AI discrepancy explainer in English and Chinese    | 1      | 3      | Should   | Done (`feat/area1-employees-page`)  |
-| [E-4](#e-4-run-the-assistants-on-aws-bedrock)                  | Run the assistants on AWS Bedrock                  | 12     | 5      | Should   | Planned                             |
-| [E-5](#e-5-no-employee-identifiers-sent-to-an-ai-service)      | No employee identifiers sent to an AI service      | 1      | 2      | Must     | Planned                             |
+| Story                                                          | Title                                              | Sprint | Points | Priority | Status                               |
+| -------------------------------------------------------------- | -------------------------------------------------- | ------ | ------ | -------- | ------------------------------------ |
+| [E-1](#e-1-ai-schema-mapping-assistant)                        | AI schema-mapping assistant                        | 1      | 8      | Must     | Done (`feat/area1-integration-api`)  |
+| [E-2](#e-2-mapping-wizard-with-explicit-approval-and-versions) | Mapping wizard with explicit approval and versions | 1      | 8      | Must     | Done (`feat/area1-connectors-page`)  |
+| [E-3](#e-3-ai-discrepancy-explainer-in-english-and-chinese)    | AI discrepancy explainer in English and Chinese    | 1      | 3      | Should   | Done (`feat/area1-employees-page`)   |
+| [E-4](#e-4-run-the-assistants-on-aws-bedrock)                  | Run the assistants on AWS Bedrock                  | 12     | 5      | Should   | Planned                              |
+| [E-5](#e-5-no-employee-identifiers-sent-to-an-ai-service)      | No employee identifiers sent to an AI service      | 1      | 2      | Must     | Done (`fix/area1-ai-no-identifiers`) |
 
 ### E-1: AI schema-mapping assistant
 

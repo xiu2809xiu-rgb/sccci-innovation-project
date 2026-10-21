@@ -284,9 +284,44 @@ export const CATEGORY_WORDS: Partial<Record<MappingTarget, Record<string, string
   },
 };
 
+/**
+ * Header words saying that a column names a person, such as a department
+ * head or an approver: its values are never shown as categories, even under
+ * a category word like "department" (story E-5).
+ */
+const PERSON_WORDS = [
+  'head',
+  'manager',
+  'supervisor',
+  'approver',
+  'approved by',
+  'owner',
+  'contact',
+  'reports to',
+  'created by',
+  'updated by',
+  'modified by',
+  'requested by',
+  'requester',
+  'in charge',
+  '负责人',
+  '上级',
+  '经理',
+  '主管',
+  '联系人',
+  '审批人',
+  '申请人',
+  '经办人',
+  '姓名',
+  'ketua',
+  'pengurus',
+  'penyelia',
+].map(normalise);
+
 /** Whether a header names a category field (department, status, location...), whose repeated values are safe to show. */
 export function isCategoricalHeader(header: string): boolean {
   const key = normalise(header);
+  if (PERSON_WORDS.some((word) => key.includes(word))) return false;
   return FIELD_WORDS.some(
     (words) =>
       words.categorical &&

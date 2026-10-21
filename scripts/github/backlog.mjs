@@ -519,6 +519,8 @@ export const EPICS = [
         sprint: 1,
         points: 2,
         priority: 'must',
+        done: true,
+        deliveredBy: 'fix/area1-ai-no-identifiers',
         labels: ['req: M2 GRS by design'],
         story:
           'As Organisation E, we want no employee identifier or sensitive HR value sent to an outside AI service without our written permission, so that using AI never becomes a data transfer we did not agree to.',

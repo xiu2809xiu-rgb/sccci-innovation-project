@@ -159,7 +159,7 @@ export class ConflictsService {
     );
   }
 
-  /** The AI explainer's account of a conflict, built by `explainerRequest` (no names, nothing above INTERNAL). */
+  /** The AI explainer's account of a conflict, built by `explainerRequest` (no identifiers, nothing above INTERNAL). */
   async explain(id: string, language: Locale, meta: SignedIn): Promise<ConflictExplanation> {
     const conflict = await this.conflicts.findForResolution(id);
     if (!conflict) throw new NotFoundError(`Conflict ${id}`);
@@ -183,10 +183,7 @@ export class ConflictsService {
     const result = await this.explainer.explain(
       explainerRequest({
         language,
-        employee: {
-          employeeNo: employee.employeeNo,
-          entityCode: employee.entityCode as EntityCode,
-        },
+        entityCode: employee.entityCode as EntityCode,
         field,
         classification: this.masker.classification(field),
         candidates,

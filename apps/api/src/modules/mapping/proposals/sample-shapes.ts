@@ -38,6 +38,15 @@ function dateOrder(values: readonly string[]): string | null {
   return 'day or month first';
 }
 
+/** An email address, an id or account number, or a phone number: never shown, even in a category column. */
+function looksLikeAnIdentifier(value: string): boolean {
+  return (
+    /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(value) ||
+    /^[A-Za-z]{0,3}\d{5,}$/.test(value) ||
+    (/^\+?[\d\s().-]+$/.test(value) && value.replace(/\D/g, '').length >= 7)
+  );
+}
+
 /**
  * Describes one column without revealing its values. Category values are
  * shown only when the caller allows it for this header (departments, statuses,
@@ -72,6 +81,6 @@ export function describeColumn(
     distinct.length > 0 &&
     distinct.length <= MAX_CATEGORIES &&
     distinct.length < filled.length &&
-    distinct.every((value) => value.length <= 40);
+    distinct.every((value) => value.length <= 40 && !looksLikeAnIdentifier(value));
   return { header, shape, categories: categorical ? distinct.sort() : null, filled: filled.length };
 }

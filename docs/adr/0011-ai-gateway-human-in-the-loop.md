@@ -82,3 +82,19 @@ Forces:
 - Assumption A-17 now allows category codes, and client question Q-42 asks Organisation E to confirm it. If its policy forbids any cell value, `describeColumn` stops sending categories, and value maps are written by hand.
 - Prompt injection (R-08): category codes are untrusted text, like headers. They sit in the same delimited DATA block, which the prompt tells the model to treat as data; the output schema and HR's approval still apply.
 - The wizard says exactly what is sent, in English and Chinese.
+
+## Amendment, 21 Oct 2026: no employee identifiers in any prompt
+
+**Context.** Azri's integrated plan asks that employee identifiers and sensitive HR data never reach a third-party AI service without the client's written permission (prompt 002, story E-5). Two gaps remained against that rule. The explainer sent the employee number (decision bullet "Explainer prompts use `employeeNo` instead of names"). Its values for fields such as the work email or a name were sent as they were, because those fields are INTERNAL. And a category column whose header named a person under a category word, such as "Department Head" (部门负责人), would have sent the repeated names as "codes".
+
+**Decision.**
+
+- **The explainer names nobody.** Its request carries the entity, the field and each system's value, but no employee number or name. The values of identifying fields are withheld like values above INTERNAL: the employee number, names, work email and phone, and a manager's number (`IDENTIFYING_EMPLOYEE_FIELDS` in `@huitong/shared`). The model is told why a value is missing, and calls the person "this employee".
+- **Category codes stay codes.** A header that names a person (head, manager, approver, 负责人, 上级 and similar) is never a category column. A value shaped like an identifier (an email address, an id or account number, a phone number) is never sent as a category.
+- **Written permission first.** No identifier or sensitive HR value goes to a third-party AI service unless Organisation E gives written permission. That would need a new amendment, and a new GRS assessment.
+
+**Consequences.**
+
+- The explainer cannot say whose record it explains. HR reads its advice beside the record, so nothing is lost.
+- A mapping for a column like "Department Head" gets no value map from the model; HR maps it by hand.
+- The decision bullet about `employeeNo` above no longer applies. The rule is written in CLAUDE.md and in the GRS register (R-09).

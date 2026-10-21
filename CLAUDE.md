@@ -113,6 +113,7 @@ The module's AI coding tool is AWS Kiro (used here as the IDE). Students "own ev
 - **No national ID numbers.** Never store NRIC/FIN or PRC resident ID numbers; use internal employee IDs.
 - **Masking.** Mask sensitive fields (salary, bank details, date of birth) by role.
 - **Draft before active.** An approved OA request creates only a draft (`PRE_HIRE`) employee record. It becomes active only after the agreed onboarding milestones and verified input from the HR system of record.
+- **No identifiers to AI.** Employee identifiers (the employee number, names, work email and phone, a manager's number) and sensitive HR data are never sent to a third-party AI service without the client's written permission. Prompts carry headers, value shapes and category codes; values above INTERNAL or that identify a person are withheld.
 - **Write-back needs approval.** A write to a system of record needs an explicit, audited human approval after a preview. Against the client's real systems it is out of scope until the client approves it; the mocks may demonstrate it, labelled as mocks.
 - **Bilingual UI.** The UI is bilingual (English and 简体中文), switchable at runtime. No hard-coded user-facing strings.
 

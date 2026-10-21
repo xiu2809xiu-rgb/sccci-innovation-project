@@ -1,5 +1,8 @@
 import { describe, expect, it } from 'vitest';
 
+import { isCategoricalHeader } from '../../ai/schema-mapping/field-vocabulary.js';
+import { buildSchemaMappingPrompt } from '../../ai/schema-mapping/schema-mapping.prompt.js';
+import { buildMappingRequest } from './mapping-request.builder.js';
 import { checkProhibited } from './prohibited-columns.js';
 import { describeColumn, shapeOf } from './sample-shapes.js';
 
@@ -37,11 +40,71 @@ describe('describeColumn', () => {
     expect(describeColumn('Status', ['Lee Mei Hua', 'Rajesh Kumar'], true).categories).toBeNull();
   });
 
+  it('never shows values shaped like an identifier, even in a category column', () => {
+    for (const values of [
+      ['E100006', 'E100006', 'E100009'],
+      ['mei.hua@orge.example', 'mei.hua@orge.example', 'raj@orge.example'],
+      ['+65 6123 4567', '+65 6123 4567', '+65 6123 4568'],
+    ]) {
+      expect(describeColumn('Department', values, true).categories).toBeNull();
+    }
+    expect(describeColumn('Status', ['A', 'T', 'A'], true).categories).toEqual(['A', 'T']);
+  });
+
   it('describes an empty column as empty', () => {
     expect(describeColumn('Preferred name', [null, null], false)).toMatchObject({
       shape: 'empty',
       filled: 0,
     });
+  });
+});
+
+describe('isCategoricalHeader', () => {
+  it('treats department, status and grade columns as categories', () => {
+    for (const header of ['Department', '部门', 'Employment Status', 'Job Grade']) {
+      expect(isCategoricalHeader(header)).toBe(true);
+    }
+  });
+
+  it('never treats a column that names a person as a category', () => {
+    for (const header of [
+      'Department Head',
+      '部门负责人',
+      'Status updated by',
+      'Grade approver',
+      'Ketua Jabatan',
+    ]) {
+      expect(isCategoricalHeader(header)).toBe(false);
+    }
+  });
+});
+
+describe('buildMappingRequest', () => {
+  it("keeps a department head's repeated name out of the prompt", () => {
+    const sample = {
+      headers: ['Staff ID', 'Department', 'Department Head'],
+      rows: [
+        { 'Staff ID': 'E300101', Department: 'Finance', 'Department Head': 'Tan Wei Ming' },
+        { 'Staff ID': 'E300102', Department: 'Finance', 'Department Head': 'Tan Wei Ming' },
+        { 'Staff ID': 'E300103', Department: 'Operations', 'Department Head': 'Siti Rahman' },
+      ],
+    };
+    const request = buildMappingRequest(sample, {
+      systemName: 'Organisation E Malaysia HR',
+      language: 'en',
+      entityCode: 'MY01',
+    });
+    expect(request.columns.find((column) => column.header === 'Department')?.categories).toEqual([
+      'Finance',
+      'Operations',
+    ]);
+    expect(
+      request.columns.find((column) => column.header === 'Department Head')?.categories,
+    ).toBeNull();
+    const prompt = buildSchemaMappingPrompt(request);
+    expect(prompt).not.toContain('Tan Wei Ming');
+    expect(prompt).not.toContain('Siti Rahman');
+    expect(prompt).not.toContain('E300101');
   });
 });
 
