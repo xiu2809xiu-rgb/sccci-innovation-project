@@ -17,7 +17,7 @@ Legend: `[x]` done and verified, `[~]` in progress, `[ ]` not started, `[!]` blo
 - [x] `docs/problem-statement.md` (verbatim statement, checked paragraph by paragraph against the prompt; stakeholders, pain points, root cause, constraints, scope, success metrics)
 - [x] `docs/design-thinking/` (README, personas, journey maps with pain points PP-01 to PP-14, 14 HMW statements, hypotheses PH/SH with prioritisation, success metrics SM-01 to SM-09 and guardrails GR-01 to GR-09)
 - [x] `docs/grs/grs-by-design.md` (governance, risk register R-01 onwards with heat maps, sustainability, PDPA/PIPL/MAS considerations)
-- [x] `docs/client/questions-for-client.md` (56 prioritised questions, Q-01 to Q-56)
+- [x] `docs/client/questions-for-client.md` (56 prioritised questions, Q-01 to Q-56; Q-57 added in Phase 6)
 - [x] `docs/team/module-ownership.md`
 - [x] `docs/assumptions.md` (A-01 to A-57), `docs/requirements-traceability.md`
 - [x] `docs/adr/0001` to `0017` + index; every relative link and anchor across 33 docs resolves
@@ -61,7 +61,7 @@ Legend: `[x]` done and verified, `[~]` in progress, `[ ]` not started, `[!]` blo
 ### Phase 6: Head starts for areas 2-4
 
 - [x] Area 2 workflows: contracts and a mock-backed API with `meta.mock` (#113), the board, timeline, instance and task list (#114), the guide [`docs/team/area-2-workflow-automation.md`](team/area-2-workflow-automation.md); 47 named test skeletons for the owner
-- [ ] Area 3 attendance/leave/reporting: contracts, UI, test skeletons, guide
+- [x] Area 3 attendance/leave/reporting: contracts, real reads of the seeded rules and template, and sample runs, preview rows and management reports with `meta.mock` (#117); consolidation, category rules, template preview and reports (#118); the guide [`docs/team/area-3-attendance-leave-reporting.md`](team/area-3-attendance-leave-reporting.md); 37 named test skeletons for the owner
 - [ ] Area 4 governance/security/monitoring: contracts, UI, test skeletons, guide
 - [ ] Playwright screenshots of every page in both themes
 
