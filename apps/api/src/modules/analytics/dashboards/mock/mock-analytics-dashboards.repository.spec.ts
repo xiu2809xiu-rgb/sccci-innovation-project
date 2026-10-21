@@ -1,6 +1,7 @@
 import {
   aiUsageDashboardSchema,
   clickstreamDashboardSchema,
+  DEFAULT_ROLE_PERMISSIONS,
   FUNNEL_STEPS,
   observabilityDashboardSchema,
 } from '@huitong/shared';
@@ -46,6 +47,17 @@ describe('MockAnalyticsDashboardsRepository', () => {
       repository.observability(week),
     ]);
     expect(weeklyRequests.requests).toEqual(monthlyRequests.requests.slice(-7));
+  });
+
+  it('credits AI calls only to roles that may make them', async () => {
+    const usage = await repository.aiUsage(month);
+    for (const { role } of usage.byUser) {
+      if (role === null) continue;
+      const permissions: readonly string[] = DEFAULT_ROLE_PERMISSIONS[role];
+      expect(
+        permissions.includes('mappings:propose') || permissions.includes('conflicts:resolve'),
+      ).toBe(true);
+    }
   });
 
   it('counts only mapping proposals as rejected, and errors apart from rejections', async () => {

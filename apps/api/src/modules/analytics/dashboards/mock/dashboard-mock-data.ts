@@ -18,13 +18,19 @@ import { windowDates, type DashboardWindow } from '../dashboard-window.js';
  * Synthetic demo data only.
  */
 
-/** A number in [0, 1) for a series on a date (FNV-1a), so the sample does not change on reload. */
+/**
+ * A number in [0, 1) for a series on a date, so the sample does not change on
+ * reload: FNV-1a, then MurmurHash3's finaliser, without which neighbouring
+ * dates (which differ in one character) hash to nearly the same value.
+ */
 function noise(series: string, date: string): number {
   let hash = 0x811c9dc5;
   for (const char of `${series}:${date}`) {
     hash = Math.imul(hash ^ char.charCodeAt(0), 0x01000193);
   }
-  return (hash >>> 0) / 2 ** 32;
+  hash = Math.imul(hash ^ (hash >>> 16), 0x85ebca6b);
+  hash = Math.imul(hash ^ (hash >>> 13), 0xc2b2ae35);
+  return ((hash ^ (hash >>> 16)) >>> 0) / 2 ** 32;
 }
 
 const isWeekend = (date: string): boolean => {
@@ -64,11 +70,14 @@ const FEATURE_PROFILE: Readonly<
   'discrepancy-explainer': { calls: [8, 22], input: 820, output: 230 },
 };
 
-/** The seeded demo users who use the AI features, and their share of the calls. */
+/**
+ * The seeded demo users who use the AI features, and their share of the
+ * calls. Only HR may call them (`mappings:propose`, `conflicts:resolve`), so a
+ * system administrator never appears here (separation of duties).
+ */
 const AI_USERS: readonly { name: string; role: Role; share: number }[] = [
-  { name: 'Tan Mei Ling', role: 'HR_SG', share: 0.46 },
-  { name: 'Zhou Xinyi', role: 'HR_HQ', share: 0.38 },
-  { name: 'Farhan Ismail', role: 'SYSTEM_ADMIN', share: 0.16 },
+  { name: 'Tan Mei Ling', role: 'HR_SG', share: 0.55 },
+  { name: 'Zhou Xinyi', role: 'HR_HQ', share: 0.45 },
 ];
 
 /** The demo stack's only provider: deterministic and free, but costed at the reference prices. */
