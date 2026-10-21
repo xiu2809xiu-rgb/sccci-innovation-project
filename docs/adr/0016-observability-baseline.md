@@ -66,3 +66,11 @@ Forces:
 | SaaS APM (Datadog, New Relic, Sentry)                       | Cost, and telemetry that may contain personal data leaves our boundary. OpenTelemetry keeps the exporter choice open                            |
 | Winston or `console` logging                                | pino is faster, writes structured JSON by default and carries request context in Nest through nestjs-pino                                       |
 | No correlation until OpenTelemetry (W14)                    | Areas 2–4 need correlated logs and `traceId`s while they build in W8–W12                                                                        |
+
+## Amendment, 21 Oct 2026: the telemetry bootstrap
+
+Decision 1 lists the telemetry bootstrap among what area 1 builds now. The platform build did not build it. Its prompt leaves OpenTelemetry, metrics and Grafana to area 4's owner, and an empty module would only have looked like tracing that does not exist.
+
+- **Who builds it.** Area 4 writes the bootstrap with the tracing it starts (G-1, W14), so one person owns the exporter choice from start to finish.
+- **Why area 1 still reviews it.** The bootstrap loads with `node --import` before every area's code, so it changes through the shared-files protocol in [module ownership](../team/module-ownership.md#shared-files-protocol), with area 1 as reviewer.
+- **Unchanged until then.** The request id (`X-Request-Id`) is the error envelope's `traceId` and is on every log line, as decision 1 describes, so every error a user sees can already be traced to its logs.
