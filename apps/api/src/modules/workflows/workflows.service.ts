@@ -18,7 +18,8 @@ import {
 import type { AuthenticatedUser } from '../../common/http/authenticated-user.js';
 import type { RequestMeta } from '../../common/http/request-meta.js';
 import { AccessPolicyService } from '../access/access-policy.service.js';
-import { WorkflowsRepository, type Page } from './workflows.repository.js';
+import type { Page } from '../../common/http/page.js';
+import { WorkflowsRepository } from './workflows.repository.js';
 
 /**
  * Workflow use cases. The reads are complete against the read-model contract;

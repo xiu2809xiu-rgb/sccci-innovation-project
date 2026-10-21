@@ -1,3 +1,5 @@
+import { COMPANY_MONTHLY_TEMPLATE, TEMPLATE_LEAVE_COLUMNS } from '@huitong/shared';
+
 import type { PrismaClient } from '../../src/generated/prisma/client.js';
 import { LeaveCategory } from '../../src/generated/prisma/client.js';
 
@@ -125,37 +127,10 @@ const MAPPINGS: {
   },
 ];
 
-const LEAVE_COLUMNS: [LeaveCategory, string, string][] = [
-  [LeaveCategory.ANNUAL, 'Annual leave (days)', '年假（天）'],
-  [LeaveCategory.SICK, 'Sick leave (days)', '病假（天）'],
-  [LeaveCategory.HOSPITALISATION, 'Hospitalisation leave (days)', '住院假（天）'],
-  [LeaveCategory.CHILDCARE, 'Childcare leave (days)', '育儿假（天）'],
-  [LeaveCategory.MATERNITY, 'Maternity leave (days)', '产假（天）'],
-  [LeaveCategory.PATERNITY, 'Paternity leave (days)', '陪产假（天）'],
-  [LeaveCategory.COMPASSIONATE, 'Compassionate leave (days)', '丧假（天）'],
-  [LeaveCategory.MARRIAGE, 'Marriage leave (days)', '婚假（天）'],
-  [LeaveCategory.TIME_OFF_IN_LIEU, 'Time-off in lieu (days)', '调休（天）'],
-  [LeaveCategory.UNPAID, 'Unpaid leave (days)', '无薪假（天）'],
-  [LeaveCategory.OTHER, 'Other leave (days)', '其他假期（天）'],
-];
-
-/** The company's monthly attendance and leave template (structure assumed until the client shares theirs, A-09). */
-const TEMPLATE_COLUMNS = [
-  { key: 'employeeNo', label: 'Employee No.', labelZh: '员工编号' },
-  { key: 'name', label: 'Name', labelZh: '姓名' },
-  { key: 'entity', label: 'Entity', labelZh: '法人实体' },
-  { key: 'department', label: 'Department', labelZh: '部门' },
-  { key: 'workingDays', label: 'Working days', labelZh: '应出勤天数' },
-  { key: 'daysPresent', label: 'Days present', labelZh: '实际出勤天数' },
-  { key: 'lateCount', label: 'Late arrivals', labelZh: '迟到次数' },
-  { key: 'absentDays', label: 'Absent days', labelZh: '缺勤天数' },
-  { key: 'overtimeHours', label: 'Overtime hours', labelZh: '加班时长' },
-  ...LEAVE_COLUMNS.map(([key, label, labelZh]) => ({ key, label, labelZh })),
-];
-
 export async function seedAttendanceLeave(prisma: PrismaClient): Promise<string> {
+  // A rule names the template column by its English label.
   const columnFor = (category: LeaveCategory) =>
-    LEAVE_COLUMNS.find(([key]) => key === category)?.[1] ?? null;
+    TEMPLATE_LEAVE_COLUMNS.find((column) => column.key === category)?.label ?? null;
   for (const mapping of MAPPINGS) {
     const data = { ...mapping, templateColumn: columnFor(mapping.canonicalCategory) };
     await prisma.leaveCategoryMapping.upsert({
@@ -170,20 +145,12 @@ export async function seedAttendanceLeave(prisma: PrismaClient): Promise<string>
       update: data,
     });
   }
+  // The template's structure lives in @huitong/shared, so the API's sample rows follow it.
+  const { key, version, ...template } = COMPANY_MONTHLY_TEMPLATE;
   await prisma.reportTemplate.upsert({
-    where: { key_version: { key: 'company-monthly-attendance-leave', version: 1 } },
-    create: {
-      key: 'company-monthly-attendance-leave',
-      version: 1,
-      name: 'Monthly attendance and leave',
-      nameZh: '月度考勤与休假报表',
-      columns: TEMPLATE_COLUMNS,
-    },
-    update: {
-      name: 'Monthly attendance and leave',
-      nameZh: '月度考勤与休假报表',
-      columns: TEMPLATE_COLUMNS,
-    },
+    where: { key_version: { key, version } },
+    create: { key, version, ...template },
+    update: template,
   });
   return `${String(MAPPINGS.length)} leave-category rules, 1 report template`;
 }

@@ -9,10 +9,7 @@ import type {
   WorkflowTaskView,
 } from '@huitong/shared';
 
-export interface Page<T> {
-  items: T[];
-  total: number;
-}
+import type { Page } from '../../common/http/page.js';
 
 /** The task list's filters once the caller's scope is resolved to a role. */
 export interface WorkflowTaskFilter extends Omit<WorkflowTaskListQuery, 'scope'> {

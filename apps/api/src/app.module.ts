@@ -20,12 +20,14 @@ import { QueuesModule } from './infrastructure/queues/queues.module.js';
 import { RedisModule } from './infrastructure/redis/redis.module.js';
 import { AccessModule } from './modules/access/access.module.js';
 import { AnalyticsModule } from './modules/analytics/analytics.module.js';
+import { AttendanceLeaveModule } from './modules/attendance-leave/attendance-leave.module.js';
 import { AuthModule } from './modules/auth/auth.module.js';
 import { ConnectorsModule } from './modules/connectors/connectors.module.js';
 import { EmployeesModule } from './modules/employees/employees.module.js';
 import { HealthModule } from './modules/health/health.module.js';
 import { MappingModule } from './modules/mapping/mapping.module.js';
 import { OverviewModule } from './modules/overview/overview.module.js';
+import { ReportsModule } from './modules/reports/reports.module.js';
 import { UsersModule } from './modules/users/users.module.js';
 import { WorkflowsModule } from './modules/workflows/workflows.module.js';
 
@@ -58,6 +60,8 @@ export class AppModule {
         MappingModule,
         ConnectorsModule,
         WorkflowsModule,
+        AttendanceLeaveModule,
+        ReportsModule,
       ],
       providers: [
         { provide: APP_GUARD, useClass: ThrottlerGuard },
