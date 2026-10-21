@@ -10,7 +10,7 @@ The source of the three models the integration map (`/integration-map`, Phase 7)
 
 [`fallback.py`](fallback.py) composes the three built models the way the live scene does and renders the still image the page shows when the browser has no WebGL (Cycles, with a transparent background and a shadow catcher, so it sits on either theme).
 
-Shared helpers are in [`lib.py`](lib.py). The names in the table are a contract: the web app finds objects and materials by name, so a rename here needs the same rename there.
+Shared helpers are in [`lib.py`](lib.py). The names in the table are a contract: the web app finds each part by its object's name ([`model-part.ts`](../../apps/web/src/features/integration-map/components/scene/model-part.ts)), and the still tints `PodStatus` by its material's name, so a rename here needs the same rename there.
 
 ## Build
 
@@ -30,6 +30,6 @@ The models in the repository were built with Blender 5.2.1 LTS. Commit the rebui
 
 ## Why the models look the way they do
 
-- **Colour comes from the design tokens.** The materials carry the physical look (roughness, metalness, transmission, emission). The web app sets their colours from `tokens.css` at runtime, so one file serves the light and the dark theme. There are no textures. If one is added, compress it to WebP.
+- **Colour comes from the design tokens.** The web app draws each part with its own material, coloured from `tokens.css` at runtime, so one file serves the light and the dark theme. It copies a material's roughness, metalness or emission strength where that suits the web's lighting. The core's glass is transmissive here, for the still; on the web it is see-through instead, because transmission would show the transparent stage as black ([ADR 0021](../../docs/adr/0021-integration-map-scene.md)). There are no textures. If one is added, compress it to WebP.
 - **No Draco or Meshopt.** Both need WebAssembly, which the web app's Content Security Policy does not allow, so the geometry is quantised instead ([ADR 0020](../../docs/adr/0020-3d-assets-without-wasm-decoders.md)).
 - **Bevels and facets.** Bevelled edges catch the light; the core's flat-shaded facets read as cut crystal.

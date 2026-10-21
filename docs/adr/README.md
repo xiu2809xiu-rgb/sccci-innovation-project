@@ -28,6 +28,7 @@ This folder records the significant technical decisions behind HuiTong 汇通, t
 | [0018](0018-web-csp-inline-styles.md)            | Allow inline styles in the web content security policy                  | Accepted | 2026-10-20 |
 | [0019](0019-ideas-not-adopted-from-azri-plan.md) | Parts of Azri's integrated plan we did not adopt                        | Accepted | 2026-10-21 |
 | [0020](0020-3d-assets-without-wasm-decoders.md)  | 3D assets without WebAssembly decoders                                  | Accepted | 2026-10-22 |
+| [0021](0021-integration-map-scene.md)            | The integration map scene                                               | Accepted | 2026-10-22 |
 
 ## Statuses
 
