@@ -63,7 +63,7 @@ Legend: `[x]` done and verified, `[~]` in progress, `[ ]` not started, `[!]` blo
 - [x] Area 2 workflows: contracts and a mock-backed API with `meta.mock` (#113), the board, timeline, instance and task list (#114), the guide [`docs/team/area-2-workflow-automation.md`](team/area-2-workflow-automation.md); 47 named test skeletons for the owner
 - [x] Area 3 attendance/leave/reporting: contracts, real reads of the seeded rules and template, and sample runs, preview rows and management reports with `meta.mock` (#117); consolidation, category rules, template preview and reports (#118); the guide [`docs/team/area-3-attendance-leave-reporting.md`](team/area-3-attendance-leave-reporting.md); 37 named test skeletons for the owner
 - [x] Area 4 governance/security/monitoring: contracts, real reads of the access policy, the classification, transfer and retention registers and the audit log with its chain check, and sample dashboards with `meta.mock` (#120); the governance pages, the audit-log viewer and the dashboards (#121); the guide [`docs/team/area-4-governance-security-monitoring.md`](team/area-4-governance-security-monitoring.md); 36 named test skeletons for the owner
-- [ ] Playwright screenshots of every page in both themes
+- [x] Playwright screenshots of every page in both themes: [`docs/design/screenshots/README.md`](design/screenshots/README.md) indexes all 25 pages, light and dark, with Chinese where the area captured it
 
 ### Phase 7: 3D integration map
 
