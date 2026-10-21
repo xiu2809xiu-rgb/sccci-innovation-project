@@ -22,6 +22,7 @@ const SYNCABLE: ConnectorSummary[] = [
     region: 'SG',
     entityCode: 'SG01',
     status: 'ACTIVE',
+    isMock: true,
     capabilities: ['employees.read'],
     syncable: true,
     lastSyncAt: null,

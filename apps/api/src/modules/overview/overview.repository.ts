@@ -46,6 +46,7 @@ export class OverviewRepository {
         nameZh: true,
         type: true,
         status: true,
+        isMock: true,
         region: true,
         lastSyncAt: true,
         syncRuns: {

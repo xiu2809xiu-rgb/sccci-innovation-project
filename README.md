@@ -37,6 +37,8 @@ pnpm dev                              # web, api, mocks and shared in watch mode
 
 Override host ports for PostgreSQL and Redis with `POSTGRES_PORT` and `REDIS_PORT` in a root `.env` (see `.env.example`).
 
+The three mock systems stand in for Organisation E's real systems, which are unknown until the client meeting. The app shows a "Mock" badge on every connector they back, and a "Mock AI" badge on output from the default `mock` AI provider. To demonstrate a real model, see [switching the AI provider](docs/team/area-1-integration-core.md#switching-the-ai-provider-for-a-demo).
+
 ## Scripts
 
 | Script                             | What it does                                |

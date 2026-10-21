@@ -3,6 +3,7 @@ import { Unplug } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
 import { EmptyState } from '@/components/common/empty-state';
+import { MockBadge } from '@/components/common/mock-badge';
 import { SectionCard } from '@/components/common/section-card';
 import { StatusBadge } from '@/components/common/status-badge';
 import { StatusMark } from '@/components/reactbits/status-mark';
@@ -27,7 +28,10 @@ function ConnectorRow({ connector }: { connector: ConnectorHealth }) {
   return (
     <li className="grid gap-x-4 gap-y-2 py-3 first:pt-0 last:pb-0 sm:grid-cols-[minmax(0,1fr)_auto_8.5rem] sm:items-center">
       <div className="min-w-0">
-        <p className="truncate text-sm font-medium text-foreground">{name}</p>
+        <div className="flex min-w-0 items-center gap-2">
+          <p className="truncate text-sm font-medium text-foreground">{name}</p>
+          {connector.isMock ? <MockBadge kind="system" /> : null}
+        </div>
         <p
           className="truncate text-xs text-muted-foreground"
           title={connector.lastSyncAt ? format.dateTime(connector.lastSyncAt) : undefined}

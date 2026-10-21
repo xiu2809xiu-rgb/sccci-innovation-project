@@ -118,6 +118,7 @@ describe('Mapping wizard', () => {
     expect(within(review).getByText('Never mapped: gender')).toBeInTheDocument();
     expect(within(review).getByText('98%')).toBeInTheDocument();
     expect(screen.getByText('Requires approval')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Mock AI' })).toBeInTheDocument();
     await user.click(screen.getByRole('button', { name: 'Continue to approval' }));
 
     const approve = screen.getByRole('button', { name: 'Approve and save' });
@@ -127,6 +128,17 @@ describe('Mapping wizard', () => {
     expect(approve).toBeEnabled();
     await user.click(approve);
     expect(await screen.findByText('Mapping version 1 saved')).toBeInTheDocument();
+  });
+
+  it('does not label a proposal from a real model as mock AI', async () => {
+    renderApp(`/connectors/new-mapping?proposal=${PROPOSAL_ID}`, {
+      ...routesFor(HR),
+      [`GET /mapping-proposals/${PROPOSAL_ID}`]: {
+        body: { data: proposal({ provider: 'BEDROCK', model: 'anthropic.claude-sonnet' }) },
+      },
+    });
+    expect(await screen.findByText('Requires approval')).toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: 'Mock AI' })).not.toBeInTheDocument();
   });
 
   it('blocks approval while two columns fill the same field', async () => {

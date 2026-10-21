@@ -153,6 +153,12 @@
     "NETWORK_ERROR": "We could not reach the server. Check your connection.",
     "CONTRACT_MISMATCH": "The server sent something unexpected. Reload the page."
   },
+  "mock": {
+    "system": "Mock",
+    "systemHint": "A HuiTong mock service stands in for this system and serves synthetic data. It is not connected to Organisation E's live system.",
+    "ai": "Mock AI",
+    "aiHint": "Deterministic rules stand in for a language model here. These suggestions demonstrate the workflow; they do not come from a real AI model."
+  },
   "masking": {
     "hidden": "Hidden",
     "whyHidden": "Why is this hidden?",

@@ -125,6 +125,18 @@ function routesFor(employees: EmployeeSummary[] = EMPLOYEES): FakeRoutes {
         },
       },
     },
+    [`POST /conflicts/${CONFLICT_ID}/explain`]: {
+      body: {
+        data: {
+          conflictId: CONFLICT_ID,
+          language: 'en',
+          text: 'SG HR and CN HQ name this job differently; check which title HR approved.',
+          provider: 'MOCK',
+          model: 'mock-discrepancy-explainer',
+          generatedAt: NOW,
+        },
+      },
+    },
   };
 }
 
@@ -174,6 +186,17 @@ describe('EmployeesPage', () => {
     expect(within(dialog).getByRole('textbox', { name: 'Note' })).toHaveAccessibleDescription(
       'Say where the value comes from, in at least 3 characters.',
     );
+  });
+
+  it('labels an explanation from the mock AI as such', async () => {
+    const user = userEvent.setup();
+    renderApp('/employees?view=conflicts', routesFor());
+    await user.click(await screen.findByRole('button', { name: 'Resolve' }));
+    const dialog = await screen.findByRole('dialog', { name: 'Resolve: Job title' });
+    await user.click(within(dialog).getByRole('button', { name: 'Explain this difference' }));
+    expect(await within(dialog).findByText(/name this job differently/)).toBeInTheDocument();
+    expect(within(dialog).getByRole('button', { name: 'Mock AI' })).toBeInTheDocument();
+    expect(within(dialog).getByText('Requires your decision')).toBeInTheDocument();
   });
 
   it('resolves a conflict only after a deliberate hold', async () => {

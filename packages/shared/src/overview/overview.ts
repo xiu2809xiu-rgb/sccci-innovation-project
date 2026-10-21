@@ -30,6 +30,8 @@ export const connectorHealthSchema = z.object({
   nameZh: z.string(),
   type: connectorTypeSchema,
   status: connectorStatusSchema,
+  /** A HuiTong mock stands in for the client's system. */
+  isMock: z.boolean(),
   region: z.string(),
   lastSyncAt: z.iso.datetime().nullable(),
   /** Newest first. */
