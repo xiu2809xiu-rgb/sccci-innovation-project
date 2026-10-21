@@ -67,3 +67,19 @@ HuiTong holds employee data from two entities in two countries, including pay, b
 | Masking in the UI only                       | Hidden values would still reach the browser (R-11)                                                                                                                                                               |
 | PostgreSQL row-level security                | Strong defence in depth, but awkward with pooled connections through the Prisma adapter, and masking reasons need application logic anyway. A candidate for production hardening                                 |
 | bcrypt                                       | Not memory-hard and limited to 72 bytes of input; OWASP recommends argon2id first                                                                                                                                |
+
+## Amendment, 21 Oct 2026: a per-destination field allowlist, default deny
+
+Adopted from Azri's integrated plan (prompt 002, story B-7). Clearance rules decide how far a role sees into classified data; they do not say which fields one entity may receive from another. A field can be within HR_HQ's clearance and still have no business reaching HQ.
+
+**Decision.**
+
+- **The register is the allowlist.** For a record of entity S read by a user whose own entity is D (D ≠ S), a field is shown only when an ACTIVE entry of the cross-border transfer register from S to D covers it. An entry's data categories map to canonical fields (`fieldsCoveredBy` in `@huitong/shared`); an entry may also name a single field; an unknown entry covers nothing. Everything else is withheld with the reason `CROSS_BORDER_NOT_APPROVED`. Within the user's own entity only the clearance rules apply. There is no second list.
+- **Enforced in the API, not the UI.** `AccessPolicyService` reads the ACTIVE entries with the clearance rules, and `FieldMasker` applies them to every value it shows: the record drawer, each source's value, conflicts, history and sync previews. The masking interceptor applies them to any `@MaskFields` route. Another entity's records appear in the employee list, the conflict queues and the overview only while every field the list shows, searches, filters or sorts by is shared. Otherwise they read as missing (a 404), so search and sort cannot leak a withheld value. The AI explainer withholds the values of a field the reader may not see.
+- **Versioned and audited.** Each entry has a `version`. A record drawer that withholds fields writes one `access.fields_withheld` audit event with the fields and the entry versions that decided it. Area 4's administration (F-4) raises the version, audits each change and reloads the policy. An export (area 3, D-4) leaves out the fields `FieldMasker.withheld` names.
+
+**Consequences.**
+
+- The seed's SG01 to CN01 entry no longer covers dates of birth (data minimisation, Q-08): HR_HQ sees them withheld, though its clearance would allow them. This is the demonstration for E2E #3.
+- A new subsidiary's records stay invisible to other entities until a register entry covers them; connecting MY01 (story A-5) includes its entry.
+- Opening another entity's record writes an audit event, which is also the start of the access log that PIPL-style accountability expects.

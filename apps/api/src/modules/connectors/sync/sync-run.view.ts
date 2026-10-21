@@ -48,7 +48,14 @@ function maskedPreview(
   viewer: AuthenticatedUser,
   masker: FieldMasker,
 ): SyncPreviewItem {
-  if (item.field === null) return item;
+  if (item.field === null) {
+    // A possible match in an entity the viewer may not list would disclose that person exists.
+    const visible = item.possibleMatches?.filter((match) =>
+      masker.canList(viewer, match.entityCode),
+    );
+    const { possibleMatches: _all, ...rest } = item;
+    return visible && visible.length > 0 ? { ...rest, possibleMatches: visible } : rest;
+  }
   const field = item.field;
   const entity = item.entityCode;
   const after = Array.isArray(item.after)

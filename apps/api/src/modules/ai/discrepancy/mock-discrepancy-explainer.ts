@@ -26,11 +26,13 @@ function english(request: DiscrepancyRequest): string {
   const held = (candidate: Candidate) =>
     `${candidate.system} has ${candidate.value === null ? 'a different value' : `"${candidate.value}"`}${candidate.changedAt ? ` (last changed ${day(candidate.changedAt)})` : ''}`;
   const withheld =
-    request.field.withheld === 'IDENTIFIES_A_PERSON'
-      ? ' The values themselves are not shown here because they identify the person.'
-      : request.field.withheld === 'ABOVE_INTERNAL'
-        ? ` The values themselves are not shown here because this field is classified ${request.field.classification.toLowerCase()}.`
-        : '';
+    request.field.withheld === 'NOT_SHARED'
+      ? ' The values themselves are not shown here because this field is not shared with your entity.'
+      : request.field.withheld === 'IDENTIFIES_A_PERSON'
+        ? ' The values themselves are not shown here because they identify the person.'
+        : request.field.withheld === 'ABOVE_INTERNAL'
+          ? ` The values themselves are not shown here because this field is classified ${request.field.classification.toLowerCase()}.`
+          : '';
   const recency = newer
     ? ` ${newer.newer.system} changed more recently, which often means the update has not reached ${newer.older.system} yet.`
     : '';
@@ -50,11 +52,13 @@ function chinese(request: DiscrepancyRequest): string {
   const held = (candidate: Candidate) =>
     `${candidate.system}${candidate.value === null ? '的值不同' : `为“${candidate.value}”`}${candidate.changedAt ? `（最后修改于 ${day(candidate.changedAt)}）` : ''}`;
   const withheld =
-    request.field.withheld === 'IDENTIFIES_A_PERSON'
-      ? '由于这些数值可识别员工身份，此处不显示。'
-      : request.field.withheld === 'ABOVE_INTERNAL'
-        ? '由于该字段属于保密级别，此处不显示具体数值。'
-        : '';
+    request.field.withheld === 'NOT_SHARED'
+      ? '由于该字段未与您所在的实体共享，此处不显示具体数值。'
+      : request.field.withheld === 'IDENTIFIES_A_PERSON'
+        ? '由于这些数值可识别员工身份，此处不显示。'
+        : request.field.withheld === 'ABOVE_INTERNAL'
+          ? '由于该字段属于保密级别，此处不显示具体数值。'
+          : '';
   const recency = newer
     ? `${newer.newer.system}的修改更近，通常说明更新尚未同步到${newer.older.system}。`
     : '';

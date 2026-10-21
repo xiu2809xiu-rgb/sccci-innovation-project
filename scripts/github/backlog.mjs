@@ -278,6 +278,7 @@ export const EPICS = [
           'Given an approved mapping for a file connector, when I upload the full export, then I see a preview of the records it would create.',
           'Given the preview, when I apply it, then the records join the master with that connector as their source.',
           'Given a column with national ID numbers, when the file is read, then it is never stored.',
+          'Given the imported records, when HR in another entity reads them, then only the fields an ACTIVE transfer register entry shares with that entity are shown (B-7).',
         ],
       },
       {
@@ -438,6 +439,8 @@ export const EPICS = [
         sprint: 1,
         points: 8,
         priority: 'must',
+        done: true,
+        deliveredBy: 'feat/area1-destination-allowlist',
         labels: ['req: M2 GRS by design', 'type: security'],
         story:
           'As a data protection officer, I want each destination to receive only the fields allowlisted for it, so that HQ never sees Singapore data that no approved transfer covers.',

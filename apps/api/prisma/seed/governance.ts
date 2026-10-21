@@ -64,14 +64,8 @@ const TRANSFERS = [
     toEntityCode: 'CN01',
     fromCountry: 'SG',
     toCountry: 'CN',
-    dataCategories: [
-      'identity',
-      'job-and-organisation',
-      'work-contact',
-      'dateOfBirth',
-      'jobGrade',
-      'costCenter',
-    ],
+    // No dateOfBirth: HQ does not need it for these purposes (data minimisation, Q-08).
+    dataCategories: ['identity', 'job-and-organisation', 'work-contact', 'jobGrade', 'costCenter'],
     purpose: 'Group HR management and consolidated headcount reporting',
     legalBasis:
       'PDPA s.26 Transfer Limitation Obligation: recipient bound by an intra-group data transfer agreement (assumed, A-25)',
@@ -79,7 +73,8 @@ const TRANSFERS = [
     status: TransferStatus.ACTIVE,
     approvedAt: new Date('2026-09-15T02:00:00Z'),
     reviewDueAt: new Date('2027-03-15T00:00:00Z'),
-    notes: 'Covers fields up to CONFIDENTIAL. Approved by the SG01 DPO (synthetic).',
+    notes:
+      'Covers identity, job and organisation, work contact, job grade and cost centre; dates of birth stay in Singapore. Approved by the SG01 DPO (synthetic).',
   },
   {
     name: 'SG01 compensation data to Group HQ',
@@ -112,7 +107,7 @@ const TRANSFERS = [
     status: TransferStatus.ACTIVE,
     approvedAt: new Date('2026-09-20T02:00:00Z'),
     reviewDueAt: new Date('2027-03-20T00:00:00Z'),
-    notes: 'INTERNAL fields only.',
+    notes: 'Identity, job and organisation, and work contact.',
   },
 ];
 
@@ -175,10 +170,16 @@ export async function seedGovernance(prisma: PrismaClient): Promise<string> {
   for (const transfer of TRANSFERS) {
     const existing = await prisma.crossBorderTransfer.findFirst({
       where: { name: transfer.name },
-      select: { id: true },
+      select: { id: true, dataCategories: true },
     });
     if (existing) {
-      await prisma.crossBorderTransfer.update({ where: { id: existing.id }, data: transfer });
+      // What a transfer covers is policy: a change in coverage is a new version.
+      const changed =
+        [...existing.dataCategories].sort().join() !== [...transfer.dataCategories].sort().join();
+      await prisma.crossBorderTransfer.update({
+        where: { id: existing.id },
+        data: { ...transfer, ...(changed ? { version: { increment: 1 } } : {}) },
+      });
     } else {
       await prisma.crossBorderTransfer.create({ data: transfer });
     }

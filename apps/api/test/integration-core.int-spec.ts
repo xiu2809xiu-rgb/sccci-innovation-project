@@ -20,6 +20,7 @@ import {
 import request from 'supertest';
 
 import { PrismaService } from '../src/infrastructure/prisma/prisma.service.js';
+import { AccessPolicyService } from '../src/modules/access/access-policy.service.js';
 import {
   MOCK_CREDENTIALS,
   pointConnectorsAt,
@@ -294,6 +295,86 @@ describe('Integration core: sync, master, conflicts (integration)', () => {
       classification: 'CONFIDENTIAL',
       reason: 'ROLE_CLEARANCE',
     });
+  });
+
+  it("withholds a field missing from HQ's allowlist through the raw API, and audits it", async () => {
+    const withheldEvents = () =>
+      prisma.auditEvent.findMany({
+        where: { action: 'access.fields_withheld', entityId: 'E100003' },
+        orderBy: { id: 'asc' },
+      });
+    const before = (await withheldEvents()).length;
+
+    const hq = await signedInClient(app, 'HR_HQ');
+    const hqView = await detail('E100003', hq);
+    // HR_HQ is cleared for CONFIDENTIAL data, but no ACTIVE transfer shares dates of birth.
+    expect(fieldOf(hqView, 'dateOfBirth').value).toEqual({
+      masked: true,
+      classification: 'CONFIDENTIAL',
+      reason: 'CROSS_BORDER_NOT_APPROVED',
+    });
+    expect(fieldOf(hqView, 'dateOfBirth').sources.every((source) => isMasked(source.value))).toBe(
+      true,
+    );
+    expect(isMasked(fieldOf(hqView, 'jobGrade').value)).toBe(false);
+
+    const events = await withheldEvents();
+    expect(events).toHaveLength(before + 1);
+    const transfer = await prisma.crossBorderTransfer.findFirstOrThrow({
+      where: { fromEntityCode: 'SG01', toEntityCode: 'CN01', status: 'ACTIVE' },
+      select: { id: true, version: true },
+    });
+    expect(events.at(-1)).toMatchObject({
+      actorRole: 'HR_HQ',
+      metadata: {
+        source: 'SG01',
+        destination: 'CN01',
+        fields: ['dateOfBirth', 'baseSalary', 'bankName', 'bankAccountLast4'],
+        transfers: [{ id: transfer.id, version: transfer.version }],
+      },
+    });
+
+    // Singapore HR reads its own entity: nothing is withheld, so nothing is audited.
+    expect(fieldOf(await detail('E100003'), 'dateOfBirth').value).toBe('1992-07-04');
+    expect(await withheldEvents()).toHaveLength(before + 1);
+  });
+
+  it('lists another entity only while the register shares every field the list shows', async () => {
+    const hq = await signedInClient(app, 'HR_HQ');
+    const singaporeRows = async () => {
+      const response = await hq.agent.get('/api/v1/employees?entityCode=SG01').expect(200);
+      return (response.body as { meta: { total: number } }).meta.total;
+    };
+    expect(await singaporeRows()).toBeGreaterThan(0);
+
+    const access = app.get(AccessPolicyService);
+    const transfer = await prisma.crossBorderTransfer.findFirstOrThrow({
+      where: { fromEntityCode: 'SG01', toEntityCode: 'CN01', status: 'ACTIVE' },
+    });
+    try {
+      // Work contact is no longer shared: SG01 rows would reveal work emails, so they leave HQ's view.
+      await prisma.crossBorderTransfer.update({
+        where: { id: transfer.id },
+        data: {
+          dataCategories: transfer.dataCategories.filter((entry) => entry !== 'work-contact'),
+          version: { increment: 1 },
+        },
+      });
+      await access.reload();
+      expect(await singaporeRows()).toBe(0);
+      await hq.agent.get('/api/v1/employees/E100003').expect(404);
+      const queue = await hq.agent.get('/api/v1/conflicts?pageSize=100').expect(200);
+      expect(
+        conflictList.parse(queue.body).data.every((conflict) => conflict.entityCode !== 'SG01'),
+      ).toBe(true);
+    } finally {
+      await prisma.crossBorderTransfer.update({
+        where: { id: transfer.id },
+        data: { dataCategories: transfer.dataCategories, version: transfer.version },
+      });
+      await access.reload();
+    }
+    expect(await singaporeRows()).toBeGreaterThan(0);
   });
 
   it('settles a conflict by choosing a source, audits it, and keeps the choice on later syncs', async () => {

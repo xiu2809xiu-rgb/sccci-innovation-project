@@ -3,18 +3,31 @@ import {
   decideMasking,
   EMPLOYEE_FIELD_CLASSIFICATION,
   type ClassificationLevel,
+  type EmployeeField,
   type EntityCode,
   type MaskedValue,
 } from '@huitong/shared';
 
 import type { AuthenticatedUser } from '../../common/http/authenticated-user.js';
 import { AccessPolicyService } from './access-policy.service.js';
+import { isShared, type TransferVersion } from './destination-policy.js';
+
+/** Fields withheld from a viewer of another entity because no ACTIVE transfer covers them. */
+export interface Withholding {
+  source: EntityCode;
+  destination: EntityCode;
+  fields: EmployeeField[];
+  transfers: readonly TransferVersion[];
+}
 
 /**
  * Field-level masking for values that sit deeper than the masking interceptor
  * reaches: each source's value in the record drawer, conflict candidates,
- * history and sync previews. Fields it does not know are treated as
- * RESTRICTED (fail closed).
+ * history and sync previews. A value is shown only when the viewer's role is
+ * cleared for its classification and, for another entity's records, the
+ * cross-border transfer register shares the field with the viewer's own
+ * entity (story B-7). Fields it does not know are treated as RESTRICTED
+ * (fail closed).
  */
 @Injectable()
 export class FieldMasker {
@@ -29,21 +42,66 @@ export class FieldMasker {
 
   /** Whether the viewer may see this field on records of `entityCode`. */
   canSee(field: string, viewer: AuthenticatedUser, entityCode: EntityCode): boolean {
-    return decideMasking(
-      this.access.clearanceRules(),
-      viewer.role,
-      entityCode,
-      this.classification(field),
-    ).visible;
+    return (
+      this.shared(field, viewer, entityCode) &&
+      decideMasking(
+        this.access.clearanceRules(),
+        viewer.role,
+        entityCode,
+        this.classification(field),
+      ).visible
+    );
   }
 
   /** The value as the viewer may see it: itself, or a MaskedValue saying why it is hidden. */
   value(field: string, value: unknown, viewer: AuthenticatedUser, entityCode: EntityCode): unknown {
     if (value === null || value === undefined) return null;
     const level = this.classification(field);
+    if (!this.shared(field, viewer, entityCode)) {
+      const withheld: MaskedValue = {
+        masked: true,
+        classification: level,
+        reason: 'CROSS_BORDER_NOT_APPROVED',
+      };
+      return withheld;
+    }
     const decision = decideMasking(this.access.clearanceRules(), viewer.role, entityCode, level);
     if (decision.visible) return value;
     const masked: MaskedValue = { masked: true, classification: level, reason: decision.reason };
     return masked;
+  }
+
+  /**
+   * Which of `fields` the register withholds from the viewer on records of
+   * `entityCode`, with the transfer versions that decided it; null for the
+   * viewer's own entity. The record drawer audits it, and an export (area 3)
+   * leaves out every field it names.
+   */
+  withheld(
+    fields: readonly EmployeeField[],
+    viewer: AuthenticatedUser,
+    entityCode: EntityCode,
+  ): Withholding | null {
+    const disclosure = this.access.disclosure(entityCode, viewer.homeEntityCode);
+    if (disclosure.kind === 'home') return null;
+    return {
+      source: entityCode,
+      destination: viewer.homeEntityCode,
+      fields: fields.filter((field) => !isShared(disclosure, field)),
+      transfers: disclosure.transfers,
+    };
+  }
+
+  /** The entities whose records may appear to the viewer at all: in lists, drawers and queues. */
+  listable(viewer: AuthenticatedUser): EntityCode[] {
+    return this.access.listableEntities(viewer.homeEntityCode);
+  }
+
+  canList(viewer: AuthenticatedUser, entityCode: EntityCode): boolean {
+    return this.listable(viewer).includes(entityCode);
+  }
+
+  private shared(field: string, viewer: AuthenticatedUser, entityCode: EntityCode): boolean {
+    return isShared(this.access.disclosure(entityCode, viewer.homeEntityCode), field);
   }
 }

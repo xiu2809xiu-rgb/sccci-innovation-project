@@ -98,11 +98,11 @@ Each area has a named backup who can explain its design, run its demo steps and 
 
 **Consumes**
 
-| From          | What                                              | Why                                                                                                                              |
-| ------------- | ------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
-| Area 4        | Cross-border transfer register and masking policy | SG01 RESTRICTED fields reach HR_HQ only with an approved register entry. A seeded baseline policy applies until area 4 delivers. |
-| Area 2        | Onboarding milestones met, per draft record       | One of the two conditions that activate a draft record; the other is the verified SG HR record (B-6)                             |
-| Areas 2 and 3 | Summary endpoints                                 | The Overview page shows pending approvals, open tasks and consolidation status                                                   |
+| From          | What                                              | Why                                                                                                                                                                                                                                                                                      |
+| ------------- | ------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Area 4        | Cross-border transfer register and masking policy | A field of another entity's records reaches a user only when an ACTIVE register entry shares it with their entity (B-7); area 1 reads the register and enforces it. Area 4 administers it: each change raises the entry's version, is audited, and calls `AccessPolicyService.reload()`. |
+| Area 2        | Onboarding milestones met, per draft record       | One of the two conditions that activate a draft record; the other is the verified SG HR record (B-6)                                                                                                                                                                                     |
+| Areas 2 and 3 | Summary endpoints                                 | The Overview page shows pending approvals, open tasks and consolidation status                                                                                                                                                                                                           |
 
 **W7 mock interview: be ready to explain**
 
@@ -214,12 +214,13 @@ Area 2 starts where the connector hub stops. Area 1 verifies, stores and publish
 
 **Consumes**
 
-| From                   | Interface                                                          | Use                                                                                        |
-| ---------------------- | ------------------------------------------------------------------ | ------------------------------------------------------------------------------------------ |
-| Area 1 connector hub   | `SystemConnector` adapters for `sg-hr` and `cn-hq`                 | Extract attendance and leave; no area-specific HTTP clients                                |
-| Area 1 employee master | Lookup by `employeeNo` (the only match key), entity and department | Attach every record to a canonical employee                                                |
-| Area 1 mapping engine  | Field transformers for dates and enums                             | Reuse instead of re-implementing source formats                                            |
-| Platform               | Queues, audit writer, masking, RBAC guard                          | Consolidation runs as a job; mapping-rule approvals are audited; `MANAGEMENT` is read-only |
+| From                   | Interface                                                                | Use                                                                                                                    |
+| ---------------------- | ------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------- |
+| Area 1 connector hub   | `SystemConnector` adapters for `sg-hr` and `cn-hq`                       | Extract attendance and leave; no area-specific HTTP clients                                                            |
+| Area 1 employee master | Lookup by `employeeNo` (the only match key), entity and department       | Attach every record to a canonical employee                                                                            |
+| Area 1 mapping engine  | Field transformers for dates and enums                                   | Reuse instead of re-implementing source formats                                                                        |
+| Platform               | Queues, audit writer, masking, RBAC guard                                | Consolidation runs as a job; mapping-rule approvals are audited; `MANAGEMENT` is read-only                             |
+| Area 1 access policy   | `FieldMasker.withheld(fields, viewer, entity)` and `FieldMasker.canList` | Leave out of an export every field the register withholds from the requester's entity, and audit the export (D-4, B-7) |
 
 **Exposes**
 
@@ -282,14 +283,14 @@ Area 2 starts where the connector hub stops. Area 1 verifies, stores and publish
 
 **Exposes**
 
-| Interface                                                                                                      | Used by                                        |
-| -------------------------------------------------------------------------------------------------------------- | ---------------------------------------------- |
-| `/api/v1/governance/*`: access matrix, classification, transfer register, retention                            | Governance pages                               |
-| Transfer-register check: is an approved entry in place for this data class, source entity and recipient        | Masking interceptor (area 1)                   |
-| `/api/v1/audit/*`: filtered, paginated, read-only                                                              | Audit-log viewer; audit-trail links on records |
-| `/api/v1/analytics/*` (dashboards)                                                                             | Analytics pages                                |
-| `/metrics` (prom-client); OpenTelemetry trace ids, which replace request ids as the error envelope's `traceId` | Operations; every error state in the UI        |
-| The AWS deployment, CloudWatch dashboards and alarms                                                           | The team, for W14 to W18                       |
+| Interface                                                                                                                                                                                      | Used by                                        |
+| ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------- |
+| `/api/v1/governance/*`: access matrix, classification, transfer register, retention                                                                                                            | Governance pages                               |
+| Transfer-register administration: each change to an entry raises its version, is audited, and calls `AccessPolicyService.reload()` so that the allowlist area 1 enforces follows at once (F-4) | Access policy (area 1)                         |
+| `/api/v1/audit/*`: filtered, paginated, read-only                                                                                                                                              | Audit-log viewer; audit-trail links on records |
+| `/api/v1/analytics/*` (dashboards)                                                                                                                                                             | Analytics pages                                |
+| `/metrics` (prom-client); OpenTelemetry trace ids, which replace request ids as the error envelope's `traceId`                                                                                 | Operations; every error state in the UI        |
+| The AWS deployment, CloudWatch dashboards and alarms                                                                                                                                           | The team, for W14 to W18                       |
 
 **W7 mock interview: be ready to explain**
 

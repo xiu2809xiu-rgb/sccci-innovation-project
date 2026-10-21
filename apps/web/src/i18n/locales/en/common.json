@@ -167,7 +167,7 @@
     "reason": {
       "ROLE_CLEARANCE": "Your role is not cleared for {{classification}} data.",
       "ENTITY_SCOPE": "You can see {{classification}} data only for your own entity.",
-      "CROSS_BORDER_NOT_APPROVED": "This field may only leave Singapore under an approved cross-border transfer, and none covers it yet."
+      "CROSS_BORDER_NOT_APPROVED": "This field reaches your entity only under an approved cross-border transfer, and none covers it."
     }
   },
   "classification": {

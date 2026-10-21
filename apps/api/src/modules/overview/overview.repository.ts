@@ -80,9 +80,10 @@ export class OverviewRepository {
     });
   }
 
-  recentOpenConflicts(take: number) {
+  /** The newest open conflicts of employees in the entities the viewer may list. */
+  recentOpenConflicts(take: number, entities: readonly string[]) {
     return this.prisma.conflict.findMany({
-      where: { status: 'OPEN' },
+      where: { status: 'OPEN', employee: { entityCode: { in: [...entities] } } },
       orderBy: { detectedAt: 'desc' },
       take,
       select: {

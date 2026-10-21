@@ -10,6 +10,7 @@ import type { Request } from 'express';
 import { map, type Observable } from 'rxjs';
 
 import { AccessPolicyService } from '../../modules/access/access-policy.service.js';
+import { isShared } from '../../modules/access/destination-policy.js';
 import { MaskFields, readMetadata, type MaskFieldsSpec } from '../decorators/route-metadata.js';
 import type { AuthenticatedUser } from '../http/authenticated-user.js';
 
@@ -21,8 +22,10 @@ function isRecord(value: unknown): value is JsonRecord {
 
 /**
  * Field-level masking for routes marked @MaskFields(). Each returned record is
- * masked for the caller's role and the record's entity; when the entity or the
- * caller is unknown, every classified field is masked (fail closed).
+ * masked for the caller's role and the record's entity, and a field another
+ * entity's register entries do not share with the caller's entity is withheld
+ * (story B-7); when the entity or the caller is unknown, every classified
+ * field is masked (fail closed).
  */
 @Injectable()
 export class FieldMaskingInterceptor implements NestInterceptor {
@@ -66,11 +69,24 @@ export class FieldMaskingInterceptor implements NestInterceptor {
     if (!user || !entity.success) {
       return this.maskAll(record, spec);
     }
-    return maskRecord(record, spec.classifications, {
+    const masked = maskRecord(record, spec.classifications, {
       rules: this.access.clearanceRules(),
       role: user.role,
       entityCode: entity.data,
     });
+    const disclosure = this.access.disclosure(entity.data, user.homeEntityCode);
+    for (const [field, level] of Object.entries(spec.classifications)) {
+      if (masked[field] === null || masked[field] === undefined || isShared(disclosure, field)) {
+        continue;
+      }
+      const withheld: MaskedValue = {
+        masked: true,
+        classification: level,
+        reason: 'CROSS_BORDER_NOT_APPROVED',
+      };
+      masked[field] = withheld;
+    }
+    return masked;
   }
 
   private maskAll(record: JsonRecord, spec: MaskFieldsSpec): JsonRecord {

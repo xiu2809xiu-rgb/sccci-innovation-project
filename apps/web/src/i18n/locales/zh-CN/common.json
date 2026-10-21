@@ -167,7 +167,7 @@
     "reason": {
       "ROLE_CLEARANCE": "您的角色无权查看{{classification}}数据。",
       "ENTITY_SCOPE": "您只能查看本法人实体的{{classification}}数据。",
-      "CROSS_BORDER_NOT_APPROVED": "此字段须经批准的跨境传输登记方可传出新加坡，目前尚无登记覆盖此字段。"
+      "CROSS_BORDER_NOT_APPROVED": "此字段须有已批准的跨境传输登记才会提供给您所在的实体，目前没有登记覆盖它。"
     }
   },
   "classification": {

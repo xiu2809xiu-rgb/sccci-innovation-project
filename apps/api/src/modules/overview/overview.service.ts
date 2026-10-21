@@ -76,7 +76,10 @@ export class OverviewService {
       can('mappings:approve') ? this.repository.pendingMappingProposalCount() : null,
       can('governance:manage') ? this.repository.pendingTransferCount() : null,
       can('workflows:tasks') ? this.repository.openTaskCountFor(user.role) : null,
-      this.repository.recentOpenConflicts(RECENT_CONFLICTS),
+      this.repository.recentOpenConflicts(
+        RECENT_CONFLICTS,
+        this.access.listableEntities(user.homeEntityCode),
+      ),
       this.repository.recentBusinessEvents(RECENT_ACTIVITY),
     ]);
 

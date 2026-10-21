@@ -30,7 +30,9 @@ function spoken(field: EmployeeField, value: unknown, language: Locale): string 
 function withheldReason(
   field: EmployeeField,
   classification: ClassificationLevel,
+  visibleToViewer: boolean,
 ): WithheldReason | null {
+  if (!visibleToViewer) return 'NOT_SHARED';
   if (!isWithinClearance(classification, 'INTERNAL')) return 'ABOVE_INTERNAL';
   return (IDENTIFYING_EMPLOYEE_FIELDS as readonly string[]).includes(field)
     ? 'IDENTIFIES_A_PERSON'
@@ -43,6 +45,8 @@ export interface ExplainerInput {
   entityCode: EntityCode;
   field: EmployeeField;
   classification: ClassificationLevel;
+  /** Whether the person asking may see this field at all (role clearance and the transfer register). */
+  visibleToViewer: boolean;
   candidates: readonly { connectorId: string; value: unknown }[];
   /** Each source's name in the UI language. */
   systems: ReadonlyMap<string, string>;
@@ -57,7 +61,7 @@ export interface ExplainerInput {
  * person (a name, an email address, a manager's number), is sent as null.
  */
 export function explainerRequest(input: ExplainerInput): DiscrepancyRequest {
-  const withheld = withheldReason(input.field, input.classification);
+  const withheld = withheldReason(input.field, input.classification, input.visibleToViewer);
   return {
     language: input.language,
     entityCode: input.entityCode,

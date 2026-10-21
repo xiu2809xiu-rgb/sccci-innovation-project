@@ -54,7 +54,7 @@ export class ConflictsService {
     query: ConflictListQuery,
     viewer: AuthenticatedUser,
   ): Promise<{ items: Conflict[]; total: number }> {
-    const { items, total } = await this.conflicts.list(query);
+    const { items, total } = await this.conflicts.list(query, this.masker.listable(viewer));
     const names = await this.names(
       items.flatMap((conflict) => (conflict.resolvedByUserId ? [conflict.resolvedByUserId] : [])),
     );
@@ -67,8 +67,7 @@ export class ConflictsService {
   }
 
   async resolve(id: string, request: ResolveConflictRequest, meta: SignedIn): Promise<Conflict> {
-    const conflict = await this.conflicts.findForResolution(id);
-    if (!conflict) throw new NotFoundError(`Conflict ${id}`);
+    const conflict = await this.visibleForResolution(id, meta.actor);
     if (conflict.status !== 'OPEN')
       throw new ConflictError('This conflict has already been settled');
     const field = conflict.field as EmployeeField;
@@ -161,8 +160,7 @@ export class ConflictsService {
 
   /** The AI explainer's account of a conflict, built by `explainerRequest` (no identifiers, nothing above INTERNAL). */
   async explain(id: string, language: Locale, meta: SignedIn): Promise<ConflictExplanation> {
-    const conflict = await this.conflicts.findForResolution(id);
-    if (!conflict) throw new NotFoundError(`Conflict ${id}`);
+    const conflict = await this.visibleForResolution(id, meta.actor);
     const field = conflict.field as EmployeeField;
     const { employee } = conflict;
     const candidates = Array.isArray(conflict.candidates)
@@ -186,6 +184,7 @@ export class ConflictsService {
         entityCode: employee.entityCode as EntityCode,
         field,
         classification: this.masker.classification(field),
+        visibleToViewer: this.masker.canSee(field, meta.actor, employee.entityCode as EntityCode),
         candidates,
         systems,
         changedAt: changed,
@@ -200,6 +199,15 @@ export class ConflictsService {
       model: result.model,
       generatedAt: new Date().toISOString(),
     };
+  }
+
+  /** The conflict, when its employee's entity is one the viewer may see; otherwise it reads as missing. */
+  private async visibleForResolution(id: string, viewer: AuthenticatedUser) {
+    const conflict = await this.conflicts.findForResolution(id);
+    if (!conflict || !this.masker.canList(viewer, conflict.employee.entityCode as EntityCode)) {
+      throw new NotFoundError(`Conflict ${id}`);
+    }
+    return conflict;
   }
 
   private async names(userIds: readonly string[]): Promise<Map<string, string>> {
