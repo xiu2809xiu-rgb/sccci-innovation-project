@@ -403,6 +403,8 @@ export const EPICS = [
         sprint: 1,
         points: 5,
         priority: 'must',
+        done: true,
+        deliveredBy: 'feat/area1-possible-matches',
         labels: ['req: M2 GRS by design'],
         story:
           'As an HR executive, I want look-alike names flagged as possible matches for me to decide, so that two different people are never merged and one person is never split by accident.',

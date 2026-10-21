@@ -99,7 +99,20 @@
       "wholeRecord": "整份档案",
       "newRecord": "加入主数据",
       "to": "变为",
-      "truncated": "仅显示前 {{count}} 项变更；上方的统计涵盖全部变更。"
+      "truncated": "仅显示前 {{count}} 项变更；上方的统计涵盖全部变更。",
+      "possibleMatch": {
+        "title_one": "可能是同一人，请人力资源核对",
+        "title_other": "{{count}} 条可能的匹配，请人力资源核对",
+        "reason": {
+          "SAME_LOCAL_NAME": "中文姓名相同",
+          "SAME_LATIN_NAME": "拉丁字母姓名相同",
+          "SAME_NAME_PARTS": "姓名相同但顺序不同",
+          "SAME_WORK_EMAIL": "工作邮箱相同"
+        },
+        "separator": "、",
+        "newTab": "（在新标签页中打开档案）",
+        "note": "姓名相似绝不会合并两个人：此记录将作为独立档案加入。只有员工编号相同才视为同一人。"
+      }
     },
     "previewAgain": "重新预览"
   },

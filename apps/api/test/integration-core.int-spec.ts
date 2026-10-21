@@ -530,4 +530,44 @@ describe('Integration core: sync, master, conflicts (integration)', () => {
     expect(settled.status).toBe('FAILED');
     expect(settled.errors).toEqual([expect.objectContaining({ code: 'INTERRUPTED' })]);
   });
+
+  it('shows a look-alike new hire as a possible match, and keeps the two people apart', async () => {
+    // A new SG HR hire with the same names as E100003, written in the other order.
+    const existing = await request(systems.sgHr.url)
+      .get('/api/employees/E100003')
+      .set('X-API-Key', MOCK_CREDENTIALS.SG_HR_API_KEY)
+      .expect(200);
+    const twin = existing.body.data as Record<string, unknown>;
+    await request(systems.sgHr.url)
+      .post('/api/employees')
+      .set('X-API-Key', MOCK_CREDENTIALS.SG_HR_API_KEY)
+      .send({
+        ...Object.fromEntries(Object.entries(twin).filter(([key]) => key !== 'lastModified')),
+        employeeNo: 'E100990',
+        fullName: `${String(twin.firstName)} ${String(twin.lastName)}`,
+        email: 'look-alike.e100990@orge.example',
+        mobile: '+65 8123 4990',
+        reportsTo: null,
+      })
+      .expect(201);
+
+    const { preview, applied } = await previewThenApply('sg-hr');
+    expect(preview.previewItems).toEqual([
+      expect.objectContaining({
+        employeeNo: 'E100990',
+        kind: 'CREATE',
+        possibleMatches: [
+          expect.objectContaining({ employeeNo: 'E100003', entityCode: 'SG01' }) as unknown,
+        ],
+      }),
+    ]);
+    expect(applied.counts).toMatchObject({ created: 1, updated: 0 });
+
+    // Two records: the look-alike was created on its own, and E100003 is untouched.
+    const created = await detail('E100990');
+    expect(created.employeeNo).toBe('E100990');
+    expect((await detail('E100003')).history.every((line) => line.syncRunId !== applied.id)).toBe(
+      true,
+    );
+  });
 });

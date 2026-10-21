@@ -95,3 +95,10 @@ Adopted from Azri's integrated plan (prompt 002). Point 6 above is tightened, an
 - **An approval creates a draft.** An approved OA manpower request leads only to a draft (`PRE_HIRE`) record in the master, linked to the request. An approval is not yet a hire: the candidate may never join.
 - **Activation needs two things.** The draft becomes active only once the agreed onboarding milestones are met (from area 2's workflow) and the verified record has arrived from the HR system of record (SG HR for SG01). The rule lives in the master (story B-6), so it holds whichever workflow triggers it.
 - **Write-back is approved, audited and mock-only for now.** A write to a system of record needs HR's explicit approval of a preview, and the approval is audited. Against the client's real systems, writes are out of scope until the client agrees to them ([Q-17](../client/questions-for-client.md)); until then the SG HR mock demonstrates them, labelled as a mock ([A-21](../assumptions.md)).
+
+## Amendment, 21 Oct 2026: identity matching
+
+Adopted from Azri's integrated plan (prompt 002). Point 3 above named work email as a fallback match key. The code never used it, and it should not: an email can be reassigned, and SG and HQ systems may hold different ones.
+
+- **Confirmed match:** the same group employee number (`E1xxxxx`). Nothing else makes two records one person, except a future HR decision to link them, which would be audited.
+- **Possible match:** a look-alike name (the same Chinese name, the same romanisation, the same names in another order) or the same work email. Romanisation is a weak signal: 陈伟 and 陈玮 are different people who are both "Chen Wei", and Hokkien "Tan" and Mandarin "Chen" are the same surname, 陈. A sync preview lists the possible matches of every new record for HR to check, and the sync still creates the record on its own (story B-5, `identity-matcher.ts`).

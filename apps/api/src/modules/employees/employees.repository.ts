@@ -71,6 +71,41 @@ export class EmployeesRepository {
   }
 
   /** The record with everything a merge needs: provenance, open conflicts and HR's typed-in decisions. */
+  /**
+   * Other employees sharing a family name, a Chinese name or a work email with
+   * a new record: the candidates the identity rule checks for possible matches.
+   */
+  lookAlikeCandidates(facts: {
+    employeeNo: string;
+    familyName: string | null;
+    givenName: string | null;
+    fullNameLocal: string | null;
+    workEmail: string | null;
+  }) {
+    const shared: Prisma.EmployeeWhereInput[] = [
+      ...(facts.familyName ? [{ familyName: facts.familyName }] : []),
+      // A swapped order puts the family name where the given name belongs.
+      ...(facts.givenName ? [{ familyName: facts.givenName }] : []),
+      ...(facts.fullNameLocal ? [{ fullNameLocal: facts.fullNameLocal }] : []),
+      ...(facts.workEmail ? [{ workEmail: facts.workEmail.toLowerCase() }] : []),
+    ];
+    if (shared.length === 0) return Promise.resolve([]);
+    return this.prisma.employee.findMany({
+      where: { employeeNo: { not: facts.employeeNo }, OR: shared },
+      select: {
+        employeeNo: true,
+        entityCode: true,
+        familyName: true,
+        givenName: true,
+        fullNameLatin: true,
+        fullNameLocal: true,
+        workEmail: true,
+      },
+      orderBy: { employeeNo: 'asc' },
+      take: 20,
+    });
+  }
+
   findForMerge(employeeNo: string, tx: Tx | PrismaService = this.prisma) {
     return tx.employee.findUnique({
       where: { employeeNo },

@@ -13,6 +13,8 @@ import { StatusBadge } from '@/components/common/status-badge';
 import { FieldValue } from '@/features/employees/components/field-value';
 import { useEmployeeLabels } from '@/features/employees/hooks/use-employee-labels';
 
+import { PossibleMatchList } from './possible-match-list';
+
 const KIND_STYLE = {
   CREATE: { tone: 'success', icon: Plus },
   UPDATE: { tone: 'info', icon: RefreshCw },
@@ -76,7 +78,12 @@ function PreviewRow({ item }: { item: SyncPreviewItem }) {
         {field.success ? (
           <ChangeValue item={item} field={field.data} />
         ) : (
-          <span className="text-muted-foreground">{t('sync.preview.newRecord')}</span>
+          <>
+            <span className="text-muted-foreground">{t('sync.preview.newRecord')}</span>
+            {item.possibleMatches?.length ? (
+              <PossibleMatchList matches={item.possibleMatches} />
+            ) : null}
+          </>
         )}
       </td>
     </tr>

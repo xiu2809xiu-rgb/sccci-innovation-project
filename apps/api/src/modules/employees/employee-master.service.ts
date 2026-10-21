@@ -5,6 +5,7 @@ import {
   type CanonicalEmployeePartial,
   type EmployeeField,
   type EntityCode,
+  type PossibleMatch,
   type SyncMode,
   type SyncPreviewItem,
 } from '@huitong/shared';
@@ -12,6 +13,7 @@ import {
 import type { RequestMeta } from '../../common/http/request-meta.js';
 import { AuditLogService } from '../../infrastructure/audit/audit-log.service.js';
 import { mergeField, sameValue, type Observation } from './domain/field-merger.js';
+import { possibleMatchReasons, type IdentityFacts } from './domain/identity-matcher.js';
 import { canonicalOf, columnsOf, createColumnsOf } from './employee-record.js';
 import { EmployeesRepository, type FieldChange } from './employees.repository.js';
 
@@ -127,8 +129,17 @@ export class EmployeeMasterService {
       };
     }
     const entityCode = values.entityCode;
+    const possibleMatches = await this.possibleMatches(employeeNo, values);
     const preview: SyncPreviewItem[] = [
-      { employeeNo, entityCode, kind: 'CREATE', field: null, before: null, after: null },
+      {
+        employeeNo,
+        entityCode,
+        kind: 'CREATE',
+        field: null,
+        before: null,
+        after: null,
+        ...(possibleMatches.length > 0 ? { possibleMatches } : {}),
+      },
     ];
     const result = {
       kind: 'created' as const,
@@ -166,6 +177,38 @@ export class EmployeeMasterService {
       );
     });
     return result;
+  }
+
+  /**
+   * Existing employees a new record may duplicate, for HR to check in the
+   * preview. The record is still created on its own: a look-alike name or a
+   * shared email never merges two people (story B-5).
+   */
+  private async possibleMatches(
+    employeeNo: string,
+    values: SourceRecordInput['values'],
+  ): Promise<PossibleMatch[]> {
+    const facts: IdentityFacts = {
+      employeeNo,
+      familyName: values.familyName ?? null,
+      givenName: values.givenName ?? null,
+      fullNameLatin: values.fullNameLatin ?? null,
+      fullNameLocal: values.fullNameLocal ?? null,
+      workEmail: values.workEmail ?? null,
+    };
+    const candidates = await this.employees.lookAlikeCandidates(facts);
+    return candidates.flatMap((candidate) => {
+      const reasons = possibleMatchReasons(facts, candidate);
+      return reasons.length > 0
+        ? [
+            {
+              employeeNo: candidate.employeeNo,
+              entityCode: candidate.entityCode as EntityCode,
+              reasons,
+            },
+          ]
+        : [];
+    });
   }
 
   private async mergeInto(

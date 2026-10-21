@@ -2,6 +2,7 @@ import { z } from 'zod';
 
 import { userRefSchema } from '../auth/user-ref.js';
 import { employeeNoSchema } from '../employees/canonical-employee.js';
+import { possibleMatchSchema } from '../employees/possible-match.js';
 import { entityCodeSchema } from '../org/entities.js';
 import { syncRunStatusSchema, syncTriggerSchema } from './connector.js';
 
@@ -71,6 +72,8 @@ export const syncPreviewItemSchema = z.object({
   field: z.string().nullable(),
   before: z.unknown(),
   after: z.unknown(),
+  /** CREATE only: existing employees who may be the same person, for HR to check. Never merged. */
+  possibleMatches: z.array(possibleMatchSchema).optional(),
 });
 
 export type SyncPreviewItem = z.infer<typeof syncPreviewItemSchema>;
