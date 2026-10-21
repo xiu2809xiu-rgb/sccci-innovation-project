@@ -29,7 +29,12 @@
     "reports": "报表",
     "governance": "治理",
     "audit": "审计日志",
+    "classification": "数据分级",
+    "transfers": "跨境传输登记册",
+    "retention": "数据保留",
     "analytics": "分析",
+    "clickstream": "点击流",
+    "aiUsage": "AI 用量",
     "settings": "设置",
     "connectorDetail": "系统连接"
   },

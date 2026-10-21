@@ -1,9 +1,24 @@
-import { useTranslation } from 'react-i18next';
+import { useMatch } from 'react-router';
 
-import { PlannedPage } from '@/components/common/planned-page';
+import { AccessPage } from './pages/access-page';
+import { AuditLogPage } from './pages/audit-log-page';
+import { ClassificationPage } from './pages/classification-page';
+import { RetentionPage } from './pages/retention-page';
+import { TransfersPage } from './pages/transfers-page';
 
-/** Governance and the audit-log viewer (area 4), head start in Phase 6. */
+/**
+ * Governance (area 4): the access policy, the classification, transfer and
+ * retention registers, and the audit log. One lazy route module serves every
+ * path. All of it is real data, read only until area 4 builds administration.
+ */
 export function GovernancePage() {
-  const { t } = useTranslation('governance');
-  return <PlannedPage title={t('title')} description={t('description')} />;
+  const classification = useMatch('/governance/classification');
+  const transfers = useMatch('/governance/transfers');
+  const retention = useMatch('/governance/retention');
+  const audit = useMatch('/governance/audit');
+  if (classification) return <ClassificationPage />;
+  if (transfers) return <TransfersPage />;
+  if (retention) return <RetentionPage />;
+  if (audit) return <AuditLogPage />;
+  return <AccessPage />;
 }

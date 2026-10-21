@@ -1,4 +1,115 @@
 {
-  "title": "分析",
-  "description": "可观测性、产品分析与 AI 使用情况。"
+  "nav": {
+    "label": "分析栏目",
+    "observability": "可观测性",
+    "clickstream": "点击流",
+    "aiUsage": "AI 用量"
+  },
+  "window": {
+    "7": "最近 7 天",
+    "30": "最近 30 天",
+    "90": "最近 90 天",
+    "label": "时间范围"
+  },
+  "asTable": "以表格显示",
+  "date": "日期",
+  "observability": {
+    "title": "可观测性",
+    "description": "服务健康状况，以及 API 每日的请求量、错误数和延迟。",
+    "services": "服务",
+    "servicesDescription": "每项依赖服务的状态及其响应速度。",
+    "state": {
+      "UP": "正常",
+      "DEGRADED": "性能下降",
+      "DOWN": "宕机"
+    },
+    "latency": "响应时间 {{value}}",
+    "requests": "请求数",
+    "errors": "错误数",
+    "errorRate": "错误率",
+    "requestsPerDay": "每日请求数",
+    "requestsCaption": "每日请求数与错误数",
+    "p95PerDay": "每日第 95 百分位延迟",
+    "p95Caption": "每日第 95 百分位延迟（毫秒）",
+    "p95": "p95 延迟",
+    "empty": "此时间范围内没有记录到请求。"
+  },
+  "clickstream": {
+    "title": "点击流",
+    "description": "汇通的使用情况，仅来自已同意的会话：只记录路由模式，从不记录个人或具体网址。",
+    "sessions": "会话数",
+    "pageViews": "页面浏览量",
+    "perSession": "每会话浏览数",
+    "consentNote": "未同意或开启了全局隐私控制（GPC）的会话不会发送任何数据，也不计入统计。",
+    "funnel": "演示流程漏斗",
+    "funnelDescription": "依次经过前面各步骤并到达每一步的会话数。",
+    "funnelCaption": "演示流程各步骤的会话数",
+    "step": "步骤",
+    "shareOfFirst": "占登录会话的比例",
+    "share": "占比",
+    "steps": {
+      "sign-in": "登录",
+      "overview": "概览",
+      "employees": "员工主数据",
+      "new-mapping": "新建 AI 映射",
+      "consolidation": "考勤汇总"
+    },
+    "pages": "浏览最多的页面",
+    "pagesCaption": "按路由模式统计的页面浏览量与会话数",
+    "route": "路由模式",
+    "views": "浏览量",
+    "languages": "界面语言",
+    "languagesCaption": "按界面语言统计的会话数",
+    "language": "语言",
+    "locale": {
+      "en": "英文",
+      "zh-CN": "简体中文"
+    },
+    "empty": "此时间范围内没有记录到已同意的会话。"
+  },
+  "aiUsage": {
+    "title": "AI 用量与成本",
+    "description": "按功能、人员、模型和日期统计的 AI 调用 Token 数、预估成本和结果。",
+    "costNote": "成本按配置的参考价格估算，并非账单。预算与告警功能将随成本管理一同提供。",
+    "calls": "调用次数",
+    "tokens": "Token 数",
+    "tokensSplit": "输入 {{input}}，输出 {{output}}",
+    "input": "输入 Token",
+    "output": "输出 Token",
+    "cost": "预估成本",
+    "errorRate": "错误率",
+    "errorRateHint": "调用失败及输出未通过校验的情况。被人力资源驳回的提议不算错误。",
+    "latency": "延迟中位数",
+    "tokensPerDay": "每日 Token 数",
+    "tokensCaption": "每日 Token 数与预估成本",
+    "byFeature": "按功能",
+    "byFeatureCaption": "按功能统计的调用次数、Token 数和成本",
+    "feature": "功能",
+    "features": {
+      "schema-mapping": "字段映射助手",
+      "discrepancy-explainer": "差异解释"
+    },
+    "byUser": "按人员",
+    "byUserCaption": "按人员统计的调用次数、Token 数和成本",
+    "person": "人员",
+    "backgroundJobs": "后台任务",
+    "byModel": "按模型",
+    "byModelCaption": "按提供方和模型统计的调用次数、Token 数和成本",
+    "model": "模型",
+    "providers": {
+      "MOCK": "模拟：确定性规则，数据不离开汇通",
+      "BEDROCK": "AWS Bedrock",
+      "OPENAI": "OpenAI"
+    },
+    "outcomes": "调用结果",
+    "outcomesCaption": "按结果统计的调用次数",
+    "outcome": "结果",
+    "outcomeLabel": {
+      "SUCCESS": "成功",
+      "REJECTED": "被人力资源驳回",
+      "INVALID_OUTPUT": "输出未通过校验",
+      "ERROR": "失败"
+    },
+    "empty": "此时间范围内没有记录到 AI 调用。"
+  }
 }

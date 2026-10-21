@@ -1,4 +1,115 @@
 {
-  "title": "Analytics",
-  "description": "Observability, product analytics and AI usage."
+  "nav": {
+    "label": "Analytics sections",
+    "observability": "Observability",
+    "clickstream": "Clickstream",
+    "aiUsage": "AI usage"
+  },
+  "window": {
+    "7": "Last 7 days",
+    "30": "Last 30 days",
+    "90": "Last 90 days",
+    "label": "Time window"
+  },
+  "asTable": "Show as a table",
+  "date": "Date",
+  "observability": {
+    "title": "Observability",
+    "description": "Service health, and the API's requests, errors and latency by day.",
+    "services": "Services",
+    "servicesDescription": "Each dependency's state and how fast it answers.",
+    "state": {
+      "UP": "Up",
+      "DEGRADED": "Degraded",
+      "DOWN": "Down"
+    },
+    "latency": "Responds in {{value}}",
+    "requests": "Requests",
+    "errors": "Errors",
+    "errorRate": "Error rate",
+    "requestsPerDay": "Requests per day",
+    "requestsCaption": "Requests and errors per day",
+    "p95PerDay": "95th-percentile latency per day",
+    "p95Caption": "95th-percentile latency per day, in milliseconds",
+    "p95": "p95 latency",
+    "empty": "No request was recorded in this window."
+  },
+  "clickstream": {
+    "title": "Clickstream",
+    "description": "How HuiTong is used, from sessions that consented: route patterns only, never people or concrete URLs.",
+    "sessions": "Sessions",
+    "pageViews": "Page views",
+    "perSession": "Views per session",
+    "consentNote": "Sessions without consent, or with Global Privacy Control on, send nothing and are not counted.",
+    "funnel": "The demo journey as a funnel",
+    "funnelDescription": "Sessions that reached each step, having passed the steps before it.",
+    "funnelCaption": "Sessions at each step of the demo journey",
+    "step": "Step",
+    "shareOfFirst": "Share of sign-ins",
+    "share": "Share",
+    "steps": {
+      "sign-in": "Sign in",
+      "overview": "Overview",
+      "employees": "Employee master",
+      "new-mapping": "New AI mapping",
+      "consolidation": "Consolidation"
+    },
+    "pages": "Most viewed pages",
+    "pagesCaption": "Page views and sessions by route pattern",
+    "route": "Route pattern",
+    "views": "Views",
+    "languages": "Interface language",
+    "languagesCaption": "Sessions by interface language",
+    "language": "Language",
+    "locale": {
+      "en": "English",
+      "zh-CN": "Simplified Chinese"
+    },
+    "empty": "No consented session was recorded in this window."
+  },
+  "aiUsage": {
+    "title": "AI usage and cost",
+    "description": "Tokens, estimated cost and outcome of AI calls, by feature, person, model and day.",
+    "costNote": "Costs are estimates at the configured reference prices, not an invoice. Budgets and alerts arrive with cost administration.",
+    "calls": "Calls",
+    "tokens": "Tokens",
+    "tokensSplit": "{{input}} in, {{output}} out",
+    "input": "Input tokens",
+    "output": "Output tokens",
+    "cost": "Estimated cost",
+    "errorRate": "Error rate",
+    "errorRateHint": "Failed calls and output that failed validation. A proposal HR rejected is not an error.",
+    "latency": "Median latency",
+    "tokensPerDay": "Tokens per day",
+    "tokensCaption": "Tokens and estimated cost per day",
+    "byFeature": "By feature",
+    "byFeatureCaption": "Calls, tokens and cost by feature",
+    "feature": "Feature",
+    "features": {
+      "schema-mapping": "Schema-mapping assistant",
+      "discrepancy-explainer": "Discrepancy explainer"
+    },
+    "byUser": "By person",
+    "byUserCaption": "Calls, tokens and cost by person",
+    "person": "Person",
+    "backgroundJobs": "Background jobs",
+    "byModel": "By model",
+    "byModelCaption": "Calls, tokens and cost by provider and model",
+    "model": "Model",
+    "providers": {
+      "MOCK": "Mock: deterministic, and no data leaves HuiTong",
+      "BEDROCK": "AWS Bedrock",
+      "OPENAI": "OpenAI"
+    },
+    "outcomes": "Outcomes",
+    "outcomesCaption": "Calls by outcome",
+    "outcome": "Outcome",
+    "outcomeLabel": {
+      "SUCCESS": "Succeeded",
+      "REJECTED": "Rejected by HR",
+      "INVALID_OUTPUT": "Output failed validation",
+      "ERROR": "Failed"
+    },
+    "empty": "No AI call was recorded in this window."
+  }
 }

@@ -1,16 +1,8 @@
-import { expect, test, type Page } from '@playwright/test';
+import { expect, test } from '@playwright/test';
 
 import { expectNoAxeViolations } from './support/axe.ts';
 import { DEMO_ROLES, signInAs } from './support/demo-session.ts';
-
-/** The columns and wide tables scroll inside their own regions; the page never scrolls sideways. */
-async function expectNoSidewaysScroll(page: Page): Promise<void> {
-  // A string expression, because the e2e TypeScript config has no DOM types.
-  const overflow = await page.evaluate<number>(
-    'document.documentElement.scrollWidth - document.documentElement.clientWidth',
-  );
-  expect(overflow).toBe(0);
-}
+import { expectNoSidewaysScroll } from './support/layout.ts';
 
 /**
  * Area 3's screens through the real stack, with axe on each. The rules and

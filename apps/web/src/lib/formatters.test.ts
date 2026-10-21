@@ -27,6 +27,18 @@ describe('Formatters', () => {
     expect(zh.date('2026-01-05')).toBe('2026年1月5日');
   });
 
+  it('makes axis labels short in both languages', () => {
+    expect(en.dayMonth('2026-10-05')).toBe('Oct 5');
+    expect(zh.dayMonth('2026-10-05')).toBe('10月5日');
+    expect(en.compact(12_400)).toBe('12.4K');
+    expect(zh.compact(12_400)).toBe('1.2万');
+  });
+
+  it('joins a list the way each language does', () => {
+    expect(en.list(['Singapore', 'China HQ'])).toBe('Singapore and China HQ');
+    expect(zh.list(['新加坡', '中国总部'])).toBe('新加坡和中国总部');
+  });
+
   it('says how long ago something happened', () => {
     const now = new Date('2026-10-20T08:00:00.000Z');
     expect(en.relativeTime('2026-10-20T07:57:00.000Z', now)).toBe('3 minutes ago');
