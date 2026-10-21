@@ -50,11 +50,15 @@ function fakeFetch(routes: FakeRoutes): typeof fetch {
   };
 }
 
-/** Mounts the real route tree at `path` with a fake API, for page and routing tests. */
+/**
+ * Mounts the real route tree at `path` with a fake API, for page and routing
+ * tests. Live updates are off unless the test passes its own realtime client.
+ */
 export function renderApp(
   path: string,
   routes: FakeRoutes = {},
   language: Locale = 'en',
+  overrides: Partial<Pick<AppDependencies, 'realtime'>> = {},
 ): RenderResult & { dependencies: AppDependencies } {
   // AppProviders keeps i18n in step with the preferences store, as the real app does.
   usePreferences.setState({ language });
@@ -64,7 +68,7 @@ export function renderApp(
     api: new ApiClient({ fetchImpl: fakeFetch(routes), readCookies: () => 'ht_csrf=test-csrf' }),
     queryClient,
     analytics: new AnalyticsTracker({ hasConsent: () => false }),
-    realtime: new RealtimeClient({ createSource: null }),
+    realtime: overrides.realtime ?? new RealtimeClient({ createSource: null }),
     i18n: createI18n(language),
   };
   const router = createMemoryRouter(createAppRoutes(dependencies), { initialEntries: [path] });

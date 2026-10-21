@@ -16,7 +16,9 @@ vi.mock('./integration-teaser-scene', () => ({
 describe('IntegrationTeaser', () => {
   beforeEach(() => {
     vi.spyOn(HTMLCanvasElement.prototype, 'getContext').mockImplementation(((kind: string) =>
-      kind === 'webgl2' ? ({} as RenderingContext) : null) as HTMLCanvasElement['getContext']);
+      kind === 'webgl2'
+        ? ({ getExtension: () => null } as unknown as RenderingContext)
+        : null) as HTMLCanvasElement['getContext']);
   });
 
   it('catches a failing 3D scene and keeps the static drawing and its description', async () => {

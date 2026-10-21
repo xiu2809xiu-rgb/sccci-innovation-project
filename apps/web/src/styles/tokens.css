@@ -117,6 +117,8 @@
   /* Glass panels over the 3D scene only */
   --glass: oklch(1 0 0 / 0.72);
   --glass-border: oklch(1 0 0 / 0.6);
+  /* The integration map's system pods: light satin here, mid grey on the dark stage */
+  --scene-pod: var(--neutral-300);
 
   /* Layout */
   --header-height: 3.5rem;
@@ -193,6 +195,7 @@
 
   --glass: oklch(0.19 0.005 75 / 0.7);
   --glass-border: oklch(1 0 0 / 0.08);
+  --scene-pod: var(--neutral-500);
 
   color-scheme: dark;
 }

@@ -1,4 +1,46 @@
 {
   "title": "集成地图",
-  "description": "实时查看数据在各连接系统之间的流动。"
+  "description": "已连接系统之间的数据流动，实时呈现。",
+  "scene": {
+    "label": "已连接系统的 3D 地图",
+    "loading": "正在加载 3D 地图",
+    "summary_one": "有 {{count}} 个系统已连接汇通。系统列表列出该系统及其状态。",
+    "summary_other": "有 {{count}} 个系统已连接汇通。系统列表列出每个系统及其状态。",
+    "fallback": "集成地图静态图：左侧为新加坡的系统，右侧为中国总部的系统，均连接至汇通核心。",
+    "fallbackNote": "此浏览器无法绘制 3D，因此显示静态图。列表中有每个系统的实时状态。",
+    "hidden_one": "另有 {{count}} 个见列表",
+    "hidden_other": "另有 {{count}} 个见列表"
+  },
+  "motion": {
+    "pause": "暂停动画",
+    "play": "播放动画",
+    "reduced": "静止画面：您的系统要求减少动态效果。"
+  },
+  "state": {
+    "connected": "已连接",
+    "syncing": "同步中",
+    "degraded": "部分异常",
+    "error": "错误",
+    "idle": "未启用",
+    "retiring": "正在停用"
+  },
+  "cluster": {
+    "SG": "新加坡",
+    "CN": "中国总部",
+    "OTHER": "其他系统"
+  },
+  "legend": {
+    "label": "颜色含义"
+  },
+  "list": {
+    "title": "系统",
+    "description": "每个已连接的系统及其状态。打开一个系统可查看其设置和同步记录。",
+    "lastSync": "上次同步：{{time}}",
+    "neverSynced": "尚未同步"
+  },
+  "empty": {
+    "title": "尚未连接任何系统",
+    "description": "连接系统后即可在地图上看到它。",
+    "action": "前往系统连接"
+  }
 }

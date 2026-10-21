@@ -1,4 +1,46 @@
 {
   "title": "Integration map",
-  "description": "How data flows between the connected systems, live."
+  "description": "How data flows between the connected systems, live.",
+  "scene": {
+    "label": "3D map of the connected systems",
+    "loading": "Loading the 3D map",
+    "summary_one": "{{count}} system is connected to HuiTong. The list of systems names it and its state.",
+    "summary_other": "{{count}} systems are connected to HuiTong. The list of systems names each one and its state.",
+    "fallback": "A still of the integration map: Singapore's systems on the left and China HQ's on the right, each connected to the HuiTong core.",
+    "fallbackNote": "This browser cannot draw 3D, so a still is shown. The list has the live state of every system.",
+    "hidden_one": "{{count}} more in the list",
+    "hidden_other": "{{count}} more in the list"
+  },
+  "motion": {
+    "pause": "Pause motion",
+    "play": "Play motion",
+    "reduced": "A still frame: your system asks for reduced motion."
+  },
+  "state": {
+    "connected": "Connected",
+    "syncing": "Syncing",
+    "degraded": "Degraded",
+    "error": "Error",
+    "idle": "Not live",
+    "retiring": "Being retired"
+  },
+  "cluster": {
+    "SG": "Singapore",
+    "CN": "China HQ",
+    "OTHER": "Other systems"
+  },
+  "legend": {
+    "label": "What the colours mean"
+  },
+  "list": {
+    "title": "Systems",
+    "description": "Every connected system and its state. Open one for its settings and sync history.",
+    "lastSync": "Last sync {{time}}",
+    "neverSynced": "Not synced yet"
+  },
+  "empty": {
+    "title": "No system is connected yet",
+    "description": "Connect a system to see it on the map.",
+    "action": "Go to connectors"
+  }
 }

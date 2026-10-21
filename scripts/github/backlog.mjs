@@ -287,6 +287,8 @@ export const EPICS = [
         sprint: 4,
         points: 8,
         priority: 'should',
+        done: true,
+        deliveredBy: 'feat/integration-map-scene',
         story:
           'As a manager, I want to see the connected systems and data flowing between them, so that I understand the integration at a glance.',
         acceptance: [

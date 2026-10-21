@@ -67,8 +67,23 @@ Legend: `[x]` done and verified, `[~]` in progress, `[ ]` not started, `[!]` blo
 
 ### Phase 7: 3D integration map
 
-- [x] Blender scripts -> GLB -> gltf-transform (<= 1.5 MB): [`assets-src/3d/`](../assets-src/3d/README.md), built headless with Blender 5.2.1 LTS. The core is 16.6 KB, the node pod 28.5 KB and the platform 51.0 KB; with the fallback still (55.2 KB), that is 151.3 KB of the 1.5 MB budget. Quantised rather than Draco-compressed, because the CSP allows no WebAssembly ([ADR 0020](adr/0020-3d-assets-without-wasm-decoders.md))
-- [ ] R3F scene with postprocessing, live status, interaction, accessibility fallbacks
+- [x] Blender scripts -> GLB -> gltf-transform (<= 1.5 MB): [`assets-src/3d/`](../assets-src/3d/README.md), built headless with Blender 5.2.1 LTS. The core is 16.6 KB, the node pod 28.5 KB and the platform 51.0 KB; with the fallback still (92.7 KB), that is 188.8 KB of the 1.5 MB budget. Quantised rather than Draco-compressed, because the CSP allows no WebAssembly ([ADR 0020](adr/0020-3d-assets-without-wasm-decoders.md))
+- [x] R3F scene ([`features/integration-map/`](../apps/web/src/features/integration-map/)): the crystal core with its inner light, a platform per region and a pod per system, with packets on arcs to the core, lit by the stored state and by live `sync.progress` events. ACES tone mapping, a Lightformer environment, soft PCF shadows, bloom, a tilt-shift depth of field and a CSS vignette over a transparent canvas ([ADR 0021](adr/0021-integration-map-scene.md)). The camera drifts until the user orbits; hovering names a pod, and clicking opens its connector. The list beside the scene carries the same states and links for keyboard and screen-reader users, with a pause control (WCAG 2.2.2), a still frame under reduced motion and the Blender still without WebGL. The scene is its own chunk (75.7 KB gzip, plus 248.6 KB of three.js and React Three Fiber shared with the sign-in teaser); 35 unit and page tests, and an e2e spec with axe in both languages
+- [x] Frame rate measured on the production bundle, below
+
+Frame rate, measured in Chromium (ANGLE on Direct3D 11) on the team lead's laptop, a Core i9-12900H with two GPUs, at full quality (the pixel ratio matched the device's). Headless Chromium does not wait for the display, so the rates are uncapped: on a 60 Hz screen each configuration holds 60 fps, with the headroom shown. The scene had 12 pods, because the local database held 17 draft Malaysia connectors from earlier e2e runs; a fresh seed draws 6.
+
+| GPU                        | Viewport       | Mean fps | 95th / 99th percentile frame | Frames over 20 ms |
+| -------------------------- | -------------- | -------- | ---------------------------- | ----------------- |
+| NVIDIA RTX 3060 Laptop     | 1440×900, 1×   | 139.6    | 10.0 / 10.1 ms               | 0 of 1,396        |
+| NVIDIA RTX 3060 Laptop     | 1280×720, 1.5× | 118.4    | 10.1 / 13.4 ms               | 1 of 1,185        |
+| Intel Iris Xe (integrated) | 1440×900, 1×   | 93.2     | 13.4 / 14.5 ms               | 0 of 931          |
+| Intel Iris Xe (integrated) | 1280×720, 1.5× | 86.8     | 13.6 / 16.7 ms               | 4 of 868          |
+| Intel Iris Xe (integrated) | 1920×1080, 1×  | 89.5     | 13.5 / 16.6 ms               | 0 of 895          |
+
+- **The honest limit.** The integrated GPU is the closer stand-in for a mid-range office laptop, but this CPU is faster than a mid-range one, so a mid-range laptop has less headroom than these figures show. The scene has not been measured on one.
+- **Paused means paused.** WebGL draw calls counted over two seconds: about 15,000 to 23,000 while the scene runs, and none while it is paused, in a hidden tab or scrolled off screen.
+- **Adaptive quality, fixed by measuring.** The first measurement found drei's PerformanceMonitor locking the RTX 3060 to low quality after 10.5 seconds. With `nextQuality` ([ADR 0021](adr/0021-integration-map-scene.md)), the scene held the full pixel ratio of 1.5 for the whole 25-second trace.
 
 ### Phase 8: Diagrams
 

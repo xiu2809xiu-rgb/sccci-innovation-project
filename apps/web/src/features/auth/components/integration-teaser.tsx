@@ -7,6 +7,7 @@ import { useAutoplayWindow } from '@/hooks/use-autoplay-window';
 import { useTokenColor } from '@/hooks/use-token-color';
 import { cssColorToHex } from '@/lib/css-color';
 import { cn } from '@/lib/utils';
+import { supportsWebGl } from '@/lib/webgl';
 
 import type { IntegrationTeaserSceneProps, TeaserColors } from './integration-teaser-scene';
 
@@ -18,15 +19,6 @@ const IntegrationTeaserScene = lazy<ComponentType<IntegrationTeaserSceneProps>>(
     .then((module) => ({ default: module.IntegrationTeaserScene }))
     .catch(() => ({ default: TeaserFallback })),
 );
-
-function supportsWebGl(): boolean {
-  try {
-    const canvas = document.createElement('canvas');
-    return Boolean(canvas.getContext('webgl2') ?? canvas.getContext('webgl'));
-  } catch {
-    return false;
-  }
-}
 
 /**
  * A static hub-and-spoke drawing: shown while the 3D scene loads, and in its place when there is
