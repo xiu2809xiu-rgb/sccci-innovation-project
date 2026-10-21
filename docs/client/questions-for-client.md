@@ -12,7 +12,7 @@ We ask for these three sample packs as soon as the meeting is booked, so the ses
 | **B** | The HQ reporting template, one example completed by hand, and the approved category map                     | The report template and the leave-category rules (capability D)                             | Q-23, Q-24, Q-28, Q-29       |
 | **C** | An example approved OA manpower request, with the onboarding checklist or workflow history that followed it | The OA adapter, the onboarding workflow and the draft-to-active rule (capabilities A and C) | Q-32, Q-33, Q-35             |
 
-**Azri's six consolidated questions.** Azri's plan condensed the discovery into six questions. Each is already asked below, so they are mapped onto our ids rather than added again. Where a question of ours missed part of his, its wording was extended.
+**Azri's six consolidated questions.** Azri's plan condensed the discovery into six questions. Each is already asked below, so they are mapped onto our ids rather than added again. Where a question of ours missed part of Azri's, its wording was extended.
 
 | #   | Azri's question, in short                                                                                                                        | Asked here                   | What changed                                                                         |
 | --- | ------------------------------------------------------------------------------------------------------------------------------------------------ | ---------------------------- | ------------------------------------------------------------------------------------ |

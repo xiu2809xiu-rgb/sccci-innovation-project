@@ -1,6 +1,6 @@
-# Build report: platform base (prompt 001)
+# Build report
 
-Status of the platform-base build on branch `feat/platform-base`. The checklist below is kept current as each phase lands; the sections after it summarise verification evidence.
+Status of the platform-base build ([prompt 001](ai/prompts/001-platform-base.md)) and of the ideas adopted from Azri's integrated plan ([prompt 002](ai/prompts/002-adopt-azri-plan.md)). Each task reaches `main` through its own pull request. The checklists are kept current as work lands; the sections after them summarise the verification evidence.
 
 ## Phase checklist
 
@@ -82,6 +82,23 @@ Legend: `[x]` done and verified, `[~]` in progress, `[ ]` not started, `[!]` blo
 
 - [ ] Security checklist + dependency audit; axe pass; Lighthouse; secrets and attribution sweeps
 - [ ] README, CONTRIBUTING, final build report; clean-state verification
+
+## Prompt 002 checklist: Azri's integrated plan
+
+Azri wrote a separate plan for Problem Statement #17. The team kept its own stack, ownership areas and backlog, and folded in ten of the plan's ideas, each credited to Azri where it is used. Each item went through its own branch and pull request. Legend as above.
+
+- [~] **1. One hero journey across all four areas.** [`docs/agile/hero-journey.md`](agile/hero-journey.md) (#97): eight steps from an OA approval to the overview, each with its owning area, as the demo spine for W5 and W18 with a presenter slot per area. E2E #1 to #3 are Playwright specs (#111, story P-9): step 1 of E2E #1 (the signed approval event reaches HuiTong), the AI mapping and approval of E2E #2, and HQ's refusal in the record drawer and the raw API of E2E #3 run in CI today. The other steps are `fixme` with their story keys until areas 2 and 3 and stories A-5, B-6, D-4 and F-2 land.
+- [~] **2. Draft-to-active lifecycle.** A written rule (#105) in CLAUDE.md, assumption A-21, an ADR 0002 amendment, the GRS register, module ownership, the area 1 guide and the journey maps: an OA approval creates only a `PRE_HIRE` draft, which becomes active after the onboarding milestones and the verified SG HR record, and a write to a system of record needs an audited approval of a preview, demonstrated only on the mocks. The code is story B-6, with C-3 in sprint 9; the area 2 guide (Phase 6) starts from this rule.
+- [x] **3. Identity matching rule** (#108, B-5). Only the same group employee number confirms a match. A sync preview lists look-alike records (the same Chinese name, the same romanisation, the same names in another order, the same email in another letter case) as possible matches for HR, never merged. Its tests include 陈伟 and 陈玮, two people who are both "Chen Wei", and 陈伟明 romanised as both "Tan Wei Ming" and "Chen Weiming". A work email another employee already holds is refused as `WORK_EMAIL_IN_USE`.
+- [x] **4. Per-destination field allowlist, default deny** (#110, B-7). The cross-border transfer register is the allowlist, so there is no second mechanism: another entity's field is shown only when an ACTIVE entry shares it with the reader's entity, in every API path, and that entity's records are hidden whole while any field the list shows, searches, filters or sorts by is withheld. Entries are versioned, and a response that withholds fields is audited with the entry versions. Area 3's export uses the same `FieldMasker.withheld`; area 4 administers the register (F-4).
+- [x] **5. Chinese-data robustness** (#109, A-7). Samples in UTF-8 with or without a byte-order mark, GBK, GB18030 and Excel read correctly, with byte-exact fixtures. HR chooses between two readings when the bytes read sensibly both ways, and other encodings are refused with how to save the file as UTF-8. [`docs/architecture/data-formats.md`](architecture/data-formats.md) records each system's date formats, time zones and effective dates.
+- [x] **6. Honesty labels, and no identifiers to AI** (#106, A-8; #107, E-5). A "Mock" badge on every connector a HuiTong mock stands in for, a "Mock AI" badge on output from the deterministic provider, and the steps to switch to Bedrock for a demo. The AI explainer carries no employee identifier and withholds identifying values, and a column that names a person never becomes a category column. The rule is in CLAUDE.md, the GRS register and an ADR 0011 amendment.
+- [x] **7. Three sample packs first** (#97). "Three items to request first" opens [`docs/client/questions-for-client.md`](client/questions-for-client.md). Azri's six consolidated questions map onto existing ids, and Q-08, Q-24, Q-33, Q-47 and Q-55 were extended where they missed part of Azri's.
+- [x] **8. Failure and edge-case matrix** (#97). The [test plan](agile/test-plan.md) lists approvals, identity and sync, input files, AI and policy, and recovery cases, each with its owning area and the test or story that covers it.
+- [x] **9. Measurement protocol** (#97). The [success metrics](design-thinking/success-metrics.md) define how manual steps removed, leave-report preparation time and new-subsidiary setup effort are measured, labelled as laboratory estimates on synthetic data until the client gives baselines.
+- [x] **10. Demo reliability and backups** (#97). P-8 gains a one-click reset that refuses non-demo databases, a timed rehearsal, a recorded backup demo and a tested Docker fallback, all built in Phase 10. [Module ownership](team/module-ownership.md#backup-owners) has a backup owner per area (TBD until the owners are agreed), and every member reviews at least one teammate's critical pull request.
+- [x] **Not adopted.** [ADR 0019](adr/0019-ideas-not-adopted-from-azri-plan.md) (#97): the FastAPI backend, the plan's ownership split and its generic 12-week roadmap, with the reasons.
+- [x] **Finish.** This checklist and its verification log, the [AI usage log](ai/ai-usage-log.md) and the [traceability matrix](requirements-traceability.md).
 
 ## Verification log
 
@@ -276,6 +293,48 @@ Found while gathering the evidence, and filed for their own branches:
 
 Stories with an unmet criterion stay open until their fix merges: A-2 (#13), B-4 (#22), E-1 (#24) and E-3 (#26).
 
+### Follow-up fixes (21 Oct 2026)
+
+The gaps filed above were fixed one per pull request, with all nine CI checks green before each merge. The four stories they held open are closed.
+
+| Pull request  | Fix                                                                                                                                                                                        | Closes                                         |
+| ------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ---------------------------------------------- |
+| #88           | The AI explainer is told the employee number instead of the name, and values above Internal are sent as `null`. #107 later removed the employee number too                                 | #79, #77, E-3 #26                              |
+| #89           | An apply writes exactly what its preview showed: the preview stores a fingerprint of its changes, and an apply whose source has changed since fails with `SOURCE_CHANGED`, writing nothing | #76, B-4 #22                                   |
+| #90           | The mapping wizard and the docs say exactly what reaches the AI: a category column's distinct codes, within limits, and no personal value. ADR 0011 gains an amendment                     | #67, E-1 #24                                   |
+| #91           | Gender columns are withheld like national ID columns, and a withheld column, even its header, never reaches the prompt                                                                     | #81                                            |
+| #92           | 年假 moves from A-2's acceptance criteria to D-2, because leave categories are area 3's mapping                                                                                            | #68, A-2 #13                                   |
+| #93           | Tests for the overview's out-of-date notice                                                                                                                                                | #69                                            |
+| #95           | The first CodeQL and Scorecard findings, each fixed or accepted with its reason in `docs/security/security-testing.md`                                                                     | #82                                            |
+| #94, #96, #70 | Dependabot ignores runtime majors, so Node.js 24 stays until an ADR changes it; CI's Redis matches compose (8.10.2); Recharts 3.10.1 without the deprecated legend prop                    | Dependabot's #72 to #74, closed with a pointer |
+
+### Prompt 002 (21 Oct 2026)
+
+| Check                           | Result                                                                                                                                                                                      |
+| ------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| CI on every pull request        | #97 and #105 to #111: all nine checks green before each merge                                                                                                                               |
+| Tests on Linux (CI on #111)     | 548 pass: web 259, api 212 (unit tests, and integration tests against PostgreSQL and Redis), shared 27, synthetic-data 23, the three mocks 27                                               |
+| End-to-end (CI on #111)         | 14 tests against the production images: 4 pass (the smoke test and the parts of E2E #1 to #3 that are built) and 10 are `fixme` with their story keys. axe is clean at every step that runs |
+| Bundle budget                   | Initial JS 226.6 KB gzip against the 250 KB budget (225.9 KB at the end of Phase 5)                                                                                                         |
+| `pnpm audit --audit-level high` | Passes, with the one documented exception (GHSA-vfj7-8cjw-p6xm, see `pnpm-workspace.yaml`)                                                                                                  |
+| Migrations                      | `connector_is_mock` (#106), which also marks the existing rows, and `transfer_policy_version` (#110)                                                                                        |
+| Screenshots                     | #106, #108, #109 and #110, in English and Chinese, from a Docker build of each branch (`docs/design/screenshots/`)                                                                          |
+| Licence key                     | Absent from every pushed commit: the unpushed commits were scanned before each push, and the value was never printed                                                                        |
+
+Defects found and fixed while verifying:
+
+- Only the Teams and DingTalk connectors said they were mocked. Nothing marked SG HR, CN HQ and OA, which are mocks too, and the AI output carried no label (#106).
+- Writing down the no-identifiers rule showed three gaps (#107): the explainer still sent the employee number, a conflict on a name or a work email sent both values, and a "Department Head" (部门负责人) column could pass a person's name to the model as a category code.
+- A review of the identity branch before pushing found that a work email already held by another employee hit the database's unique key and stopped the whole sync run; it is now a `WORK_EMAIL_IN_USE` error on that record, and the run goes on. The same review found that the first possible-match lookup queried once per record, could not compare normalised names and capped its results; a preview now reads every employee's identity details once and compares them in memory (#108).
+- The integration tests polled run status fast enough to reach the API's rate limit; they poll every 250 ms (#108).
+- The reason on a withheld field said it could not "leave Singapore", which is wrong for CN01 data; it now names the cross-border transfer (#110).
+- With ten or more notifications, the bell's accessible name did not contain its visible "9+" (WCAG 2.5.3). The hero-journey specs found it on a long-lived stack; a fresh CI stack never has that many (#111).
+
+Notes:
+
+- The review and critique planned as workflows for the allowlist (#110) stopped at the session limit before reporting, so both were done directly against the code.
+- Local test runs used a portable Node.js 24.22.0, because the machine's Node.js 24.15.0 aborts API test workers (manual step 8).
+
 ## Manual steps for the owner
 
 Step 1 records a decision already taken. The others improve the local setup.
@@ -286,10 +345,11 @@ Step 1 records a decision already taken. The others improve the local setup.
 4. **corepack (optional).** `corepack enable` fails without admin rights because it writes shims into `C:\Program Files\nodejs`. pnpm was installed with `npm i -g pnpm` instead, which needs no admin rights.
 5. **Docker Desktop.** It was started from the terminal for this build. Enable "Start Docker Desktop when you sign in" in Docker Desktop settings if you want it running by default.
 6. **shadcn MCP server.** `.mcp.json` registers the shadcn MCP server (pointed at `apps/web`). It loads in the next Claude Code session; approve the `shadcn` server when prompted. If it fails to start on native Windows, register it locally with `claude mcp add shadcn -- cmd /c npx -y shadcn@4.22.0 mcp --cwd apps/web`.
-7. **CODEOWNERS.** Replace the placeholder handles in `.github/CODEOWNERS` with real GitHub usernames once areas 2-4 are assigned, then uncomment the rules.
+7. **CODEOWNERS and backup owners.** Replace the placeholder handles in `.github/CODEOWNERS` with real GitHub usernames once areas 2-4 are assigned, then uncomment the rules. Name a backup owner for each area in [`docs/team/module-ownership.md`](team/module-ownership.md#backup-owners) at the same time.
 8. **Upgrade Node.js to 24.22.** This machine runs Node 24.15.0 from `C:\Program Files\nodejs`, while `.node-version`, CI and the Docker images use 24.22.0, and `package.json` now asks for 24.22 or newer. On 24.15.0 about one API integration test file in eight died with a silent native abort (`Worker exited unexpectedly with exit code 3221226505`, 0xC0000409) in both the forks and threads pools; on 24.22.0 there were none in 88 file runs (20 Oct 2026). Install 24.22 from nodejs.org (the installer needs admin rights).
 9. **Sign in to the GitHub CLI (done, 21 Oct 2026).** The task branches are pushed and merged through pull requests, and the backlog and board are seeded.
 10. **Wiki.** The wiki is off. Turn it on (Settings, Features), create any first page in the browser so that GitHub creates its repository, then run `node scripts/github/publish-wiki.mjs`.
 11. **Board grouping.** On the HuiTong delivery board, open the Backlog view and choose Group by, then Sprint, once. GitHub's API cannot set grouping.
 12. **Licence file.** Scorecard notes that the repository has no licence file. Choosing one is the team lead's decision, given the licensed React Bits Pro code (#82).
 13. **Two rulesets on `main`.** The `protect-main` ruleset (id 25411321) from 19 Oct requires pull requests, and `Protect main` (id 25503945, from `.github/rulesets/main.json`) adds the required checks and the CodeQL gate. Both apply together without conflict. Delete the older one if you want a single source, kept as code.
+14. **Client sample packs.** At the first client meeting (W2 or W3), ask for the [three sample packs](client/questions-for-client.md#three-items-to-request-first) before the other questions: the SG HR employee-master sample, the HQ reporting template with a completed example, and an approved OA manpower request with its onboarding history. The table there lists what each pack unblocks and which questions it answers.
