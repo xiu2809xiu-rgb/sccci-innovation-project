@@ -274,7 +274,18 @@
         "error": "失败",
         "retry": "重新获取 AI 建议"
       },
-      "submit": "获取 AI 建议"
+      "submit": "获取 AI 建议",
+      "encoding": {
+        "title": "哪种读取方式看起来正确？",
+        "description": "此文件可以按两种文本编码读取。请选择列标题显示正确的一种，助手将按该方式读取文件。",
+        "names": {
+          "utf-8": "UTF-8（Unicode）",
+          "gb18030": "GB18030 或 GBK（简体中文 Excel）"
+        },
+        "separator": "・",
+        "noHeaders": "没有可读的标题",
+        "use": "按此方式读取文件"
+      }
     },
     "review": {
       "aiSuggestion": "AI 建议",

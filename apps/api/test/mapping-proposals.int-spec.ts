@@ -21,6 +21,11 @@ const SAMPLE_PATH = path.resolve(
   '../../web/public/samples/organisation-e-malaysia-hr-export.csv',
 );
 const SAMPLE = readFileSync(SAMPLE_PATH);
+const ENCODINGS = path.resolve(import.meta.dirname, 'fixtures/encodings');
+const encodingFixture = (name: string) => ({
+  content: readFileSync(path.join(ENCODINGS, name)),
+  name,
+});
 const SYSTEM_NAME = 'Organisation E Malaysia HR';
 const NEW_CONNECTOR = {
   kind: 'new',
@@ -37,6 +42,7 @@ describe('AI schema-mapping wizard (integration)', () => {
   function upload(
     client: TestClient,
     file: { content: Buffer; name: string } | null = { content: SAMPLE, name: 'my-hr-export.csv' },
+    encoding?: string,
   ) {
     const call = client.agent
       .post('/api/v1/mapping-proposals')
@@ -44,6 +50,7 @@ describe('AI schema-mapping wizard (integration)', () => {
       .field('sourceSystemName', SYSTEM_NAME)
       .field('entityCode', 'MY01')
       .field('language', 'en');
+    if (encoding) void call.field('encoding', encoding);
     return file ? call.attach('file', file.content, file.name) : call;
   }
 
@@ -142,6 +149,32 @@ describe('AI schema-mapping wizard (integration)', () => {
       const response = await upload(hr, file).expect(400);
       expect((response.body as { error: { code: string } }).error.code).toBe('VALIDATION_FAILED');
     }
+  });
+
+  it('reads a GBK file from Chinese Excel, and asks HR when two encodings fit', async () => {
+    const gbk = await upload(hr, encodingFixture('gbk.csv')).expect(201);
+    expect(proposalEnvelope.parse(gbk.body).data.headers).toEqual([
+      '员工编号',
+      '姓名',
+      '部门',
+      '入职日期',
+      '在职状态',
+    ]);
+
+    const uncertain = await upload(hr, encodingFixture('ambiguous.csv')).expect(422);
+    const { error } = uncertain.body as {
+      error: { code: string; details: { readings: { encoding: string }[] } };
+    };
+    expect(error.code).toBe('SAMPLE_ENCODING_UNCERTAIN');
+    expect(error.details.readings.map((reading) => reading.encoding)).toEqual(['gb18030', 'utf-8']);
+
+    const chosen = await upload(hr, encodingFixture('ambiguous.csv'), 'gb18030').expect(201);
+    expect(proposalEnvelope.parse(chosen.body).data.headers).toEqual(['隆垄', '拢陇', '楼娄搂篓']);
+
+    const latin = await upload(hr, encodingFixture('windows-1252.csv')).expect(422);
+    expect((latin.body as { error: { code: string } }).error.code).toBe(
+      'SAMPLE_ENCODING_UNSUPPORTED',
+    );
   });
 
   it('keeps proposing and approving with HR: administrators can do neither', async () => {

@@ -3,8 +3,10 @@ import {
   ENTITY_CODES,
   entityCodeSchema,
   localeSchema,
+  sampleEncodingReadingsSchema,
   type Locale,
   type MappingProposal,
+  type SampleEncoding,
 } from '@huitong/shared';
 import { ShieldCheck, Sparkles } from 'lucide-react';
 import { useCallback, useId, useState } from 'react';
@@ -27,8 +29,10 @@ import {
 } from '@/components/ui/select';
 import { useEmployeeLabels } from '@/features/employees/hooks/use-employee-labels';
 import { useFormatters } from '@/hooks/use-formatters';
+import { ApiError } from '@/lib/api-error';
 
 import { useProposeMapping } from '../api/mapping-proposals';
+import { EncodingChoice } from './encoding-choice';
 import { fileProblem, SAMPLE } from './sample-file';
 import { SampleFileField } from './sample-file-field';
 
@@ -61,6 +65,8 @@ export function UploadStep({ onProposed }: { onProposed: (proposal: MappingPropo
   const chooseFile = (next: File | null) => {
     setFile(next);
     setFileTouched(true);
+    // A new file needs its own encoding check, not the last file's question.
+    propose.reset();
   };
 
   const loadSample = async () => {
@@ -75,17 +81,28 @@ export function UploadStep({ onProposed }: { onProposed: (proposal: MappingPropo
     if (form.getValues('entityCode') === undefined) form.setValue('entityCode', SAMPLE.entity);
   };
 
+  const send = (values: UploadForm, encoding?: SampleEncoding) => {
+    if (fileProblem(file) !== null || !file) return;
+    propose.mutate({ ...values, file, encoding }, { onSuccess: onProposed });
+  };
+
   const submit = form.handleSubmit((values) => {
     setFileTouched(true);
-    if (fileProblem(file) !== null || !file) return;
-    propose.mutate({ ...values, file }, { onSuccess: onProposed });
+    send(values);
   });
 
+  // The file reads sensibly in two encodings: HR chooses instead of seeing an error.
+  const readings =
+    propose.error instanceof ApiError && propose.error.code === 'SAMPLE_ENCODING_UNCERTAIN'
+      ? sampleEncodingReadingsSchema.safeParse(propose.error.details)
+      : null;
+
+  // A question about the encoding is not a failed call: the chooser takes its place.
   const chip: CallChipStatus = propose.isPending
     ? 'running'
     : propose.isSuccess
       ? 'done'
-      : propose.isError
+      : propose.isError && !readings?.success
         ? 'error'
         : 'idle';
   const languageLabel = (locale: Locale) => t(`wizard.upload.languages.${locale}`);
@@ -162,7 +179,17 @@ export function UploadStep({ onProposed }: { onProposed: (proposal: MappingPropo
         {t('wizard.upload.privacy')}
       </p>
 
-      {propose.isError ? <ErrorState error={propose.error} /> : null}
+      {readings?.success ? (
+        <EncodingChoice
+          readings={readings.data.readings}
+          disabled={propose.isPending}
+          onChoose={(encoding) => {
+            send(form.getValues(), encoding);
+          }}
+        />
+      ) : propose.isError ? (
+        <ErrorState error={propose.error} />
+      ) : null}
 
       <div className="flex flex-wrap items-center justify-between gap-3">
         {chip === 'idle' ? (

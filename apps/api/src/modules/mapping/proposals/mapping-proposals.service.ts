@@ -93,7 +93,7 @@ export class MappingProposalsService {
     if (fields.connectorId && !(await this.proposals.connectorExists(fields.connectorId))) {
       throw new NotFoundError(`Connector ${fields.connectorId}`);
     }
-    const sample = await this.reader.read(file);
+    const sample = await this.reader.read(file, fields.encoding);
     const request = buildMappingRequest(sample, {
       systemName: fields.sourceSystemName,
       language: fields.language,

@@ -1,4 +1,4 @@
-import type { ErrorCode } from '@huitong/shared';
+import type { ErrorCode, SampleEncodingReadings } from '@huitong/shared';
 
 /**
  * Base class for expected failures. The global exception filter turns it into
@@ -79,5 +79,26 @@ export class WebhookSignatureInvalidError extends AppError {
 export class AiOutputInvalidError extends AppError {
   constructor() {
     super('AI_OUTPUT_INVALID', 'The language model returned something HuiTong could not use', 502);
+  }
+}
+
+/** A CSV sample's bytes read sensibly in more than one encoding; HR chooses the reading that looks right. */
+export class SampleEncodingUncertainError extends AppError {
+  constructor(readings: SampleEncodingReadings['readings']) {
+    super(
+      'SAMPLE_ENCODING_UNCERTAIN',
+      'The file could be read in more than one encoding; choose the reading whose headers look right',
+      422,
+      { readings },
+    );
+  }
+}
+
+/** A CSV sample in an encoding HuiTong does not read: only UTF-8 and GB18030 (which includes GBK). */
+export class SampleEncodingUnsupportedError extends AppError {
+  constructor(
+    message = 'The file is not UTF-8 or GB18030 text. Save it as CSV UTF-8 and upload it again',
+  ) {
+    super('SAMPLE_ENCODING_UNSUPPORTED', message, 422);
   }
 }

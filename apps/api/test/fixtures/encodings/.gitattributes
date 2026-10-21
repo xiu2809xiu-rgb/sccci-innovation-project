@@ -1,0 +1,4 @@
+# The exact bytes are what the tests check: no line-ending conversion.
+* -text
+README.md text eol=lf
+.gitattributes text eol=lf

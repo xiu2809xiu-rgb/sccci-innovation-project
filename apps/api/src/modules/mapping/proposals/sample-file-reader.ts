@@ -1,10 +1,16 @@
 import { extname } from 'node:path';
 
 import { Injectable } from '@nestjs/common';
+import type { SampleEncoding } from '@huitong/shared';
 import { parse } from 'csv-parse/sync';
 import { readSheet } from 'read-excel-file/node';
 
-import { ValidationFailedError } from '../../../common/errors/app-error.js';
+import {
+  SampleEncodingUncertainError,
+  SampleEncodingUnsupportedError,
+  ValidationFailedError,
+} from '../../../common/errors/app-error.js';
+import { decodeStrict, detectEncoding } from './text-encoding.js';
 
 /** An uploaded sample: its header row and the first rows, keyed by header. */
 export interface SampleFile {
@@ -25,6 +31,11 @@ export const MAX_SAMPLE_BYTES = 1_000_000;
 const MAX_HEADER_LENGTH = 120;
 
 const ZIP_MAGIC = Buffer.from([0x50, 0x4b, 0x03, 0x04]);
+
+/** How many headers each reading shows HR when the encoding is uncertain. */
+const READING_HEADERS = 8;
+
+const ENCODING_NAMES: Record<SampleEncoding, string> = { 'utf-8': 'UTF-8', gb18030: 'GB18030' };
 
 function fail(message: string): never {
   throw new ValidationFailedError([{ path: 'file', message }], message);
@@ -48,15 +59,18 @@ function headerText(value: unknown): string {
  * Reads a sample export (CSV or Excel) into headers and at most
  * MAX_SAMPLE_ROWS rows. Nothing is evaluated: formulas arrive as their cached
  * values, macros are never opened. The sample itself is never stored.
+ * A CSV file's encoding is detected (UTF-8 with or without a byte-order mark,
+ * or GB18030, which covers GBK); when two readings are plausible, HR chooses
+ * and sends the choice as `encoding`. Excel files are Unicode inside.
  */
 @Injectable()
 export class SampleFileReader {
-  async read(file: UploadedFile): Promise<SampleFile> {
+  async read(file: UploadedFile, encoding?: SampleEncoding): Promise<SampleFile> {
     if (file.size > MAX_SAMPLE_BYTES) fail('The sample file is larger than 1 MB');
     const extension = extname(file.originalname).toLowerCase();
     const table =
       extension === '.csv'
-        ? this.readCsv(file.buffer)
+        ? this.readCsv(file.buffer, encoding)
         : extension === '.xlsx'
           ? await this.readXlsx(file.buffer)
           : fail('Only .csv and .xlsx files can be read');
@@ -79,9 +93,10 @@ export class SampleFileReader {
     return { headers, rows };
   }
 
-  private readCsv(buffer: Buffer): unknown[][] {
+  private readCsv(buffer: Buffer, chosen: SampleEncoding | undefined): unknown[][] {
+    const text = this.decodeCsv(buffer, chosen);
     try {
-      return parse(buffer, {
+      return parse(text, {
         bom: true,
         relax_column_count: true,
         skip_empty_lines: true,
@@ -89,6 +104,44 @@ export class SampleFileReader {
       });
     } catch {
       return fail('The CSV file could not be read');
+    }
+  }
+
+  /** The file's text, in the encoding HR chose or the one its bytes show. */
+  private decodeCsv(buffer: Buffer, chosen: SampleEncoding | undefined): string {
+    if (chosen) {
+      const text = decodeStrict(buffer, chosen);
+      if (text === null) {
+        throw new SampleEncodingUnsupportedError(
+          `The file is not valid ${ENCODING_NAMES[chosen]} text`,
+        );
+      }
+      return text;
+    }
+    const verdict = detectEncoding(buffer);
+    if (verdict.kind === 'unsupported') throw new SampleEncodingUnsupportedError();
+    if (verdict.kind === 'uncertain') {
+      throw new SampleEncodingUncertainError(
+        verdict.candidates.map((encoding) => ({
+          encoding,
+          headers: this.headerRow(decodeStrict(buffer, encoding) ?? ''),
+        })),
+      );
+    }
+    return decodeStrict(buffer, verdict.encoding) ?? fail('The CSV file could not be read');
+  }
+
+  /** The first record's cells, shortened, for HR to compare two readings. */
+  private headerRow(text: string): string[] {
+    try {
+      const [first = []] = parse<string[]>(text, {
+        bom: true,
+        relax_column_count: true,
+        to_line: 1,
+      });
+      return first.slice(0, READING_HEADERS).map((header) => header.trim().slice(0, 40));
+    } catch {
+      return [];
     }
   }
 
