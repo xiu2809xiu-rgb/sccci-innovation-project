@@ -91,7 +91,7 @@ Each area has a named backup who can explain its design, run its demo steps and 
 | Error envelope, typed errors, `UPPER_SNAKE` error codes and the pagination schema in `@huitong/shared`                                                                                         | Contract         | All                                                                 |
 | `SystemConnector` and `ConnectorFactory`; connectors `sg-hr`, `cn-hq`, `oa`, `excel-master`, `teams`, `dingtalk`                                                                               | Connector hub    | 2 (notifications, SG HR write), 3 (attendance and leave extraction) |
 | Domain event `oa.approval.completed`, published after the HMAC check and once the `InboundWebhookEvent` is stored                                                                              | Event            | 2                                                                   |
-| Employee master: masked read and search, lookup by `employeeNo` (fallback `workEmail`), a create-from-hire use case                                                                            | Service and REST | 2, 3                                                                |
+| Employee master: masked read and search, lookup by `employeeNo` (fallback `workEmail`), a draft-from-hire use case (a `PRE_HIRE` record that only area 1's rule activates, B-6)                | Service and REST | 2, 3                                                                |
 | Field transformers for dates, name order, department codes, enums and phone numbers                                                                                                            | Strategy classes | 3                                                                   |
 | Web: `ApiClient`, `AnalyticsTracker`, the app shell (router, sidebar, breadcrumbs, command palette, role switcher), design tokens, shared composites (`DataTable`, `PageHeader`, `EmptyState`) | Web platform     | 2, 3, 4                                                             |
 | Raw `ClickstreamEvent` rows stored by `POST /api/v1/analytics/events`                                                                                                                          | Data             | 4                                                                   |
@@ -101,6 +101,7 @@ Each area has a named backup who can explain its design, run its demo steps and 
 | From          | What                                              | Why                                                                                                                              |
 | ------------- | ------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
 | Area 4        | Cross-border transfer register and masking policy | SG01 RESTRICTED fields reach HR_HQ only with an approved register entry. A seeded baseline policy applies until area 4 delivers. |
+| Area 2        | Onboarding milestones met, per draft record       | One of the two conditions that activate a draft record; the other is the verified SG HR record (B-6)                             |
 | Areas 2 and 3 | Summary endpoints                                 | The Overview page shows pending approvals, open tasks and consolidation status                                                   |
 
 **W7 mock interview: be ready to explain**
@@ -151,21 +152,22 @@ Area 2 starts where the connector hub stops. Area 1 verifies, stores and publish
 
 **Consumes**
 
-| From                   | Interface                                                                | Use                                                                                                               |
-| ---------------------- | ------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------- |
-| Area 1 connector hub   | `oa.approval.completed` (`MANPOWER_REQUEST`; other approval types later) | Start a workflow instance; ignore duplicate OA event ids                                                          |
-| Area 1 employee master | Create-from-hire use case                                                | Create the `PRE_HIRE` record in the master and in SG HR through the `sg-hr` connector ([A-21](../assumptions.md)) |
-| Area 1 connectors      | `teams` and `dingtalk` notification adapters                             | Send reminders, escalations and hand-offs                                                                         |
-| Platform               | Queues, audit writer, RBAC guard, SSE                                    | Jobs with retries, an audit event for every transition, live board updates                                        |
+| From                   | Interface                                                                | Use                                                                                                                                                                                                                                                 |
+| ---------------------- | ------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Area 1 connector hub   | `oa.approval.completed` (`MANPOWER_REQUEST`; other approval types later) | Start a workflow instance; ignore duplicate OA event ids                                                                                                                                                                                            |
+| Area 1 employee master | Draft-from-hire use case                                                 | Create the draft (`PRE_HIRE`) record in the master, linked to the request. Push it to SG HR only after HR's explicit, audited approval, and only to the mock until the client agrees ([A-21](../assumptions.md)). Area 1 activates the record (B-6) |
+| Area 1 connectors      | `teams` and `dingtalk` notification adapters                             | Send reminders, escalations and hand-offs                                                                                                                                                                                                           |
+| Platform               | Queues, audit writer, RBAC guard, SSE                                    | Jobs with retries, an audit event for every transition, live board updates                                                                                                                                                                          |
 
 **Exposes**
 
-| Interface                                                                                                                     | Used by                                      |
-| ----------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------- |
-| `/api/v1/workflows/*`: instances, timelines and tasks (paginated)                                                             | Workflow pages; Overview (area 1)            |
-| Workflow lifecycle events (instance started or completed, task overdue) on the event bus; names are fixed in the area 2 guide | Overview activity feed, notifications        |
-| Admin preparation tasks (laptop, desk, accounts) for `ADMIN_OPS`                                                              | `/workflows/tasks`                           |
-| Lead time from OA approval to onboarding checklist                                                                            | Success metrics, management reports (area 3) |
+| Interface                                                                                                                     | Used by                                                                          |
+| ----------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------- |
+| `/api/v1/workflows/*`: instances, timelines and tasks (paginated)                                                             | Workflow pages; Overview (area 1)                                                |
+| Workflow lifecycle events (instance started or completed, task overdue) on the event bus; names are fixed in the area 2 guide | Overview activity feed, notifications                                            |
+| Admin preparation tasks (laptop, desk, accounts) for `ADMIN_OPS`                                                              | `/workflows/tasks`                                                               |
+| Lead time from OA approval to onboarding checklist                                                                            | Success metrics, management reports (area 3)                                     |
+| Onboarding milestones met, per draft record (event)                                                                           | Area 1 activates the draft once the verified SG HR record has also arrived (B-6) |
 
 **W7 mock interview: be ready to explain**
 
@@ -179,7 +181,7 @@ Area 2 starts where the connector hub stops. Area 1 verifies, stores and publish
 
 **Area 2 is done when**
 
-- An approved `MANPOWER_REQUEST` from `mock-oa` creates exactly one workflow instance, even when the event is delivered twice, and the chain runs through to a `PRE_HIRE` employee record and the admin preparation tasks.
+- An approved `MANPOWER_REQUEST` from `mock-oa` creates exactly one workflow instance, even when the event is delivered twice, and the chain runs through to a draft (`PRE_HIRE`) employee record and the admin preparation tasks. The workflow alone never makes the record active.
 - Unit tests cover every transition, guard and SLA calculation with at least 80% line coverage. Integration tests cover the happy path, 401 and 403, and a duplicate event.
 - Failed steps retry with backoff and show as a visible failed state after the last attempt.
 - Every transition writes an audit event, and reminders and escalations go out through the notification adapters.
