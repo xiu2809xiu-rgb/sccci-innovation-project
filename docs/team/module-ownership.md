@@ -147,7 +147,7 @@ Area 2 starts where the connector hub stops. Area 1 verifies, stores and publish
 | i18n      | `apps/web/src/i18n/locales/{en,zh-CN}/workflows.json`                                                                                        |
 | Data      | Workflow definition, instance and task models in `apps/api/prisma/schema.prisma` (shared file)                                               |
 | Contracts | The workflows schemas in `packages/shared/`                                                                                                  |
-| Tests     | Unit specs in `apps/api/src/modules/workflows/`, API integration test `apps/api/test/workflows.e2e-spec.ts`, a Playwright flow for the board |
+| Tests     | Unit specs in `apps/api/src/modules/workflows/`, API integration test `apps/api/test/workflows.int-spec.ts`, a Playwright flow for the board |
 | Docs      | `docs/team/area-2-workflow-automation.md`                                                                                                    |
 
 **Consumes**
@@ -209,7 +209,7 @@ Area 2 starts where the connector hub stops. Area 1 verifies, stores and publish
 | i18n      | `apps/web/src/i18n/locales/{en,zh-CN}/attendanceLeave.json`, `apps/web/src/i18n/locales/{en,zh-CN}/reports.json`                                                              |
 | Data      | Attendance and leave records, leave-category mappings and report models in the shared Prisma schema                                                                           |
 | Contracts | The attendance-leave and reports schemas in `packages/shared/`                                                                                                                |
-| Tests     | Unit specs in both modules; `apps/api/test/attendance-leave.e2e-spec.ts` and `apps/api/test/reports.e2e-spec.ts`; the "run a consolidation" step of the Playwright smoke test |
+| Tests     | Unit specs in both modules; `apps/api/test/attendance-leave.int-spec.ts` and `apps/api/test/reports.int-spec.ts`; the "run a consolidation" step of the Playwright smoke test |
 | Docs      | `docs/team/area-3-attendance-leave-reporting.md`                                                                                                                              |
 
 **Consumes**

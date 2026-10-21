@@ -151,6 +151,7 @@
     "SAMPLE_ENCODING_UNCERTAIN": "This file can be read in more than one text encoding. Choose the reading that looks right.",
     "SAMPLE_ENCODING_UNSUPPORTED": "We could not read this file’s text. In Excel, save it as \"CSV UTF-8 (Comma delimited)\" and upload it again.",
     "SERVICE_UNAVAILABLE": "HuiTong is temporarily unavailable. Try again shortly.",
+    "NOT_IMPLEMENTED": "This part of HuiTong is not built yet. Nothing was changed.",
     "INTERNAL": "Something went wrong on our side.",
     "NETWORK_ERROR": "We could not reach the server. Check your connection.",
     "CONTRACT_MISMATCH": "The server sent something unexpected. Reload the page."

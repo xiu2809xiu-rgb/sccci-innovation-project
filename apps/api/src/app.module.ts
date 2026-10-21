@@ -7,6 +7,7 @@ import { AuthGuard } from './common/guards/auth.guard.js';
 import { CsrfGuard } from './common/guards/csrf.guard.js';
 import { PermissionsGuard } from './common/guards/permissions.guard.js';
 import { FieldMaskingInterceptor } from './common/interceptors/field-masking.interceptor.js';
+import { MockDataInterceptor } from './common/interceptors/mock-data.interceptor.js';
 import { createValidationPipe } from './common/pipes/validation.pipe.js';
 import { AppConfig } from './config/app-config.js';
 import { ConfigModule } from './config/config.module.js';
@@ -26,6 +27,7 @@ import { HealthModule } from './modules/health/health.module.js';
 import { MappingModule } from './modules/mapping/mapping.module.js';
 import { OverviewModule } from './modules/overview/overview.module.js';
 import { UsersModule } from './modules/users/users.module.js';
+import { WorkflowsModule } from './modules/workflows/workflows.module.js';
 
 /**
  * Root module: platform infrastructure first, then the domain modules. Global
@@ -55,6 +57,7 @@ export class AppModule {
         EmployeesModule,
         MappingModule,
         ConnectorsModule,
+        WorkflowsModule,
       ],
       providers: [
         { provide: APP_GUARD, useClass: ThrottlerGuard },
@@ -63,6 +66,7 @@ export class AppModule {
         { provide: APP_GUARD, useClass: PermissionsGuard },
         { provide: APP_FILTER, useClass: GlobalExceptionFilter },
         { provide: APP_INTERCEPTOR, useClass: FieldMaskingInterceptor },
+        { provide: APP_INTERCEPTOR, useClass: MockDataInterceptor },
         { provide: APP_PIPE, useFactory: createValidationPipe },
       ],
     };
