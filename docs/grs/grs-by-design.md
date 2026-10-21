@@ -221,8 +221,8 @@ Systems of record stay authoritative. The canonical master (capability B) is a g
 2. **Unowned field, sources disagree:** an OPEN conflict is raised. The master keeps the last approved value until HR picks a source or enters a value with a reason. The decision is audited.
 3. **Decisions stick:** a decision holds until a source changes that field again, so the same conflict does not reopen on every sync.
 4. **Manual values** are recorded with the source "HR decision" and a reason, and should also be corrected in the source system.
-5. **New hires** are created by the onboarding workflow from the approved OA request, with status `PRE_HIRE`. Once the record exists in SG HR, the table above applies.
-6. **Write-back** to a system of record happens only through an approved flow with a preview, for example the new-hire record into SG HR.
+5. **New hires start as drafts.** The onboarding workflow creates a draft (`PRE_HIRE`) record from the approved OA request. It becomes active only after the agreed onboarding milestones and the verified SG HR record, and then the table above applies.
+6. **Write-back** to a system of record happens only through an explicit, audited approval after a preview, for example the new-hire record into SG HR. Against the client's real systems it is out of scope until the client agrees ([Q-17](../client/questions-for-client.md)); until then the mocks demonstrate it, labelled as mocks.
 
 ### 2.8 Retention defaults
 

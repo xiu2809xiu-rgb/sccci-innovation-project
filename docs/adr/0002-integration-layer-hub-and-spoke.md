@@ -87,3 +87,11 @@ flowchart LR
 | RPA only (bots re-keying between screens and spreadsheets) | Quick where no API exists, but brittle when screens change. Bots hold credentials, give no provenance and do not scale to new subsidiaries. RPA stays possible as one connector type behind `SystemConnector`, for a system with no API or export |
 | Commercial iPaaS or ESB                                    | Mature, but the licence cost and lock-in are hard to justify before the client's systems are known, and it would hide the integration logic the team must build and explain. Our canonical model and mappings would carry over to one later       |
 | Reporting warehouse only (ETL into a database)             | Solves consolidated reporting, but not "approved changes trigger downstream processes"                                                                                                                                                            |
+
+## Amendment, 21 Oct 2026: draft records and write-back
+
+Adopted from Azri's integrated plan (prompt 002). Point 6 above is tightened, and the employee lifecycle is made explicit:
+
+- **An approval creates a draft.** An approved OA manpower request leads only to a draft (`PRE_HIRE`) record in the master, linked to the request. An approval is not yet a hire: the candidate may never join.
+- **Activation needs two things.** The draft becomes active only once the agreed onboarding milestones are met (from area 2's workflow) and the verified record has arrived from the HR system of record (SG HR for SG01). The rule lives in the master (story B-6), so it holds whichever workflow triggers it.
+- **Write-back is approved, audited and mock-only for now.** A write to a system of record needs HR's explicit approval of a preview, and the approval is audited. Against the client's real systems, writes are out of scope until the client agrees to them ([Q-17](../client/questions-for-client.md)); until then the SG HR mock demonstrates them, labelled as a mock ([A-21](../assumptions.md)).

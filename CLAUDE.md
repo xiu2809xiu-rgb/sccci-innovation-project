@@ -101,7 +101,7 @@ The module's AI coding tool is AWS Kiro (used here as the IDE). Students "own ev
 |---|---|---|
 | A | Connector hub | One adapter per external system behind a common `SystemConnector` interface. Mock services cover SG HR, CN HQ (Chinese field names and formats) and OA (webhooks), plus Excel/CSV import. New subsidiaries plug in through configuration and field mappings. |
 | B | Canonical employee master | One consolidated employee record, with a source of truth for each field, change history, and conflict detection across systems. |
-| C | Workflow automation | Event-driven chain: OA "manpower request approved" → recruitment requisition → hire → onboarding checklist → employee record created in the master and in SG HR → admin preparation (laptop, desk, accounts) → notifications (Teams/DingTalk, mocked). Idempotent, retried and audited. |
+| C | Workflow automation | Event-driven chain: OA "manpower request approved" → recruitment requisition → hire → onboarding checklist → a **draft** (`PRE_HIRE`) employee record in the master, and in SG HR once HR approves the write → admin preparation (laptop, desk, accounts) → notifications (Teams/DingTalk, mocked). The record becomes active only after the onboarding milestones and the verified SG HR record. Idempotent, retried and audited. |
 | D | Attendance and leave consolidation | Pull from SG and CN, then map leave categories (e.g. 年假 ↔ Annual Leave, 病假 ↔ Sick Leave, 调休 ↔ Time-off in lieu). Validate, render into the company reporting template, and export to .xlsx. |
 | E | AI assistance (human in the loop) | **Schema-mapping assistant:** proposes mappings from a new system's sample file (including Chinese headers) to the canonical model, with a confidence score and a rationale. HR approves before anything is used. **Discrepancy explainer:** explains conflicts between systems in plain English or 中文. AI never writes to systems of record without human approval. |
 | F | Governance and compliance | RBAC, field-level masking, an append-only audit log, data-classification tags, a cross-border transfer register (Singapore PDPA and China PIPL considerations), and retention settings. |
@@ -112,6 +112,8 @@ The module's AI coding tool is AWS Kiro (used here as the IDE). Students "own ev
 - **Synthetic data only.** All data is synthetic. Label it "Synthetic demo data" in the UI.
 - **No national ID numbers.** Never store NRIC/FIN or PRC resident ID numbers; use internal employee IDs.
 - **Masking.** Mask sensitive fields (salary, bank details, date of birth) by role.
+- **Draft before active.** An approved OA request creates only a draft (`PRE_HIRE`) employee record. It becomes active only after the agreed onboarding milestones and verified input from the HR system of record.
+- **Write-back needs approval.** A write to a system of record needs an explicit, audited human approval after a preview. Against the client's real systems it is out of scope until the client approves it; the mocks may demonstrate it, labelled as mocks.
 - **Bilingual UI.** The UI is bilingual (English and 简体中文), switchable at runtime. No hard-coded user-facing strings.
 
 ### Ownership areas (each is deep enough to earn an A)
