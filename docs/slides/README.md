@@ -24,7 +24,7 @@ The notes give what to say on each slide and what to be honest about: what is bu
 2. **Use the theme's classes**, not inline styles: `kicker`, `note`, `fill`, `split`, `shots` (with `rows`), `crop`, `kpis`, `steps`, `tag built`, `timeline` (with `weeks`) and `cards`, and the slide classes `lead` and `diagram`. Each is described where [`theme/huitong.css`](theme/huitong.css) defines it. Keep to its seven type sizes, the most CLAUDE.md allows.
 3. **Show the product, not mock-ups.** Screenshots come from [`docs/design/screenshots/`](../design/screenshots/README.md) and diagrams from [`docs/diagrams/`](../diagrams/README.md). To show part of a screenshot, wrap it in `<div class="crop" style="--left: 553; --top: 320; --width: 887; --height: 570">`, giving the region in the screenshot's own pixels (the screenshots are 1440 by 900).
 4. **Build and look.** Run `pnpm slides:build`, then check every slide, for example in the HTML's overview.
-5. **Commit the source and `dist/` together.** `pnpm slides:check`, which CI runs, fails when the deck, the theme, the tokens, an image the deck shows, the build script, or the installed version of Marp or a font has changed since the exports were built.
+5. **Commit the source and `dist/` together.** `pnpm slides:check`, which CI runs, fails when the deck, the theme, the tokens, an image the deck shows or the build script has changed since the exports were built. A newer Marp or font version only warns, so a dependency update can merge first; rebuild the exports soon after.
 
 ## How the build works
 

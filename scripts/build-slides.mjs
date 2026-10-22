@@ -5,7 +5,8 @@
 //
 // The exports are committed, so dist/sources.json records what they were built from. `--check`
 // builds nothing and needs no browser: it fails when the deck, the theme, the tokens, an image the
-// deck shows, this script, or the installed version of Marp or a font has changed since. CI runs it.
+// deck shows or this script has changed since. CI runs it. A newer Marp or font version only warns,
+// so a dependency update can merge before someone rebuilds the exports.
 //
 // Marp renders the PDF and the PPTX in the Chromium that Playwright installs for the e2e tests;
 // BROWSER_PATH overrides it. The PPTX holds each slide as an image, with its speaker notes.
@@ -62,14 +63,15 @@ function assertTokens(theme) {
 /** The installed versions the exports depend on: Marp CLI, the renderer it uses, and the fonts. */
 function versions() {
   const marp = createRequire(join(realpathSync(MARP), 'package.json'));
-  return [
-    marp('./package.json').version,
-    marp('@marp-team/marp-core/package.json').version,
-    marp('@marp-team/marpit/package.json').version,
-    ...['geist', 'noto-sans-sc'].map(
-      (family) => JSON.parse(readFileSync(join(FONTS, family, 'package.json'), 'utf8')).version,
-    ),
-  ];
+  const font = (family) =>
+    JSON.parse(readFileSync(join(FONTS, family, 'package.json'), 'utf8')).version;
+  return {
+    '@marp-team/marp-cli': marp('./package.json').version,
+    '@marp-team/marp-core': marp('@marp-team/marp-core/package.json').version,
+    '@marp-team/marpit': marp('@marp-team/marpit/package.json').version,
+    '@fontsource-variable/geist': font('geist'),
+    '@fontsource-variable/noto-sans-sc': font('noto-sans-sc'),
+  };
 }
 
 /** A font file as a data URL. */
@@ -135,8 +137,8 @@ function images(deck) {
 }
 
 /**
- * What the exports depend on: the deck, the theme and the tokens, every image the deck shows, this
- * script (its Marp options and font choice), and the installed versions of Marp and the fonts.
+ * What the exports' content depends on: the deck, the theme and the tokens, every image the deck
+ * shows, and this script (its Marp options and font choice).
  */
 function fingerprint(deck) {
   const hash = createHash('sha256')
@@ -148,21 +150,29 @@ function fingerprint(deck) {
     if (!existsSync(file)) throw new Error(`the deck shows ${file}, which does not exist`);
     hash.update(readFileSync(file));
   }
-  for (const version of versions()) hash.update(version);
   return hash.digest('hex').slice(0, 16);
 }
 
 function check(deck) {
-  const recorded = existsSync(MANIFEST) ? JSON.parse(readFileSync(MANIFEST, 'utf8')).huitong : null;
+  const recorded = existsSync(MANIFEST) ? JSON.parse(readFileSync(MANIFEST, 'utf8')) : {};
   const problems = EXPORTS.filter((file) => !existsSync(join(DIST, file))).map(
     (file) => `${file} is missing`,
   );
-  if (recorded !== fingerprint(deck)) {
-    problems.push('the exports were built from an older deck, theme, image or version');
+  if (recorded.huitong !== fingerprint(deck)) {
+    problems.push('the exports were built from an older deck, theme, image or build script');
   }
   if (problems.length > 0) {
     console.error(`${problems.join('\n')}\nRun pnpm slides:build and commit docs/slides/dist/.`);
     process.exit(1);
+  }
+  const drift = Object.entries(versions()).filter(
+    ([name, version]) => recorded.versions?.[name] !== version,
+  );
+  for (const [name, version] of drift) {
+    const was = recorded.versions?.[name] ?? 'an unknown version';
+    console.warn(
+      `${name} is ${version}, but the exports were built with ${was}: rebuild them soon`,
+    );
   }
   console.log('the slide exports are current');
 }
@@ -178,6 +188,7 @@ async function build(deck) {
   // Taken before anything is written, so it records exactly what the exports are built from, and
   // a missing image fails the build before Marp overwrites the old exports.
   const built = fingerprint(deck);
+  const builtWith = versions();
   const theme = readFileSync(THEME, 'utf8').replace('/* @theme huitong */', '');
   assertTokens(theme);
   const work = mkdtempSync(join(tmpdir(), 'huitong-slides-'));
@@ -212,7 +223,7 @@ async function build(deck) {
     rmSync(source, { force: true });
     rmSync(work, { recursive: true, force: true });
   }
-  writeFileSync(MANIFEST, `${JSON.stringify({ huitong: built }, null, 2)}\n`);
+  writeFileSync(MANIFEST, `${JSON.stringify({ huitong: built, versions: builtWith }, null, 2)}\n`);
 }
 
 const deck = readFileSync(DECK, 'utf8');
