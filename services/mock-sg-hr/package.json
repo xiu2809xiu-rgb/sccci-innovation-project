@@ -2,7 +2,7 @@
   "name": "@huitong/mock-sg-hr",
   "version": "0.1.0",
   "private": true,
-  "description": "Mock Singapore HR system (English keys, ISO dates) for HuiTong. Synthetic data only.",
+  "description": "Mock INFO-TECH, the Singapore HR system: English keys and ISO dates in its API, INFO-TECH-style CSV exports with Singapore dates. Synthetic data only.",
   "type": "module",
   "exports": {
     "./app": {
@@ -33,6 +33,7 @@
     "@types/express": "5.0.6",
     "@types/node": "24.19.2",
     "@types/supertest": "7.2.1",
+    "csv-parse": "7.0.3",
     "supertest": "7.3.1",
     "tsx": "4.23.15",
     "typescript": "6.0.3",
