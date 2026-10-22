@@ -19,11 +19,11 @@ We will use **one Git repository with pnpm 12.14.0 workspaces**. Local machines,
 
 **Workspace layout.** `pnpm-workspace.yaml` includes `apps/*`, `services/*` and `packages/*`.
 
-| Folder      | Packages                                                         | Purpose                                                                                     |
-| ----------- | ---------------------------------------------------------------- | ------------------------------------------------------------------------------------------- |
-| `apps/`     | `web`, `api`                                                     | The deployable applications                                                                 |
-| `services/` | `mock-sg-hr`, `mock-cn-hq`, `mock-oa`                            | Stand-ins for Organisation E's external systems ([ADR 0013](0013-mock-external-systems.md)) |
-| `packages/` | `@huitong/shared`, `@huitong/eslint-config`, `@huitong/tsconfig` | Code and configuration shared by apps and services                                          |
+| Folder      | Packages                                                         | Purpose                                                                                 |
+| ----------- | ---------------------------------------------------------------- | --------------------------------------------------------------------------------------- |
+| `apps/`     | `web`, `api`                                                     | The deployable applications                                                             |
+| `services/` | `mock-sg-hr`, `mock-cn-hq`, `mock-oa`                            | Stand-ins for the client's external systems ([ADR 0013](0013-mock-external-systems.md)) |
+| `packages/` | `@huitong/shared`, `@huitong/eslint-config`, `@huitong/tsconfig` | Code and configuration shared by apps and services                                      |
 
 **Boundary rules**
 

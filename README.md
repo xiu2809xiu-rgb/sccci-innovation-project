@@ -1,6 +1,6 @@
 # HuiTong 汇通
 
-HR and administration integration and workflow-automation layer for a financial-services group with a Singapore operation and a China HQ (IT2134 IT Innovation Project, SCCCI x NYP AI Innovation Challenge, Problem Statement #17).
+HR and administration integration and workflow layer for LESSO Solar, the solar division of LESSO Group, with a regional hub in Singapore and its HQ in China (IT2134 IT Innovation Project, SCCCI x NYP AI Innovation Challenge, Problem Statement #7).
 
 > Work in progress on `feat/platform-base`. The full README (screenshots, demo accounts, architecture) lands at the end of the platform-base build. All data in this repository is synthetic.
 
@@ -37,7 +37,7 @@ pnpm dev                              # web, api, mocks and shared in watch mode
 
 Override host ports for PostgreSQL and Redis with `POSTGRES_PORT` and `REDIS_PORT` in a root `.env` (see `.env.example`).
 
-The three mock systems stand in for Organisation E's real systems, which are unknown until the client meeting. The app shows a "Mock" badge on every connector they back, and a "Mock AI" badge on output from the default `mock` AI provider. To demonstrate a real model, see [switching the AI provider](docs/team/area-1-integration-core.md#switching-the-ai-provider-for-a-demo).
+The three mock systems stand in for LESSO Solar's real systems (INFO-TECH, a customised SAP and the HQ intranet), whose interfaces are unknown until the client's sample exports arrive. The app shows a "Mock" badge on every connector they back, and a "Mock AI" badge on output from the default `mock` AI provider. To demonstrate a real model, see [switching the AI provider](docs/team/area-1-integration-core.md#switching-the-ai-provider-for-a-demo).
 
 ## Scripts
 

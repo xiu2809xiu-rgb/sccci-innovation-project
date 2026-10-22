@@ -8,11 +8,11 @@
 
 ## 1. What this project is
 
-**HuiTong 汇通** (working name: "converge and connect") is an HR and administration **integration and workflow-automation layer** for a financial-services group with a Singapore operation and a China HQ. It connects the systems each office already uses, so approved data flows between them securely instead of people re-keying it through Excel.
+**HuiTong 汇通** (working name: "converge and connect") is an HR and administration **integration and workflow layer** for LESSO Solar, the solar division of LESSO Group, which runs a regional hub in Singapore and its HQ in China. It connects the systems each side already uses, so approved data is entered once and flows between them securely, instead of people re-entering it in each system.
 
 - **Module:** IT2134 IT Innovation Project, Diploma in IT, Nanyang Polytechnic, AY2026 Semester 2 (19 Oct 2026 to Feb 2027)
 - **Theme:** SCCCI x NYP AI Innovation Challenge
-- **Client:** Organisation E (Financial Services), Problem Statement **#17**
+- **Client:** LESSO Solar (solar and renewable energy, part of LESSO Group), Problem Statement **#7**. It replaced #17 (Organisation E, financial services) on 22 Oct 2026 (`docs/adr/0022-final-statement-7-lesso-solar.md`).
 - **Team:** 4 Year-2 students: Richie (team lead), Iok Teck, Azri, Angelyn. Ownership areas are at the end of section 4.
 
 ### Assessment (this shapes how we build)
@@ -28,7 +28,7 @@
 
 ### Schedule anchors
 
-W2 (26 Oct) problem allocation, first client meeting in W2 or W3 · W3 project plan · W4 UI prototype · W5 proposal · W8–12 AI-assisted coding · W13 technical review · W14 observability · W15 clickstream analytics · W16 AI token usage tracking · W18 final presentation · W19 client check-in.
+W2 (26 Oct) problem allocation · W3 (week of 2 Nov) briefing call with LESSO Solar · W3 project plan · W4 UI prototype · W5 proposal · W8–12 AI-assisted coding · W13 technical review · W14 observability · W15 clickstream analytics · W16 AI token usage tracking · W18 final presentation · W19 client check-in.
 
 ---
 
@@ -47,37 +47,36 @@ The module's AI coding tool is AWS Kiro (used here as the IDE). Students "own ev
 
 ---
 
-## 3. The problem (summary; full original text in `docs/problem-statement.md`)
+## 3. The problem (summary; the analysis is in `docs/problem-statement.md`)
 
-**User:** an HR professional supporting the Singapore operation of a China-headquartered financial-services group.
+**User:** an HR professional at LESSO Solar's Singapore hub, working with China HQ.
 
 **Systems today**
-- Internal **OA platform** for workflows and approvals: manpower/hiring requests, office rental, out-of-pocket expenses, IT and fixed-asset purchases, payment approvals.
-- **Singapore HR software:** locally compliant attendance, leave and payroll.
-- **China HQ:** different HR and enterprise systems (ERP, SAP, customised features).
-- **Collaboration tools:** Singapore uses Microsoft Office, Teams, OneDrive and CRM. China uses WeChat, DingTalk and Chinese office apps.
-- **Excel is the glue:** employee master data lives in Excel because it is the only consolidated view.
+- **Singapore: INFO-TECH** for employee records, leave and payroll.
+- **China HQ: a customised SAP**, and an **intranet** for news, policies, claims and approvals.
+
+**Two rules from the brief**
+- A new employee is created in HQ's SAP **before** they get intranet access.
+- Some payments need an **extra HQ Treasury approval**.
 
 **Pain points**
-- Different data structures and formats between SG and CN.
-- Little system-to-system integration.
-- Repeated CSV/Excel export and import.
-- Manual consolidation of attendance and leave categories into company reporting templates.
-- Approvals happen in OA, but the follow-up work happens elsewhere.
-- Access-control and data-protection concerns when employee data crosses entities and countries.
+- The same employee and transaction data is entered in several systems.
+- The SAP-before-intranet order and the Treasury approvals are carried between systems by people.
+- The local and HQ systems use different data structures and formats.
+- No single view of the relevant information across the systems.
+- Access-control and data-protection concerns when employee data crosses entities and countries (PDPA, PIPL).
 
 **Root cause:** the systems are digital but isolated, so task-level digitalisation never became end-to-end automation.
 
-**What success looks like:** not one global platform replacing everything, but an intelligent integration and automation layer.
-- Approved employee-data changes update other approved systems, or a central employee master.
-- Approved manpower requests trigger recruitment and onboarding.
-- Attendance and leave consolidate automatically into the required format.
-- Management reports draw from multiple authorised sources.
-- New subsidiaries plug in through standardised interfaces, with access control, data protection and local compliance.
+**What success looks like** (from the brief):
+- Data integrated or consolidated across the local and HQ systems.
+- A single view of the relevant information, with dashboards and insights.
+- Duplicate data entry minimised.
+- A layer that other Chinese companies operating in Singapore could reuse.
 
-**Client stance:** open to API integration, workflow automation, RPA, data analytics or AI. Wants a feasible PoC architecture that extends to other functions and subsidiaries. Happy to work closely with the team.
+**Suggested starting point:** prove one flow, onboarding a new hire into both systems, using mock data exports. A Lark/Feishu or DingTalk connector is a possible extension.
 
-**Unknowns:** the exact systems and vendors, the available APIs, data volumes and real field lists. Until the client meeting, everything external is **mocked**, and every assumption is logged in `docs/assumptions.md`.
+**Unknowns:** the systems' versions, APIs and export formats, how SAP is customised, the exact onboarding steps, the Treasury threshold, data volumes and real field lists. Until the client's sample exports arrive through the team's data folder, everything external is **mocked**, and every assumption is logged in `docs/assumptions.md`. The brief and any client sample data are never committed.
 
 ---
 

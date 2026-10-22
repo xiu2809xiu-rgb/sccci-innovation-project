@@ -12,7 +12,7 @@ Forces:
 
 - **Windows laptops.** The team runs Docker Desktop on Windows; images must behave the same there, in CI and on AWS.
 - **Security.** Non-root containers, health checks and secrets kept out of images (M4.1-16).
-- **Unknown residency rules.** Where Organisation E's employee data may be stored is open (A-15, Q-37), as are MAS regulation and critical information infrastructure status (A-13, Q-38) and the SG–CN network (A-19, Q-16). Wherever the hub sits, the other entity's data crosses a border to reach it ([R-01, R-02](../grs/grs-by-design.md#32-register)).
+- **Unknown residency rules.** Where the client's employee data may be stored is open (A-15, Q-37), as is critical information infrastructure status (A-13, Q-38) and the SG–CN network (A-19, Q-16). Wherever the hub sits, the other entity's data crosses a border to reach it ([R-01, R-02](../grs/grs-by-design.md#32-register)).
 - **Mainland China is a different cloud.** AWS's China regions form a separate partition.
 
 ## Decision
@@ -54,14 +54,14 @@ The infrastructure-as-code tool is area 4's choice, recorded in its own ADR. The
 - Docker Desktop on Windows is slower than native Linux, especially with bind mounts. Day-to-day development runs the apps natively and uses compose for the databases and the full-stack check.
 - ECS, the load balancer, RDS and ElastiCache cost money even when idle, so the demo environment must be scaled down deliberately.
 - A China-side deployment would double operations and need China-specific approvals.
-- If Organisation E prefers another cloud or on-premises hosting (Q-55), `infra/aws/` is rewritten, although the images carry over.
+- If the client prefers another cloud or on-premises hosting (Q-55), `infra/aws/` is rewritten, although the images carry over.
 
 ## Alternatives considered
 
-| Option                                      | Why rejected                                                                                                                                                                                              |
-| ------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Amazon EKS (Kubernetes)                     | Far more to operate and explain than four kinds of service need                                                                                                                                           |
-| One EC2 instance running docker compose     | Cheapest and simplest, but manual patching, no managed backups or high availability, and a weaker deployment story for M6                                                                                 |
-| AWS Lambda with API Gateway                 | A poor fit for NestJS with BullMQ workers and long-lived SSE streams                                                                                                                                      |
-| Hosting platforms such as Render or Railway | Less control over region, network isolation and data residency, and not where the client's IT would run it                                                                                                |
-| Alibaba Cloud or Azure                      | Credible for Organisation E (Alibaba Cloud in China, Microsoft 365 already in Singapore). `CLAUDE.md` fixes AWS for the PoC, and the containers are portable if the client chooses otherwise (Q-37, Q-55) |
+| Option                                      | Why rejected                                                                                                                                                                                                                                |
+| ------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Amazon EKS (Kubernetes)                     | Far more to operate and explain than four kinds of service need                                                                                                                                                                             |
+| One EC2 instance running docker compose     | Cheapest and simplest, but manual patching, no managed backups or high availability, and a weaker deployment story for M6                                                                                                                   |
+| AWS Lambda with API Gateway                 | A poor fit for NestJS with BullMQ workers and long-lived SSE streams                                                                                                                                                                        |
+| Hosting platforms such as Render or Railway | Less control over region, network isolation and data residency, and not where the client's IT would run it                                                                                                                                  |
+| Alibaba Cloud or Azure                      | Credible for the client (Alibaba Cloud in China; Azure if the Singapore office runs on Microsoft 365, which is to confirm). `CLAUDE.md` fixes AWS for the PoC, and the containers are portable if the client chooses otherwise (Q-37, Q-55) |

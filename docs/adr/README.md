@@ -1,6 +1,6 @@
 # Architecture decision records
 
-This folder records the significant technical decisions behind HuiTong 汇通, the HR integration and workflow-automation layer for Organisation E (Problem Statement #17). Each record gives the context, the decision, its consequences and the options we rejected. That way any team member can explain _why_ the platform is built the way it is, at the mock interview (week 7), the technical review (week 13) and the final presentation (week 18).
+This folder records the significant technical decisions behind HuiTong 汇通, the HR integration and workflow layer for LESSO Solar (Problem Statement #7; it began on #17, Organisation E, see ADR 0022). Each record gives the context, the decision, its consequences and the options we rejected. That way any team member can explain _why_ the platform is built the way it is, at the mock interview (week 7), the technical review (week 13) and the final presentation (week 18).
 
 [`CLAUDE.md`](../../CLAUDE.md) section 5 lists _what_ was decided, and these records explain _why_. A pull request that changes a decision updates both.
 
@@ -29,6 +29,7 @@ This folder records the significant technical decisions behind HuiTong 汇通, t
 | [0019](0019-ideas-not-adopted-from-azri-plan.md) | Parts of Azri's integrated plan we did not adopt                        | Accepted | 2026-10-21 |
 | [0020](0020-3d-assets-without-wasm-decoders.md)  | 3D assets without WebAssembly decoders                                  | Accepted | 2026-10-22 |
 | [0021](0021-integration-map-scene.md)            | The integration map scene                                               | Accepted | 2026-10-22 |
+| [0022](0022-final-statement-7-lesso-solar.md)    | The final statement, #7 LESSO Solar                                     | Accepted | 2026-10-22 |
 
 ## Statuses
 
@@ -47,4 +48,4 @@ This folder records the significant technical decisions behind HuiTong 汇通, t
 3. Add a row to this index in the same pull request, and request review from the owner of every area the decision affects ([`../team/module-ownership.md`](../team/module-ownership.md)).
 4. The ADR becomes Accepted when the pull request merges.
 
-Decisions made before the first client meeting rest on assumptions about Organisation E's real systems (see [`../assumptions.md`](../assumptions.md) and [`../client/questions-for-client.md`](../client/questions-for-client.md)). Some of them will be superseded once the actual vendors, APIs and data-residency rules are known.
+Decisions made before the briefing call rest on assumptions about LESSO Solar's real systems (see [`../assumptions.md`](../assumptions.md) and [`../client/questions-for-client.md`](../client/questions-for-client.md)). Some of them will be superseded once the actual vendors, APIs and data-residency rules are known.

@@ -6,7 +6,7 @@
 
 ## Context
 
-Organisation E's Singapore operation and China HQ each run systems suited to local requirements (see [`../problem-statement.md`](../problem-statement.md)):
+LESSO Solar's Singapore hub and China HQ each run systems suited to local requirements (see [`../problem-statement.md`](../problem-statement.md)):
 
 - a locally compliant Singapore HR system for attendance, leave and payroll;
 - HQ ERP and SAP, with customised features;

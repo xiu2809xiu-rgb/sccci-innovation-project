@@ -11,7 +11,7 @@ Four students build HuiTong over one semester, and 85% of the IT2134 marks are i
 Three things make the reasoning easy to lose:
 
 - **AI-assisted coding.** Code arrives quickly, and the module expects us to own every line we submit. A record of why each significant design was chosen shows that a person made the decision and understands it.
-- **Unknown client systems.** Until the first client meeting, everything about Organisation E's real systems is an assumption (see [`../assumptions.md`](../assumptions.md)). Some decisions will change, so we need to see which assumption each one rests on.
+- **Unknown client systems.** Until the briefing call, everything about the client's real systems beyond the brief is an assumption (see [`../assumptions.md`](../assumptions.md)). Some decisions will change, so we need to see which assumption each one rests on.
 - **Parallel work.** Areas 2–4 start from scaffolding written by area 1. Their owners need the reasons behind the platform choices, not just the code.
 
 [`CLAUDE.md`](../../CLAUDE.md) section 5 already requires an ADR for any deviation from the decided stack.

@@ -6,7 +6,7 @@
 
 ## Context
 
-HuiTong's value lies in connecting systems that disagree, yet until the first client meeting we know none of Organisation E's real systems ([R-16](../grs/grs-by-design.md#32-register)):
+HuiTong's value lies in connecting systems that disagree, yet until the briefing call we know the client's systems by name only, not their interfaces ([R-16](../grs/grs-by-design.md#32-register)):
 
 - the SG HR product, its API and its field names (A-01, Q-01, Q-12);
 - HQ's SAP-like HR system and its customisations (A-02, Q-02);
