@@ -15,8 +15,14 @@ const AREA = {
 /** Sprint n runs Monday to Sunday of module week n, from W1 = 19 Oct 2026. */
 export const SPRINTS = [
   { number: 1, goal: 'Platform base, security scanning and the Agile workflow in GitHub' },
-  { number: 2, goal: 'Problem allocation; prepare and hold the first client session' },
-  { number: 3, goal: 'Project plan; area owners agreed; client answers folded into the backlog' },
+  {
+    number: 2,
+    goal: 'Problem allocation (#7, LESSO Solar); retarget the docs; prepare the briefing call',
+  },
+  {
+    number: 3,
+    goal: 'Briefing call with LESSO Solar; project plan; area owners agreed; answers folded into the backlog',
+  },
   { number: 4, goal: 'UI prototype across every area' },
   { number: 5, goal: 'Proposal presentation (25%)' },
   { number: 6, goal: 'Backlog refinement; area owners start their core logic' },
@@ -185,8 +191,8 @@ export const EPICS = [
         story:
           'As the team, we want the hero journey and its two proof points to run end to end in CI, so that the demo we present is the product we test.',
         acceptance: [
-          "Given E2E #1, when it runs, then an OA approval travels through the tasks, the draft record, activation, reconciliation with HQ, the leave mapping and HQ's report to the overview, each step named with its owning area.",
-          'Given E2E #2, when an unfamiliar subsidiary CSV is uploaded, then the AI suggestions approved by HR are saved as a mapping version and import the file with no code change.',
+          "Given E2E #1, when it runs, then a new hire entered once travels through the SAP and INFO-TECH writes, intranet access after the SAP record, activation, reconciliation with HQ, a claim through HQ Treasury, the single view and HQ's summary to the overview, each step named with its owning area.",
+          "Given E2E #2, when another company's unfamiliar CSV is uploaded, then the AI suggestions approved by HR are saved as a mapping version and import the file with no code change.",
           'Given E2E #3, when HQ HR asks for a field missing from its allowlist through the UI, the raw API or a report export, then it is refused each time and each refusal is audited.',
           'Given a step whose story is not done, when the suite runs, then the step is marked fixme with the story key, never deleted.',
         ],
@@ -198,7 +204,7 @@ export const EPICS = [
     title: 'Connector hub',
     area: AREA[1],
     labels: ['req: M4 best practices'],
-    goal: "Each of Organisation E's systems plugs in behind one connector interface, so data flows between Singapore and HQ without CSV exports.",
+    goal: "Each of LESSO Solar's systems (INFO-TECH, the customised SAP and the HQ intranet) plugs in behind one connector interface, so data flows between Singapore and HQ without re-entry or CSV exports.",
     stories: [
       {
         key: 'A-1',
@@ -268,12 +274,12 @@ export const EPICS = [
       },
       {
         key: 'A-5',
-        title: 'Import a new subsidiary file through its approved mapping',
+        title: "Import another company's file through its approved mapping",
         sprint: 6,
         points: 8,
         priority: 'should',
         story:
-          "As an HR executive, I want to import a new subsidiary's export with the mapping I approved, so that a new market joins the master without code changes.",
+          "As an HR executive, I want to import another company's export with the mapping I approved, so that a company or a new market joins the master without code changes.",
         acceptance: [
           'Given an approved mapping for a file connector, when I upload the full export, then I see a preview of the records it would create.',
           'Given the preview, when I apply it, then the records join the master with that connector as their source.',
@@ -328,6 +334,75 @@ export const EPICS = [
           'Given a connector backed by a mock system, when it appears on the connectors pages or the overview, then it carries a "Mock" badge.',
           'Given the mock AI provider, when the mapping wizard or the discrepancy explainer shows its output, then it is labelled "Mock AI".',
           'Given a demo on a real model, when the team prepares it, then the docs say how to switch the provider and what changes.',
+        ],
+      },
+      {
+        key: 'A-9',
+        title: 'INFO-TECH-like SG HR mock with INFO-TECH-style exports',
+        sprint: 3,
+        points: 5,
+        priority: 'must',
+        story:
+          'As the team, we want the Singapore mock to behave like INFO-TECH, with its employee, leave and payroll exports, so that our connector and mappings are tested against the kind of file the client uses.',
+        acceptance: [
+          'Given the mock, when an export is requested, then employees, leave and payroll come as CSV or Excel with English headers and DD/MM/YYYY dates (assumption A-59).',
+          'Given an export, when HuiTong imports it, then it goes through the mapping engine, so a real export can replace it with only a mapping change.',
+          'Given any screen that shows the mock, when it is displayed, then it is labelled "Mock".',
+        ],
+      },
+      {
+        key: 'A-10',
+        title: 'HQ intranet mock: news, policies, claims and approvals',
+        sprint: 3,
+        points: 5,
+        priority: 'must',
+        story:
+          'As the workflow area, I want an intranet mock that sends signed claim and approval events and exports them to Excel, so that onboarding and the Treasury step can be built before the real intranet is reachable.',
+        acceptance: [
+          'Given a claim or an approval that completes, when the mock emits it, then a signed JSON event reaches HuiTong and is verified (HMAC, replay window) (assumption A-61).',
+          'Given an export request, when it runs, then claims and approvals come out as Excel in the documented format.',
+          "Given a request for a new hire's intranet account without an SAP personnel number, when it reaches the mock, then it is refused.",
+        ],
+      },
+      {
+        key: 'A-11',
+        title: 'Lark/Feishu notification adapter (mocked) beside DingTalk',
+        sprint: 4,
+        points: 3,
+        priority: 'should',
+        story:
+          'As a hiring manager, I want reminders and status updates in Lark or DingTalk, whichever my office uses, so that I do not have to check HuiTong.',
+        acceptance: [
+          'Given a notification, when the entity uses Lark, then it goes to the mocked Lark adapter, appears in its delivery log and is labelled "Mock".',
+          'Given the seeded connectors, when they are listed, then Teams is not among them, and no placeholder adapter is counted as healthy (#129).',
+        ],
+      },
+      {
+        key: 'A-12',
+        title: 'Tenant configuration: another company joins by configuration',
+        sprint: 6,
+        points: 5,
+        priority: 'should',
+        story:
+          'As another Chinese company in Singapore, we want to join through a configuration of our name, connectors, field mappings and colours, so that we reuse HuiTong without new code.',
+        acceptance: [
+          'Given a tenant configuration, when it is loaded, then its company name, connector set, field mappings and theme tokens apply without code changes.',
+          "Given a tenant's theme tokens, when the UI renders, then its colours follow and still meet the contrast rules.",
+          "Given the default tenant, when the app starts, then it carries HuiTong's own identity; no client theme or brand is added without that client's permission (Q-62).",
+        ],
+      },
+      {
+        key: 'A-13',
+        title: 'Document the data formats; keep real samples out of git',
+        sprint: 3,
+        points: 2,
+        priority: 'must',
+        labels: ['req: M2 GRS by design'],
+        story:
+          "As a developer, I want each system's export format written down, and a samples folder git ignores, so that real exports can be tried locally without ever reaching the public repository.",
+        acceptance: [
+          'Given the data-formats document, when it is read, then each system has its file type, encoding, key fields, date format, the mock that emulates it and the open questions.',
+          'Given a real sample export, when it is copied into samples/, then git ignores it.',
         ],
       },
     ],
@@ -532,7 +607,7 @@ export const EPICS = [
         deliveredBy: 'fix/area1-ai-no-identifiers',
         labels: ['req: M2 GRS by design'],
         story:
-          'As Organisation E, we want no employee identifier or sensitive HR value sent to an outside AI service without our written permission, so that using AI never becomes a data transfer we did not agree to.',
+          'As the client, we want no employee identifier or sensitive HR value sent to an outside AI service without our written permission, so that using AI never becomes a data transfer we did not agree to.',
         acceptance: [
           'Given a conflict, when the explainer prompt is built, then it holds no employee number, name, email or phone number, and no value above INTERNAL.',
           'Given the mapping assistant, when its prompt is built, then it holds headers and category codes only, never a personal value.',
@@ -543,22 +618,23 @@ export const EPICS = [
   },
   {
     key: 'C',
-    title: 'Workflow automation',
+    title: 'Onboarding and approval workflows',
     area: AREA[2],
     labels: ['req: M4 best practices'],
-    goal: 'An approved manpower request in OA triggers recruitment, onboarding, the employee record and admin preparation, with nobody re-keying data.',
+    goal: "One new-hire entry onboards into SAP and INFO-TECH in the order the rules require, with intranet access only after the SAP record, and claims and payments above a threshold get HQ Treasury's approval, with nobody re-keying data.",
     stories: [
       {
         key: 'C-1',
-        title: 'Start a recruitment requisition from an OA approval',
+        title: 'Start onboarding from one new-hire entry',
         sprint: 8,
         points: 5,
         priority: 'must',
         story:
-          'As a hiring manager, I want my approved manpower request to open a requisition automatically, so that hiring starts the same day.',
+          "As an HR executive, I want to enter a new hire once, prefilled from the intranet's approval where one arrives, so that onboarding starts the same day without re-keying.",
         acceptance: [
-          'Given an `oa.approval.completed` event for a manpower request, when it is handled, then one requisition is created, even if the event arrives twice.',
-          'Given a rejected request, when the event arrives, then no requisition is created and the outcome is recorded.',
+          'Given an `oa.approval.completed` event for a hire, when it is handled, then one onboarding entry is prepared, even if the event arrives twice.',
+          "Given HR's entry, when it is saved, then a draft (PRE_HIRE) record exists in the master and the onboarding workflow starts (B-6).",
+          'Given a rejected approval, when the event arrives, then nothing starts and the outcome is recorded.',
         ],
       },
       {
@@ -578,15 +654,15 @@ export const EPICS = [
       },
       {
         key: 'C-3',
-        title: 'Create the employee record on hire',
+        title: 'Write the new hire to SAP and INFO-TECH',
         sprint: 9,
         points: 5,
         priority: 'must',
         story:
-          'As an HR executive, I want the new hire created from the approved data, as a draft in the master and in SG HR once I approve it, so that I type it once.',
+          "As an HR executive, I want the new hire written to SAP and INFO-TECH from the one entry, each write approved by that system's data steward, so that nobody types the hire again.",
         acceptance: [
           'Given a confirmed hire, when the step runs, then a draft (PRE_HIRE) record appears in the master with the workflow as the change source (B-6).',
-          "Given the SG HR mock, when the record is pushed after HR's explicit approval, then the call is idempotent, audited and labelled as a write-back to a mock.",
+          "Given the SAP and INFO-TECH mocks, when each write is approved by that system's data steward after a preview, then the call is idempotent, audited and labelled as a write-back to a mock.",
         ],
       },
       {
@@ -604,14 +680,14 @@ export const EPICS = [
       },
       {
         key: 'C-5',
-        title: 'Notify people in Teams or DingTalk (mocked)',
+        title: 'Notify people in Lark/Feishu or DingTalk (mocked)',
         sprint: 10,
         points: 3,
         priority: 'could',
         story:
           'As a hiring manager, I want status updates where I already work, so that I do not have to check HuiTong.',
         acceptance: [
-          'Given a workflow step, when it completes, then a message is sent to the mocked Teams or DingTalk channel for the entity.',
+          'Given a workflow step, when it completes, then a message is sent to the mocked Lark or DingTalk channel for the entity.',
           'Given a failed delivery, when it is retried, then the same message is not sent twice.',
         ],
       },
@@ -628,18 +704,49 @@ export const EPICS = [
           'Given a task assigned to me, when I complete it, then the workflow moves on and the change is audited.',
         ],
       },
+      {
+        key: 'C-7',
+        title: 'Intranet access only after the SAP record exists',
+        sprint: 9,
+        points: 3,
+        priority: 'must',
+        labels: ['req: M2 GRS by design'],
+        story:
+          "As HQ IT, we want a new hire's intranet access requested only once their SAP record exists, so that the rule holds without anyone having to remember it.",
+        acceptance: [
+          'Given a new hire whose SAP record is not confirmed, when the workflow reaches the intranet step, then it waits and shows what it is waiting for.',
+          "Given the SAP connector's confirmation, when it arrives, then intranet access is requested once, idempotently, and audited.",
+          'Given every hire, when success metric SM-10 is computed, then it reports whether the SAP record came first (GRS risk R-22).',
+        ],
+      },
+      {
+        key: 'C-8',
+        title: 'HQ Treasury approval above a configurable threshold',
+        sprint: 9,
+        points: 5,
+        priority: 'must',
+        labels: ['req: M2 GRS by design'],
+        story:
+          'As HQ Treasury, I want every claim or payment above the threshold routed to me before it is paid, so that the extra approval the group requires is never skipped.',
+        acceptance: [
+          'Given a claim event from the intranet, when its amount is above the configured threshold, then a Treasury approval step follows the usual approvals; at or below it, none does.',
+          'Given a claim waiting for Treasury, when anyone views it, then its step and owner show on the board, and it is not marked payable.',
+          'Given the threshold, when an authorised role changes it, then the change is audited, and claims already routed keep their step.',
+          'Given a replayed event, when it arrives, then no second approval step or decision is created (GRS risk R-21).',
+        ],
+      },
     ],
   },
   {
     key: 'D',
-    title: 'Attendance and leave consolidation',
+    title: 'Single view, dashboards and insights',
     area: AREA[3],
     labels: ['req: M4 best practices'],
-    goal: 'Attendance and leave from Singapore and HQ consolidate into the company template automatically, with exceptions explained.',
+    goal: 'Management sees one current view across the systems, with dashboards and insights; leave from Singapore and HQ consolidates into the company template automatically, with exceptions explained, as one part of it.',
     stories: [
       {
         key: 'D-1',
-        title: 'Ingest attendance and leave from SG HR and CN HQ',
+        title: 'Ingest attendance and leave from INFO-TECH and SAP',
         sprint: 8,
         points: 5,
         priority: 'must',
@@ -701,6 +808,33 @@ export const EPICS = [
         acceptance: [
           'Given the reports page, when it loads, then each figure names the systems it was drawn from.',
           'Given the MANAGEMENT role, when it opens a report, then it is read-only and shows no restricted fields.',
+        ],
+      },
+      {
+        key: 'D-6',
+        title: 'Single view with dashboards',
+        sprint: 10,
+        points: 8,
+        priority: 'must',
+        story:
+          'As a manager, I want one current view across INFO-TECH, SAP and the intranet, with dashboards for headcount, joiners and leavers, and leave and payroll summaries, so that I decide from one set of numbers.',
+        acceptance: [
+          'Given the single view, when it loads, then each figure names the systems it was drawn from and when.',
+          'Given figures that span entities, when they are shown, then they are aggregates with small counts suppressed (assumption A-39).',
+          'Given the MANAGEMENT role, when it opens a dashboard, then it is read-only and shows no restricted fields.',
+        ],
+      },
+      {
+        key: 'D-7',
+        title: 'Data-consistency and duplicate-entry insights',
+        sprint: 11,
+        points: 3,
+        priority: 'should',
+        story:
+          'As the HR lead, I want to see how consistent the systems are and how much duplicate entry HuiTong has removed, so that the benefit is measured, not claimed.',
+        acceptance: [
+          "Given the insights panel, when it loads, then it shows the share of consistent records (SM-02) and how many times each new-hire field was typed (SM-05), from HuiTong's own records.",
+          'Given a measure with too little data, when it is shown, then it says so instead of showing a number.',
         ],
       },
     ],
@@ -888,14 +1022,14 @@ export const EPICS = [
       },
       {
         key: 'T-2',
-        title: 'First client session',
-        sprint: 2,
+        title: 'Briefing call with LESSO Solar (week of 2 Nov)',
+        sprint: 3,
         points: 3,
         priority: 'must',
         type: 'type: task',
         labels: ['status: needs client input'],
         story:
-          'As the team, we want the open questions answered by Organisation E, so that our assumptions become facts.',
+          'As the team, we want the open questions answered by LESSO Solar, so that our assumptions become facts.',
         acceptance: [
           'Given the three sample packs in docs/client/questions-for-client.md, when the session is arranged, then they are requested first.',
           'Given docs/client/questions-for-client.md, when the session ends, then each question has an answer or a follow-up.',
@@ -988,7 +1122,7 @@ export const EPICS = [
         priority: 'should',
         type: 'type: task',
         story:
-          'As the team, we want to hand over what we built with its documentation, so that Organisation E can take it further.',
+          'As the team, we want to hand over what we built with its documentation, so that LESSO Solar can take it further.',
         acceptance: [
           'Given the handover, when it is done, then the client has the repository guide, the architecture and the open questions.',
         ],
