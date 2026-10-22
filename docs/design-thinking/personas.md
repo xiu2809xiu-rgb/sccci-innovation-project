@@ -1,8 +1,8 @@
 # Personas
 
-HuiTong 汇通 · Organisation E (Financial Services) · Problem Statement #17
+HuiTong 汇通 · LESSO Solar · Problem Statement #7
 
-> **Status: Assumed.** These are **proto-personas**. We built them from Problem Statement #17 and desk research before the first client meeting (W2 or W3), and we have not yet met the people they describe. Roles, tools and habits are hypotheses to validate with Organisation E, and every quote is illustrative. Assumptions are logged in [../assumptions.md](../assumptions.md) (A-xx) and tested by the questions in [../client/questions-for-client.md](../client/questions-for-client.md) (Q-xx). Labels follow [README.md](README.md).
+> **Status: Assumed.** These are **proto-personas**. We built them from the brief and desk research before the briefing call (the week of 2 Nov), and we have not yet met the people they describe. They first described Problem Statement #17 and moved to LESSO Solar's context on 22 October 2026 ([ADR 0022](../adr/0022-final-statement-7-lesso-solar.md)). Roles, tools and habits are hypotheses to validate with LESSO Solar, and every quote is illustrative. Assumptions are logged in [../assumptions.md](../assumptions.md) (A-xx) and tested by the questions in [../client/questions-for-client.md](../client/questions-for-client.md) (Q-xx). Labels follow [README.md](README.md).
 
 All three people are synthetic. They are also HuiTong's seeded demo users, so a walkthrough or a prototype test can be run as the persona, with the matching role, from the demo role switcher.
 
@@ -10,79 +10,80 @@ All three people are synthetic. They are also HuiTong's seeded demo users, so a 
 
 ## Personas at a glance
 
-|                                                             | Tan Mei Ling                                         | Zhou Xinyi 周欣怡                                                 | Arjun Menon                                                    |
-| ----------------------------------------------------------- | ---------------------------------------------------- | ----------------------------------------------------------------- | -------------------------------------------------------------- |
-| Role                                                        | SG HR executive                                      | China HQ HR partner                                               | Hiring manager, Head of Wealth Management SG                   |
-| Entity and location                                         | `SG01` Organisation E Singapore Pte. Ltd., Singapore | `CN01` Organisation E Group HQ, Shanghai                          | `SG01`, Singapore                                              |
-| HuiTong role                                                | `HR_SG`                                              | `HR_HQ`                                                           | `HIRING_MANAGER`                                               |
-| Working language                                            | English                                              | 简体中文 (reads English well)                                     | English                                                        |
-| Journeys ([journey-maps.md](journey-maps.md))               | Both: onboarding and the monthly consolidation       | Both, for the HQ side                                             | Manpower request to day 1                                      |
-| Biggest need                                                | Enter data once and close the month quickly          | Singapore data in HQ's structure, and only the fields HQ may hold | Know where a hire stands, and a new hire who is ready on day 1 |
-| Main screens                                                | Overview, Employees, Workflows, Attendance and leave | Employees, Governance, AI mapping wizard, Attendance and leave    | Workflows, Overview                                            |
-| Success measures ([success-metrics.md](success-metrics.md)) | SM-01, SM-02, SM-05, SM-07                           | SM-02, SM-06, GR-03                                               | SM-03, SM-04                                                   |
+|                                                             | Tan Mei Ling                                                              | Zhou Xinyi 周欣怡                                                    | Arjun Menon                                                        |
+| ----------------------------------------------------------- | ------------------------------------------------------------------------- | -------------------------------------------------------------------- | ------------------------------------------------------------------ |
+| Role                                                        | SG HR executive                                                           | China HQ HR partner                                                  | Hiring manager, Head of Regional Sales                             |
+| Entity                                                      | `SG01`, the Singapore hub                                                 | `CN01`, China HQ                                                     | `SG01`, the Singapore hub                                          |
+| HuiTong role                                                | `HR_SG`                                                                   | `HR_HQ`                                                              | `HIRING_MANAGER`                                                   |
+| Working language                                            | English                                                                   | 简体中文 (reads English well)                                        | English                                                            |
+| Journeys ([journey-maps.md](journey-maps.md))               | All three: onboarding, the monthly summary, and claims she is asked about | Onboarding (the SAP record) and the monthly summary, for the HQ side | Onboarding his hires; his team's claims                            |
+| Biggest need                                                | Enter a new hire once, in the right order, and close the month quickly    | Singapore hires in SAP's structure, and only the fields HQ may hold  | Know where a hire or a claim stands, and a new hire ready on day 1 |
+| Main screens                                                | Overview, Employees, Workflows, Attendance and leave                      | Employees, Workflows, Governance, AI mapping wizard                  | Workflows, Overview                                                |
+| Success measures ([success-metrics.md](success-metrics.md)) | SM-01, SM-02, SM-05, SM-07                                                | SM-02, SM-06, SM-10, GR-03                                           | SM-03, SM-04, SM-11                                                |
 
 ---
 
 ## 1. Tan Mei Ling, SG HR executive
 
-Tan Mei Ling · `HR_SG` · Organisation E Singapore Pte. Ltd. (`SG01`), Singapore
+Tan Mei Ling · `HR_SG` · the Singapore hub (`SG01`)
 
 ### Role and context
 
-- HR executive in a small HR team (assumed three people). Reports to the Head of HR, Singapore operation, who is the data owner for SG01 ([GRS 2.1](../grs/grs-by-design.md#21-roles-and-responsibilities)).
-- Looks after records, attendance, leave and payroll inputs for about 50 SG01 employees (A-11: we model about 50 SG01 and 70 CN01 employees) in the locally compliant SG HR system.
-- Maintains the Excel employee master, the only consolidated view management has (A-07), and prepares the monthly attendance and leave consolidation in the company template.
-- Every hand-off runs through her: hiring managers and admin in Teams, HQ HR by email and WeChat.
+- HR executive in a small HR team at LESSO Solar's Singapore hub (assumed three people). Reports to the Head of HR, Singapore, who is the data owner for SG01 ([GRS 2.1](../grs/grs-by-design.md#21-roles-and-responsibilities)).
+- Looks after records, leave and payroll inputs for about 50 SG01 employees (A-11: we model about 50 SG01 and 70 CN01 employees) in INFO-TECH.
+- Every new hire passes through her three times: into INFO-TECH, to HQ for the SAP record, and to IT for intranet access once the SAP record exists (A-62).
+- Prepares the monthly leave and payroll summary for management, and is the person colleagues ask when a claim is stuck at HQ.
 - Works in English. Speaks Mandarin socially but reads formal Chinese HR terms slowly, so HQ files with Chinese headers cost her time (assumed).
 
 ### Goals
 
-- Enter each piece of employee data once, and trust that it reaches HQ and the master.
-- Keep SG HR, HQ's system and the master in step without reconciling spreadsheets.
-- Close the monthly consolidation quickly and get it right first time.
-- See every new hire ready on day 1.
-- Spend her time on workforce planning and employee development instead of checking data (Problem Statement #17, "Feelings").
+- Enter each new hire once, and trust that SAP, INFO-TECH and the intranet follow in the right order.
+- Keep INFO-TECH, SAP and HuiTong's master in step without reconciling spreadsheets.
+- Close the monthly summary quickly and get it right first time.
+- See every new hire ready on day 1, intranet account included.
+- Spend her time on people rather than on carrying data between systems.
 
 ### Frustrations
 
-- Typing the same new hire into a recruitment tracker, SG HR and the Excel master.
+- Typing the same new hire into INFO-TECH, into a spreadsheet for HQ, and into an access request for IT.
+- Waiting for HQ to create the SAP record before she can even ask for intranet access, while the start date gets closer.
 - Reformatting HQ files: Chinese headers, `YYYY/MM/DD` dates, SAP codes and CSV text that opens garbled because it was saved as GBK.
-- Acting as the relay between Teams, WeChat and email, so the status of every request lives in her inbox.
-- Not knowing which version of the master HQ or management is using.
+- Being asked where a claim is when it is waiting for HQ Treasury, in a step she cannot see.
 - Emailing files that contain salary and bank columns, with no record of what went where.
-- The month-end crunch: about 16 hours of consolidation while the report waits (A-12: assumed baselines).
+- The month-end crunch: about 16 hours of preparing the summary while management waits (A-12: assumed baselines).
 
 ### Tools today
 
-| Tool                                  | What she uses it for                                                                                             | How often                    |
-| ------------------------------------- | ---------------------------------------------------------------------------------------------------------------- | ---------------------------- |
-| SG HR software (vendor unknown, Q-01) | Employee records, attendance, leave and payroll inputs                                                           | Daily                        |
-| OA platform                           | Approved manpower requests and other approvals                                                                   | Daily                        |
-| Excel                                 | Employee master; recruitment and onboarding trackers; the consolidation workbook; the company reporting template | Daily, heaviest at month-end |
-| Outlook and OneDrive                  | Files to and from HQ, admin and management                                                                       | Daily                        |
-| Microsoft Teams                       | Hiring managers, admin and Singapore colleagues                                                                  | All day                      |
-| WeChat                                | Quick questions to HQ colleagues                                                                                 | Several times a week         |
-| HQ SAP                                | No access (assumed); HQ data reaches her as exports                                                              | Never                        |
+| Tool                                      | What she uses it for                                                                                      | How often                    |
+| ----------------------------------------- | --------------------------------------------------------------------------------------------------------- | ---------------------------- |
+| INFO-TECH                                 | Employee records, leave and payroll inputs                                                                | Daily                        |
+| HQ intranet                               | News, policies, her own claims and approvals                                                              | Daily                        |
+| Excel                                     | The onboarding tracker; spreadsheets for HQ; the monthly summary workbook; the company reporting template | Daily, heaviest at month-end |
+| Email                                     | Files to and from HQ, IT, admin and management                                                            | Daily                        |
+| Chat (Lark, WeChat or another tool, Q-61) | Hiring managers, admin, IT and HQ colleagues                                                              | All day                      |
+| HQ SAP                                    | No access (assumed); HQ confirms SAP records by email                                                     | Never                        |
 
 ### A day in the life (second working day of the month)
 
-- **08:45** OA shows that a manpower request for a Wealth Management analyst was approved last night. She copies its fields into the recruitment tracker and briefs the agency by email.
-- **09:30** Keys in yesterday's joiner: SG HR first, then the Excel master, saved as yet another "final" version.
-- **10:15** Arjun asks in Teams whether there are CVs yet. She checks OA, her tracker and her inbox to answer him.
-- **11:00** Xinyi emails: SAP shows different job titles for two Singapore staff. Mei Ling exports from SG HR, reformats and replies. Nobody records which value was right.
-- **13:30** Month-end: she exports attendance and leave from SG HR and asks Xinyi on WeChat for HQ's file.
+- **08:45** An offer was accepted last night: a project engineer for Arjun's team starts in ten days. She keys the new hire into INFO-TECH: the record, the leave entitlement and the payroll details.
+- **09:30** Copies the same details into HQ's spreadsheet format and emails Xinyi to create the SAP record. Nothing else can start until it exists.
+- **10:15** Arjun asks in chat whether last week's hire will have intranet access on Monday. She checks her email: HQ has not confirmed the SAP record yet.
+- **11:00** Xinyi replies: SAP shows a different job title for a Singapore engineer. Mei Ling exports from INFO-TECH, reformats and replies. Nobody records which value was right.
+- **13:30** Month-end: she exports leave and payroll summaries from INFO-TECH and asks Xinyi in chat for HQ's file.
+- **14:30** A colleague asks why a large travel claim has not been paid. It is waiting for HQ Treasury, but all she can say is "it's at HQ".
 - **15:30** The HQ file opens as garbled characters. She re-imports it, renames the 入职日期 and 假期类型 columns and converts the dates.
 - **17:00** She finds 调休 and 探亲假 rows and messages Xinyi to ask how they were reported last month.
-- **18:30** She leaves with the consolidation half done, unsure which version of the master HQ is working from.
+- **18:30** She leaves with the summary half done and the SAP record still unconfirmed.
 
 ### Key quote (illustrative)
 
-> "We have four systems, and I am still the one connecting them, one spreadsheet at a time."
+> "Three systems, one new hire, and I am still the one carrying the details between them."
 
 ### What success looks like
 
-- Each new-hire field is typed once, at its source (SM-05: from about three times to one).
-- The consolidation takes two hours or less, and the report is final the same day (SM-01, SM-07).
+- Each new-hire field is typed once (SM-05: from about three times to one).
+- Intranet access follows the SAP record the same day, without her asking (SM-03, SM-10).
+- The monthly summary takes two hours or less, and is final the same day (SM-01, SM-07).
 - At least 98% of records agree across systems, and every disagreement waits in one queue with the sources side by side (SM-02).
 - No employee data leaves by email, and every cross-border flow is recorded and approved ([SH-04](hypotheses.md#sh-04--visible-controls-make-cross-border-flows-acceptable)).
 
@@ -96,69 +97,68 @@ Tan Mei Ling · `HR_SG` · Organisation E Singapore Pte. Ltd. (`SG01`), Singapor
 
 ### How HuiTong serves her
 
-| Screen                                                                                                 | What it does for her                                                                                                                                                                                                                                                                                                                    |
-| ------------------------------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Overview (`/overview`)                                                                                 | Her first screen each morning: sync health, open SG01 conflicts, approvals waiting for her (mapping versions, transfer entries, workflow steps), this month's consolidation status and the activity feed                                                                                                                                |
-| Employees (`/employees`)                                                                               | One searchable master instead of the Excel file. The record drawer puts SG HR and CN HQ values side by side and highlights conflicts. She picks the source of truth, or enters a value with a reason, and the decision lands in the audit history. "Run sync" previews creates, updates, skips and conflicts before anything is written |
-| Workflows (`/workflows`, `/workflows/:instanceId`)                                                     | Each manpower request from OA approval to day 1, with owners and SLAs. She records the hire once, and the request's fields carry over                                                                                                                                                                                                   |
-| Attendance and leave (`/attendance-leave`, `/attendance-leave/mappings`, `/attendance-leave/template`) | One consolidation run: both sides pulled, categories mapped by approved rules, only the exceptions left to clear, then the company template previewed and exported as .xlsx                                                                                                                                                             |
-| Connectors (`/connectors`)                                                                             | Status and recent runs for each connector. As SG01's data steward she approves SG01 mapping versions                                                                                                                                                                                                                                    |
-| Governance (`/governance`)                                                                             | She approves cross-border transfer entries for SG01 data, with the DPO's reference                                                                                                                                                                                                                                                      |
+| Screen                                                                                                 | What it does for her                                                                                                                                                                                                                                                                                                                         |
+| ------------------------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Overview (`/overview`)                                                                                 | Her first screen each morning: sync health, open SG01 conflicts, approvals waiting for her (mapping versions, transfer entries, workflow steps), this month's summary status and the activity feed                                                                                                                                           |
+| Employees (`/employees`)                                                                               | One searchable master in place of the spreadsheets. The record drawer puts INFO-TECH and SAP values side by side and highlights conflicts. She picks the source of truth, or enters a value with a reason, and the decision lands in the audit history. "Run sync" previews creates, updates, skips and conflicts before anything is written |
+| Workflows (`/workflows`, `/workflows/:instanceId`)                                                     | Each new hire from one entry to day 1: the SAP record, the INFO-TECH record and intranet access in order, with owners and SLAs. She approves the preview of the INFO-TECH write, and sees which claims wait for Treasury, so she can answer "where is it?"                                                                                   |
+| Attendance and leave (`/attendance-leave`, `/attendance-leave/mappings`, `/attendance-leave/template`) | One run: both sides pulled, categories mapped by approved rules, only the exceptions left to clear, then the company template previewed and exported as .xlsx                                                                                                                                                                                |
+| Connectors (`/connectors`)                                                                             | Status and recent runs for each connector. As SG01's data steward she approves SG01 mapping versions                                                                                                                                                                                                                                         |
+| Governance (`/governance`)                                                                             | She approves cross-border transfer entries for SG01 data, with the DPO's reference                                                                                                                                                                                                                                                           |
 
 ### Assumptions to validate
 
-- She, rather than HQ or a payroll specialist, owns both the Excel master and the monthly consolidation (A-07; Q-06, Q-29).
-- A new hire is typed into about three places today (A-12; Q-33).
+- She, rather than HQ or a payroll specialist, prepares the monthly summary (Q-06, Q-29, Q-30).
+- A new hire is typed into about three places today, and the SAP record is requested by email (A-12, A-62; Q-33, Q-59).
 - She has no access to HQ's SAP, and HQ data reaches her only as exports (Q-04, Q-08).
 
 ---
 
 ## 2. Zhou Xinyi, China HQ HR partner
 
-Zhou Xinyi 周欣怡 · `HR_HQ` · Organisation E Group HQ (`CN01`), Shanghai
+Zhou Xinyi 周欣怡 · `HR_HQ` · China HQ (`CN01`)
 
 ### Role and context
 
-- HR business partner for overseas entities (海外HRBP) in HQ's Human Resources department (人力资源部). Reports to the HR director, Group HQ, who is the data owner for CN01.
-- Keeps Singapore staff in HQ's SAP-like HR system as overseas staff (A-05: SG employees are also recorded at HQ) and applies group HR policy to them.
-- Data steward for about 70 CN01 employees (A-11). Prepares group headcount and attendance reporting together with Singapore.
-- Approves the HQ step of overseas manpower requests in OA (assumed; Q-32).
+- HR business partner for overseas entities (海外HRBP) in HQ's Human Resources department (人力资源部). Reports to the HR director at HQ, who is the data owner for CN01.
+- Creates and keeps Singapore staff in HQ's customised SAP (A-05: SG employees are also recorded at HQ), so every Singapore hire waits on her before getting intranet access (A-62).
+- Data steward for about 70 CN01 employees (A-11). Prepares group headcount and leave reporting together with Singapore.
 - Works in 简体中文. Reads English well, but prefers Chinese for HR terms and for anything she must get exactly right.
 
 ### Goals
 
-- Receive Singapore data in HQ's structure (员工编号, 部门编码, SAP codes) without chasing files.
+- Receive Singapore hires in SAP's structure (员工编号, 部门编码, SAP codes), complete, without chasing anyone.
 - Hold only the Singapore fields HQ is authorised to hold, and be able to show compliance what crossed the border and why.
 - Know which system is right for each field, so that each question is settled once.
 - Group reports whose numbers match Singapore's.
-- New subsidiaries joining group reporting without a new IT project each time.
+- Other entities and companies joining group reporting without a new IT project each time.
 
 ### Frustrations
 
-- Singapore files in English, with ISO dates and department codes such as `SG-COMP` that she maps by hand to 8-digit org-unit codes such as `50001030`.
+- Singapore spreadsheets in English, with Singapore-style dates and department codes that she maps by hand to 8-digit org-unit codes such as `50001030`.
+- Being the bottleneck: a Singapore new hire cannot get intranet access until she has re-keyed them into SAP.
 - Attachments with salary and bank columns HQ never asked for, left sitting in her inbox.
 - Two job titles for the same person, and no way to tell which is current.
-- Questions scattered across WeChat, DingTalk and email.
-- Leave categories that do not line up with Singapore's (探亲假 has no counterpart), and holiday calendars that differ, including China's make-up working days.
+- Questions scattered across chat tools and email, and leave categories that do not line up with Singapore's (探亲假 has no counterpart), with holiday calendars that differ, including China's make-up working days.
 
 ### Tools today
 
-| Tool                                                 | What she uses it for                                            | How often |
-| ---------------------------------------------------- | --------------------------------------------------------------- | --------- |
-| HQ SAP HCM-like system (exact product unknown, Q-02) | HQ HR master data, including SG01 staff held as overseas staff  | Daily     |
-| OA platform                                          | Approvals, including HQ steps of Singapore requests             | Daily     |
-| DingTalk 钉钉                                        | Messages, HQ approvals and attendance (source to confirm, Q-09) | All day   |
-| WeChat 微信 and WeChat Work 企业微信                 | Messages with Singapore colleagues                              | Daily     |
-| WPS Office and Excel                                 | Exports, SAP upload files and group reporting workbooks         | Daily     |
-| Email                                                | Files from Singapore                                            | Daily     |
+| Tool                                              | What she uses it for                                            | How often |
+| ------------------------------------------------- | --------------------------------------------------------------- | --------- |
+| HQ's customised SAP (exact product unknown, Q-02) | HQ HR master data, including SG01 staff                         | Daily     |
+| HQ intranet                                       | News, policies, claims and approvals                            | Daily     |
+| DingTalk 钉钉 or Lark 飞书 (Q-61)                 | Messages and HQ approvals; attendance (source to confirm, Q-09) | All day   |
+| WeChat 微信                                       | Messages with Singapore colleagues                              | Daily     |
+| WPS Office and Excel                              | Exports, SAP upload files and group reporting workbooks         | Daily     |
+| Email                                             | Files from Singapore                                            | Daily     |
 
 ### A day in the life
 
-- **09:00** DingTalk shows two approvals waiting. One is the HQ step of a Singapore manpower request.
-- **09:45** An updated staff list arrives from Singapore by email. She maps department names to org-unit codes, converts ISO dates to `YYYY/MM/DD` and builds the SAP upload file.
+- **09:00** Two Singapore new hires are waiting for their SAP records; one starts on Monday.
+- **09:45** Mei Ling's spreadsheet arrives by email. She maps department names to org-unit codes, converts the dates to `YYYY/MM/DD` and keys the hire into SAP.
 - **10:30** The file includes salary and bank columns HQ did not ask for. She deletes them, but the original stays in her inbox.
 - **11:30** Two Singapore job titles differ between SAP and the file. She asks Mei Ling on WeChat and waits until the afternoon for an answer.
-- **14:00** She exports CN01 attendance and leave for the monthly consolidation, saves it as CSV from WPS and sends it to Singapore.
+- **14:00** She exports CN01 leave for the monthly summary, saves it as CSV from WPS and sends it to Singapore.
 - **16:00** The HR director asks for overseas headcount by department. She uses last month's spreadsheet, because it is the only consolidated view.
 
 ### Key quote (illustrative)
@@ -169,10 +169,10 @@ Zhou Xinyi 周欣怡 · `HR_HQ` · Organisation E Group HQ (`CN01`), Shanghai
 
 ### What success looks like
 
-- Singapore data appears in HQ's structure and in 中文, without asking anyone for a file.
+- Singapore hires reach SAP in its structure and in 中文, complete, without anyone emailing a file, and intranet access follows on its own (SM-10).
 - She sees only what HQ may see, and the interface tells her why a field is hidden (GR-03).
 - Each field has a source of truth, and disagreements are settled once (SM-02).
-- A new subsidiary's HR export is connected in under a day (SM-06).
+- Another company's HR export is connected in under a day (SM-06).
 
 ### Accessibility and language needs
 
@@ -180,104 +180,108 @@ Zhou Xinyi 周欣怡 · `HR_HQ` · Organisation E Group HQ (`CN01`), Shanghai
 - Chinese field and category names as primary labels, with the canonical names alongside (员工编号 / `employeeNo`, 调休 / Time-off in lieu).
 - Unambiguous, year-first dates.
 - Everything loads from mainland China: self-hosted fonts and first-party analytics, with no Google services or third-party CDNs.
-- Notifications in DingTalk, not Teams, and a discrepancy explainer that answers in 中文.
+- Notifications in DingTalk or Lark, whichever HQ uses (Q-61), and a discrepancy explainer that answers in 中文.
 
 ### How HuiTong serves her
 
-| Screen                                                                      | What it does for her                                                                                                                                                                                                                                                                                                                                                                          |
-| --------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Employees (`/employees`)                                                    | SG01 and CN01 records with 中文 labels. The drawer shows SAP's value next to SG HR's. Where SG HR owns a field, the discrepancy tells her which SAP value to correct; conflicts on shared fields are decided by `HR_SG`, and she sees the decision and its reason. SG01 RESTRICTED fields stay masked, and "Why is this hidden?" names the missing transfer entry. She decides CN01 conflicts |
-| Discrepancy explainer (in the record drawer)                                | Explains a disagreement between systems in 中文 or English. It has no write path                                                                                                                                                                                                                                                                                                              |
-| Connectors and AI mapping wizard (`/connectors`, `/connectors/new-mapping`) | Proposals for exports with Chinese headers, such as the `MY01` export that mixes English and 简体中文 headers (入职日期 → `hireDate`), each with a confidence score, a rationale and "Requires approval". Approval stays with the data steward of the connector's entity, which for `cn-hq` is her                                                                                            |
-| Governance (`/governance`)                                                  | She requests SG01 RESTRICTED fields through the cross-border transfer register. She cannot approve her own request                                                                                                                                                                                                                                                                            |
-| Attendance and leave (`/attendance-leave/mappings`)                         | She approves CN category mappings (年假 → `ANNUAL`, 调休 → `TIME_OFF_IN_LIEU`) and clears CN exceptions                                                                                                                                                                                                                                                                                       |
-| Overview (`/overview`) and Integration map (`/integration-map`)             | The same overview in 中文, and every connected system with its status in one picture                                                                                                                                                                                                                                                                                                          |
+| Screen                                                                      | What it does for her                                                                                                                                                                                                                                                                                                                                                                                  |
+| --------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Workflows (`/workflows`, `/workflows/:instanceId`)                          | The Singapore hires waiting for an SAP record. She approves a preview of each SAP write, as SAP's data steward, instead of re-keying the hire                                                                                                                                                                                                                                                         |
+| Employees (`/employees`)                                                    | SG01 and CN01 records with 中文 labels. The drawer shows SAP's value next to INFO-TECH's. Where INFO-TECH owns a field, the discrepancy tells her which SAP value to correct; conflicts on shared fields are decided by `HR_SG`, and she sees the decision and its reason. SG01 RESTRICTED fields stay masked, and "Why is this hidden?" names the missing transfer entry. She decides CN01 conflicts |
+| Discrepancy explainer (in the record drawer)                                | Explains a disagreement between systems in 中文 or English. It has no write path                                                                                                                                                                                                                                                                                                                      |
+| Connectors and AI mapping wizard (`/connectors`, `/connectors/new-mapping`) | Proposals for exports with Chinese headers, such as a joining company's sample that mixes English and 简体中文 headers (入职日期 → `hireDate`), each with a confidence score, a rationale and "Requires approval". Approval stays with the data steward of the connector's entity, which for `cn-hq` is her                                                                                           |
+| Governance (`/governance`)                                                  | She requests SG01 RESTRICTED fields through the cross-border transfer register. She cannot approve her own request                                                                                                                                                                                                                                                                                    |
+| Attendance and leave (`/attendance-leave/mappings`)                         | She approves CN category mappings (年假 → `ANNUAL`, 调休 → `TIME_OFF_IN_LIEU`) and clears CN exceptions                                                                                                                                                                                                                                                                                               |
+| Overview (`/overview`) and Integration map (`/integration-map`)             | The same overview in 中文, and every connected system with its status in one picture                                                                                                                                                                                                                                                                                                                  |
 
 ### Assumptions to validate
 
-- HQ holds SG01 staff as overseas staff, under an employee number shared with SG HR (A-04: an HQ-assigned `E1xxxxx` number, the only match key; A-05; Q-04, Q-05).
+- HQ holds SG01 staff in SAP under an employee number shared with INFO-TECH (A-04: an HQ-assigned `E1xxxxx` number, the only match key; A-05; Q-04, Q-05).
+- She, or someone else in HQ HR, creates each Singapore hire's SAP record today (A-62; Q-59).
 - HQ needs only a subset of Singapore fields (Q-08).
-- HQ attendance comes from SAP or DingTalk (Q-09), and HQ notifications belong in DingTalk or WeChat Work (A-18: notification channels; Q-10).
+- HQ attendance comes from SAP or DingTalk (Q-09), and HQ notifications belong in DingTalk or Lark (A-18: notification channels; Q-61).
 
 ---
 
 ## 3. Arjun Menon, hiring manager
 
-Arjun Menon · `HIRING_MANAGER` · Head of Wealth Management (财富管理部), Organisation E Singapore Pte. Ltd. (`SG01`)
+Arjun Menon · `HIRING_MANAGER` · Head of Regional Sales (区域销售部), the Singapore hub (`SG01`)
 
 ### Role and context
 
-- Leads Wealth Management in Singapore: relationship managers, investment analysts and client-service staff (assumed about 12 people). Reports to the Singapore chief executive.
-- Raises manpower requests in OA and hires three or four people a year, mostly client-facing (assumed).
-- Spends most of the day in client meetings and reads Teams and OA notices on his phone between them.
-- Client-facing hires also need compliance clearance before they can serve clients, so a late or unprepared start costs revenue as well as time.
+- Leads Regional Sales for Southeast Asia from Singapore: sales managers, project and application engineers, and sales support (assumed about 12 people). Reports to the head of the Singapore hub.
+- Hires three or four people a year, mostly engineers and sales staff who travel to customers and project sites (assumed).
+- Spends much of the week with customers, and reads messages and intranet notices on his phone between meetings.
+- His team's travel and project expenses go through intranet claims, and the larger ones need HQ Treasury's extra approval (A-63), so he often waits on payments he cannot trace.
 - Works in English.
 
 ### Goals
 
-- Recruitment starts as soon as a request is approved.
-- He knows where each hire stands without having to ask.
-- New hires are productive from day 1, with laptop, desk, accounts and system access ready.
+- New hires start with a laptop, accounts and intranet access, ready to travel and to claim expenses from their first trip.
+- He knows where each hire, and each large claim, stands without having to ask.
 - He fills in each request once.
 
 ### Frustrations
 
-- After approval the request disappears from view, and its status lives in HR's inbox.
-- HR asks him again for details he already put in the OA form.
-- New hires spend their first days waiting for a laptop or CRM access.
-- He chases HR and admin separately, in Teams and by email.
+- After approval the hire disappears from view, and its status lives in HR's inbox.
+- HR asks him again for details he already gave.
+- New hires spend their first days without intranet access, so they cannot read the policies or file a claim.
+- Large claims sit with HQ Treasury for days, and nobody can tell him where they are.
+- He chases HR, admin and finance separately, in chat and by email.
 
 ### Tools today
 
-| Tool                   | What he uses it for                                         | How often           |
-| ---------------------- | ----------------------------------------------------------- | ------------------- |
-| OA platform            | Raises manpower requests; approves his team's requests      | A few times a month |
-| Microsoft Teams        | HR, admin and his own team                                  | All day             |
-| Outlook and calendar   | Client meetings; OA notices                                 | Daily               |
-| CRM                    | Client relationships (no HR data flow identified yet, Q-11) | Daily               |
-| Phone (Teams, Outlook) | Between client meetings                                     | Daily               |
+| Tool                                      | What he uses it for                       | How often          |
+| ----------------------------------------- | ----------------------------------------- | ------------------ |
+| HQ intranet                               | Claims, approvals, policies and news      | A few times a week |
+| Chat (Lark, WeChat or another tool, Q-61) | HR, admin and his own team                | All day            |
+| Email and calendar                        | Customer meetings; intranet notices       | Daily              |
+| Phone                                     | Between customer meetings and site visits | Daily              |
 
 ### A day in the life
 
-- **08:15** Checks Teams on his phone before the first client meeting.
-- **10:00 to 12:30** Client meetings.
-- **12:45** OA notice: his request for an investment analyst has been approved. Nothing tells him what happens next.
-- **15:00** Asks Mei Ling in Teams whether the agency has sent CVs for an earlier vacancy.
-- **17:30** Another new hire starts on Monday. He asks admin whether the laptop and CRM access are ready. Nobody knows, because the start date only reached admin yesterday.
+- **08:15** Checks messages on his phone before the first customer meeting.
+- **10:00 to 12:30** Customer meetings.
+- **12:45** His request for a project engineer has been approved. Nothing tells him what happens next.
+- **15:00** Asks Mei Ling whether last week's hire will have intranet access on Monday. She is still waiting for HQ.
+- **16:30** A sales manager asks why last month's trip claim has not been paid. Finance says it is "with Treasury".
+- **17:30** Another new hire starts on Monday. He asks admin whether the laptop is ready. Nobody knows, because the start date only reached admin yesterday.
 
 ### Key quote (illustrative)
 
-> "The headcount was approved weeks ago. Why am I still asking HR whether my new analyst will have a laptop on Monday?"
+> "The hire was approved weeks ago. Why am I still asking whether my new engineer can log in on Monday?"
 
 ### What success looks like
 
-- The requisition exists within minutes of approval (SM-03: under 5 minutes).
-- He can see each hire's stage, owner and due date without asking ([SH-06](hypotheses.md#sh-06--status-where-people-already-work)).
+- A new hire's intranet access is granted the same day they are entered, once the SAP record exists (SM-03, SM-10).
+- He can see each hire's stage, owner and due date, and each large claim's step, without asking ([SH-06](hypotheses.md#sh-06--status-where-people-already-work), [SH-08](hypotheses.md#sh-08-a-threshold-rule-makes-the-treasury-step-certain-and-visible)).
 - At least 95% of new hires are fully prepared on day 1 (SM-04).
+- Every claim above the threshold is approved by Treasury before it is paid (SM-11).
 - He never sees other people's pay or bank data, and can trust that his team's data is protected in the same way (GR-03).
 
 ### Accessibility and language needs
 
-- Glanceable, plain-language status: where the request is, who has it and when it is due.
+- Glanceable, plain-language status: where the hire or claim is, who has it and when it is due.
 - One primary action per view, with detail behind progressive disclosure (Hick's law).
 - Usable on a tablet between meetings, with generous targets (Fitts's law; WCAG 2.2 target size).
 - Notifications that carry the key facts, so he rarely needs to open the app.
 
 ### How HuiTong serves him
 
-| Screen                                                                | What it does for him                                                                                                                       |
-| --------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
-| Workflows board and timeline (`/workflows`, `/workflows/:instanceId`) | Every request from OA approval to day 1: the current step, its owner, the SLA, and the OA approval steps shown explicitly                  |
-| Notifications (Teams, mocked in the PoC)                              | A message at each milestone: requisition opened, hire recorded, preparation complete or overdue                                            |
-| Overview (`/overview`)                                                | His open requests and anything waiting for him                                                                                             |
-| Employees (`/employees`)                                              | INTERNAL fields only. Pay, bank, birth date and other CONFIDENTIAL fields are masked, and "Why is this hidden?" names the clearance needed |
-| Connectors, Governance and other screens                              | The permission-denied state, which names the role needed                                                                                   |
+| Screen                                                                | What it does for him                                                                                                                                     |
+| --------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Workflows board and timeline (`/workflows`, `/workflows/:instanceId`) | Every hire from entry to day 1, and his team's claims above the threshold: the current step, its owner, the SLA, and the approval steps shown explicitly |
+| Notifications (Lark/Feishu or DingTalk, mocked in the PoC)            | A message at each milestone: hire entered, SAP record created, intranet access granted, preparation complete or overdue, a claim approved by Treasury    |
+| Overview (`/overview`)                                                | His open hires and claims, and anything waiting for him                                                                                                  |
+| Employees (`/employees`)                                              | INTERNAL fields only. Pay, bank, birth date and other CONFIDENTIAL fields are masked, and "Why is this hidden?" names the clearance needed               |
+| Connectors, Governance and other screens                              | The permission-denied state, which names the role needed                                                                                                 |
 
 ### Assumptions to validate
 
-- The OA approval steps and the fields a manpower request carries (A-10: manpower request steps; Q-32).
-- Today's lead time and day-1 readiness (A-12; Q-33, Q-48).
-- Teams is the right channel for Singapore managers (A-18; Q-10).
+- How a hire is approved, and which fields the approval carries (A-10; Q-32).
+- Today's lead time to intranet access, and day-1 readiness (A-12; Q-33, Q-48, Q-59).
+- Which claims need Treasury, and how long they wait (A-63; Q-60).
+- The chat tool Singapore managers use (A-18; Q-61).
 
 ---
 
@@ -285,47 +289,49 @@ Arjun Menon · `HIRING_MANAGER` · Head of Wealth Management (财富管理部), 
 
 These roles appear in the journeys but do not need full personas this semester.
 
-| Person (demo user)                            | HuiTong role    | What they need                                                                                                                                   | Main screens                                | What they never see                                                                   |
-| --------------------------------------------- | --------------- | ------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------- | ------------------------------------------------------------------------------------- |
-| Nur Aisyah                                    | `ADMIN_OPS`     | Preparation tasks (laptop, desk, accounts) created automatically with the start date and an SLA; notices in Teams; only the data each task needs | Task list (`/workflows/tasks`)              | Pay, bank details or birth dates                                                      |
-| Li Guoqiang 李国强                            | `MANAGEMENT`    | Same-day consolidated reports from authorised sources, with provenance; one set of numbers for Singapore and HQ; English or 中文                 | Reports (`/reports`), Overview              | Any write action; named cross-entity data (aggregates by default)                     |
-| Grace Lim                                     | `AUDITOR`       | An append-only trail of every write, approval and conflict decision; chain verification; access reviews                                          | Audit log (`/governance/audit`)             | CONFIDENTIAL or RESTRICTED values, which the audit log never holds                    |
-| Farhan Ismail                                 | `SYSTEM_ADMIN`  | Connector set-up and health, users and roles, platform configuration                                                                             | Connectors, Settings, Analytics             | RESTRICTED values; he cannot approve mappings, conflict decisions or transfer entries |
-| Compliance team and DPO                       | None in the PoC | Purpose, lawful basis and mechanism for every flow; evidence for a breach assessment                                                             | Governance, reviewed with the client (Q-40) | Not applicable                                                                        |
-| New hires and other employees (data subjects) | None            | Accurate records, a ready first day, and as little sharing of their data as possible                                                             | None; HR acts for them                      | Not applicable                                                                        |
+| Person (demo user)                            | HuiTong role                                             | What they need                                                                                                                                                     | Main screens                                                      | What they never see                                                                   |
+| --------------------------------------------- | -------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ----------------------------------------------------------------- | ------------------------------------------------------------------------------------- |
+| Nur Aisyah                                    | `ADMIN_OPS`                                              | Preparation tasks (laptop, desk, accounts) created automatically with the start date and an SLA; notices in Lark/Feishu or DingTalk; only the data each task needs | Task list (`/workflows/tasks`)                                    | Pay, bank details or birth dates                                                      |
+| Li Guoqiang 李国强                            | `MANAGEMENT`                                             | A single view with dashboards from authorised sources, with provenance; one set of numbers for Singapore and HQ; English or 中文                                   | Reports (`/reports`), Overview                                    | Any write action; named cross-entity data (aggregates by default)                     |
+| An HQ Treasury approver                       | None yet; area 2 decides how the step is approved (Q-60) | Only the claims and payments above the threshold, with what they need to decide; a record that nothing was paid before their approval                              | The approval step on the workflow board, or the intranet (mocked) | Pay and bank data beyond the payment itself; claims below the threshold               |
+| Grace Lim                                     | `AUDITOR`                                                | An append-only trail of every write, approval and conflict decision; chain verification; access reviews                                                            | Audit log (`/governance/audit`)                                   | CONFIDENTIAL or RESTRICTED values, which the audit log never holds                    |
+| Farhan Ismail                                 | `SYSTEM_ADMIN`                                           | Connector set-up and health, users and roles, platform configuration                                                                                               | Connectors, Settings, Analytics                                   | RESTRICTED values; he cannot approve mappings, conflict decisions or transfer entries |
+| Compliance team and DPO                       | None in the PoC                                          | Purpose, lawful basis and mechanism for every flow; evidence for a breach assessment                                                                               | Governance, reviewed with the client (Q-40)                       | Not applicable                                                                        |
+| New hires and other employees (data subjects) | None                                                     | Accurate records, a ready first day with intranet access, and as little sharing of their data as possible                                                          | None; HR acts for them                                            | Not applicable                                                                        |
 
-**Not designing for this semester:** recruiters and agencies (there is no applicant-tracking system in the PoC; HuiTong tracks the requisition and the hire only), employee self-service (employees keep their local HR systems) and payroll specialists (pay is calculated in the locally compliant payroll systems). See [scope](../problem-statement.md#25-scope).
+**Not designing for this semester:** recruiters and agencies (there is no applicant-tracking system in the PoC; HuiTong tracks the hire from its entry), employee self-service (employees keep INFO-TECH and the intranet) and payroll specialists (pay is calculated in INFO-TECH). See [scope](../problem-statement.md#25-scope).
 
 ## Accessibility across the personas
 
 None of the proto-personas is defined by a disability, but any of them may use a screen magnifier, the keyboard alone, a screen reader or reduced motion, permanently or for a while. HuiTong targets WCAG 2.2 AA. These criteria matter most for these users:
 
-| Criterion                                                             | Where it matters                             | Design response                                                                             |
-| --------------------------------------------------------------------- | -------------------------------------------- | ------------------------------------------------------------------------------------------- |
-| 1.4.3 Contrast (minimum); 2.4.7 Focus visible                         | Dense tables at month-end (Mei Ling)         | Colour tokens checked at 4.5:1 or more; visible focus rings                                 |
-| 2.4.11 Focus not obscured (minimum)                                   | Sticky table headers, drawers and toasts     | A focused row scrolls clear of sticky elements                                              |
-| 2.5.7 Dragging movements                                              | Workflows board                              | Every card can also be moved with a menu action, not only by dragging                       |
-| 2.5.8 Target size (minimum)                                           | Arjun on a tablet                            | Targets of at least 24 × 24 CSS pixels                                                      |
-| 3.1.1 Language of page; 3.1.2 Language of parts                       | Bilingual labels such as 年假 / Annual Leave | `lang` set per language, so screen readers switch voice for Chinese text on an English page |
-| 3.3.7 Redundant entry                                                 | Recording a hire                             | Fields from the OA request carry over; nothing is asked for twice                           |
-| 3.3.8 Accessible authentication (minimum)                             | Sign-in                                      | Password managers and paste allowed; no puzzles                                             |
-| Project rule: reduced motion ([CLAUDE.md](../../CLAUDE.md) section 8) | Overview animations, the 3D integration map  | `prefers-reduced-motion` honoured everywhere; a static frame replaces the 3D animation      |
+| Criterion                                                             | Where it matters                             | Design response                                                                                       |
+| --------------------------------------------------------------------- | -------------------------------------------- | ----------------------------------------------------------------------------------------------------- |
+| 1.4.3 Contrast (minimum); 2.4.7 Focus visible                         | Dense tables at month-end (Mei Ling)         | Colour tokens checked at 4.5:1 or more; visible focus rings                                           |
+| 2.4.11 Focus not obscured (minimum)                                   | Sticky table headers, drawers and toasts     | A focused row scrolls clear of sticky elements                                                        |
+| 2.5.7 Dragging movements                                              | Workflows board                              | Every card can also be moved with a menu action, not only by dragging                                 |
+| 2.5.8 Target size (minimum)                                           | Arjun on a tablet                            | Targets of at least 24 × 24 CSS pixels                                                                |
+| 3.1.1 Language of page; 3.1.2 Language of parts                       | Bilingual labels such as 年假 / Annual Leave | `lang` set per language, so screen readers switch voice for Chinese text on an English page           |
+| 3.3.7 Redundant entry                                                 | Recording a hire                             | Fields entered once carry over to SAP, INFO-TECH and the intranet request; nothing is asked for twice |
+| 3.3.8 Accessible authentication (minimum)                             | Sign-in                                      | Password managers and paste allowed; no puzzles                                                       |
+| Project rule: reduced motion ([CLAUDE.md](../../CLAUDE.md) section 8) | Overview animations, the 3D integration map  | `prefers-reduced-motion` honoured everywhere; a static frame replaces the 3D animation                |
 
 Evidence is collected by the accessibility guardrail GR-07 in [success-metrics.md](success-metrics.md#guardrails).
 
 ## Validation plan
 
-| Persona      | Riskiest assumptions                                                                                        | How we test them                                                                                       | Questions                    | What changes if we are wrong                                                                                                         |
-| ------------ | ----------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------ | ---------------------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
-| Tan Mei Ling | One SG HR executive owns both the Excel master and the consolidation; a new hire is typed into three places | Interview and walkthrough at the first client meeting; review of the master's column headers (no rows) | Q-06, Q-29, Q-33, Q-48       | Split the persona (HR operations and payroll), re-time both journeys, and give the consolidation steps to whoever actually owns them |
-| Zhou Xinyi   | HQ keeps Singapore staff in SAP and needs them in HQ's structure; she prefers a 中文 interface              | Interview with the HQ HR counterpart if one can join; otherwise written questions                      | Q-02, Q-04, Q-05, Q-08, Q-51 | If HQ only consumes reports, `HR_HQ` becomes a reader of aggregates and the SG ↔ CN sync changes shape                               |
-| Arjun Menon  | He loses sight of a request after approval; day-1 readiness is a real problem                               | Interview with a hiring manager (Q-51); prototype test of the workflow board in W4–W5                  | Q-32, Q-34, Q-48             | The board serves HR and admin first, and managers get notifications only                                                             |
+| Persona      | Riskiest assumptions                                                                                        | How we test them                                                                                                              | Questions                          | What changes if we are wrong                                                                                          |
+| ------------ | ----------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------- | ---------------------------------- | --------------------------------------------------------------------------------------------------------------------- |
+| Tan Mei Ling | One SG HR executive carries each hire into all three systems and prepares the monthly summary               | Interview and walkthrough at the briefing call; review of the summary's column headers (no rows)                              | Q-06, Q-29, Q-33, Q-48, Q-59       | Split the persona (HR operations and payroll), re-time the journeys, and give the steps to whoever actually owns them |
+| Zhou Xinyi   | HQ creates each Singapore hire's SAP record and needs it in SAP's structure; she prefers a 中文 interface   | Interview with the HQ HR counterpart if one can join; otherwise written questions                                             | Q-02, Q-04, Q-05, Q-08, Q-51, Q-59 | If HQ only consumes reports, `HR_HQ` becomes a reader of aggregates and the SG ↔ CN sync changes shape                |
+| Arjun Menon  | He loses sight of a hire after approval, and of large claims at Treasury; day-1 readiness is a real problem | Interview with a hiring manager (Q-51); prototype test of the workflow board in W4–W5, ideally with HR staff trying it (Q-63) | Q-32, Q-34, Q-48, Q-60             | The board serves HR and admin first, and managers get notifications only                                              |
 
 - **Proxy users.** Where client staff cannot join a prototype test, people briefed on a persona stand in for them, and their results are labelled as proxy results.
-- **After the meeting.** Within two working days, each persona's label moves from Assumed to Partly validated or Validated (definitions in [README.md](README.md)), the matching assumptions are updated in [../assumptions.md](../assumptions.md), and the change log below records what changed.
+- **After the briefing call.** Within two working days, each persona's label moves from Assumed to Partly validated or Validated (definitions in [README.md](README.md)), the matching assumptions are updated in [../assumptions.md](../assumptions.md), and the change log below records what changed.
 
 ## Change log
 
-| Date            | Week | Change                                       |
-| --------------- | ---- | -------------------------------------------- |
-| 20 October 2026 | W1   | First version, from PS #17 and desk research |
+| Date            | Week | Change                                                                                                                                                                                                                                                                               |
+| --------------- | ---- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| 20 October 2026 | W1   | First version, from PS #17 and desk research                                                                                                                                                                                                                                         |
+| 22 October 2026 | W1   | Moved to statement #7, LESSO Solar ([ADR 0022](../adr/0022-final-statement-7-lesso-solar.md)): INFO-TECH, SAP and the intranet replace SG HR, OA and the Excel master; Arjun leads Regional Sales; the SAP-before-intranet rule, the Treasury step and an HQ Treasury approver added |
