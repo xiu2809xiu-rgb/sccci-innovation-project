@@ -12,9 +12,9 @@ TLS, strict CSP, security headers`"]:::container
 
   subgraph app ["HuiTong application: private network"]
     api["`**API**
-Validation, CSRF check, RBAC guard, field masking, rate limit`"]:::container
+Validation, CSRF check, RBAC guard, masking by role and by the transfer register, rate limit`"]:::container
     audit["`**Audit writer**
-Every write; append-only, hash-chained`"]:::control
+Every change to records, mappings and access; append-only, hash-chained`"]:::control
     gateway["`**LlmGateway**
 Identifiers withheld; tokens and cost recorded`"]:::control
   end
@@ -45,9 +45,9 @@ Run ids and who started them, never field values`")]:::store
   api --> gateway
   api <--->|"Parameterised queries (Prisma)"| pg
   api <--->|"BullMQ jobs"| redis
-  api <--->|"REST; no national ID numbers stored; write-back only on HR's approval"| sghr
+  api <--->|"REST: employees; no national ID numbers stored; any write-back needs HR's approval"| sghr
   api <--->|"Webhooks in (HMAC and timestamp, stored once); health checks out"| oa
-  api <--->|"REST; another entity's fields only through an ACTIVE register entry"| cnhq
-  gateway -->|"Headers, value shapes and category codes only"| ai
+  api <--->|"REST: employees; no national ID numbers stored"| cnhq
+  gateway -->|"Mapper: headers, shapes, codes; explainer: values that identify no one"| ai
 
   class device,edge,app,stores,sg,cn,third boundary

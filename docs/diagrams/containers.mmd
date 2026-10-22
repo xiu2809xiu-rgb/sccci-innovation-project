@@ -26,7 +26,7 @@ _Mocked_`"]:::mock
   cnhq["`**China HQ HR and SAP**
 _Mocked_`"]:::mock
   collab["`**Teams and DingTalk**
-_Mocked_`"]:::mock
+_Planned: notifications_`"]:::planned
   ai["`**AI model provider**
 Mock, Bedrock or OpenAI
 _External service_`"]:::external
@@ -34,11 +34,11 @@ _External service_`"]:::external
   user -->|"HTTPS: pages, JSON API, live events"| web
   web -->|"/api/* and /api/v1/events, same origin"| api
   api -->|"Prisma: each change in one transaction"| db
-  api -->|"Jobs: sync, workflow, notifications, consolidation"| redis
+  api -->|"Jobs: syncs and the webhook outbox; the rest planned"| redis
   oa -->|"Signed webhooks (HMAC)"| api
-  api --->|"REST: employees, attendance, leave"| sghr
-  api --->|"REST: employees, attendance, leave"| cnhq
-  api --->|"Messages"| collab
+  api --->|"REST: employees; attendance and leave planned"| sghr
+  api --->|"REST: employees; attendance and leave planned"| cnhq
+  api -..->|"Messages, planned"| collab
   api --->|"Prompts without identifiers; usage recorded"| ai
 
   class huitong boundary

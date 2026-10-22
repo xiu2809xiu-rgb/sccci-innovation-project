@@ -1,6 +1,6 @@
 # Architecture
 
-HuiTong is an integration and workflow layer between the systems Organisation E already runs. It does not replace them. Each system sits behind one adapter, a canonical employee master records where every value came from, and approved changes flow on as events and jobs ([ADR 0002](../adr/0002-integration-layer-hub-and-spoke.md)). Every system outside HuiTong is a mock until the client meeting ([ADR 0013](../adr/0013-mock-external-systems.md)), and every value is synthetic.
+HuiTong is an integration and workflow layer between the systems Organisation E already runs. It does not replace them. Each system sits behind one adapter, a canonical employee master records where every value came from, and an approved change becomes an event for the workflow jobs that act on it, which area 2 builds ([ADR 0002](../adr/0002-integration-layer-hub-and-spoke.md)). Every system outside HuiTong is a mock until the client meeting ([ADR 0013](../adr/0013-mock-external-systems.md)), and every value is synthetic.
 
 The diagrams below start from the problem and go from the outside in: what HR does today without HuiTong, who uses HuiTong, what it is made of, where it runs, how its key flows work, where data crosses a trust boundary, and the data model. The design patterns are in [patterns.md](patterns.md), the data formats in [data-formats.md](data-formats.md), and every decision in the [ADR index](../adr/README.md).
 
@@ -12,15 +12,15 @@ The ER diagrams are generated from `schema.prisma`. `pnpm diagrams:check` runs i
 
 In every diagram:
 
-| Box                         | Means                                                       |
-| --------------------------- | ----------------------------------------------------------- |
-| Solid jade                  | HuiTong itself, or one of its parts                         |
-| Light jade, rounded         | A person                                                    |
-| Dashed outline              | A mock standing in for one of the client's systems          |
-| Grey                        | A system or service outside the group, such as the AI model |
-| Amber                       | A governance, risk and security control                     |
-| Dotted, faded               | Retiring, or designed but not built                         |
-| Dashed frame around a group | A boundary: HuiTong, a network, a legal entity              |
+| Box                         | Means                                                                                                                                                    |
+| --------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Solid jade                  | HuiTong itself, or one of its parts                                                                                                                      |
+| Light jade, rounded         | A person                                                                                                                                                 |
+| Dashed outline              | A mock standing in for one of the client's systems                                                                                                       |
+| Grey                        | A real system rather than a mock: the client's systems as they run today, a new subsidiary's export, or a service outside the group such as the AI model |
+| Amber                       | A governance, risk and security control                                                                                                                  |
+| Dotted, faded               | Retiring, or designed but not built                                                                                                                      |
+| Dashed frame around a group | A boundary: HuiTong, a network, a legal entity                                                                                                           |
 
 ## Today, without HuiTong
 
@@ -38,11 +38,11 @@ Every system of record stays where it is, behind one adapter, and HuiTong keeps 
 
 ![System context: HR teams, hiring managers, management and administrators use HuiTong, which connects OA, the Singapore and China HQ HR systems, the collaboration tools, a new subsidiary's export, the retiring Excel master and an AI model](../diagrams/system-context.svg)
 
-HR in Singapore and at China HQ syncs records, settles conflicts and consolidates attendance and leave. Hiring managers and admin operations work onboarding tasks; management and auditors read reports and the audit log. HuiTong reads from the HR systems of record and writes back only with HR's audited approval, which the mocks may demonstrate and the client's real systems will not see until the client agrees. The AI model receives column headers, value shapes and category codes, never anything that identifies a person ([ADR 0011](../adr/0011-ai-gateway-human-in-the-loop.md)).
+HR in Singapore and at China HQ syncs records, settles conflicts and consolidates attendance and leave. Hiring managers and admin operations work onboarding tasks; management and auditors read reports and the audit log. HuiTong reads from the HR systems of record and writes back only with HR's audited approval, which the mocks may demonstrate and the client's real systems will not see until the client agrees. The AI model never receives anything that identifies a person: the mapping assistant sends column headers, value shapes and category codes, and the explainer sends a system's value only when it identifies no one and is classified Internal or lower ([ADR 0011](../adr/0011-ai-gateway-human-in-the-loop.md)).
 
 ## Containers (C4 level 2)
 
-![Containers: the web app and the API inside HuiTong, with PostgreSQL and Redis, talking to the mocked OA, Singapore HR, China HQ and collaboration systems, and to an AI model provider](../diagrams/containers.svg)
+![Containers: the web app and the API inside HuiTong, with PostgreSQL and Redis, talking to the mocked OA, Singapore HR and China HQ systems and to an AI model provider; the collaboration tools are drawn as planned](../diagrams/containers.svg)
 
 - **Web app.** A React 19 single-page app, served by nginx with a strict content security policy ([ADR 0005](../adr/0005-web-stack.md), [ADR 0018](../adr/0018-web-csp-inline-styles.md)). It talks to the API on the same origin, so session cookies stay `SameSite=Strict`.
 - **API and job workers.** One NestJS process with a module per domain ([ADR 0006](../adr/0006-api-nestjs-layered-modules.md)). The BullMQ workers run in the same process, and modules react to each other through in-process domain events; the browser follows them over Server-Sent Events ([ADR 0008](../adr/0008-jobs-events-realtime.md)).
@@ -83,7 +83,7 @@ A sync is always previewed first, and the apply writes exactly what HR saw: the 
 
 ![Sequence: OA sends a signed approval, area 1 verifies and stores it once and publishes it, area 2's workflow starts once per event, creates the requisition, a draft employee record, the preparation tasks and the reminders, and the master activates the record once the milestones are met and the verified SG HR record arrives](../diagrams/sequence-manpower-to-onboarding.svg)
 
-Receiving the approval is built: the webhook's signature and timestamp are verified, and the event is stored once and published from an outbox. The workflow is area 2's to build, as its guide recommends ([area 2's guide](../team/area-2-workflow-automation.md#the-recommended-design)). An approval only ever creates a draft (`PRE_HIRE`) record; the master activates it when the onboarding milestones are met and the verified record has arrived from SG HR, and the rule belongs to the master, so no trigger can skip it. This is the first half of the [hero journey](../agile/hero-journey.md).
+Receiving the approval is built: the webhook's signature and timestamp are verified, and the event is stored once in an outbox, where it waits until area 2's workflow subscribes. The workflow is area 2's to build, as its guide recommends ([area 2's guide](../team/area-2-workflow-automation.md#the-recommended-design)). An approval only ever creates a draft (`PRE_HIRE`) record; the master activates it when the onboarding milestones are met and the verified record has arrived from SG HR, and the rule belongs to the master, so no trigger can skip it. This is the first half of the [hero journey](../agile/hero-journey.md).
 
 ### The monthly attendance and leave consolidation (designed)
 
@@ -95,14 +95,14 @@ Area 3 builds the run on the same five-step pattern as the sync. Each system's l
 
 ![Data flow: the browser, the edge, the HuiTong application, its data stores, the Singapore and China HQ entities and the third-party AI provider, each in its own trust boundary, with the controls on every crossing](../diagrams/data-flow.svg)
 
-| Crossing                        | What crosses                               | Controls                                                                                                                                                                                                 |
-| ------------------------------- | ------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Device to edge                  | Pages, API calls, live events              | TLS; httpOnly, `SameSite=Strict` cookies with refresh rotation; CSRF double-submit; a strict CSP; live events carry ids and counts, never values ([ADR 0010](../adr/0010-auth-sessions-rbac-masking.md)) |
-| Edge to application             | `/api/*` only                              | Rate limiting; validation of every input; the RBAC guard; field masking by role and entity                                                                                                               |
-| Application to data stores      | Queries and jobs                           | Parameterised queries only; classification on every field; an append-only, hash-chained audit log; retention rules                                                                                       |
-| Application to Singapore (SG01) | Employees, attendance, leave; OA approvals | Credentials from the environment; no national ID numbers stored; webhooks verified by HMAC and stored once; write-back only on HR's approval                                                             |
-| Application to China HQ (CN01)  | Employees, attendance, leave               | Another entity's fields only through an ACTIVE entry of the cross-border transfer register (PDPA and PIPL); everything else withheld by default                                                          |
-| Application to a third party    | Mapping prompts                            | Headers, value shapes and category codes only; every call's tokens, cost and outcome recorded; no AI output is written without human approval                                                            |
+| Crossing                        | What crosses                                           | Controls                                                                                                                                                                                                                                              |
+| ------------------------------- | ------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Device to edge                  | Pages, API calls, live events                          | TLS; httpOnly, `SameSite=Strict` cookies with refresh rotation; CSRF double-submit; a strict CSP; live events carry ids and counts, never values ([ADR 0010](../adr/0010-auth-sessions-rbac-masking.md))                                              |
+| Edge to application             | `/api/*` only                                          | Rate limiting; validation of every input; the RBAC guard; field masking by role and entity; another entity's fields only where an ACTIVE entry of the cross-border transfer register shares them (PDPA and PIPL), everything else withheld by default |
+| Application to data stores      | Queries and jobs                                       | Parameterised queries only; classification on every field; an append-only, hash-chained audit log; retention rules                                                                                                                                    |
+| Application to Singapore (SG01) | Employees (attendance and leave planned); OA approvals | Credentials from the environment; no national ID numbers stored; webhooks verified by HMAC and stored once; any write-back needs HR's approval                                                                                                        |
+| Application to China HQ (CN01)  | Employees (attendance and leave planned)               | Credentials from the environment; no national ID numbers stored. What CN01 data SG01 users may see is the register's, on the edge-to-application row; where the data may be stored and processed is a question for the client (Q-37)                  |
+| Application to a third party    | Mapping prompts, conflict explanations                 | The mapper: headers, value shapes and category codes; the explainer: a system's value only when it identifies no one and is Internal or lower; every call's tokens, cost and outcome recorded; no AI output is written without human approval         |
 
 The register, the classification map and the retention rules are administered in the governance pages (area 4); the API enforces them for every area ([GRS by design](../grs/grs-by-design.md)).
 
