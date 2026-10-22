@@ -2,11 +2,11 @@
 
 HuiTong is an integration and workflow layer between the systems Organisation E already runs. It does not replace them. Each system sits behind one adapter, a canonical employee master records where every value came from, and approved changes flow on as events and jobs ([ADR 0002](../adr/0002-integration-layer-hub-and-spoke.md)). Every system outside HuiTong is a mock until the client meeting ([ADR 0013](../adr/0013-mock-external-systems.md)), and every value is synthetic.
 
-The diagrams below go from the outside in: who uses HuiTong, what it is made of, where it runs, how its key flows work, where data crosses a trust boundary, and the data model. The design patterns are in [patterns.md](patterns.md), the data formats in [data-formats.md](data-formats.md), and every decision in the [ADR index](../adr/README.md).
+The diagrams below start from the problem and go from the outside in: what HR does today without HuiTong, who uses HuiTong, what it is made of, where it runs, how its key flows work, where data crosses a trust boundary, and the data model. The design patterns are in [patterns.md](patterns.md), the data formats in [data-formats.md](data-formats.md), and every decision in the [ADR index](../adr/README.md).
 
 ## Reading and rebuilding the diagrams
 
-Each diagram's source is a Mermaid file in [`docs/diagrams/`](../diagrams/), rendered to the SVG beside it by `pnpm diagrams:build`. The renders take their colours from the design tokens and embed the app's font, so they look the same here and on the slides.
+Each diagram's source is a Mermaid file in [`docs/diagrams/`](../diagrams/), rendered to the SVG beside it by `pnpm diagrams:build`, which renders only the diagrams whose source or palette changed. The renders take their colours from the design tokens and embed the app's font, so they look the same here and on the [slides](../slides/README.md).
 
 The ER diagrams are generated from `schema.prisma`. `pnpm diagrams:check` runs in CI and fails when an ER diagram no longer matches the schema, or when an SVG is older than its source; the fix is to run `pnpm diagrams:build` and commit the result.
 
@@ -21,6 +21,18 @@ In every diagram:
 | Amber                       | A governance, risk and security control                     |
 | Dotted, faded               | Retiring, or designed but not built                         |
 | Dashed frame around a group | A boundary: HuiTong, a network, a legal entity              |
+
+## Today, without HuiTong
+
+![Today: approvals copied from OA, exports from China HQ's HR system and SAP, and questions on the chat tools all reach HR, who re-keys the values into the Excel master and SG HR and consolidates the management reports by hand](../diagrams/current-state.svg)
+
+Every system is digital, and none of them passes data to another, so HR does: approvals are copied out of OA, the HR systems' exports arrive as CSV and Excel files with different headers and formats, and the Excel master is the only consolidated view ([Problem Statement 17](../problem-statement.md)). The rest of this page is the layer that takes that work away.
+
+## With HuiTong
+
+![With HuiTong: OA's signed approvals, the Singapore and China HQ HR systems and a new subsidiary's export reach one employee master, which sends HR the conflicts and the AI's mapping proposals; the Excel master's one-off import and the consolidated reports are drawn dotted, as designed](../diagrams/future-state.svg)
+
+Every system of record stays where it is, behind one adapter, and HuiTong keeps one employee master that records where each value came from. HR settles the exceptions, the conflicts between systems and the AI's mapping proposals, instead of re-keying every value. Dotted parts are designed and not built yet: the Excel master's one-off import, after which it retires, and area 3's consolidated reports.
 
 ## System context (C4 level 1)
 

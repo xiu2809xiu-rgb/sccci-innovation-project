@@ -1,0 +1,29 @@
+%% With HuiTong, the target: every system of record stays, and HuiTong carries the data between
+%% them, so HR settles exceptions instead of re-keying. Dotted parts are designed, not yet built.
+flowchart LR
+  oa["`**OA platform**
+Approvals`"]:::mock
+  sghr["`**Singapore HR software**
+Attendance, leave, payroll`"]:::mock
+  cnhq["`**China HQ HR and SAP**
+Chinese headers, SAP codes`"]:::mock
+  sub["`**A new subsidiary**
+Its own export`"]:::external
+  excel["`**The Excel master**
+Retired`"]:::planned
+
+  hub["`**HuiTong**
+One employee master`"]:::system
+
+  hr("`**HR**
+Settles conflicts, approves`"):::person
+  mgmt["`**Management reports**
+The company's templates`"]:::planned
+
+  oa -->|"Signed approvals"| hub
+  sghr -->|"Synced"| hub
+  cnhq -->|"Synced and mapped"| hub
+  sub -->|"Mapped with AI"| hub
+  excel -.->|"Imported once"| hub
+  hub -->|"Conflicts, AI proposals"| hr
+  hub -.->|"Consolidated"| mgmt
