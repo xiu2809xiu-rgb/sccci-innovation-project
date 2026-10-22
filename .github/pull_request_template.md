@@ -13,8 +13,8 @@ Closes #
 ## Ownership area
 
 - [ ] Area 1: Integration Core + platform base
-- [ ] Area 2: Workflow automation
-- [ ] Area 3: Attendance, leave and reporting
+- [ ] Area 2: Onboarding and approval workflows
+- [ ] Area 3: Single view, dashboards and insights
 - [ ] Area 4: Governance, security and monitoring
 - [ ] Team: assessments and process
 
