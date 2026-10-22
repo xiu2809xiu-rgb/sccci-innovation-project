@@ -108,6 +108,32 @@ describe('FieldMasker and the transfer register', () => {
     });
   });
 
+  it('masks an empty value it hides, so that being empty tells the viewer nothing', async () => {
+    const fields = await masker();
+    expect(fields.value('dateOfBirth', null, HQ, 'SG01')).toEqual({
+      masked: true,
+      classification: 'CONFIDENTIAL',
+      reason: 'CROSS_BORDER_NOT_APPROVED',
+    });
+    expect(fields.value('jobGrade', null, HQ, 'SG01')).toBeNull();
+    expect(fields.value('dateOfBirth', undefined, SG, 'SG01')).toBeNull();
+  });
+
+  it('scopes a query across fields to what the viewer may see in each entity', async () => {
+    const fields = await masker();
+    const scopes = fields.visibleScopes(HQ);
+    expect(scopes.map((scope) => scope.entityCode)).toEqual(['SG01', 'CN01']);
+    const singapore = scopes.find((scope) => scope.entityCode === 'SG01')?.hiddenFields;
+    expect(singapore).toEqual(
+      expect.arrayContaining(['dateOfBirth', 'baseSalary', 'bankName', 'bankAccountLast4']),
+    );
+    expect(singapore).not.toContain('jobGrade');
+    expect(scopes.find((scope) => scope.entityCode === 'CN01')?.hiddenFields).not.toContain(
+      'dateOfBirth',
+    );
+    expect((await masker([])).visibleScopes(SG).map((scope) => scope.entityCode)).toEqual(['SG01']);
+  });
+
   it('lets a viewer list another entity only while the register shares its directory fields', async () => {
     expect((await masker()).listable(HQ)).toEqual(['SG01', 'CN01']);
     const fields = await masker([]);

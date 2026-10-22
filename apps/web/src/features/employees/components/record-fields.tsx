@@ -51,11 +51,16 @@ function SourceCell({ view, connectorId }: { view: EmployeeFieldView; connectorI
   }
   return (
     <span
-      className={cn('inline-flex items-start gap-1.5', !held.agrees && 'font-medium text-warning')}
+      className={cn(
+        'inline-flex items-start gap-1.5',
+        held.agrees === false && 'font-medium text-warning',
+      )}
     >
-      {held.agrees ? (
+      {/* A hidden field comes without agreement (null), so it gets neither mark. */}
+      {held.agrees === true && (
         <Check className="mt-0.5 size-3.5 flex-none text-success" aria-label={t('drawer.agrees')} />
-      ) : (
+      )}
+      {held.agrees === false && (
         <EqualNot className="mt-0.5 size-3.5 flex-none" aria-label={t('drawer.differs')} />
       )}
       <FieldValue field={view.field} value={held.value} />

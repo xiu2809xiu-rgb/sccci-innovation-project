@@ -3,6 +3,7 @@ import type { ConflictListQuery } from '@huitong/shared';
 
 import { Prisma } from '../../generated/prisma/client.js';
 import { PrismaService } from '../../infrastructure/prisma/prisma.service.js';
+import type { VisibleScope } from '../access/field-masker.js';
 import { jsonColumn } from './employees.repository.js';
 
 type Tx = Prisma.TransactionClient;
@@ -22,16 +23,22 @@ const EMPLOYEE = {
 export class ConflictsRepository {
   constructor(private readonly prisma: PrismaService) {}
 
-  /** One page of the queue, limited to employees of the entities the viewer may list. */
-  async list(query: ConflictListQuery, entities: readonly string[]) {
+  /**
+   * One page of the queue: conflicts about employees of the entities the viewer may list, on the
+   * fields it may see there. The scope is in the query, so the page and its total agree.
+   */
+  async list(query: ConflictListQuery, scopes: readonly VisibleScope[]) {
+    const inScope = scopes.filter(
+      (scope) => !query.entityCode || scope.entityCode === query.entityCode,
+    );
+    if (inScope.length === 0) return { items: [], total: 0 };
     const where: Prisma.ConflictWhereInput = {
       status: query.status,
       ...(query.field ? { field: query.field } : {}),
-      employee: {
-        entityCode: query.entityCode
-          ? { in: entities.includes(query.entityCode) ? [query.entityCode] : [] }
-          : { in: [...entities] },
-      },
+      OR: inScope.map((scope) => ({
+        employee: { entityCode: scope.entityCode },
+        ...(scope.hiddenFields.length > 0 ? { field: { notIn: scope.hiddenFields } } : {}),
+      })),
     };
     const [items, total] = await this.prisma.$transaction([
       this.prisma.conflict.findMany({

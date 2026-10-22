@@ -111,6 +111,10 @@ export class EmployeesService {
       ]),
     );
     const show = (field: string, value: unknown) => this.masker.value(field, value, viewer, entity);
+    // A field the viewer may not see keeps its row and its history lines, with the values masked,
+    // so an auditor still sees that it changed; but nothing derived from comparing its values
+    // reaches the viewer: whether the systems agree on it, or whether a conflict is open on it.
+    const visible = (field: string) => this.masker.canSee(field, viewer, entity);
 
     return {
       employeeNo: row.employeeNo,
@@ -140,14 +144,16 @@ export class EmployeesService {
               connectorId: provenance.connectorId,
               value: show(field, provenance.value),
               observedAt: provenance.observedAt.toISOString(),
-              agrees: sameValue(provenance.value, master[field]),
+              agrees: visible(field) ? sameValue(provenance.value, master[field]) : null,
             })),
-          openConflictId: openConflicts.find((conflict) => conflict.field === field)?.id ?? null,
+          openConflictId: visible(field)
+            ? (openConflicts.find((conflict) => conflict.field === field)?.id ?? null)
+            : null,
         };
       }),
-      conflicts: row.conflicts.map((conflict) =>
-        conflictView(conflict, row, viewer, this.masker, names),
-      ),
+      conflicts: row.conflicts
+        .filter((conflict) => visible(conflict.field))
+        .map((conflict) => conflictView(conflict, row, viewer, this.masker, names)),
       history: row.changes.map((change) => ({
         id: change.id,
         field: change.field as EmployeeField,

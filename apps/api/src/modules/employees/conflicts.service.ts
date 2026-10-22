@@ -54,7 +54,7 @@ export class ConflictsService {
     query: ConflictListQuery,
     viewer: AuthenticatedUser,
   ): Promise<{ items: Conflict[]; total: number }> {
-    const { items, total } = await this.conflicts.list(query, this.masker.listable(viewer));
+    const { items, total } = await this.conflicts.list(query, this.masker.visibleScopes(viewer));
     const names = await this.names(
       items.flatMap((conflict) => (conflict.resolvedByUserId ? [conflict.resolvedByUserId] : [])),
     );
@@ -202,9 +202,19 @@ export class ConflictsService {
   }
 
   /** The conflict, when its employee's entity is one the viewer may see; otherwise it reads as missing. */
+  /**
+   * The conflict, if the viewer may see both its employee and its field; otherwise not found, so
+   * that a conflict about a hidden field cannot be resolved, explained or even confirmed to exist.
+   */
   private async visibleForResolution(id: string, viewer: AuthenticatedUser) {
     const conflict = await this.conflicts.findForResolution(id);
-    if (!conflict || !this.masker.canList(viewer, conflict.employee.entityCode as EntityCode)) {
+    const entity = conflict?.employee.entityCode as EntityCode | undefined;
+    if (
+      !conflict ||
+      !entity ||
+      !this.masker.canList(viewer, entity) ||
+      !this.masker.canSee(conflict.field, viewer, entity)
+    ) {
       throw new NotFoundError(`Conflict ${id}`);
     }
     return conflict;
