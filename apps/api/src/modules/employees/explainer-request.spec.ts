@@ -21,8 +21,8 @@ function input(overrides: Partial<ExplainerInput> = {}): ExplainerInput {
     classification: 'INTERNAL',
     visibleToViewer: true,
     candidates: [
-      { connectorId: 'sg-hr', value: 'jiachenglee@orge.example' },
-      { connectorId: 'cn-hq', value: 'jiacheng.lee@orge.example' },
+      { connectorId: 'sg-hr', value: 'jialelee@orge.example' },
+      { connectorId: 'cn-hq', value: 'jiale.lee@orge.example' },
     ],
     systems: SYSTEMS,
     changedAt: CHANGED_AT,
@@ -32,9 +32,9 @@ function input(overrides: Partial<ExplainerInput> = {}): ExplainerInput {
 
 describe('explainerRequest', () => {
   it.each([
-    ['workEmail', 'jiachenglee@orge.example', 'jiacheng.lee@orge.example'],
-    ['fullNameLatin', 'Lee Jia Cheng', 'Lee Jiacheng'],
-    ['fullNameLocal', '李嘉诚', '李家成'],
+    ['workEmail', 'jialelee@orge.example', 'jiale.lee@orge.example'],
+    ['fullNameLatin', 'Lee Jia Le', 'Lee Jiale'],
+    ['fullNameLocal', '李嘉乐', '李佳乐'],
     ['managerEmployeeNo', 'E100006', 'E100009'],
   ] as const)('withholds a %s, because it identifies a person', (field, first, second) => {
     const request = explainerRequest(

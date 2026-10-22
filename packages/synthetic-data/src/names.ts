@@ -1,6 +1,8 @@
 /**
  * Name pools for the synthetic workforce. Common placeholder-like combinations
- * (for example 张伟) are avoided, and no pool contains real public figures.
+ * (for example 张伟) are avoided, and no surname and given name together spell a
+ * well-known person's name, or a homophone of one: names.spec.ts checks every
+ * combination the pools can make.
  */
 
 export interface PersonName {
@@ -113,7 +115,7 @@ const CHINESE_GIVEN: readonly ChineseGiven[] = [
   { sg: 'Hui Min', pinyin: 'Huimin', zh: '慧敏' },
   { sg: 'Zhi Hao', pinyin: 'Zhihao', zh: '志豪' },
   { sg: 'Xin Yi', pinyin: 'Xinyi', zh: '心怡' },
-  { sg: 'Jun Jie', pinyin: 'Junjie', zh: '俊杰' },
+  { sg: 'Jun Wei', pinyin: 'Junwei', zh: '俊伟' },
   { sg: 'Shu Ting', pinyin: 'Shuting', zh: '舒婷' },
   { sg: 'Yong Kang', pinyin: 'Yongkang', zh: '永康' },
   { sg: 'Li Ting', pinyin: 'Liting', zh: '丽婷' },
@@ -123,7 +125,7 @@ const CHINESE_GIVEN: readonly ChineseGiven[] = [
   { sg: 'Ya Qin', pinyin: 'Yaqin', zh: '雅琴' },
   { sg: 'Hao Ran', pinyin: 'Haoran', zh: '浩然' },
   { sg: 'Shi Han', pinyin: 'Shihan', zh: '诗涵' },
-  { sg: 'Jia Cheng', pinyin: 'Jiacheng', zh: '嘉诚' },
+  { sg: 'Jia Le', pinyin: 'Jiale', zh: '嘉乐' },
   { sg: 'Ruo Xi', pinyin: 'Ruoxi', zh: '若曦' },
   { sg: 'Tian You', pinyin: 'Tianyou', zh: '天佑' },
   { sg: 'Meng Qi', pinyin: 'Mengqi', zh: '梦琪' },
@@ -134,12 +136,12 @@ const CHINESE_GIVEN: readonly ChineseGiven[] = [
   { sg: 'Guo Dong', pinyin: 'Guodong', zh: '国栋' },
   { sg: 'Yu Tong', pinyin: 'Yutong', zh: '雨桐' },
   { sg: 'Peng Fei', pinyin: 'Pengfei', zh: '鹏飞' },
-  { sg: 'Jia Xin', pinyin: 'Jiaxin', zh: '嘉欣' },
+  { sg: 'Pei Shan', pinyin: 'Peishan', zh: '佩珊' },
   { sg: 'Hai Tao', pinyin: 'Haitao', zh: '海涛' },
   { sg: 'Shu Yao', pinyin: 'Shuyao', zh: '书瑶' },
   { sg: 'Bo Wen', pinyin: 'Bowen', zh: '博文' },
   { sg: 'Zi Han', pinyin: 'Zihan', zh: '梓涵' },
-  { sg: 'Yi Ming', pinyin: 'Yiming', zh: '一鸣' },
+  { sg: 'Yi Hang', pinyin: 'Yihang', zh: '一航' },
   { sg: 'Xue Ying', pinyin: 'Xueying', zh: '雪莹' },
   { sg: 'Rui Lin', pinyin: 'Ruilin', zh: '瑞麟' },
   { sg: 'An Qi', pinyin: 'Anqi', zh: '安琪' },
