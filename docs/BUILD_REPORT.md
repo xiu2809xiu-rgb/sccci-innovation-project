@@ -368,6 +368,14 @@ Notes:
 - The review and critique planned as workflows for the allowlist (#110) stopped at the session limit before reporting, so both were done directly against the code.
 - Local test runs used a portable Node.js 24.22.0, because the machine's Node.js 24.15.0 aborts API test workers (manual step 8).
 
+### Follow-up fixes from the deck reviews (22 Oct 2026)
+
+The reviews of the Phase 9 deck found three gaps that need code; each is fixed in its own pull request.
+
+| Issue | Fix                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
+| ----- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| #128  | A field the viewer may not see, by role or by the transfer register, no longer says whether the systems agree on it (`agrees: null`) or names its open conflict, and the drawer shows no agree or differ mark on it. The conflict queue leaves out conflicts on such fields within its query, so the page and its total agree, and explaining or resolving one answers 404. An empty hidden value is masked too, since showing it empty told the viewer something. History lines keep their masked values, so an auditor still sees that a field changed |
+
 ## Manual steps for the owner
 
 Step 1 records a decision already taken. The others improve the local setup.
