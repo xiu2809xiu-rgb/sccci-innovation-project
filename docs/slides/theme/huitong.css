@@ -1,0 +1,426 @@
+/* @theme huitong */
+
+/*
+ * The HuiTong deck theme: the app's design tokens and fonts on 16:9 slides.
+ * scripts/build-slides.mjs puts the light theme's tokens (tokens.css) and the
+ * fonts (Geist, and the Noto Sans SC subsets the deck uses) in front of this
+ * file, so every colour below is a token, never a raw value.
+ */
+
+:root {
+  /* The slide's own spacing, on the app's 8-point grid. */
+  --space-1: 8px;
+  --space-2: 16px;
+  --space-3: 24px;
+  --space-4: 32px;
+  --space-6: 48px;
+  --space-9: 72px;
+  /* One radius for every surface: the app's landing-page radius, as a slide is viewed whole. */
+  --slide-radius: 12px;
+  /* Seven type sizes, the most CLAUDE.md section 8 allows, larger than the app's for the room. */
+  --slide-text-xs: 14px;
+  --slide-text-sm: 16px;
+  --slide-text-md: 18px;
+  --slide-text-base: 24px;
+  --slide-text-kpi: 40px;
+  --slide-text-h1: 46px;
+  --slide-text-display: 64px;
+  --font-sans: 'Geist Variable', 'Noto Sans SC Variable', system-ui, sans-serif;
+}
+
+section {
+  width: 1280px;
+  height: 720px;
+  box-sizing: border-box;
+  padding: var(--space-6) var(--space-9) var(--space-9);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  gap: var(--space-2);
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans);
+  font-size: var(--slide-text-base);
+  line-height: 1.45;
+}
+
+h1 {
+  margin: 0;
+  font-size: var(--slide-text-h1);
+  font-weight: 600;
+  line-height: 1.12;
+  letter-spacing: -0.015em;
+}
+
+h2 {
+  margin: 0;
+  font-size: var(--slide-text-base);
+  font-weight: 400;
+  line-height: 1.3;
+  color: var(--muted-foreground);
+}
+
+h3 {
+  margin: 0 0 var(--space-1);
+  font-size: var(--slide-text-base);
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+p {
+  margin: 0;
+}
+
+ul,
+ol {
+  margin: 0;
+  padding-left: var(--space-3);
+}
+
+li + li {
+  margin-top: var(--space-1);
+}
+
+strong {
+  font-weight: 600;
+}
+
+blockquote {
+  margin: 0;
+  padding-left: var(--space-3);
+  border-left: 3px solid var(--primary);
+  line-height: 1.4;
+  color: var(--foreground);
+}
+
+img {
+  max-width: 100%;
+  border-radius: var(--slide-radius);
+}
+
+figure {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+figcaption {
+  font-size: var(--slide-text-sm);
+  color: var(--muted-foreground);
+}
+
+figcaption strong {
+  display: block;
+  color: var(--foreground);
+}
+
+footer,
+section::after {
+  position: absolute;
+  bottom: var(--space-3);
+  font-size: var(--slide-text-xs);
+  color: var(--muted-foreground);
+}
+
+footer {
+  left: var(--space-9);
+  right: auto;
+}
+
+/* Marpit's base styles give the page number the slide's padding; this theme places it itself. */
+section::after {
+  right: var(--space-9);
+  padding: 0;
+  content: attr(data-marpit-pagination) ' / ' attr(data-marpit-pagination-total);
+  font-variant-numeric: tabular-nums;
+}
+
+/* A small label above a slide's headline: where we are in the story. */
+.kicker {
+  font-size: var(--slide-text-sm);
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--primary);
+}
+
+/* Small print: sources, honest caveats. At most about 80 characters a line. */
+.note {
+  max-width: 640px;
+  font-size: var(--slide-text-sm);
+  color: var(--muted-foreground);
+}
+
+.fill {
+  flex: 1;
+  min-height: 0;
+}
+
+/* A few words beside a screenshot, which gets two thirds of the width. */
+.split {
+  display: grid;
+  grid-template-columns: 4fr 8fr;
+  gap: var(--space-6);
+  align-items: center;
+  flex: 1;
+  min-height: 0;
+}
+
+/* A slide that is one diagram: the image takes the height the headline leaves. */
+section.diagram p:has(> img:only-child) {
+  flex: 1;
+  min-height: 0;
+  text-align: center;
+}
+
+section.diagram p > img {
+  height: 100%;
+  width: auto;
+}
+
+/*
+ * A screenshot cropped to the part that matters. --left, --top, --width and --height give the
+ * region in the screenshot's own pixels; the screenshots are 1440 by 900, and the default is all
+ * of it.
+ */
+.crop {
+  --image-width: 1440;
+  --image-height: 900;
+  --left: 0;
+  --top: 0;
+  --width: 1440;
+  --height: 900;
+  overflow: hidden;
+  aspect-ratio: var(--width) / var(--height);
+  border: 1px solid var(--border);
+  border-radius: var(--slide-radius);
+  box-shadow: var(--elevation-md);
+}
+
+.crop img {
+  display: block;
+  width: calc(100% * var(--image-width) / var(--width));
+  height: auto;
+  max-width: none;
+  border-radius: 0;
+  translate: calc(var(--left) / var(--image-width) * -100%)
+    calc(var(--top) / var(--image-height) * -100%);
+}
+
+/* Screenshots with captions: side by side, or in rows with the caption first. */
+.shots {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  align-content: center;
+  gap: var(--space-3) var(--space-4);
+  flex: 1;
+  min-height: 0;
+}
+
+.shots.rows {
+  grid-template-columns: 1fr;
+}
+
+.shots.rows figure {
+  display: grid;
+  grid-template-columns: 200px 1fr;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+/* The measured outcomes: from a baseline to a target. */
+.kpis {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--space-3);
+  flex: 1;
+}
+
+.kpi {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: var(--space-3) var(--space-4);
+  border: 1px solid var(--border);
+  border-radius: var(--slide-radius);
+  background: var(--card);
+  box-shadow: var(--elevation-sm);
+}
+
+.kpi .value {
+  font-size: var(--slide-text-kpi);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  font-variant-numeric: tabular-nums;
+}
+
+.kpi .value .from {
+  color: var(--muted-foreground);
+  font-weight: 400;
+}
+
+.kpi .value .to {
+  color: var(--primary);
+}
+
+.kpi .label {
+  margin-top: var(--space-1);
+  font-size: var(--slide-text-md);
+  color: var(--muted-foreground);
+}
+
+/* A story told in steps, each with its owner and what of it is built. */
+.steps {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--space-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  counter-reset: step;
+}
+
+.steps li {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: var(--space-2);
+  border: 1px solid var(--border);
+  border-radius: var(--slide-radius);
+  background: var(--card);
+  font-size: var(--slide-text-md);
+  line-height: 1.35;
+  counter-increment: step;
+}
+
+.steps li::before {
+  content: counter(step);
+  display: grid;
+  place-items: center;
+  width: var(--space-4);
+  height: var(--space-4);
+  margin-bottom: var(--space-1);
+  border-radius: 50%;
+  background: var(--primary);
+  color: var(--primary-foreground);
+  font-size: var(--slide-text-xs);
+  font-weight: 600;
+}
+
+.steps .who {
+  margin-top: auto;
+  padding-top: var(--space-1);
+  font-size: var(--slide-text-sm);
+  color: var(--muted-foreground);
+}
+
+/* A label in the app's badge style. */
+.tag {
+  display: inline-block;
+  padding: 2px var(--space-1);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  font-size: var(--slide-text-sm);
+  font-weight: 500;
+  color: var(--muted-foreground);
+  background: var(--muted);
+}
+
+.tag.built {
+  border-color: var(--success-border);
+  background: var(--success-subtle);
+  color: var(--success);
+}
+
+/* Points in time, each under its time: a day hour by hour, or the module week by week. */
+.timeline {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-3) var(--space-4);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.timeline li {
+  margin: 0;
+  padding-top: var(--space-1);
+  border-top: 2px solid var(--border);
+  line-height: 1.35;
+}
+
+.timeline.weeks {
+  grid-template-columns: repeat(5, 1fr);
+  gap: var(--space-2) var(--space-3);
+}
+
+.timeline.weeks li {
+  font-size: var(--slide-text-md);
+}
+
+.timeline time {
+  display: block;
+  font-size: var(--slide-text-sm);
+  font-weight: 600;
+  color: var(--primary);
+  font-variant-numeric: tabular-nums;
+}
+
+/* The four ownership areas. The cards share their rows, so titles of any length line up. */
+.cards {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  grid-template-rows: auto auto 1fr auto;
+  gap: var(--space-1) var(--space-2);
+  flex: 1;
+}
+
+.card {
+  display: grid;
+  grid-row: span 4;
+  grid-template-rows: subgrid;
+  padding: var(--space-3) var(--space-2);
+  border: 1px solid var(--border);
+  border-radius: var(--slide-radius);
+  background: var(--card);
+  font-size: var(--slide-text-md);
+  line-height: 1.4;
+}
+
+.card h3 {
+  margin: 0;
+}
+
+.card .area {
+  font-size: var(--slide-text-xs);
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--primary);
+}
+
+.card .owner {
+  padding-top: var(--space-2);
+  font-size: var(--slide-text-sm);
+  color: var(--muted-foreground);
+}
+
+/* The title slide. */
+section.lead {
+  justify-content: center;
+  gap: var(--space-3);
+}
+
+section.lead h1 {
+  font-size: var(--slide-text-display);
+}
+
+section.lead h1 span {
+  color: var(--primary);
+}
+
+section.lead .team {
+  font-size: var(--slide-text-md);
+  color: var(--muted-foreground);
+}

@@ -7,9 +7,13 @@
 // `--check` renders nothing and needs no browser: it fails when an ER diagram no longer matches the
 // schema, or an SVG was rendered from an older source or palette. CI runs it.
 //
+// A build renders only the diagrams whose source or palette changed: Mermaid's ER layout is not
+// stable from one render to the next, so re-rendering an unchanged diagram would only churn its SVG.
+// `--force` renders them all.
+//
 // Rendering drives the Chromium that Playwright installs for the e2e tests (Puppeteer's own browser
 // download is disabled in pnpm-workspace.yaml); PUPPETEER_EXECUTABLE_PATH overrides it.
-// Usage: node scripts/build-diagrams.mjs [--check]
+// Usage: node scripts/build-diagrams.mjs [--check | --force]
 import { createHash } from 'node:crypto';
 import {
   copyFileSync,
@@ -32,6 +36,7 @@ const TOKENS = join(ROOT, 'apps/web/src/styles/tokens.css');
 const GEIST = join(ROOT, 'apps/web/node_modules/@fontsource-variable/geist');
 const MANIFEST = join(DIAGRAMS, 'sources.json');
 const CHECK = process.argv.includes('--check');
+const FORCE = process.argv.includes('--force');
 
 // --- Palette: the light theme's tokens -------------------------------------
 
@@ -374,6 +379,11 @@ function handWrittenSources() {
     }));
 }
 
+/** The fingerprint each SVG was rendered from, by diagram name. */
+function readManifest() {
+  return existsSync(MANIFEST) ? JSON.parse(readFileSync(MANIFEST, 'utf8')) : {};
+}
+
 function check() {
   const problems = [];
   for (const source of erSources()) {
@@ -383,7 +393,7 @@ function check() {
     }
   }
   const sources = [...handWrittenSources(), ...erSources()];
-  const manifest = existsSync(MANIFEST) ? JSON.parse(readFileSync(MANIFEST, 'utf8')) : {};
+  const manifest = readManifest();
   for (const source of sources) {
     if (!existsSync(join(DIAGRAMS, `${source.name}.svg`)))
       problems.push(`${source.name}.svg is missing`);
@@ -402,15 +412,21 @@ function check() {
   console.log(`diagrams are current (${String(sources.length)} sources)`);
 }
 
-async function build() {
-  const generated = erSources();
-  for (const file of readdirSync(DIAGRAMS).filter((entry) => /^er-.*\.(mmd|svg)$/.test(entry))) {
-    if (!generated.some((source) => file.startsWith(`${source.name}.`)))
-      rmSync(join(DIAGRAMS, file));
+/**
+ * The manifest a build starts from. One that cannot be read, such as a sources.json left with merge
+ * conflict markers, renders every diagram again: a rebuild is how that conflict is meant to be fixed.
+ */
+function previousManifest() {
+  try {
+    return readManifest();
+  } catch {
+    console.warn('sources.json could not be read, so every diagram is rendered again');
+    return {};
   }
-  for (const source of generated) writeFileSync(join(DIAGRAMS, `${source.name}.mmd`), source.text);
+}
 
-  const sources = [...handWrittenSources(), ...generated];
+/** Renders each source to its SVG, and records the fingerprint it was rendered from. */
+async function render(sources, manifest) {
   const web = createRequire(join(ROOT, 'apps/web/package.json'));
   const { chromium } = web('@playwright/test');
   const executablePath = process.env.PUPPETEER_EXECUTABLE_PATH ?? chromium.executablePath();
@@ -418,7 +434,6 @@ async function build() {
   const { renderMermaid } = await import('@mermaid-js/mermaid-cli');
   const browser = await puppeteer.launch({ executablePath, headless: true });
   const font = latinFontStylesheet();
-  const manifest = {};
   try {
     for (const source of sources) {
       const { data } = await renderMermaid(browser, prepared(source.text), 'svg', {
@@ -437,6 +452,29 @@ async function build() {
     await browser.close();
     rmSync(font.folder, { recursive: true, force: true });
   }
+}
+
+async function build() {
+  const generated = erSources();
+  for (const file of readdirSync(DIAGRAMS).filter((entry) => /^er-.*\.(mmd|svg)$/.test(entry))) {
+    if (!generated.some((source) => file.startsWith(`${source.name}.`)))
+      rmSync(join(DIAGRAMS, file));
+  }
+  for (const source of generated) writeFileSync(join(DIAGRAMS, `${source.name}.mmd`), source.text);
+
+  const sources = [...handWrittenSources(), ...generated];
+  const previous = FORCE ? {} : previousManifest();
+  const manifest = {};
+  const stale = [];
+  for (const source of sources) {
+    const current =
+      previous[source.name] === fingerprint(source.text) &&
+      existsSync(join(DIAGRAMS, `${source.name}.svg`));
+    if (current && !FORCE) manifest[source.name] = previous[source.name];
+    else stale.push(source);
+  }
+  if (stale.length > 0) await render(stale, manifest);
+  console.log(`${String(sources.length - stale.length)} diagrams were already current`);
   for (const file of readdirSync(DIAGRAMS).filter((entry) => entry.endsWith('.svg'))) {
     if (!(file.slice(0, -4) in manifest)) rmSync(join(DIAGRAMS, file));
   }

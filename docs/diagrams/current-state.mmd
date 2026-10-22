@@ -1,0 +1,26 @@
+%% Today (Problem Statement 17): every system is digital, and HR connects them by hand.
+flowchart LR
+  oa["`**OA platform**
+Approvals`"]:::external
+  cnhq["`**China HQ HR and SAP**
+Chinese headers, SAP codes`"]:::external
+  chat["`**Teams, WeChat, DingTalk, email**
+Questions and files`"]:::external
+
+  hr("`**HR**
+Copies, exports, re-keys, reconciles`"):::person
+
+  excel["`**The Excel employee master**
+The only consolidated view`"]:::external
+  sghr["`**Singapore HR software**
+Attendance, leave, payroll`"]:::external
+  mgmt["`**Management reports**
+The company's templates`"]:::external
+
+  oa -->|"Copied into a tracker"| hr
+  cnhq -->|"Emailed as Excel"| hr
+  chat -->|"Which value is right?"| hr
+  sghr -->|"Exported to CSV"| hr
+  hr -->|"Re-keyed"| excel
+  hr -->|"Re-keyed"| sghr
+  hr -->|"Consolidated by hand"| mgmt

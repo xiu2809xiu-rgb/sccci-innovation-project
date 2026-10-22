@@ -61,6 +61,8 @@ jobs:
         run: pnpm lint
       - name: Diagrams match their sources and schema.prisma
         run: pnpm diagrams:check
+      - name: Slide exports match the deck
+        run: pnpm slides:check
       - name: Typecheck
         run: pnpm typecheck
       - name: Unit and integration tests

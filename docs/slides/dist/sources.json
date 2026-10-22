@@ -1,0 +1,10 @@
+{
+  "huitong": "bb9f696dc4b1fae7",
+  "versions": {
+    "@marp-team/marp-cli": "4.5.1",
+    "@marp-team/marp-core": "4.4.0",
+    "@marp-team/marpit": "3.2.3",
+    "@fontsource-variable/geist": "5.3.0",
+    "@fontsource-variable/noto-sans-sc": "5.3.1"
+  }
+}
