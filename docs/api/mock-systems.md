@@ -1,14 +1,14 @@
 # Mock external systems
 
-Until Organisation E's real systems and APIs are known ([A-20](../assumptions.md)), HuiTong talks to three stand-ins. Each one deliberately looks like a different vendor, so the connector framework, the mapping engine and the consolidation are built against real-world friction rather than a tidy shared schema.
+Until the interfaces of LESSO Solar's systems are known ([A-20](../assumptions.md)), HuiTong talks to three stand-ins: INFO-TECH in Singapore, and HQ's customised SAP and intranet. Their technical ids keep the names they were given first ([ADR 0022](../adr/0022-final-statement-7-lesso-solar.md)); so far only the Singapore mock behaves like its system, and the intranet's news, policies and claims come with story A-10. Each one deliberately looks like a different vendor, so the connector framework, the mapping engine and the consolidation are built against real-world friction rather than a tidy shared schema.
 
 All data is synthetic, generated deterministically by [`@huitong/synthetic-data`](../../packages/synthetic-data/) (seed `20261020`): the same 120 people, the same drift and the same records on every start. No national ID numbers exist anywhere in the dataset.
 
-| System              | Package               | Port | Auth                    | Keys and formats                                                                                           |
-| ------------------- | --------------------- | ---- | ----------------------- | ---------------------------------------------------------------------------------------------------------- |
-| Singapore HR        | `services/mock-sg-hr` | 4101 | `X-API-Key` header      | English camelCase, ISO dates, `page`/`pageSize`                                                            |
-| China HQ (SAP-like) | `services/mock-cn-hq` | 4102 | HTTP Basic              | Chinese keys, `YYYY/MM/DD` values, `YYYYMMDD` query dates, string numbers, SAP codes, OData `$top`/`$skip` |
-| OA approvals        | `services/mock-oa`    | 4103 | `Authorization: Bearer` | English top level, Chinese form fields, HMAC-signed webhooks                                               |
+| System                   | Package               | Port | Auth                    | Keys and formats                                                                                               |
+| ------------------------ | --------------------- | ---- | ----------------------- | -------------------------------------------------------------------------------------------------------------- |
+| INFO-TECH (Singapore HR) | `services/mock-sg-hr` | 4101 | `X-API-Key` header      | API: English camelCase, ISO dates, `page`/`pageSize`. Exports: CSV with English headers and `DD/MM/YYYY` dates |
+| China HQ (SAP-like)      | `services/mock-cn-hq` | 4102 | HTTP Basic              | Chinese keys, `YYYY/MM/DD` values, `YYYYMMDD` query dates, string numbers, SAP codes, OData `$top`/`$skip`     |
+| OA approvals             | `services/mock-oa`    | 4103 | `Authorization: Bearer` | English top level, Chinese form fields, HMAC-signed webhooks                                                   |
 
 Default credentials (local only) are in [`.env.example`](../../.env.example). Every service answers `GET /health` without authentication.
 
@@ -53,7 +53,7 @@ Eight Singapore employees differ between SG HR and CN HQ. Each difference has a 
 
 `employeeAsSeenBy(employee, drift, system)` in the generator applies these, keeping related fields consistent. For example, an "active" leaver also has no termination date at HQ.
 
-## Singapore HR (`mock-sg-hr`, port 4101)
+## INFO-TECH, the Singapore HR system (`mock-sg-hr`, port 4101)
 
 | Method and path                                 | Purpose                                                     |
 | ----------------------------------------------- | ----------------------------------------------------------- |
@@ -64,6 +64,9 @@ Eight Singapore employees differ between SG HR and CN HQ. Each difference has a 
 | `GET /api/leave-types`                          | AL, SL, HL, CCL, ML, PL, CL, TOIL, NPL                      |
 | `GET /api/attendance?from&to&page&pageSize`     | Daily attendance (pageSize ≤ 500)                           |
 | `GET /api/leave?from&to&page&pageSize`          | Leave overlapping the range                                 |
+| `GET /api/exports/employees.csv`                | Export: the employee master, as a CSV file                  |
+| `GET /api/exports/leave.csv?from&to`            | Export: the leave that overlaps the range                   |
+| `GET /api/exports/payroll.csv?month=YYYY-MM`    | Export: the month's payroll summary                         |
 | `POST /api/_admin/employees/:employeeNo/update` | Demo: simulate an edit made directly in SG HR               |
 | `POST /api/_admin/reset`                        | Demo: restore the generated dataset                         |
 
@@ -89,7 +92,37 @@ curl -H "X-API-Key: sg-hr-local-key" "http://localhost:4101/api/attendance?from=
 }
 ```
 
-An employee record has `employeeNo`, `firstName` (given), `lastName` (family), `preferredName`, `email`, `mobile` (`+65 9123 4567`), `department`, `departmentCode` (`SG-HR`), `jobTitle`, `employmentType` (Permanent, Contract, Part-Time, Intern), `status` (Active, Probation, On Leave, Resigned), `hireDate`, `resignationDate`, `dateOfBirth`, `basicSalary`, `currency`, `bankName`, `bankAccountNo`, `workLocation`, `reportsTo` and `lastModified`. SG HR has no job grade, cost centre or Chinese name. Errors look like `{ "error": "not_found", "message": "Employee E000000 not found" }`.
+An employee record has `employeeNo`, `firstName` (given), `lastName` (family), `fullName` (as on the person's identity card), `preferredName`, `email`, `mobile` (`+65 9123 4567`), `department`, `departmentCode` (`SG-HR`), `jobTitle`, `employmentType` (Permanent, Contract, Part-Time, Intern), `status` (Active, Probation, On Leave, Resigned), `hireDate`, `resignationDate`, `dateOfBirth`, `basicSalary`, `currency`, `bankName`, `bankAccountNo`, `workLocation`, `reportsTo` and `lastModified`. SG HR has no job grade, cost centre or Chinese name. Errors look like `{ "error": "not_found", "message": "Employee E000000 not found" }`.
+
+### INFO-TECH-style exports
+
+We assume INFO-TECH hands HR spreadsheet exports besides any API ([A-59](../assumptions.md)), so the mock offers them: one file per dataset, in a layout we assume until the client shares a real export through the team's data folder ([Q-58](../client/questions-for-client.md)). The headers, the leave codes and the file names are ours, not INFO-TECH's.
+
+- **File:** CSV, UTF-8 with a byte-order mark (as Excel's "CSV UTF-8" writes it), CRLF line ends, RFC 4180 quoting, downloaded as an attachment.
+- **Headers:** English, in a spreadsheet's wording (`Employee No`, `Date Joined`, `Designation`).
+- **Dates:** day first, `DD/MM/YYYY`; a pay period is `MM/YYYY`; "Applied On" is the day in Singapore. An empty cell means no value.
+- **Values as they are:** like a vendor's export, the mock does not neutralise a cell that a spreadsheet would read as a formula (a value starting with `=`, `+`, `-` or `@`). HuiTong's own exports must (area 3, story D-4).
+- **No national ID column** in any export. The employee master carries no pay or bank columns; the payroll summary carries the bank account in full, as a payroll export would, and HuiTong keeps only its last four digits.
+
+| File                    | Columns                                                                                                                                                                                                                                |
+| ----------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `employees.csv`         | Employee No, Employee Name, Surname, Given Name, Preferred Name, Department Code, Department, Designation, Employment Type, Employee Status, Date Joined, Date Left, Date of Birth, Email, Mobile No, Reporting Officer, Work Location |
+| `leave_<from>_<to>.csv` | Leave ID, Employee No, Employee Name, Leave Code, Leave Type, Date From, Date To, No. of Days, Half Day, Status, Applied On (the day in Singapore)                                                                                     |
+| `payroll_<YYYY-MM>.csv` | Pay Period, Employee No, Employee Name, Department Code, Basic Salary, OT Hours, No-pay Leave Days, Currency, Bank Name, Bank Account No                                                                                               |
+
+The payroll summary lists everyone on the books at any time in the month, with the overtime hours recorded that month and the approved no-pay leave days that fall inside it: a leave across a month end is split by its working days. It computes no statutory amounts such as CPF contributions.
+
+```bash
+curl -H "X-API-Key: sg-hr-local-key" "http://localhost:4101/api/exports/payroll.csv?month=2026-09"
+```
+
+```csv
+Pay Period,Employee No,Employee Name,Department Code,Basic Salary,OT Hours,No-pay Leave Days,Currency,Bank Name,Bank Account No
+09/2026,E100002,Lim Wei Jie,SG-EXEC,27100.00,11.25,0,SGD,OCBC Bank,934-284117-7
+09/2026,E100003,Tan Mei Ling,SG-HR,6700.00,11.5,0,SGD,OCBC Bank,945-108766-6
+```
+
+The exports come from the same records as the API, so the fields they share agree; the employee master leaves pay and bank details to the payroll summary. None of them is imported yet. Importing the employee master is story [A-5](../agile/backlog.md#a-5-import-another-companys-file-through-its-approved-mapping): HuiTong will read it through the mapping engine with an approved mapping version, so a real INFO-TECH export can replace the mock's with only a mapping change. The leave file feeds area 3's leave ingestion (story D-1) and the payroll summary its single view (story D-6); the mapping engine has no targets for them yet.
 
 ## China HQ (`mock-cn-hq`, port 4102)
 
