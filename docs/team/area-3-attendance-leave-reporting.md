@@ -83,6 +83,7 @@ sequenceDiagram
 
 - **Per-person data stays in its entity.** No transfer register entry shares attendance or leave between entities, so the service shows a run's exceptions and the template's rows for the caller's own entity, and counts the rest as withheld. If HQ's report needs Singapore staff's leave, that takes a register entry for attendance and leave, decided with area 4 and recorded in the register (B-7, F-4), not a code change.
 - **Exports leave out what the register withholds.** Build the .xlsx through `FieldMasker.withheld(fields, viewer, entity)` and audit each export with the fields left out ([module ownership](module-ownership.md#area-3-single-view-dashboards-and-insights-owner-tbd)).
+- **Exports neutralise formulas.** A cell that starts with `=`, `+`, `-` or `@` is written so that a spreadsheet reads it as text, in CSV and in .xlsx (OWASP CSV injection). Vendor exports, such as the INFO-TECH mock's, do not, so HuiTong must not pass their cells on untouched.
 - **Nothing is guessed.** A code without an approved rule, leave pending at month end, and home leave with no column are exceptions for HR, never silent defaults.
 
 **Decisions that are yours** (record each in an ADR or an assumption when you make it):

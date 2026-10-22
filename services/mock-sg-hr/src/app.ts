@@ -9,6 +9,7 @@ import { errorHandler } from './http/errors.js';
 import { logger as defaultLogger } from './logger.js';
 import { adminRoutes } from './routes/admin.js';
 import { employeeRoutes } from './routes/employees.js';
+import { exportRoutes } from './routes/exports.js';
 import { timeRecordRoutes } from './routes/time-records.js';
 
 export interface SgHrAppOptions {
@@ -17,7 +18,11 @@ export interface SgHrAppOptions {
   logger?: Logger;
 }
 
-/** Builds the mock Singapore HR system (English keys, ISO dates). Synthetic data only. */
+/**
+ * Builds the mock of INFO-TECH, the Singapore HR system: an API with English
+ * keys and ISO dates, and INFO-TECH-style CSV exports with Singapore dates.
+ * Synthetic data only.
+ */
 export function createApp(options: SgHrAppOptions = {}): Express {
   const config = options.config ?? loadConfig();
   const store = options.store ?? new SgHrStore();
@@ -35,6 +40,7 @@ export function createApp(options: SgHrAppOptions = {}): Express {
   app.use('/api', requireApiKey(config.apiKey));
   app.use(employeeRoutes(store));
   app.use(timeRecordRoutes(store));
+  app.use(exportRoutes(store));
   app.use(adminRoutes(store));
 
   app.use((_req, res) => {

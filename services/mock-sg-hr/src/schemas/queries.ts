@@ -18,3 +18,16 @@ export const dateRangeQuerySchema = pageQuerySchema(200, 500)
     to: z.iso.date(),
   })
   .refine((query) => query.from <= query.to, { message: '"from" must not be after "to"' });
+
+/** `?from=&to=` of an export, which is one whole file rather than a page. */
+export const exportRangeQuerySchema = z
+  .object({
+    from: z.iso.date(),
+    to: z.iso.date(),
+  })
+  .refine((query) => query.from <= query.to, { message: '"from" must not be after "to"' });
+
+/** `?month=YYYY-MM` of the payroll export. */
+export const payrollQuerySchema = z.object({
+  month: z.string().regex(/^\d{4}-(0[1-9]|1[0-2])$/, { message: 'month must be YYYY-MM' }),
+});

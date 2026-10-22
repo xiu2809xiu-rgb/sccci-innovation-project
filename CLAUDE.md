@@ -163,7 +163,7 @@ Small Express + TypeScript apps with deliberately different schemas:
 
 | Service | Schema |
 |---|---|
-| `mock-sg-hr` | English field names, ISO dates |
+| `mock-sg-hr` | INFO-TECH-like: English field names and ISO dates in its API; UTF-8 CSV exports of employees, leave and payroll with `DD/MM/YYYY` dates (`MM/YYYY` pay periods) |
 | `mock-cn-hq` | Chinese keys, `YYYY/MM/DD` dates, SAP-like codes |
 | `mock-oa` | Approval workflows plus an HMAC-signed webhook emitter |
 
