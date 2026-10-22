@@ -1,8 +1,8 @@
-# Area 3: Attendance, leave and reporting
+# Area 3: Single view, dashboards and insights
 
-This guide is the starting point for area 3's owner. It explains what the platform build already gives you, what is yours to build, the design we recommend, a build plan by sprint, the risks, and how the area plugs into the rest of HuiTong. Area 3 covers capability D in [CLAUDE.md](../../CLAUDE.md) section 4: attendance and leave from Singapore and China HQ consolidate into the company's reporting template automatically, with exceptions explained, and management reports draw on several authorised sources.
+This guide is the starting point for area 3's owner. It explains what the platform build already gives you, what is yours to build, the design we recommend, a build plan by sprint, the risks, and how the area plugs into the rest of HuiTong. Area 3 covers capability D in [CLAUDE.md](../../CLAUDE.md) section 4, as statement #7 reshaped it ([ADR 0022](../adr/0022-final-statement-7-lesso-solar.md)): the single view across INFO-TECH, SAP and the intranet that the brief asks for, with dashboards for headcount, joiners and leavers, and leave and payroll summaries, plus data-consistency and duplicate-entry insights. Leave consolidation is one part of it: attendance and leave from Singapore and China HQ consolidate into the company's reporting template automatically, with exceptions explained.
 
-The ground rule is in [module ownership](module-ownership.md#ground-rules): the platform build gives you a head start, and the core logic (the consolidation rules engine and report rendering) is yours to write.
+The ground rule is in [module ownership](module-ownership.md#ground-rules): the platform build gives you a head start, and the core logic (the consolidation rules engine, report rendering, and the single view with its dashboards) is yours to write. The head start covers leave consolidation and the management reports; the dashboards (D-6) and insights (D-7) start from the reports page and its contract.
 
 ## What the head start gives you
 
@@ -21,15 +21,17 @@ The sample was computed from the synthetic attendance and leave that mock-sg-hr 
 
 From the [backlog](../agile/backlog.md#epic-d-single-view-dashboards-and-insights) (edit `scripts/github/backlog.mjs`, not the page):
 
-| Story                                                | Sprint | Acceptance criteria, in short                                                                                                          |
-| ---------------------------------------------------- | ------ | -------------------------------------------------------------------------------------------------------------------------------------- |
-| D-1 Ingest attendance and leave from SG HR and CN HQ | 8      | A month's records from both systems, each with its source category; a record for an unknown employee is an exception, not dropped      |
-| D-2 Map leave categories between systems             | 8      | 年假, 病假 and 调休 become Annual Leave, Sick Leave and time off in lieu; a code with no approved rule is listed, never guessed        |
-| D-3 Validate and report exceptions                   | 9      | Overlapping leave is reported with both records; each exception explains what is wrong and where it came from                          |
-| D-4 Render the company template and export .xlsx     | 10     | The file follows the template exactly; a destination such as HQ gets only the fields on its allowlist (B-7), and the export is audited |
-| D-5 Management reports from several sources          | 11     | Each figure names its systems; `MANAGEMENT` reads it, read-only, with no restricted fields                                             |
+| Story                                                  | Sprint | Acceptance criteria, in short                                                                                                                                                                         |
+| ------------------------------------------------------ | ------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| D-1 Ingest attendance and leave from INFO-TECH and SAP | 8      | A month's records from both systems, each with its source category; a record for an unknown employee is an exception, not dropped                                                                     |
+| D-2 Map leave categories between systems               | 8      | 年假, 病假 and 调休 become Annual Leave, Sick Leave and time off in lieu; a code with no approved rule is listed, never guessed                                                                       |
+| D-3 Validate and report exceptions                     | 9      | Overlapping leave is reported with both records; each exception explains what is wrong and where it came from                                                                                         |
+| D-4 Render the company template and export .xlsx       | 10     | The file follows the template exactly; a destination such as HQ gets only the fields on its allowlist (B-7), and the export is audited                                                                |
+| D-5 Management reports from several sources            | 11     | Each figure names its systems; `MANAGEMENT` reads it, read-only, with no restricted fields                                                                                                            |
+| D-6 Single view with dashboards                        | 10     | Headcount, joiners and leavers, and leave and payroll summaries; each figure names its systems and time; cross-entity figures are aggregates with small counts suppressed; read-only for `MANAGEMENT` |
+| D-7 Data-consistency and duplicate-entry insights      | 11     | The share of consistent records (SM-02) and how often each new-hire field was typed (SM-05), from HuiTong's own records; too little data is said, not shown as a number                               |
 
-Your steps in the [hero journey](../agile/hero-journey.md) are 6 and 7: the employee's later leave is imported and mapped, and HQ's report is exported without the fields HQ may not receive. You present them at W5 and W18. The [failure matrix](../agile/test-plan.md) gives you four cases: an invalid date (with area 1), an unknown leave code, a denied export (with area 4), and a report requested while source data is incomplete.
+Your steps in the [hero journey](../agile/hero-journey.md) are 8 and 9: the employee's later leave and payroll summary appear in the single view, mapped to the group categories, and HQ's summary is exported without the fields HQ may not receive. You present them at W5 and W18. The [failure matrix](../agile/test-plan.md) gives you four cases: an invalid date (with area 1), an unknown leave code, a denied export (with area 4), and a report requested while source data is incomplete.
 
 ## The recommended design
 
@@ -46,6 +48,7 @@ flowchart LR
   REND --> PREVIEW["Preview<br/>(before any export)"]
   PREVIEW --> XLSX["Export .xlsx<br/>FieldMasker.withheld, audited"]
   STORE --> MGMT["Management reports<br/>aggregates by entity"]
+  MGMT --> VIEW["Single view and dashboards<br/>each figure with its sources (D-6)"]
 ```
 
 **Patterns** (add each to [patterns.md](../architecture/patterns.md) as you build it):
@@ -53,7 +56,7 @@ flowchart LR
 | Pattern         | Where it earns its place                                                                                                                                                                                     |
 | --------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | Template Method | A run is extract → map → validate → render → audit, the same skeleton as area 1's sync job ([`sync`](../../apps/api/src/modules/connectors/sync/)), so a failure at any step leaves the run in a known state |
-| Strategy        | One leave-category mapper per source system, configured by the approved rules, so a new subsidiary's codes are configuration, not code; one renderer per template                                            |
+| Strategy        | One leave-category mapper per source system, configured by the approved rules, so another company's codes are configuration, not code; one renderer per template                                             |
 | Repository      | Replace `MockConsolidationRepository` and `MockManagementReportsRepository` with Prisma repositories bound to the same abstract classes; the controllers and the contract do not change                      |
 | Idempotency     | The unique keys above: running the same month twice changes nothing the second time                                                                                                                          |
 
@@ -79,7 +82,7 @@ sequenceDiagram
 **Rules to keep.**
 
 - **Per-person data stays in its entity.** No transfer register entry shares attendance or leave between entities, so the service shows a run's exceptions and the template's rows for the caller's own entity, and counts the rest as withheld. If HQ's report needs Singapore staff's leave, that takes a register entry for attendance and leave, decided with area 4 and recorded in the register (B-7, F-4), not a code change.
-- **Exports leave out what the register withholds.** Build the .xlsx through `FieldMasker.withheld(fields, viewer, entity)` and audit each export with the fields left out ([module ownership](module-ownership.md#area-3-attendance-leave-and-reporting-owner-tbd)).
+- **Exports leave out what the register withholds.** Build the .xlsx through `FieldMasker.withheld(fields, viewer, entity)` and audit each export with the fields left out ([module ownership](module-ownership.md#area-3-single-view-dashboards-and-insights-owner-tbd)).
 - **Nothing is guessed.** A code without an approved rule, leave pending at month end, and home leave with no column are exceptions for HR, never silent defaults.
 
 **Decisions that are yours** (record each in an ADR or an assumption when you make it):
@@ -97,8 +100,10 @@ sequenceDiagram
 3. **Validation (D-3, sprint 9).** The rules in [`consolidation-engine.spec.ts`](../../apps/api/src/modules/attendance-leave/consolidation-engine.spec.ts), each raising one of the contract's exception types.
 4. **Bind the Prisma repository.** Implement `ConsolidationRepository` over the models, bind it in [`AttendanceLeaveModule`](../../apps/api/src/modules/attendance-leave/attendance-leave.module.ts), remove `@ServesMockData()`, and delete the mock repository and its sample. The badge disappears from the pages by itself.
 5. **Rendering and export (D-4, sprint 10).** The renderer, the golden-file test, then `POST runs/:runId/export`: build the file through `FieldMasker.withheld`, audit it, and return it. The export button becomes active once the data is real and the run is exportable.
-6. **Management reports (D-5, sprint 11).** Aggregates by entity from the stored runs and the employee master, each with its sources; replace `MockManagementReportsRepository`.
-7. **Switch on your end-to-end steps.** Steps 6 and 7 in [`hero-journey.spec.ts`](../../apps/web/e2e/hero-journey.spec.ts), the export case in [`hq-field-denial.spec.ts`](../../apps/web/e2e/hq-field-denial.spec.ts), and the smoke test's "run a consolidation" step.
+6. **The single view (D-6, sprint 10).** Dashboards for headcount, joiners and leavers, and leave and payroll summaries, each figure naming its systems and time, read-only for `MANAGEMENT`; figures that span entities are aggregates with small counts suppressed ([A-39](../assumptions.md)).
+7. **Management reports (D-5, sprint 11).** Aggregates by entity from the stored runs and the employee master, each with its sources; replace `MockManagementReportsRepository`.
+8. **Insights (D-7, sprint 11).** The share of consistent records (SM-02) and how often each new-hire field was typed (SM-05), read from area 1's sync runs and field provenance, never re-computed from raw data.
+9. **Switch on your end-to-end steps.** Steps 8 and 9 in [`hero-journey.spec.ts`](../../apps/web/e2e/hero-journey.spec.ts), the export case in [`hq-field-denial.spec.ts`](../../apps/web/e2e/hq-field-denial.spec.ts), and the smoke test's "run a consolidation" step.
 
 ## The risks
 
@@ -115,7 +120,7 @@ sequenceDiagram
 
 | You use                                                                                                            | Where                                                                                                                                                               |
 | ------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| SG HR and CN HQ adapters                                                                                           | [`SystemConnector`](../../apps/api/src/modules/connectors/adapters/system-connector.ts) (area 1 adds the attendance and leave methods)                              |
+| INFO-TECH and SAP adapters (`sg-hr`, `cn-hq`)                                                                      | [`SystemConnector`](../../apps/api/src/modules/connectors/adapters/system-connector.ts) (area 1 adds the attendance and leave methods)                              |
 | The employee master, by employee number only                                                                       | Area 1's employees module                                                                                                                                           |
 | Date and enum transformers                                                                                         | Area 1's [mapping engine](../../apps/api/src/modules/mapping/)                                                                                                      |
 | `FieldMasker.withheld` and `canList`                                                                               | [`field-masker.ts`](../../apps/api/src/modules/access/field-masker.ts)                                                                                              |
@@ -128,9 +133,9 @@ You expose `/api/v1/attendance-leave/*` and `/api/v1/reports/*`, the consolidati
 
 | Requirement           | Rows in the [traceability matrix](../requirements-traceability.md)                                                                               |
 | --------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------ |
-| M1 Design thinking    | The hero journey's steps 6 and 7; leave-report preparation time in the measurement protocol                                                      |
+| M1 Design thinking    | The hero journey's steps 8 and 9; the management summary time in the measurement protocol; success metrics SM-01 and SM-07                       |
 | M2 GRS by design      | Default deny across entities and the export allowlist (M2-18); preview before export (M2-10); every figure naming its source                     |
 | M4 Best practices     | The mappers', validators' and renderers' unit tests and coverage (M4.3-03), integration tests per module (M4.3-05), the failure matrix (M4.3-11) |
 | M6 Deploy and monitor | Consolidation jobs in the traces and metrics (area 4 instruments them)                                                                           |
 
-For the W7 mock interview, the questions to be ready for are in [module ownership](module-ownership.md#area-3-attendance-leave-and-reporting-owner-tbd).
+For the W7 mock interview, the questions to be ready for are in [module ownership](module-ownership.md#area-3-single-view-dashboards-and-insights-owner-tbd).

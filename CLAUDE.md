@@ -89,19 +89,21 @@ The module's AI coding tool is AWS Kiro (used here as the IDE). Students "own ev
 | `SYSTEM_ADMIN` | Full system administration |
 | `HR_SG` | Singapore HR work |
 | `HR_HQ` | China HQ HR work |
-| `HIRING_MANAGER` | Hiring and manpower requests |
+| `HIRING_MANAGER` | Hires and their onboarding progress |
 | `ADMIN_OPS` | Admin preparation tasks |
-| `MANAGEMENT` | Reports, read-only |
+| `MANAGEMENT` | Single view, dashboards and reports, read-only |
 | `AUDITOR` | Audit log, read-only |
+
+HQ Treasury gives the extra approval for claims and payments above the threshold. Whether that is a HuiTong role or a step in the intranet is open (Q-60); area 2 decides it with the client.
 
 ### Capabilities
 
 | # | Capability | Summary |
 |---|---|---|
-| A | Connector hub | One adapter per external system behind a common `SystemConnector` interface. Mock services cover SG HR, CN HQ (Chinese field names and formats) and OA (webhooks), plus Excel/CSV import. New subsidiaries plug in through configuration and field mappings. |
+| A | Connector hub | One adapter per external system behind a common `SystemConnector` interface. Mock services cover INFO-TECH (`mock-sg-hr`: employee records, leave and payroll, with INFO-TECH-style exports), the customised SAP (`mock-cn-hq`: Chinese field names and formats) and the HQ intranet (`mock-oa`: news, policies, claims and approvals, with signed webhooks), plus Excel/CSV import and the Lark/Feishu and DingTalk notification adapters (mocked). Another company joins through a tenant configuration: company name, connector set, field mappings and theme tokens. |
 | B | Canonical employee master | One consolidated employee record, with a source of truth for each field, change history, and conflict detection across systems. |
-| C | Workflow automation | Event-driven chain: OA "manpower request approved" → recruitment requisition → hire → onboarding checklist → a **draft** (`PRE_HIRE`) employee record in the master, and in SG HR once HR approves the write → admin preparation (laptop, desk, accounts) → notifications (Teams/DingTalk, mocked). The record becomes active only after the onboarding milestones and the verified SG HR record. Idempotent, retried and audited. |
-| D | Attendance and leave consolidation | Pull from SG and CN, then map leave categories (e.g. 年假 ↔ Annual Leave, 病假 ↔ Sick Leave, 调休 ↔ Time-off in lieu). Validate, render into the company reporting template, and export to .xlsx. |
+| C | Onboarding and approval workflows | **Onboarding:** one new-hire entry (prefilled from the intranet's approval where one arrives) → a **draft** (`PRE_HIRE`) employee record in the master → the SAP and INFO-TECH records, each written after that system's data steward approves a preview → intranet access, requested only once the SAP record exists → admin preparation (laptop, desk, accounts) → notifications (Lark/Feishu or DingTalk, mocked). The record becomes active only after the onboarding milestones and the verified INFO-TECH record. **Claims and payments:** a claim or payment above a configurable threshold gets an extra HQ Treasury approval step, and nothing above it is payable before that approval. Idempotent, retried and audited. |
+| D | Single view, dashboards and insights | One consolidated view across INFO-TECH, SAP and the intranet: dashboards for headcount, joiners and leavers, leave and payroll summaries, data consistency and duplicate entry, and management insights drawn from authorised sources. Leave consolidation is one part of it: pull from SG and CN, map leave categories (e.g. 年假 ↔ Annual Leave, 病假 ↔ Sick Leave, 调休 ↔ Time-off in lieu), validate, render into the company reporting template, and export to .xlsx. |
 | E | AI assistance (human in the loop) | **Schema-mapping assistant:** proposes mappings from a new system's sample file (including Chinese headers) to the canonical model, with a confidence score and a rationale. HR approves before anything is used. **Discrepancy explainer:** explains conflicts between systems in plain English or 中文. AI never writes to systems of record without human approval. |
 | F | Governance and compliance | RBAC, field-level masking, an append-only audit log, data-classification tags, a cross-border transfer register (Singapore PDPA and China PIPL considerations), and retention settings. |
 | G | Monitoring and analytics | Observability (structured logs, traces, metrics, health checks), first-party clickstream analytics, and AI token usage and cost tracking, each with an in-app dashboard. |
@@ -112,19 +114,19 @@ The module's AI coding tool is AWS Kiro (used here as the IDE). Students "own ev
 - **No national ID numbers.** Never store NRIC/FIN or PRC resident ID numbers; use internal employee IDs.
 - **Masking.** Mask sensitive fields (salary, bank details, date of birth) by role.
 - **Identity matching.** Never match people on names, romanisation or name similarity alone. Only the same group employee number (or an audited HR decision) confirms that two records are one person; a look-alike name is a possible match, shown for HR to review and never merged. A work email that another employee already has is refused as a sync error.
-- **Draft before active.** An approved OA request creates only a draft (`PRE_HIRE`) employee record. It becomes active only after the agreed onboarding milestones and verified input from the HR system of record.
+- **Draft before active.** A new hire's one entry creates only a draft (`PRE_HIRE`) employee record. It becomes active only after the agreed onboarding milestones and verified input from the HR system of record (INFO-TECH for Singapore). Intranet access is requested only once the SAP record exists.
 - **No identifiers to AI.** Employee identifiers (the employee number, names, work email and phone, a manager's number) and sensitive HR data are never sent to a third-party AI service without the client's written permission. Prompts carry headers, value shapes and category codes; values above INTERNAL or that identify a person are withheld.
 - **Default deny across entities.** A user sees another entity's employee data only for the fields that an ACTIVE entry in the cross-border transfer register shares with their own entity; everything else is withheld, in the API and in exports. A change to an entry raises its version and is audited.
-- **Write-back needs approval.** A write to a system of record needs an explicit, audited human approval after a preview. Against the client's real systems it is out of scope until the client approves it; the mocks may demonstrate it, labelled as mocks.
+- **Write-back needs approval.** A write to a system of record needs an explicit, audited approval by that system's data steward after a preview. Against the client's real systems it is out of scope until the client approves it; the mocks may demonstrate it, labelled as mocks.
 - **Bilingual UI.** The UI is bilingual (English and 简体中文), switchable at runtime. No hard-coded user-facing strings.
 
 ### Ownership areas (each is deep enough to earn an A)
 
 | Area | Owner | Scope |
 |---|---|---|
-| 1. Integration Core + platform base | Richie | **Platform:** architecture, monorepo, design system and app shell, auth/RBAC baseline, CI/CD, Docker, mock systems. **Integration:** connector framework (Adapter + Factory), canonical employee master with provenance, mapping engine (Strategy transformers), SG ↔ CN sync with conflict resolution, AI schema-mapping assistant, China-side systems (Chinese schemas, DingTalk/WeChat), 3D integration map. |
-| 2. Workflow automation | TBD | OA approval webhooks → recruitment → onboarding → employee record → admin preparation. Workflow state machine, event-driven jobs with retries and idempotency, SLA reminders and escalations, notifications (Teams/DingTalk, mocked), workflow board UI. |
-| 3. Attendance, leave and reporting | TBD | Attendance and leave ingestion from SG and CN, leave-category mapping rules, validation and exception reports, the company reporting-template engine, .xlsx export, management reports that draw on multiple sources. |
+| 1. Integration Core + platform base | Richie | **Platform:** architecture, monorepo, design system and app shell, auth/RBAC baseline, CI/CD, Docker, mock systems, the tenant configuration. **Integration:** connector framework (Adapter + Factory) with connectors for INFO-TECH, SAP, the intranet and Lark/DingTalk, canonical employee master with provenance, mapping engine (Strategy transformers), SG ↔ CN sync with conflict resolution, AI schema-mapping assistant, China-side systems (Chinese schemas), 3D integration map. |
+| 2. Onboarding and approval workflows | TBD | The new-hire flow into SAP and INFO-TECH from one entry, with the SAP-before-intranet rule; claims and payments with the HQ Treasury step above a configurable threshold. Workflow state machine, event-driven jobs with retries and idempotency, SLA reminders and escalations, notifications (Lark/Feishu or DingTalk, mocked), workflow board UI. |
+| 3. Single view, dashboards and insights | TBD | The consolidated cross-system view the brief asks for: leave and payroll summaries from INFO-TECH, data-consistency and duplicate-entry metrics, management dashboards and insights from multiple authorised sources. Leave consolidation is one part: attendance and leave ingestion from SG and CN, leave-category mapping rules, validation and exception reports, the company reporting-template engine, .xlsx export. |
 | 4. Governance, security and monitoring | TBD | RBAC and field-masking administration, audit-log viewer, data classification, cross-border transfer register and retention (PDPA/PIPL), OpenTelemetry tracing and metrics, clickstream analytics, AI token usage and cost dashboards, AWS deployment with CloudWatch. |
 
 **Rules**

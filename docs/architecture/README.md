@@ -52,12 +52,12 @@ HR in Singapore and at China HQ syncs records, settles conflicts and consolidate
 
 The API's modules, by ownership area ([module ownership](../team/module-ownership.md)):
 
-| Area                                   | Modules                                                                                              |
-| -------------------------------------- | ---------------------------------------------------------------------------------------------------- |
-| 1: integration core and platform       | `auth`, `users`, `access`, `employees`, `connectors`, `mapping`, `ai`, `overview`, `health`          |
-| 2: workflow automation                 | `workflows`                                                                                          |
-| 3: attendance, leave and reporting     | `attendance-leave`, `reports`                                                                        |
-| 4: governance, security and monitoring | `governance`, `audit` (the viewer), `analytics` (the dashboards; area 1 owns the clickstream ingest) |
+| Area                                    | Modules                                                                                              |
+| --------------------------------------- | ---------------------------------------------------------------------------------------------------- |
+| 1: integration core and platform        | `auth`, `users`, `access`, `employees`, `connectors`, `mapping`, `ai`, `overview`, `health`          |
+| 2: onboarding and approval workflows    | `workflows`                                                                                          |
+| 3: single view, dashboards and insights | `attendance-leave`, `reports`                                                                        |
+| 4: governance, security and monitoring  | `governance`, `audit` (the viewer), `analytics` (the dashboards; area 1 owns the clickstream ingest) |
 
 ## Deployment
 

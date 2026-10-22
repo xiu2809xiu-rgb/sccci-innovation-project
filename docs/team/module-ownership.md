@@ -8,25 +8,25 @@ This file records who owns which part of HuiTong 汇通, what each area provides
 
 ## Areas at a glance
 
-| Area                                   | Owner                          | Capabilities (CLAUDE.md section 4)                                                                                          | Implementation guide                                                                 |
-| -------------------------------------- | ------------------------------ | --------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------ |
-| 1. Integration Core + platform base    | Richie (team lead)             | A Connector hub, B Canonical employee master, E AI assistance, plus the shared base that F and G build on                   | [area-1-integration-core.md](area-1-integration-core.md)                             |
-| 2. Workflow automation                 | TBD: Iok Teck, Azri or Angelyn | C Workflow automation                                                                                                       | [area-2-workflow-automation.md](area-2-workflow-automation.md)                       |
-| 3. Attendance, leave and reporting     | TBD: Iok Teck, Azri or Angelyn | D Attendance and leave consolidation, and management reports                                                                | [area-3-attendance-leave-reporting.md](area-3-attendance-leave-reporting.md)         |
-| 4. Governance, security and monitoring | TBD: Iok Teck, Azri or Angelyn | F Governance and compliance (administration), G Monitoring and analytics (telemetry and dashboards), and the AWS deployment | [area-4-governance-security-monitoring.md](area-4-governance-security-monitoring.md) |
+| Area                                    | Owner                          | Capabilities (CLAUDE.md section 4)                                                                                          | Implementation guide                                                                 |
+| --------------------------------------- | ------------------------------ | --------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------ |
+| 1. Integration Core + platform base     | Richie (team lead)             | A Connector hub, B Canonical employee master, E AI assistance, plus the shared base that F and G build on                   | [area-1-integration-core.md](area-1-integration-core.md)                             |
+| 2. Onboarding and approval workflows    | TBD: Iok Teck, Azri or Angelyn | C Onboarding and approval workflows, including the HQ Treasury step                                                         | [area-2-workflow-automation.md](area-2-workflow-automation.md)                       |
+| 3. Single view, dashboards and insights | TBD: Iok Teck, Azri or Angelyn | D Single view, dashboards and insights, with leave consolidation as one part                                                | [area-3-attendance-leave-reporting.md](area-3-attendance-leave-reporting.md)         |
+| 4. Governance, security and monitoring  | TBD: Iok Teck, Azri or Angelyn | F Governance and compliance (administration), G Monitoring and analytics (telemetry and dashboards), and the AWS deployment | [area-4-governance-security-monitoring.md](area-4-governance-security-monitoring.md) |
 
-Areas 2 to 4 are shared out among Iok Teck, Azri and Angelyn. Once the team agrees who takes which, the names go into this table and into `.github/CODEOWNERS`. The working assumption is that this happens by the W3 project plan ([A-44](../assumptions.md)).
+Areas 2 and 3 were reshaped for statement #7 ([ADR 0022](../adr/0022-final-statement-7-lesso-solar.md)); their guides keep their file names, so links still work. Areas 2 to 4 are shared out among Iok Teck, Azri and Angelyn. Once the team agrees who takes which, the names go into this table and into `.github/CODEOWNERS`. The working assumption is that this happens by the W3 project plan ([A-44](../assumptions.md)).
 
 ## Backup owners
 
 Each area has a named backup who can explain its design, run its demo steps and review its pull requests when the owner is away. Backups are agreed together with the owners ([T-1](../agile/backlog.md#t-1-agree-area-owners-and-fill-codeowners)), so they stay TBD until then. Adopted from Azri's integrated plan.
 
-| Area                                   | Owner  | Backup owner |
-| -------------------------------------- | ------ | ------------ |
-| 1. Integration Core + platform base    | Richie | TBD          |
-| 2. Workflow automation                 | TBD    | TBD          |
-| 3. Attendance, leave and reporting     | TBD    | TBD          |
-| 4. Governance, security and monitoring | TBD    | TBD          |
+| Area                                    | Owner  | Backup owner |
+| --------------------------------------- | ------ | ------------ |
+| 1. Integration Core + platform base     | Richie | TBD          |
+| 2. Onboarding and approval workflows    | TBD    | TBD          |
+| 3. Single view, dashboards and insights | TBD    | TBD          |
+| 4. Governance, security and monitoring  | TBD    | TBD          |
 
 - **Cross-review.** Every member reviews at least one teammate's critical pull request, normally in the area they back up. A pull request is critical when it changes a domain rule, a contract between areas, access control or masking, or a migration.
 - **Shared deployment knowledge.** Area 4's backup takes part in one deployment rehearsal ([P-8](../agile/backlog.md#p-8-hardening-and-handover)), so the AWS setup is never known by one person only.
@@ -50,7 +50,7 @@ Each area has a named backup who can explain its design, run its demo steps and 
 | Area | Head start from the platform build                                                                                                                                            | Left for the owner                                                                                                                                |
 | ---- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
 | 2    | Pipeline board and timeline, workflow-instance detail, task list; workflow models; contracts                                                                                  | The workflow state machine, event handlers and SLA logic                                                                                          |
-| 3    | Consolidation run screen, category-mapping editor, company-template preview, .xlsx export button, management reports; models; contracts                                       | The consolidation rules engine and report rendering                                                                                               |
+| 3    | Consolidation run screen, category-mapping editor, company-template preview, .xlsx export button, management reports; models; contracts                                       | The consolidation rules engine, report rendering, and the single view with its dashboards and insights                                            |
 | 4    | Governance tabs (access matrix, classification, cross-border register, retention), audit-log viewer, analytics tabs (observability, clickstream, AI usage); models; contracts | OpenTelemetry tracing and metrics (Grafana is the owner's call), the clickstream analytics pipeline, token budgets and alerts, the AWS deployment |
 
 ---
@@ -59,8 +59,8 @@ Each area has a named backup who can explain its design, run its demo steps and 
 
 **Scope.**
 
-- **Platform:** architecture, monorepo, design system and app shell, auth and the RBAC baseline, CI/CD, Docker, mock systems.
-- **Integration:** connector framework (Adapter + Factory), canonical employee master with provenance, mapping engine (Strategy transformers), SG ↔ CN sync with conflict resolution, the AI schema-mapping assistant, China-side systems (Chinese schemas, DingTalk/WeChat) and the 3D integration map.
+- **Platform:** architecture, monorepo, design system and app shell, auth and the RBAC baseline, CI/CD, Docker, mock systems and the tenant configuration (A-12).
+- **Integration:** connector framework (Adapter + Factory) with connectors for INFO-TECH, SAP, the intranet and Lark/DingTalk, canonical employee master with provenance, mapping engine (Strategy transformers), SG ↔ CN sync with conflict resolution, the AI schema-mapping assistant, China-side systems (Chinese schemas) and the 3D integration map.
 - **Also area 1:** the AI discrepancy explainer, because it explains the employee-master conflicts that area 1 detects ([A-45](../assumptions.md)).
 
 **Owns**
@@ -80,33 +80,33 @@ Each area has a named backup who can explain its design, run its demo steps and 
 
 **Exposes to other areas**
 
-| Interface                                                                                                                                                                                                                   | Kind             | Used by                                                             |
-| --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------- | ------------------------------------------------------------------- |
-| Session and current user (role, entity scope); RBAC guard and role decorator                                                                                                                                                | API platform     | 2, 3, 4                                                             |
-| Field-masking interceptor driven by the classification map; masked values carry a reason                                                                                                                                    | API platform     | 2, 3, 4                                                             |
-| Append-only audit writer (every write calls it)                                                                                                                                                                             | API platform     | 2, 3, 4                                                             |
-| BullMQ queue infrastructure: retries, backoff, `Idempotency-Key` handling                                                                                                                                                   | API platform     | 2, 3                                                                |
-| `LlmGateway` and `AiUsageTracker` (every AI call is recorded)                                                                                                                                                               | API platform     | Any area that adds AI; 4 reads the records                          |
-| Domain event bus and SSE stream at `/api/v1/events`                                                                                                                                                                         | API platform     | 2, 3, 4                                                             |
-| Error envelope, typed errors, `UPPER_SNAKE` error codes and the pagination schema in `@huitong/shared`                                                                                                                      | Contract         | All                                                                 |
-| `SystemConnector` and `ConnectorFactory`; connectors `sg-hr`, `cn-hq`, `oa`, `excel-master`, `teams`, `dingtalk`                                                                                                            | Connector hub    | 2 (notifications, SG HR write), 3 (attendance and leave extraction) |
-| Domain event `oa.approval.completed`, published after the HMAC check and once the `InboundWebhookEvent` is stored                                                                                                           | Event            | 2                                                                   |
-| Employee master: masked read and search, lookup by `employeeNo` (the only match key; look-alikes are possible matches for HR, B-5), a draft-from-hire use case (a `PRE_HIRE` record that only area 1's rule activates, B-6) | Service and REST | 2, 3                                                                |
-| Field transformers for dates, name order, department codes, enums and phone numbers                                                                                                                                         | Strategy classes | 3                                                                   |
-| Web: `ApiClient`, `AnalyticsTracker`, the app shell (router, sidebar, breadcrumbs, command palette, role switcher), design tokens, shared composites (`DataTable`, `PageHeader`, `EmptyState`)                              | Web platform     | 2, 3, 4                                                             |
-| Raw `ClickstreamEvent` rows stored by `POST /api/v1/analytics/events`                                                                                                                                                       | Data             | 4                                                                   |
+| Interface                                                                                                                                                                                                                   | Kind             | Used by                                                                                               |
+| --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------- | ----------------------------------------------------------------------------------------------------- |
+| Session and current user (role, entity scope); RBAC guard and role decorator                                                                                                                                                | API platform     | 2, 3, 4                                                                                               |
+| Field-masking interceptor driven by the classification map; masked values carry a reason                                                                                                                                    | API platform     | 2, 3, 4                                                                                               |
+| Append-only audit writer (every write calls it)                                                                                                                                                                             | API platform     | 2, 3, 4                                                                                               |
+| BullMQ queue infrastructure: retries, backoff, `Idempotency-Key` handling                                                                                                                                                   | API platform     | 2, 3                                                                                                  |
+| `LlmGateway` and `AiUsageTracker` (every AI call is recorded)                                                                                                                                                               | API platform     | Any area that adds AI; 4 reads the records                                                            |
+| Domain event bus and SSE stream at `/api/v1/events`                                                                                                                                                                         | API platform     | 2, 3, 4                                                                                               |
+| Error envelope, typed errors, `UPPER_SNAKE` error codes and the pagination schema in `@huitong/shared`                                                                                                                      | Contract         | All                                                                                                   |
+| `SystemConnector` and `ConnectorFactory`; connectors `sg-hr` (INFO-TECH), `cn-hq` (SAP), `oa` (the HQ intranet), `excel-master`, and the notification adapters (`dingtalk` today, `lark` with A-11)                         | Connector hub    | 2 (the SAP and INFO-TECH writes, intranet access, notifications), 3 (attendance and leave extraction) |
+| Domain event `oa.approval.completed`, published after the HMAC check and once the `InboundWebhookEvent` is stored                                                                                                           | Event            | 2                                                                                                     |
+| Employee master: masked read and search, lookup by `employeeNo` (the only match key; look-alikes are possible matches for HR, B-5), a draft-from-hire use case (a `PRE_HIRE` record that only area 1's rule activates, B-6) | Service and REST | 2, 3                                                                                                  |
+| Field transformers for dates, name order, department codes, enums and phone numbers                                                                                                                                         | Strategy classes | 3                                                                                                     |
+| Web: `ApiClient`, `AnalyticsTracker`, the app shell (router, sidebar, breadcrumbs, command palette, role switcher), design tokens, shared composites (`DataTable`, `PageHeader`, `EmptyState`)                              | Web platform     | 2, 3, 4                                                                                               |
+| Raw `ClickstreamEvent` rows stored by `POST /api/v1/analytics/events`                                                                                                                                                       | Data             | 4                                                                                                     |
 
 **Consumes**
 
 | From          | What                                              | Why                                                                                                                                                                                                                                                                                      |
 | ------------- | ------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Area 4        | Cross-border transfer register and masking policy | A field of another entity's records reaches a user only when an ACTIVE register entry shares it with their entity (B-7); area 1 reads the register and enforces it. Area 4 administers it: each change raises the entry's version, is audited, and calls `AccessPolicyService.reload()`. |
-| Area 2        | Onboarding milestones met, per draft record       | One of the two conditions that activate a draft record; the other is the verified SG HR record (B-6)                                                                                                                                                                                     |
+| Area 2        | Onboarding milestones met, per draft record       | One of the two conditions that activate a draft record; the other is the verified INFO-TECH record (B-6)                                                                                                                                                                                 |
 | Areas 2 and 3 | Summary endpoints                                 | The Overview page shows pending approvals, open tasks and consolidation status                                                                                                                                                                                                           |
 
 **W7 mock interview: be ready to explain**
 
-- Why each external system sits behind an Adapter and connectors are built by a Factory from configuration, and how a new subsidiary (the `MY01` demo) plugs in through configuration and field mappings.
+- Why each external system sits behind an Adapter and connectors are built by a Factory from configuration, and how another company plugs in through a tenant configuration and field mappings (the `MY01` sample until A-12).
 - How the Strategy transformers convert CN HQ data: `YYYY/MM/DD` dates, family-name-first 姓名, SAP-like org-unit codes such as `50001030` to canonical department codes, and enum codes such as 雇佣状态 "3" to `ACTIVE`.
 - The Template Method sync job (extract → map → validate → load → audit), its retries and idempotency keys, and what happens when a sync fails halfway.
 - Per-field source of truth and provenance, how a conflict is detected, and how HR's resolution is audited.
@@ -117,7 +117,7 @@ Each area has a named backup who can explain its design, run its demo steps and 
 
 **Area 1 is done when** (in addition to the shared definition of done below)
 
-- The SG HR and CN HQ connectors sync end to end against the mocks, and OA webhooks are verified, stored and published as `oa.approval.completed`.
+- The INFO-TECH and SAP connectors sync end to end against the mocks, the intranet's webhooks are verified, stored and published as `oa.approval.completed`, and a tenant configuration connects another company without new code (A-12).
 - Running the same sync twice changes nothing the second time (integration test).
 - Unit tests cover transformers, conflict detection, masking and mapping-proposal validation with at least 80% line coverage.
 - The AI mapping wizard saves a new versioned mapping only after HR approval, and every call produces an `AiUsageRecord` (tested).
@@ -126,17 +126,17 @@ Each area has a named backup who can explain its design, run its demo steps and 
 
 ---
 
-## Area 2: Workflow automation (owner TBD)
+## Area 2: Onboarding and approval workflows (owner TBD)
 
-**Scope.** OA approval webhooks → recruitment → onboarding → employee record → admin preparation, built from these parts:
+**Scope.** Two workflows. Onboarding: one new-hire entry reaches SAP and INFO-TECH, each write approved by that system's data steward, and intranet access follows only once the SAP record exists (C-1, C-3, C-7). Claims and payments: above a configurable threshold, an extra HQ Treasury approval step (C-8). Both are built from these parts:
 
 - the workflow state machine
 - event-driven jobs with retries and idempotency
 - SLA reminders and escalations
-- notifications (Teams/DingTalk, mocked)
+- notifications (Lark/Feishu or DingTalk, mocked)
 - the workflow board UI
 
-Area 2 starts where the connector hub stops. Area 1 verifies, stores and publishes the webhook; area 2 subscribes to `oa.approval.completed` and owns everything that follows.
+Area 2 starts where the connector hub stops. Area 1 verifies, stores and publishes the intranet's webhook; area 2 subscribes to `oa.approval.completed`, owns everything that follows, and calls area 1's connectors to write to SAP and INFO-TECH and to request intranet access.
 
 **Owns**
 
@@ -152,28 +152,30 @@ Area 2 starts where the connector hub stops. Area 1 verifies, stores and publish
 
 **Consumes**
 
-| From                   | Interface                                                                | Use                                                                                                                                                                                                                                                 |
-| ---------------------- | ------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Area 1 connector hub   | `oa.approval.completed` (`MANPOWER_REQUEST`; other approval types later) | Start a workflow instance; ignore duplicate OA event ids                                                                                                                                                                                            |
-| Area 1 employee master | Draft-from-hire use case                                                 | Create the draft (`PRE_HIRE`) record in the master, linked to the request. Push it to SG HR only after HR's explicit, audited approval, and only to the mock until the client agrees ([A-21](../assumptions.md)). Area 1 activates the record (B-6) |
-| Area 1 connectors      | `teams` and `dingtalk` notification adapters                             | Send reminders, escalations and hand-offs                                                                                                                                                                                                           |
-| Platform               | Queues, audit writer, RBAC guard, SSE                                    | Jobs with retries, an audit event for every transition, live board updates                                                                                                                                                                          |
+| From                   | Interface                                                                                                                        | Use                                                                                                                                                                                                                                                                                   |
+| ---------------------- | -------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Area 1 connector hub   | `oa.approval.completed` (`MANPOWER_REQUEST` for a hire's approval; `EXPENSE_CLAIM` and `PAYMENT_APPROVAL` for the Treasury step) | Prefill HR's one entry; route claims and payments; ignore duplicate event ids                                                                                                                                                                                                         |
+| Area 1 employee master | Draft-from-hire use case                                                                                                         | Create the draft (`PRE_HIRE`) record from HR's entry. Write it to SAP and INFO-TECH only after each system's data steward approves a preview, and only to the mocks until the client agrees ([A-21](../assumptions.md), [A-62](../assumptions.md)). Area 1 activates the record (B-6) |
+| Area 1 connectors      | The `cn-hq` and `sg-hr` create calls, the intranet's account request, and the Lark/Feishu and DingTalk notification adapters     | Write the new hire, request intranet access once SAP confirms the record (C-7), and send reminders, escalations and hand-offs                                                                                                                                                         |
+| Platform               | Queues, audit writer, RBAC guard, SSE                                                                                            | Jobs with retries, an audit event for every transition, live board updates                                                                                                                                                                                                            |
 
 **Exposes**
 
-| Interface                                                                                                                     | Used by                                                                          |
-| ----------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------- |
-| `/api/v1/workflows/*`: instances, timelines and tasks (paginated)                                                             | Workflow pages; Overview (area 1)                                                |
-| Workflow lifecycle events (instance started or completed, task overdue) on the event bus; names are fixed in the area 2 guide | Overview activity feed, notifications                                            |
-| Admin preparation tasks (laptop, desk, accounts) for `ADMIN_OPS`                                                              | `/workflows/tasks`                                                               |
-| Lead time from OA approval to onboarding checklist                                                                            | Success metrics, management reports (area 3)                                     |
-| Onboarding milestones met, per draft record (event)                                                                           | Area 1 activates the draft once the verified SG HR record has also arrived (B-6) |
+| Interface                                                                                                                               | Used by                                                                              |
+| --------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------ |
+| `/api/v1/workflows/*`: instances, timelines and tasks (paginated)                                                                       | Workflow pages; Overview (area 1)                                                    |
+| Workflow lifecycle events (instance started or completed, task overdue) on the event bus; names are fixed in the area 2 guide           | Overview activity feed, notifications                                                |
+| Admin preparation tasks (laptop, desk, accounts) for `ADMIN_OPS`                                                                        | `/workflows/tasks`                                                                   |
+| Lead time from a new hire's entry to intranet access (SM-03), the SAP-first order (SM-10) and Treasury approvals before payment (SM-11) | Success metrics, the single view (area 3)                                            |
+| Onboarding milestones met, per draft record (event)                                                                                     | Area 1 activates the draft once the verified INFO-TECH record has also arrived (B-6) |
 
 **W7 mock interview: be ready to explain**
 
 - The workflow states and transitions, which transitions are illegal, and how the state machine rejects them.
 - Why the chain is event-driven (Observer and domain events, [ADR 0008](../adr/0008-jobs-events-realtime.md)) instead of the webhook handler calling each step in turn.
-- Idempotency: what happens when OA delivers the same approval twice, or a job retries after a partial success.
+- Idempotency: what happens when the intranet delivers the same event twice, or a job retries after a partial success.
+- The SAP-before-intranet rule: how the workflow waits for SAP's confirmation, and what happens when it never comes (C-7, GRS R-22).
+- The Treasury threshold: where it is configured, who may change it, how a claim at exactly the threshold is treated, and why the rule runs on the server (C-8, GRS R-21).
 - Retries and backoff in BullMQ, and what HR sees after the last attempt fails.
 - SLA timers, reminders and escalations: how they are scheduled, cancelled and tested with fake timers.
 - How each step is audited and how the approval steps appear in the UI.
@@ -181,7 +183,8 @@ Area 2 starts where the connector hub stops. Area 1 verifies, stores and publish
 
 **Area 2 is done when**
 
-- An approved `MANPOWER_REQUEST` from `mock-oa` creates exactly one workflow instance, even when the event is delivered twice, and the chain runs through to a draft (`PRE_HIRE`) employee record and the admin preparation tasks. The workflow alone never makes the record active.
+- One new-hire entry creates exactly one onboarding instance, even when the intranet's approval event is delivered twice. The chain writes the SAP and INFO-TECH mocks after their stewards' approvals, requests intranet access only after the SAP record exists, and creates the admin preparation tasks. The workflow alone never makes the record active.
+- A claim above the threshold gets exactly one Treasury approval step and is not payable before it; a claim at or below it gets none.
 - Unit tests cover every transition, guard and SLA calculation with at least 80% line coverage. Integration tests cover the happy path, 401 and 403, and a duplicate event.
 - Failed steps retry with backoff and show as a visible failed state after the last attempt.
 - Every transition writes an audit event, and reminders and escalations go out through the notification adapters.
@@ -190,15 +193,14 @@ Area 2 starts where the connector hub stops. Area 1 verifies, stores and publish
 
 ---
 
-## Area 3: Attendance, leave and reporting (owner TBD)
+## Area 3: Single view, dashboards and insights (owner TBD)
 
-**Scope.** This area covers:
+**Scope.** The consolidated cross-system view the brief asks for:
 
-- attendance and leave ingestion from SG and CN
-- leave-category mapping rules
-- validation and exception reports
-- the company reporting-template engine and .xlsx export
-- management reports that draw on multiple sources
+- the single view and its dashboards: headcount, joiners and leavers, and leave and payroll summaries from INFO-TECH (D-6)
+- data-consistency and duplicate-entry insights from HuiTong's own records (D-7)
+- management reports that draw on multiple authorised sources (D-5)
+- leave consolidation, as one part: attendance and leave ingestion from SG and CN, leave-category mapping rules, validation and exception reports, the company reporting-template engine and .xlsx export (D-1 to D-4)
 
 **Owns**
 
@@ -224,17 +226,19 @@ Area 2 starts where the connector hub stops. Area 1 verifies, stores and publish
 
 **Exposes**
 
-| Interface                                                                                         | Used by                                              |
-| ------------------------------------------------------------------------------------------------- | ---------------------------------------------------- |
-| `/api/v1/attendance-leave/*`: runs, category mappings, exceptions, template preview, .xlsx export | Attendance and leave pages                           |
-| `/api/v1/reports/*`: management reports, read-only for `MANAGEMENT`                               | Reports page                                         |
-| Consolidation status and exception counts                                                         | Overview (area 1)                                    |
-| Effort per consolidation run                                                                      | Success metric "HR hours per month on consolidation" |
+| Interface                                                                                         | Used by                                                           |
+| ------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------- |
+| `/api/v1/attendance-leave/*`: runs, category mappings, exceptions, template preview, .xlsx export | Attendance and leave pages                                        |
+| `/api/v1/reports/*`: management reports, read-only for `MANAGEMENT`                               | Reports page                                                      |
+| Consolidation status and exception counts                                                         | Overview (area 1)                                                 |
+| Effort per consolidation run                                                                      | Success metric SM-01 (HR hours a month on the management summary) |
+| The single view, dashboards and insights (D-6, D-7)                                               | Managers; the Overview (area 1)                                   |
 
 **W7 mock interview: be ready to explain**
 
 - The canonical leave categories and the mapping rules, for example 年假 → `ANNUAL`, 调休 → `TIME_OFF_IN_LIEU`, 事假 and No-pay Leave → `UNPAID`, and why 探亲假 (home leave) is reported as an exception for the template.
-- Why the leave-category mappers and report renderers use the Strategy pattern, and how a new subsidiary's categories are added as configuration.
+- Why the leave-category mappers and report renderers use the Strategy pattern, and how another company's categories are added as configuration.
+- How the single view draws each figure from several systems with its provenance, and why figures that span entities are aggregates with small counts suppressed.
 - The validation rules: unknown categories, overlapping leave, leave on non-working days, employees missing from the master, totals that do not reconcile.
 - How working days are counted per entity, using the Singapore and mainland China public-holiday calendars, including China's weekend make-up working days ([A-36](../assumptions.md)).
 - The template engine and .xlsx export: library choice, values versus formulas, and how the output is tested.
@@ -242,6 +246,7 @@ Area 2 starts where the connector hub stops. Area 1 verifies, stores and publish
 
 **Area 3 is done when**
 
+- The single view shows its dashboards from authorised sources, each figure with its systems and time, read-only for `MANAGEMENT` (D-6).
 - One month of SG and CN data consolidates into the company template, and every source category in [A-08](../assumptions.md) is either mapped or listed as an exception.
 - Unit tests cover the mappers, validation rules and renderers with at least 80% line coverage, and a golden-file test checks the .xlsx output.
 - Integration tests cover the happy path, 401 and 403, and an invalid mapping rule.

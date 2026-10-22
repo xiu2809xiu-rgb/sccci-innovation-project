@@ -96,7 +96,7 @@ sequenceDiagram
 - **Day boundaries.** The dashboards count whole UTC days ([`dashboard-window.ts`](../../apps/api/src/modules/analytics/dashboards/dashboard-window.ts)). Both entities work in UTC+8, so Asia/Singapore days may read better.
 - **The infrastructure-as-code tool** for `infra/aws` (Terraform, the AWS CDK or CloudFormation), recorded in its own ADR ([ADR 0014](../adr/0014-deployment-docker-aws.md)), and ECS Fargate or App Runner for the demo.
 - **Local dashboards.** Grafana with Prometheus, or the in-app observability page alone ([ADR 0016](../adr/0016-observability-baseline.md)).
-- **Budgets and alerts.** A monthly budget per feature, the threshold for a warning, and the channel it goes to (a mocked Teams message, CloudWatch, or both).
+- **Budgets and alerts.** A monthly budget per feature, the threshold for a warning, and the channel it goes to (a mocked Lark or DingTalk message, CloudWatch, or both).
 - **Retention mechanics.** What "anonymise" removes for each category, how the audit log is archived, and how often the purge runs. The client sets the periods (Q-41).
 - **Who may receive compensation data.** The pending SG01 compensation entry should stay pending until the client says which HQ roles may receive it (Q-08, Q-39).
 
