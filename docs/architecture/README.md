@@ -1,6 +1,8 @@
 # Architecture
 
-HuiTong is an integration and workflow layer between the systems Organisation E already runs. It does not replace them. Each system sits behind one adapter, a canonical employee master records where every value came from, and an approved change becomes an event for the workflow jobs that act on it, which area 2 builds ([ADR 0002](../adr/0002-integration-layer-hub-and-spoke.md)). Every system outside HuiTong is a mock until the client meeting ([ADR 0013](../adr/0013-mock-external-systems.md)), and every value is synthetic.
+HuiTong is an integration and workflow layer between the systems LESSO Solar already runs: INFO-TECH in Singapore, and a customised SAP and an intranet at China HQ. It does not replace them. Each system sits behind one adapter, a canonical employee master records where every value came from, and an approved change becomes an event for the workflow jobs that act on it, which area 2 builds ([ADR 0002](../adr/0002-integration-layer-hub-and-spoke.md)). Every system outside HuiTong is a mock until the client confirms its interfaces ([ADR 0013](../adr/0013-mock-external-systems.md)), and every value is synthetic.
+
+> **Diagrams still show statement #17.** They name OA, the Singapore HR system and the Excel master, the systems of the superseded statement. They are redrawn for statement #7 with the slides ([ADR 0022](../adr/0022-final-statement-7-lesso-solar.md)); OA corresponds to the intranet, and the Singapore HR system to INFO-TECH.
 
 The diagrams below start from the problem and go from the outside in: what HR does today without HuiTong, who uses HuiTong, what it is made of, where it runs, how its key flows work, where data crosses a trust boundary, and the data model. The design patterns are in [patterns.md](patterns.md), the data formats in [data-formats.md](data-formats.md), and every decision in the [ADR index](../adr/README.md).
 
@@ -26,7 +28,7 @@ In every diagram:
 
 ![Today: approvals copied from OA, exports from China HQ's HR system and SAP, and questions on the chat tools all reach HR, who re-keys the values into the Excel master and SG HR and consolidates the management reports by hand](../diagrams/current-state.svg)
 
-Every system is digital, and none of them passes data to another, so HR does: approvals are copied out of OA, the HR systems' exports arrive as CSV and Excel files with different headers and formats, and the Excel master is the only consolidated view ([Problem Statement 17](../problem-statement.md)). The rest of this page is the layer that takes that work away.
+Every system is digital, and none of them passes data to another, so HR does: approvals are copied out of OA, the HR systems' exports arrive as CSV and Excel files with different headers and formats, and the Excel master is the only consolidated view ([the superseded statement #17](../problem-statement.md#appendix-a-the-superseded-statement-17)). The rest of this page is the layer that takes that work away.
 
 ## With HuiTong
 

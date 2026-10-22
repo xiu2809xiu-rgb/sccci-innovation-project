@@ -1,6 +1,6 @@
 # HuiTong 汇通 team wiki
 
-HuiTong is the HR and administration integration layer we are building for Organisation E (Problem Statement #17, SCCCI x NYP AI Innovation Challenge, IT2134). It connects Singapore HR, China HQ's SAP and the OA approvals platform, so approved data flows between them instead of being re-keyed through Excel. All data is synthetic.
+HuiTong is the HR and administration integration layer we are building for LESSO Solar (Problem Statement #7, SCCCI x NYP AI Innovation Challenge, IT2134). It connects INFO-TECH in Singapore with China HQ's customised SAP and intranet, so a new hire is entered once and approved data flows between the systems instead of being re-entered in each. All data is synthetic.
 
 These pages are a map. The documents they point to live in the repository, where every change is reviewed in a pull request.
 
@@ -18,7 +18,7 @@ These pages are a map. The documents they point to live in the repository, where
 | Document                                                                                                                            | Why read it                                                      |
 | ----------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------- |
 | [CLAUDE.md](https://github.com/xiu2809xiu-rgb/sccci-innovation-project/blob/main/CLAUDE.md)                                         | The project's context, stack and engineering standards           |
-| [Problem statement](https://github.com/xiu2809xiu-rgb/sccci-innovation-project/blob/main/docs/problem-statement.md)                 | Organisation E's problem and our analysis of it                  |
+| [Problem statement](https://github.com/xiu2809xiu-rgb/sccci-innovation-project/blob/main/docs/problem-statement.md)                 | LESSO Solar's problem and our analysis of it                     |
 | [Design thinking](https://github.com/xiu2809xiu-rgb/sccci-innovation-project/tree/main/docs/design-thinking)                        | Personas, journey maps, how-might-we statements, success metrics |
 | [Backlog](https://github.com/xiu2809xiu-rgb/sccci-innovation-project/blob/main/docs/agile/backlog.md)                               | Every epic and story with its acceptance criteria                |
 | [Test plan](https://github.com/xiu2809xiu-rgb/sccci-innovation-project/blob/main/docs/agile/test-plan.md)                           | Test levels, environments, schedule and defect handling          |

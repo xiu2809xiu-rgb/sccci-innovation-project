@@ -133,6 +133,21 @@ Azri wrote a separate plan for Problem Statement #17. The team kept its own stac
 - [x] **Not adopted.** [ADR 0019](adr/0019-ideas-not-adopted-from-azri-plan.md) (#97): the FastAPI backend, the plan's ownership split and its generic 12-week roadmap, with the reasons.
 - [x] **Finish.** This checklist and its verification log, the [AI usage log](ai/ai-usage-log.md) and the [traceability matrix](requirements-traceability.md).
 
+## Prompt 003 checklist: the final statement #7, LESSO Solar
+
+On 22 Oct 2026 the team was allocated Problem Statement #7, LESSO Solar, which replaces #17. [Prompt 003](ai/prompts/003-lessosolar-statement.md) retargets the project by editing what exists, and [ADR 0022](adr/0022-final-statement-7-lesso-solar.md) records the decisions. The work goes through one pull request per step, in this order: the brief and its analysis; the areas and the hero journey; the mocks and data; the tenant configuration; the backlog; the slides and diagrams. Legend as above.
+
+- [~] **1. Naming everywhere.** Done in the documents: the problem statement is rewritten to the brief, in our own words and quoting nothing, with #17 kept as a short superseded appendix; CLAUDE.md sections 1 and 3, the README, the wiki home, ADRs 0001 to 0003, 0011, 0013 and 0014 and the ADR index; the design-thinking set; the GRS (the MAS guidance out, PDPA and PIPL kept); the assumptions and client questions; the test plan and working agreement; the architecture README's prose; and the traceability matrix. Still to do: CLAUDE.md section 4 and the area guides (next), the i18n copy and seed text (with the mocks), and the deck and diagrams (last).
+- [ ] **2. Systems and mocks.** An INFO-TECH-like `mock-sg-hr` with INFO-TECH-style exports, the HQ intranet in `mock-oa`, and a Lark/Feishu adapter beside DingTalk, every one labelled Mock.
+- [~] **3. The hero journey.** Decided in ADR 0022 and drawn in journey A, the personas and assumptions A-21 and A-62: one entry; the SAP and INFO-TECH writes, each approved by that system's data steward; intranet access only once the SAP record exists; draft to active. `docs/agile/hero-journey.md` and CLAUDE.md section 4 follow with the areas.
+- [~] **4. Claims and payments.** The Treasury step is in the problem statement, journey C, assumption A-63, success metric SM-11 and GRS risk R-21; area 2's requirement follows with the areas.
+- [ ] **5. Ownership areas reshaped.** Module ownership, CLAUDE.md and the area guides.
+- [~] **6. Reuse by other Chinese companies.** Reframed in the documents (GRS section 4.4, A-23, HMW-12, SM-06); the tenant configuration is its own pull request.
+- [x] **7. Client questions and assumptions.** The brief's answers marked (Q-01 to Q-03 partly; Q-10 superseded; Q-11 dropped), the call re-prioritised for the week of 2 Nov, and Q-58 to Q-63 added: INFO-TECH's exports and API, the onboarding steps and order, the Treasury threshold, Lark or DingTalk, the use of the brand, and HR staff trying the prototype. A-13, A-41 and A-43 revised, the rows the brief touches reworded, and A-59 to A-63 added.
+- [~] **8. Data and document formats.** Recorded as assumptions A-59 to A-61 to confirm at the briefing call; the formats in the mocks, their documentation and the git-ignored `samples/` folder come with the mocks.
+- [ ] **9. Backlog and timeline.** `scripts/github/backlog.mjs`.
+- [ ] **Finish.** Every check, the traceability matrix and this report, with a summary per item.
+
 ## Verification log
 
 ### Phase 2 (20 Oct 2026)
@@ -394,4 +409,4 @@ Step 1 records a decision already taken. The others improve the local setup.
 11. **Board grouping.** On the HuiTong delivery board, open the Backlog view and choose Group by, then Sprint, once. GitHub's API cannot set grouping.
 12. **Licence file.** Scorecard notes that the repository has no licence file. Choosing one is the team lead's decision, given the licensed React Bits Pro code (#82).
 13. **Two rulesets on `main`.** The `protect-main` ruleset (id 25411321) from 19 Oct requires pull requests, and `Protect main` (id 25503945, from `.github/rulesets/main.json`) adds the required checks and the CodeQL gate. Both apply together without conflict. Delete the older one if you want a single source, kept as code.
-14. **Client sample packs.** At the first client meeting (W2 or W3), ask for the [three sample packs](client/questions-for-client.md#three-items-to-request-first) before the other questions: the SG HR employee-master sample, the HQ reporting template with a completed example, and an approved OA manpower request with its onboarding history. The table there lists what each pack unblocks and which questions it answers.
+14. **Client sample packs.** When the briefing call is booked (the week of 2 Nov), ask for the [three sample packs](client/questions-for-client.md#three-items-to-request-first) before the other questions: INFO-TECH export samples, an SAP export sample with HQ's code lists, and the onboarding steps across INFO-TECH, SAP and the intranet with an example claim that needed HQ Treasury approval. They come through the team's data folder and never into the repository. The table there lists what each pack unblocks and which questions it answers.

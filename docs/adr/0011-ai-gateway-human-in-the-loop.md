@@ -27,7 +27,7 @@ Forces:
 | ---------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `mock` (default) | Deterministic, with no key and no network. Matches headers against a bilingual synonym dictionary (for example 入职日期 → `hireDate`, 员工编号 → `employeeNo`), returns fixed confidences and estimates token counts, so the dashboards have realistic data |
 | `bedrock`        | AWS Bedrock through the Converse API, in the deployment region without cross-region inference, using the task's IAM role rather than keys. Token counts and latency come from the response                                                                  |
-| `openai`         | Optional. Off for client data unless Organisation E approves it in writing                                                                                                                                                                                  |
+| `openai`         | Optional. Off for client data unless the client approves it in writing                                                                                                                                                                                      |
 
 **2. Every call is tracked.** `AiUsageTracker` wraps each provider call, failures included, and stores an `AiUsageRecord`: feature, user, provider, model, tokens in and out, latency, a cost estimate from a price table in configuration, and the outcome (success, invalid output, provider error or timeout). HR's later decision (accepted, edited or rejected) is added to the same record. Prompt and completion text are not stored.
 
@@ -79,7 +79,7 @@ Forces:
 
 **Consequences.**
 
-- Assumption A-17 now allows category codes, and client question Q-42 asks Organisation E to confirm it. If its policy forbids any cell value, `describeColumn` stops sending categories, and value maps are written by hand.
+- Assumption A-17 now allows category codes, and client question Q-42 asks the client to confirm it. If its policy forbids any cell value, `describeColumn` stops sending categories, and value maps are written by hand.
 - Prompt injection (R-08): category codes are untrusted text, like headers. They sit in the same delimited DATA block, which the prompt tells the model to treat as data; the output schema and HR's approval still apply.
 - The wizard says exactly what is sent, in English and Chinese.
 
@@ -91,7 +91,7 @@ Forces:
 
 - **The explainer names nobody.** Its request carries the entity, the field and each system's value, but no employee number or name. The values of identifying fields are withheld like values above INTERNAL: the employee number, names, work email and phone, and a manager's number (`IDENTIFYING_EMPLOYEE_FIELDS` in `@huitong/shared`). The model is told why a value is missing, and calls the person "this employee".
 - **Category codes stay codes.** A header that names a person (head, manager, approver, 负责人, 上级 and similar) is never a category column. A value shaped like an identifier (an email address, an id or account number, a phone number) is never sent as a category.
-- **Written permission first.** No identifier or sensitive HR value goes to a third-party AI service unless Organisation E gives written permission. That would need a new amendment, and a new GRS assessment.
+- **Written permission first.** No identifier or sensitive HR value goes to a third-party AI service unless the client gives written permission. That would need a new amendment, and a new GRS assessment.
 
 **Consequences.**
 
