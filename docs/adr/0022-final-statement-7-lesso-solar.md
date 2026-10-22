@@ -34,3 +34,9 @@ We will retarget the project to statement #7 by editing what exists, not by rebu
 - **Positive.** The analysis and the demo rest on a named client and its real systems; the hero flow is the one the brief suggests; the briefing call can confirm specifics instead of the basics.
 - **Negative.** Documents, mocks, seed data, screenshots and the deck all need rework, and for a few pull requests the documents describe the new statement while the data still shows the old organisation's departments.
 - **Neutral.** The technical ids keep their #17-era names (`mock-oa`, `orge.example`). Each is recorded here so that a reader who finds them knows why; the team lead may rename them once the briefing call settles the systems and the brand.
+
+## Amendment (22 Oct 2026): the backlog moves second
+
+The area guides and the hero journey name backlog stories (C-7 for intranet access after the SAP record, C-8 for the Treasury step, D-6 for the single view), so the backlog is updated before them. The pull requests now run in this order: the brief and its analysis (#133); the backlog; the areas and the hero journey; the mocks and data; the tenant configuration; the slides and diagrams.
+
+GitHub issues follow the backlog without duplicates: `seed-backlog.mjs` matches issues by title, so a story or epic whose title changed is renamed in place first, and only then does the seed create the new ones.

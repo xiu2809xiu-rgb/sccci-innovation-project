@@ -19,7 +19,7 @@ The sample was computed from the synthetic attendance and leave that mock-sg-hr 
 
 ## The goal, with user stories
 
-From the [backlog](../agile/backlog.md#epic-d-attendance-and-leave-consolidation) (edit `scripts/github/backlog.mjs`, not the page):
+From the [backlog](../agile/backlog.md#epic-d-single-view-dashboards-and-insights) (edit `scripts/github/backlog.mjs`, not the page):
 
 | Story                                                | Sprint | Acceptance criteria, in short                                                                                                          |
 | ---------------------------------------------------- | ------ | -------------------------------------------------------------------------------------------------------------------------------------- |
