@@ -96,7 +96,7 @@ const DETAIL: EmployeeDetail = {
       classification: 'RESTRICTED',
       value: HIDDEN,
       sourceOfTruth: { kind: 'POLICY', connectorId: 'cn-hq' },
-      sources: [{ connectorId: 'cn-hq', value: HIDDEN, observedAt: NOW, agrees: true }],
+      sources: [{ connectorId: 'cn-hq', value: HIDDEN, observedAt: NOW, agrees: null }],
       openConflictId: null,
     },
   ],
@@ -159,6 +159,9 @@ describe('EmployeesPage', () => {
     expect(
       within(drawer).getAllByRole('button', { name: /only for your own entity/ }).length,
     ).toBeGreaterThan(0);
+    // The job title's two sources are marked; the hidden salary says nothing either way.
+    expect(within(drawer).getAllByLabelText('Matches the master')).toHaveLength(1);
+    expect(within(drawer).getAllByLabelText('Differs from the master')).toHaveLength(1);
   });
 
   it('offers each entity by code and name', async () => {

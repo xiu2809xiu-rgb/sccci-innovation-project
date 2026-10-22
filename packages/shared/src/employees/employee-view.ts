@@ -61,7 +61,10 @@ export const sourceOfTruthSchema = z.object({
 
 export type SourceOfTruth = z.infer<typeof sourceOfTruthSchema>;
 
-/** One field of a record, beside what each source holds. Values may be masked. */
+/**
+ * One field of a record, beside what each source holds. Values may be masked; for a field the
+ * viewer may not see, `agrees` is null and `openConflictId` is null too.
+ */
 export const employeeFieldViewSchema = z.object({
   field: employeeFieldSchema,
   classification: classificationLevelSchema,
@@ -72,8 +75,8 @@ export const employeeFieldViewSchema = z.object({
       connectorId: z.string(),
       value: z.unknown(),
       observedAt: z.iso.datetime(),
-      /** Whether this source holds the same value as the master. */
-      agrees: z.boolean(),
+      /** Whether this source holds the same value as the master; null when the field is hidden. */
+      agrees: z.boolean().nullable(),
     }),
   ),
   openConflictId: z.uuid().nullable(),

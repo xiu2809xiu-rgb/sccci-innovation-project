@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import {
   decideMasking,
   EMPLOYEE_FIELD_CLASSIFICATION,
+  EMPLOYEE_FIELDS,
   type ClassificationLevel,
   type EmployeeField,
   type EntityCode,
@@ -11,6 +12,12 @@ import {
 import type { AuthenticatedUser } from '../../common/http/authenticated-user.js';
 import { AccessPolicyService } from './access-policy.service.js';
 import { isShared, type TransferVersion } from './destination-policy.js';
+
+/** An entity whose records the viewer may list, and the fields of them it may not see. */
+export interface VisibleScope {
+  entityCode: EntityCode;
+  hiddenFields: EmployeeField[];
+}
 
 /** Fields withheld from a viewer of another entity because no ACTIVE transfer covers them. */
 export interface Withholding {
@@ -53,9 +60,12 @@ export class FieldMasker {
     );
   }
 
-  /** The value as the viewer may see it: itself, or a MaskedValue saying why it is hidden. */
+  /**
+   * The value as the viewer may see it: itself, or a MaskedValue saying why it is hidden. An empty
+   * value is masked too, since showing it empty would tell the viewer something, for example that
+   * there is no termination date.
+   */
   value(field: string, value: unknown, viewer: AuthenticatedUser, entityCode: EntityCode): unknown {
-    if (value === null || value === undefined) return null;
     const level = this.classification(field);
     if (!this.shared(field, viewer, entityCode)) {
       const withheld: MaskedValue = {
@@ -66,7 +76,7 @@ export class FieldMasker {
       return withheld;
     }
     const decision = decideMasking(this.access.clearanceRules(), viewer.role, entityCode, level);
-    if (decision.visible) return value;
+    if (decision.visible) return value ?? null;
     const masked: MaskedValue = { masked: true, classification: level, reason: decision.reason };
     return masked;
   }
@@ -99,6 +109,18 @@ export class FieldMasker {
 
   canList(viewer: AuthenticatedUser, entityCode: EntityCode): boolean {
     return this.listable(viewer).includes(entityCode);
+  }
+
+  /**
+   * Each entity the viewer may list, with the fields of its records the viewer may not see: what a
+   * query across fields, such as the conflict queue, must leave out, so that not even the existence
+   * of a disagreement about a hidden field reaches the viewer.
+   */
+  visibleScopes(viewer: AuthenticatedUser): VisibleScope[] {
+    return this.listable(viewer).map((entityCode) => ({
+      entityCode,
+      hiddenFields: EMPLOYEE_FIELDS.filter((field) => !this.canSee(field, viewer, entityCode)),
+    }));
   }
 
   private shared(field: string, viewer: AuthenticatedUser, entityCode: EntityCode): boolean {

@@ -295,6 +295,10 @@ describe('Integration core: sync, master, conflicts (integration)', () => {
       classification: 'CONFIDENTIAL',
       reason: 'ROLE_CLEARANCE',
     });
+    // Masked by role, the field also hides whether its sources agree.
+    expect(
+      fieldOf(auditorView, 'dateOfBirth').sources.every((source) => source.agrees === null),
+    ).toBe(true);
   });
 
   it("withholds a field missing from HQ's allowlist through the raw API, and audits it", async () => {
@@ -317,6 +321,13 @@ describe('Integration core: sync, master, conflicts (integration)', () => {
       true,
     );
     expect(isMasked(fieldOf(hqView, 'jobGrade').value)).toBe(false);
+    // A hidden field says nothing about itself, not even whether the systems agree on it.
+    const bank = fieldOf(hqView, 'bankName');
+    expect(bank.sources.length).toBeGreaterThan(0);
+    expect(bank.sources.every((source) => source.agrees === null)).toBe(true);
+    expect(
+      fieldOf(hqView, 'jobGrade').sources.every((source) => typeof source.agrees === 'boolean'),
+    ).toBe(true);
 
     const events = await withheldEvents();
     expect(events).toHaveLength(before + 1);
@@ -337,6 +348,48 @@ describe('Integration core: sync, master, conflicts (integration)', () => {
     // Singapore HR reads its own entity: nothing is withheld, so nothing is audited.
     expect(fieldOf(await detail('E100003'), 'dateOfBirth').value).toBe('1992-07-04');
     expect(await withheldEvents()).toHaveLength(before + 1);
+  });
+
+  it('keeps a conflict about a hidden field out of the drawer and the queue, and will not act on it', async () => {
+    const employee = await prisma.employee.findUniqueOrThrow({
+      where: { employeeNo: 'E100003' },
+      select: { id: true },
+    });
+    // The register shares no bank details from SG01 with CN01, so HQ HR may not see this one.
+    const hidden = await prisma.conflict.create({
+      data: {
+        employeeId: employee.id,
+        field: 'bankName',
+        openKey: `${employee.id}:bankName`,
+        candidates: [],
+      },
+    });
+    try {
+      const hq = await signedInClient(app, 'HR_HQ');
+      const hqView = await detail('E100003', hq);
+      expect(hqView.conflicts.map((conflict) => conflict.id)).not.toContain(hidden.id);
+      expect(fieldOf(hqView, 'bankName').openConflictId).toBeNull();
+      const queue = await hq.agent.get('/api/v1/conflicts?pageSize=100').expect(200);
+      const listed = conflictList.parse(queue.body);
+      expect(listed.data.map((conflict) => conflict.id)).not.toContain(hidden.id);
+      expect(listed.meta.total).toBe(listed.data.length);
+      await hq.agent
+        .post(`/api/v1/conflicts/${hidden.id}/explain`)
+        .set(CSRF_HEADER, hq.csrf)
+        .send({ language: 'en' })
+        .expect(404);
+
+      // Singapore HR, whose entity it is, sees it in both places.
+      const hrView = await detail('E100003');
+      expect(hrView.conflicts.map((conflict) => conflict.id)).toContain(hidden.id);
+      expect(fieldOf(hrView, 'bankName').openConflictId).toBe(hidden.id);
+      const hrQueue = await hr.agent.get('/api/v1/conflicts?pageSize=100').expect(200);
+      expect(conflictList.parse(hrQueue.body).data.map((conflict) => conflict.id)).toContain(
+        hidden.id,
+      );
+    } finally {
+      await prisma.conflict.delete({ where: { id: hidden.id } });
+    }
   });
 
   it('lists another entity only while the register shares every field the list shows', async () => {
