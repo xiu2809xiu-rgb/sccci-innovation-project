@@ -19,7 +19,7 @@ The sample data follows the synthetic OA requests that mock-oa serves (OA-2026-0
 
 ## The goal, with user stories
 
-From the [backlog](../agile/backlog.md#epic-c-workflow-automation) (edit `scripts/github/backlog.mjs`, not the page):
+From the [backlog](../agile/backlog.md#epic-c-onboarding-and-approval-workflows) (edit `scripts/github/backlog.mjs`, not the page):
 
 | Story                                                   | Sprint | Acceptance criteria, in short                                                                                                                                       |
 | ------------------------------------------------------- | ------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
