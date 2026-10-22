@@ -28,9 +28,9 @@ Presenter: all, opened by the team lead.
 
 HuiTong, 汇通, means "converge and connect". It is our answer to Problem Statement 17 from Organisation E, a financial-services group with a Singapore operation and a China headquarters.
 
-In one sentence: HuiTong connects the HR systems the group already runs, so approved data flows between them instead of being re-keyed through Excel.
+In one sentence: HuiTong connects the HR systems the group already runs, so that approved data can flow between them instead of being re-keyed through Excel.
 
-Everything you will see runs on synthetic data, and every system outside HuiTong is a clearly labelled mock until we meet the client's IT team.
+Everything you will see runs on synthetic data, and every system HuiTong connects to is a clearly labelled mock, or a synthetic sample file, until we meet the client's IT team.
 -->
 
 ---
@@ -130,7 +130,7 @@ The client asked for a feasible architecture that extends to other functions and
 
 So every system of record stays where it is, each behind one adapter, and HuiTong keeps one employee master that records where every value came from. HR stops re-keying and settles only the exceptions: the conflicts between systems, and the AI's mapping proposals.
 
-What runs today: OA's signed approvals are verified, stored once with an audit record and published from an outbox; SG HR and China HQ sync into the master; and a new subsidiary, such as the Malaysia demo, gets an AI-proposed mapping that HR approves and saves as a version, with no code change. From week 8, area 2's workflow picks up the approvals, with retries, and importing a subsidiary's file through its mapping is the next story, A-5. The dotted parts are designed but not built: the Excel master's one-off import and area 3's consolidated reports.
+What runs today: OA's signed approvals are verified, stored once with an audit record, and kept in an outbox until area 2's workflow subscribes from week 8; SG HR and China HQ sync into the master; and a new subsidiary, such as the Malaysia demo, gets an AI-proposed mapping that HR approves and saves as a version, with no code change. The dotted parts are designed but not built: importing a subsidiary's file through its mapping (A-5), the Excel master's one-off import, and area 3's consolidated reports.
 -->
 
 ---
@@ -163,7 +163,7 @@ Everything runs with one command, docker compose up. The AWS target, with Fargat
 <li>OA's signed approval arrives, and is stored once <span class="who">Areas 1 and 2 · <span class="tag built">Receiving built</span></span></li>
 <li>The requisition, the onboarding checklist and the preparation tasks appear <span class="who">Area 2</span></li>
 <li>A draft employee record, linked to the request <span class="who">Areas 1 and 2</span></li>
-<li>SG HR's verified record activates the draft <span class="who">Area 1 · <span class="tag built">Sync built</span></span></li>
+<li>With the milestones met, SG HR's verified record activates the draft <span class="who">Area 1 · <span class="tag built">Sync built</span></span></li>
 <li>Reconciled with HQ's record by the group employee number <span class="who">Area 1 · <span class="tag built">Matching built</span></span></li>
 <li>Later leave imported and mapped: 年假, 病假, 调休 <span class="who">Area 3</span></li>
 <li>HQ's report holds only the fields HQ may hold <span class="who">Areas 3 and 4 · <span class="tag built">Area 1's allowlist built</span></span></li>
@@ -177,7 +177,7 @@ Presenters, as in the hero-journey presenter plan: area 2's owner walks steps 1 
 
 This is the hero journey: one approval followed through all four areas. Arjun, a hiring manager, raises a manpower request in OA, and every approver signs it off.
 
-Area 1 receives the signed approval once; area 2 turns it into tasks with owners and due dates. The master holds only a draft record until the verified record arrives from SG HR, so an approval never creates an active employee. Later, area 3 maps the employee's leave into the group's categories, and HQ's report holds only the fields HQ may hold.
+Area 1 receives the signed approval once; area 2 turns it into tasks with owners and due dates. The master holds only a draft record until the onboarding milestones are met and the verified record arrives from SG HR, so an approval never creates an active employee. Later, area 3 maps the employee's leave into the group's categories, and HQ's report holds only the fields HQ may hold.
 
 Be precise about what runs. Step 1 runs end to end in E2E #1 today. The green tags name the building blocks that are built: the SG HR sync, matching on the employee number, area 1's allowlist, which E2E #3 already tests, and the overview. Those steps join the journey when the steps before them land. Activation (B-6) and HQ's report (D-4) come in weeks 9 and 10, and the rest is each owner's to build from week 8.
 -->
@@ -189,14 +189,14 @@ Be precise about what runs. Step 1 runs end to end in E2E #1 today. The green ta
 # Built on the real API, with synthetic data
 
 <div class="shots">
-<figure><div class="crop" style="--left: 272; --top: 64; --width: 1152; --height: 706"><img src="../design/screenshots/platform/overview-mock-badges.png" alt="The overview: 120 employees, 96.7% of records consistent, 4 open conflicts, sync health for each mocked system, and the work waiting for HR"></div><figcaption><strong>The overview</strong>Sync health and the work waiting for HR; every mock is labelled</figcaption></figure>
-<figure><div class="crop" style="--left: 360; --top: 230; --width: 720; --height: 441"><img src="../design/screenshots/employees/run-sync-preview.png" alt="A sync from Singapore HR previewed before it writes: 50 records read, 1 update and 1 conflict on a job title"></div><figcaption><strong>A sync, previewed</strong>Nothing is written until HR has seen the changes and the conflicts</figcaption></figure>
+<figure><div class="crop" style="--left: 272; --top: 64; --width: 1152; --height: 642"><img src="../design/screenshots/platform/overview-mock-badges.png" alt="The overview: 120 employees, 96.7% of records consistent, 4 open conflicts, sync health for each mocked system, and the work waiting for HR"></div><figcaption><strong>The overview</strong>Sync health and the work waiting for HR; every mock is labelled</figcaption></figure>
+<figure><div class="crop" style="--left: 330; --top: 233; --width: 780; --height: 435"><img src="../design/screenshots/employees/run-sync-preview.png" alt="A sync from Singapore HR previewed before it writes: 50 records read, 1 update and 1 conflict on a job title"></div><figcaption><strong>A sync, previewed</strong>Nothing is written until HR has seen the changes and the conflicts</figcaption></figure>
 </div>
 
 <!--
-These are real screenshots of the running product, in English; every screen also works in Chinese, and in a dark theme. Every system outside HuiTong carries a Mock badge.
+These are real screenshots of the running product, in English; every screen also works in Chinese, and in a dark theme. Every mocked system carries a Mock badge.
 
-The overview shows the master's size and consistency, the sync health of each system, and the work waiting for HR: here four data conflicts and two AI mapping proposals.
+The overview shows the master's size and consistency, the sync health of each system, and the work waiting for HR: here four data conflicts and two AI mapping proposals. The healthy-connector count includes the Teams and DingTalk channels, which are placeholders until notifications are built (C-5).
 
 A sync is previewed before HR applies it. Here SG HR and HQ disagree on a job title, so the preview shows a conflict instead of overwriting either value. HR applies the change with a slide, and the apply writes exactly what the preview showed; if the source has changed since, it writes nothing.
 -->
@@ -242,19 +242,19 @@ Three rules hold. The AI never writes to a system of record: HR approves, and th
 - **Least privilege:** seven roles, by entity
 - **Masked fields** say why they are hidden
 - **Preview first:** HR sees a sync before it writes
-- **Every write audited,** in a hash chain
+- **Audited:** every change to records, mappings and access
 - **Cross-border:** default deny, by register
 
 </div>
 
-<figure><div class="crop" style="--left: 553; --top: 518; --width: 887; --height: 372"><img src="../design/screenshots/employees/record-allowlist-withheld.png" alt="A Singapore record seen by HQ HR: the date of birth withheld because no cross-border transfer covers it, and the restricted pay fields masked"></div><figcaption>Seen by HQ HR: the master, CN HQ and SG HR columns, with each hidden field's reason</figcaption></figure>
+<figure><div class="crop" style="--left: 553; --top: 518; --width: 887; --height: 372"><img src="../design/screenshots/employees/record-allowlist-withheld.png" alt="A Singapore record seen by HQ HR: the date of birth withheld because no cross-border transfer covers it, and the restricted pay fields masked"></div><figcaption>Seen by HQ HR: the date of birth withheld, with its reason, and the pay fields masked</figcaption></figure>
 
 </div>
 
 <!--
 GRS is designed into three layers: the data model stores governance facts, the API enforces them so no screen can bypass them, and the UI shows people why the system behaves as it does.
 
-Each role sees only what it needs, scoped by entity. Here an HQ user opens a Singapore record: the restricted pay fields are masked, and the date of birth is withheld because no active transfer shares it, each with its reason. A sync that a person runs is previewed first, and the server refuses an apply without a recent preview; the one exception is the demo stack's first load. Every write lands in an append-only audit log, chained by hash so tampering shows.
+Each role sees only what it needs, scoped by entity. Here an HQ user opens a Singapore record: the restricted pay fields are masked, and the date of birth is withheld because no active transfer shares it, each with its reason. A sync that a person runs is previewed first, and the server refuses an apply without a recent preview; the one exception is the demo stack's first load. Every change to an employee record, a mapping, a connector or access lands in an append-only audit log, chained by hash so tampering shows.
 
 A user in one entity sees another entity's employee values only where an active entry in the cross-border transfer register shares them, with Singapore's PDPA and China's PIPL in mind; every other value is withheld by default, in the API today and in exports when they are built. Where the hub runs, and whether China HQ's data must stay in China, is a question for the client (Q-37 and Q-39).
 
@@ -282,7 +282,7 @@ The module asks for observability, clickstream analytics and AI token tracking, 
 
 Observability shows service health, request volumes, errors and latency. Clickstream is first-party: it records route patterns, never raw URLs or personal data, and only from sessions that consented. AI usage shows the calls, tokens, estimated cost and outcome of every model call, by feature.
 
-Be clear that the dashboards show labelled sample data for now; area 4 builds the real aggregations, with CloudWatch on AWS, in weeks 14 to 16.
+Be clear that the dashboards show labelled sample data for now; area 4 builds the real aggregations in weeks 14 to 16, and deploys to AWS with CloudWatch in week 17.
 -->
 
 ---
