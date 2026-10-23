@@ -13,9 +13,12 @@ export const SAMPLE = {
 
 export type FileProblem = 'missing' | 'type' | 'size';
 
-/** What stops a file from being sent, checked before upload so the user hears at once. */
-export function fileProblem(file: File | null): FileProblem | null {
+/**
+ * What stops a file from being sent, checked before upload so the user hears
+ * at once. A sample has the default limit; a whole import passes its own.
+ */
+export function fileProblem(file: File | null, maxBytes = MAX_BYTES): FileProblem | null {
   if (!file) return 'missing';
   if (!/\.(csv|xlsx)$/i.test(file.name)) return 'type';
-  return file.size > MAX_BYTES ? 'size' : null;
+  return file.size > maxBytes ? 'size' : null;
 }

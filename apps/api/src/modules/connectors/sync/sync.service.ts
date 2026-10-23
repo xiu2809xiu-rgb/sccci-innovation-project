@@ -4,6 +4,7 @@ import { InjectQueue } from '@nestjs/bullmq';
 import { Injectable } from '@nestjs/common';
 import {
   PREVIEW_VALID_MINUTES,
+  statusAllowsSync,
   type SyncMode,
   type SyncRun,
   type SyncRunDetail,
@@ -11,7 +12,13 @@ import {
 } from '@huitong/shared';
 import type { Queue } from 'bullmq';
 
-import { ConflictError, NotFoundError } from '../../../common/errors/app-error.js';
+import {
+  ConflictError,
+  ImportFileMissingError,
+  ImportFileOutdatedError,
+  NotFoundError,
+  SyncInProgressError,
+} from '../../../common/errors/app-error.js';
 import type { AuthenticatedUser } from '../../../common/http/authenticated-user.js';
 import type { RequestMeta } from '../../../common/http/request-meta.js';
 import { AuditLogService } from '../../../infrastructure/audit/audit-log.service.js';
@@ -21,6 +28,7 @@ import { MappingConfigsRepository } from '../../mapping/mapping-configs.reposito
 import { ConnectorCapabilityError } from '../adapters/connector-capability.error.js';
 import { ConnectorFactory } from '../connector-factory.js';
 import { ConnectorsRepository } from '../connectors.repository.js';
+import { StagedImportStore, type StagedFile } from '../imports/staged-import.store.js';
 import { syncRunDetailView, syncRunView, type RunReferences } from './sync-run.view.js';
 import { SyncRecovery } from './sync-recovery.js';
 import { SyncRunsRepository } from './sync-runs.repository.js';
@@ -31,8 +39,6 @@ export interface SyncJobData {
   actor: Pick<AuthenticatedUser, 'id' | 'role' | 'homeEntityCode'> | null;
   traceId: string;
 }
-
-const LIVE_STATUSES = new Set(['ACTIVE', 'DEGRADED', 'ERROR']);
 
 /**
  * Starts and reads sync runs. A run is queued as a BullMQ job whose id is the
@@ -50,6 +56,7 @@ export class SyncService {
     private readonly audit: AuditLogService,
     private readonly masker: FieldMasker,
     private readonly recovery: SyncRecovery,
+    private readonly staged: StagedImportStore,
   ) {}
 
   async start(
@@ -67,7 +74,7 @@ export class SyncService {
     if (!this.factory.create(connector).canFetchEmployees) {
       throw new ConnectorCapabilityError(connectorId, 'employees');
     }
-    if (!LIVE_STATUSES.has(connector.status)) {
+    if (!statusAllowsSync(connector.type, connector.status)) {
       throw new ConflictError(
         `Connector ${connectorId} is ${connector.status.toLowerCase()}, so it cannot sync`,
       );
@@ -82,12 +89,16 @@ export class SyncService {
 
     const active = await this.runs.findActive(connectorId);
     if (active && !(await this.recovery.settleIfOrphaned(active, meta))) {
-      throw new ConflictError('A sync is already running for this connector', {
+      throw new SyncInProgressError('A sync is already running for this connector', {
         syncRunId: active.id,
       });
     }
     const mapping = await this.mappings.findActive(connectorId);
     if (!mapping) throw new ConflictError(`Connector ${connectorId} has no approved mapping yet`);
+    const file =
+      connector.type === 'FILE_IMPORT'
+        ? await this.requireStagedFile(connectorId, mapping.version)
+        : null;
 
     const run = await this.runs.create({
       connectorId,
@@ -103,7 +114,13 @@ export class SyncService {
         action: 'sync.run.requested',
         entityType: 'SyncRun',
         entityId: run.id,
-        metadata: { connectorId, mode: request.mode, trigger: request.trigger },
+        metadata: {
+          connectorId,
+          mode: request.mode,
+          trigger: request.trigger,
+          // Which file a file connector's run reads, so the trail names what was imported.
+          ...(file ? { file: { name: file.summary.fileName, sha256: file.sha256 } } : {}),
+        },
       },
       meta,
     );
@@ -147,6 +164,14 @@ export class SyncService {
       people: new Map(people.map((person) => [person.id, person.displayName])),
       versions: new Map(versions.map((config) => [config.id, config.version])),
     };
+  }
+
+  /** A file connector syncs only a staged file, read through the mapping version active now. */
+  private async requireStagedFile(connectorId: string, version: number): Promise<StagedFile> {
+    const staged = await this.staged.summary(connectorId);
+    if (!staged) throw new ImportFileMissingError(connectorId);
+    if (staged.summary.mappingVersion !== version) throw new ImportFileOutdatedError();
+    return staged;
   }
 
   /** Error prevention on the server: a person applies a sync only after previewing it. */

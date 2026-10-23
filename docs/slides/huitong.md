@@ -130,7 +130,7 @@ The client asked for a feasible architecture that extends to other functions and
 
 So every system of record stays where it is, each behind one adapter, and HuiTong keeps one employee master that records where every value came from. HR stops re-keying and settles only the exceptions: the conflicts between systems, and the AI's mapping proposals.
 
-What runs today: OA's signed approvals are verified, stored once with an audit record, and kept in an outbox until area 2's workflow subscribes from week 8; SG HR and China HQ sync into the master; and a new subsidiary, such as the Malaysia demo, gets an AI-proposed mapping that HR approves and saves as a version, with no code change. The dotted parts are designed but not built: importing a subsidiary's file through its mapping (A-5), the Excel master's one-off import, and area 3's consolidated reports.
+What runs today: OA's signed approvals are verified, stored once with an audit record, and kept in an outbox until area 2's workflow subscribes from week 8; SG HR and China HQ sync into the master; and a new subsidiary, such as the Malaysia demo, gets an AI-proposed mapping that HR approves and saves as a version, and its whole export imports through that mapping, with no code change (A-5). The dotted parts are designed but not built: the Excel master's one-off import, and area 3's consolidated reports.
 -->
 
 ---

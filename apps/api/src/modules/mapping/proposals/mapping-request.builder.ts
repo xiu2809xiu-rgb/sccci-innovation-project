@@ -20,7 +20,7 @@ const COUNTRY_DEFAULTS: Record<string, { location: string; phone: string }> = {
  * model is told all of it except the withheld columns (`modelRequestOf`).
  */
 export function buildMappingRequest(
-  sample: SampleFile,
+  sample: Pick<SampleFile, 'headers' | 'rows'>,
   options: { systemName: string; language: Locale; entityCode: EntityCode | null },
 ): MappingRequest {
   const entity = LEGAL_ENTITIES.find((candidate) => candidate.code === options.entityCode);

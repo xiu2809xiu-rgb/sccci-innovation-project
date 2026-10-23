@@ -3,10 +3,12 @@ import type { ConnectorType } from '@huitong/shared';
 
 import { AppConfig } from '../../config/app-config.js';
 import { CnHqSapConnector } from './adapters/cn-hq-sap.connector.js';
+import { FileImportConnector } from './adapters/file-import.connector.js';
 import { OaWebhookConnector } from './adapters/oa-webhook.connector.js';
 import { OfflineConnector } from './adapters/offline.connector.js';
 import { SgHrRestConnector } from './adapters/sg-hr-rest.connector.js';
 import type { SystemConnector } from './adapters/system-connector.js';
+import { StagedImportStore } from './imports/staged-import.store.js';
 
 /** The parts of a `connectors` row the factory needs. */
 export interface ConnectorDefinition {
@@ -29,7 +31,10 @@ function setting(config: unknown, key: string): number | undefined {
  */
 @Injectable()
 export class ConnectorFactory {
-  constructor(private readonly config: AppConfig) {}
+  constructor(
+    private readonly config: AppConfig,
+    private readonly staged: StagedImportStore,
+  ) {}
 
   create(definition: ConnectorDefinition, fetchImpl?: typeof fetch): SystemConnector {
     const { sgHr, cnHq, oa } = this.config.connectors;
@@ -59,6 +64,7 @@ export class ConnectorFactory {
           ...withFetch,
         });
       case 'FILE_IMPORT':
+        return new FileImportConnector(definition.id, this.staged);
       case 'NOTIFICATION':
       case 'GENERIC_REST':
         return new OfflineConnector(definition.id, definition.type);

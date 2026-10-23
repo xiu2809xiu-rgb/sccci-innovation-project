@@ -1,9 +1,12 @@
+import type { Redis } from 'ioredis';
 import { describe, expect, it } from 'vitest';
 
 import { UpstreamUnavailableError } from '../../../common/errors/app-error.js';
 import { AppConfig } from '../../../config/app-config.js';
 import { ConnectorFactory } from '../connector-factory.js';
+import { StagedImportStore } from '../imports/staged-import.store.js';
 import { CnHqSapConnector } from './cn-hq-sap.connector.js';
+import { FileImportConnector } from './file-import.connector.js';
 import { HttpJsonClient } from './http-json-client.js';
 import { SgHrRestConnector } from './sg-hr-rest.connector.js';
 import type { ExternalRecord } from './system-connector.js';
@@ -142,7 +145,11 @@ describe('ConnectorFactory', () => {
     REDIS_URL: 'redis://localhost',
     JWT_ACCESS_SECRET: 'factory-test-secret-0123456789abcdef',
   });
-  const factory = new ConnectorFactory(config);
+  // Redis with nothing staged: the factory only hands the store to file connectors.
+  const nothingStaged = new StagedImportStore({
+    hgetall: () => Promise.resolve({}),
+  } as unknown as Redis);
+  const factory = new ConnectorFactory(config, nothingStaged);
 
   it('builds the adapter for each connector type, and nothing to pull from offline ones', async () => {
     const sg = factory.create({
@@ -163,7 +170,16 @@ describe('ConnectorFactory', () => {
       baseUrl: null,
       config: {},
     });
+    expect(excel).toBeInstanceOf(FileImportConnector);
     await expect(excel.checkHealth()).resolves.toMatchObject({ status: 'OK' });
-    await expect(collect(excel.fetchEmployees())).rejects.toThrow('cannot provide employees');
+    await expect(collect(excel.fetchEmployees())).rejects.toThrow('No file is staged');
+    const dingtalk = factory.create({
+      id: 'dingtalk',
+      type: 'NOTIFICATION',
+      baseUrl: null,
+      config: {},
+    });
+    expect(dingtalk.canFetchEmployees).toBe(false);
+    await expect(collect(dingtalk.fetchEmployees())).rejects.toThrow('cannot provide employees');
   });
 });

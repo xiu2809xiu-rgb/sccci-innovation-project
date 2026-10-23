@@ -6,6 +6,9 @@ import { ConnectorFactory } from './connector-factory.js';
 import { ConnectorsController } from './connectors.controller.js';
 import { ConnectorsRepository } from './connectors.repository.js';
 import { ConnectorsService } from './connectors.service.js';
+import { FileImportController } from './imports/file-import.controller.js';
+import { FileImportService } from './imports/file-import.service.js';
+import { StagedImportStore } from './imports/staged-import.store.js';
 import { SyncRunsController } from './sync-runs.controller.js';
 import { BootstrapSyncService } from './sync/bootstrap-sync.service.js';
 import { EmployeeSyncPipeline } from './sync/employee-sync.pipeline.js';
@@ -21,13 +24,21 @@ import { WebhookOutboxProcessor } from './webhooks/webhook-outbox.processor.js';
 
 /**
  * The connector hub (capability A): adapters built by the factory, the sync
- * pipeline on BullMQ, and the OA webhook endpoint with its outbox.
+ * pipeline on BullMQ, file imports staged for that pipeline, and the OA
+ * webhook endpoint with its outbox.
  */
 @Module({
   imports: [EmployeesModule, MappingModule],
-  controllers: [ConnectorsController, SyncRunsController, OaWebhookController],
+  controllers: [
+    ConnectorsController,
+    SyncRunsController,
+    FileImportController,
+    OaWebhookController,
+  ],
   providers: [
     ConnectorFactory,
+    StagedImportStore,
+    FileImportService,
     ConnectorsRepository,
     ConnectorsService,
     SyncRunsRepository,

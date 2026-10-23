@@ -5,7 +5,7 @@ import {
 } from '@huitong/shared';
 import { screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 
 import { renderApp, sessionFor, type FakeRoutes } from '@/test/render-app';
 
@@ -30,6 +30,7 @@ const SYNCABLE: ConnectorSummary[] = [
     lastHealthStatus: null,
     activeMappingVersion: 2,
     latestRun: null,
+    stagedImport: null,
   },
 ];
 
@@ -71,13 +72,13 @@ function routesFor(result: SyncRunDetail): FakeRoutes {
 async function previewSingaporeHr(result: SyncRunDetail) {
   const user = userEvent.setup();
   const routes = routesFor(result);
-  renderApp('/employees', routes);
+  const { dependencies } = renderApp('/employees', routes);
   const [headerAction] = await screen.findAllByRole('button', { name: 'Run sync' });
   await user.click(headerAction as HTMLElement);
   const dialog = await screen.findByRole('dialog', { name: 'Choose a system to sync' });
   await user.click(await within(dialog).findByRole('radio', { name: /Singapore HR/ }));
   await user.click(within(dialog).getByRole('button', { name: 'Preview changes' }));
-  return { user, dialog, routes };
+  return { user, dialog, routes, dependencies };
 }
 
 describe('Run sync', () => {
@@ -288,5 +289,189 @@ describe('Run sync', () => {
     );
     expect(within(dialog).queryByText(/Attempt 1/)).not.toBeInTheDocument();
     expect(within(dialog).getByRole('button', { name: 'Preview again' })).toBeEnabled();
+  });
+
+  it('lists the records a preview would skip, by reason, beside the changes', async () => {
+    const { dialog } = await previewSingaporeHr(
+      run({
+        counts: { fetched: 12, created: 1, updated: 0, unchanged: 9, conflicts: 0, errors: 2 },
+        previewItems: [
+          {
+            employeeNo: 'E100099',
+            entityCode: 'SG01',
+            kind: 'CREATE',
+            field: null,
+            before: null,
+            after: null,
+          },
+        ],
+        errors: ['E100103', 'E100109'].map((externalId) => ({
+          externalId,
+          stage: 'LOAD' as const,
+          code: 'WORK_EMAIL_IN_USE',
+          message: 'The work email already belongs to E100021.',
+        })),
+      }),
+    );
+    const skipped = await within(dialog).findByRole('region', { name: 'Records with errors' });
+    expect(
+      within(skipped).getByText('2 records have errors and would be skipped:'),
+    ).toBeInTheDocument();
+    expect(
+      within(skipped).getByText(
+        'Records carried a work email another employee already has. Check whether they are the same person, then correct the email at the source.',
+      ),
+    ).toBeInTheDocument();
+    expect(within(skipped).getByText('E100103 and E100109')).toBeInTheDocument();
+    // The server's own message stays in its logs.
+    expect(within(dialog).queryByText(/already belongs to/)).not.toBeInTheDocument();
+    expect(
+      within(dialog).getByRole('slider', { name: 'Slide to apply these changes' }),
+    ).toBeVisible();
+  });
+
+  it('does not call a preview in sync when its only findings are errors', async () => {
+    const { dialog } = await previewSingaporeHr(
+      run({
+        counts: { fetched: 12, created: 0, updated: 0, unchanged: 11, conflicts: 0, errors: 1 },
+        errors: [
+          {
+            externalId: 'E100103',
+            stage: 'VALIDATE',
+            code: 'VALIDATION_FAILED',
+            message: 'jobTitle: Invalid input',
+          },
+        ],
+      }),
+    );
+    expect(
+      await within(dialog).findByText(
+        'Nothing can be applied: the other records match the employee master. Correct the records with errors at the source, then preview again.',
+      ),
+    ).toBeInTheDocument();
+    expect(
+      within(dialog).queryByText('Everything is already in sync: there is nothing to apply.'),
+    ).not.toBeInTheDocument();
+    expect(
+      within(dialog).getByText('1 record has an error and would be skipped:'),
+    ).toBeInTheDocument();
+    expect(within(dialog).queryByRole('slider')).not.toBeInTheDocument();
+  });
+
+  it('lists every record of a preview in which all of them failed, and offers to preview again', async () => {
+    const { dialog } = await previewSingaporeHr(
+      run({
+        status: 'FAILED',
+        counts: { fetched: 2, created: 0, updated: 0, unchanged: 0, conflicts: 0, errors: 2 },
+        errors: ['E100103', 'E100109'].map((externalId) => ({
+          externalId,
+          stage: 'LOAD' as const,
+          code: 'INCOMPLETE_RECORD',
+          message: 'Cannot add the record: missing jobTitle',
+        })),
+      }),
+    );
+    expect(
+      await within(dialog).findByText(
+        'Every record has an error, so nothing can be applied. Correct the records at the source, then preview again.',
+      ),
+    ).toBeInTheDocument();
+    const skipped = within(dialog).getByRole('region', { name: 'Records with errors' });
+    expect(within(skipped).getByText('E100103 and E100109')).toBeInTheDocument();
+    // Not "the preview stopped": nothing stopped it, every record needs correcting.
+    expect(
+      within(dialog).queryByText(
+        'The preview stopped, so nothing was written. You can preview again.',
+      ),
+    ).not.toBeInTheDocument();
+    expect(within(dialog).queryByRole('alert')).not.toBeInTheDocument();
+    expect(within(dialog).getByRole('button', { name: 'Preview again' })).toBeEnabled();
+  });
+
+  it('counts every failed record, though the API keeps only the first few hundred', async () => {
+    const { dialog } = await previewSingaporeHr(
+      run({
+        counts: {
+          fetched: 1300,
+          created: 100,
+          updated: 0,
+          unchanged: 0,
+          conflicts: 0,
+          errors: 1200,
+        },
+        previewItems: [
+          {
+            employeeNo: 'E100099',
+            entityCode: 'SG01',
+            kind: 'CREATE',
+            field: null,
+            before: null,
+            after: null,
+          },
+        ],
+        errors: ['E100103', 'E100109'].map((externalId) => ({
+          externalId,
+          stage: 'VALIDATE' as const,
+          code: 'VALIDATION_FAILED',
+          message: 'jobTitle: Invalid input',
+        })),
+      }),
+    );
+    const skipped = await within(dialog).findByRole('region', { name: 'Records with errors' });
+    expect(
+      within(skipped).getByText('1,200 records have errors and would be skipped:'),
+    ).toBeInTheDocument();
+    expect(within(skipped).getByText('Only the first 2 are listed here.')).toBeInTheDocument();
+  });
+
+  it('asks the pages again once a run finishes, even without live updates', async () => {
+    const user = userEvent.setup();
+    const routes = routesFor(run());
+    const { dependencies } = renderApp('/employees', routes);
+    const asked = vi.spyOn(dependencies.queryClient, 'invalidateQueries');
+    const [headerAction] = await screen.findAllByRole('button', { name: 'Run sync' });
+    await user.click(headerAction as HTMLElement);
+    const dialog = await screen.findByRole('dialog', { name: 'Choose a system to sync' });
+    await user.click(await within(dialog).findByRole('radio', { name: /Singapore HR/ }));
+    await user.click(within(dialog).getByRole('button', { name: 'Preview changes' }));
+    await within(dialog).findByText('Everything is already in sync: there is nothing to apply.');
+    // Once when the run was queued, and once when it finished.
+    await waitFor(() => {
+      expect(
+        asked.mock.calls.filter(([filters]) => filters?.queryKey?.[0] === 'connectors'),
+      ).toHaveLength(2);
+    });
+  });
+
+  it('keeps naming the system once the apply leaves it nothing to sync', async () => {
+    const { user, dialog, routes, dependencies } = await previewSingaporeHr(
+      run({
+        counts: { fetched: 1, created: 1, updated: 0, unchanged: 0, conflicts: 0, errors: 0 },
+        previewItems: [
+          {
+            employeeNo: 'E100099',
+            entityCode: 'SG01',
+            kind: 'CREATE',
+            field: null,
+            before: null,
+            after: null,
+          },
+        ],
+      }),
+    );
+    await within(dialog).findByRole('table', { name: 'Changes the sync would make' });
+
+    // As for a file connector, whose staged file the apply uses up.
+    const unsyncable = [{ ...SYNCABLE[0], syncable: false }];
+    routes['GET /connectors'] = { body: { data: unsyncable } };
+    const slider = within(dialog).getByRole('slider', { name: 'Slide to apply these changes' });
+    slider.focus();
+    await user.keyboard('{Enter}');
+    await user.keyboard('{Enter}');
+
+    await waitFor(() => {
+      expect(dependencies.queryClient.getQueryData(['connectors', 'list'])).toEqual(unsyncable);
+    });
+    expect(within(dialog).getByRole('heading', { name: 'Sync from Singapore HR' })).toBeVisible();
   });
 });

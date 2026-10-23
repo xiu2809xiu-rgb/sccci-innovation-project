@@ -9,6 +9,8 @@ export interface PlannedChanges {
   preview: readonly SyncPreviewItem[];
   /** A hash of each new record's values, which the preview does not list. */
   created: readonly string[];
+  /** The version of the source the run read, when it names one (a staged file's SHA-256). */
+  source?: string | null;
 }
 
 const order = (item: SyncPreviewItem) =>
@@ -27,5 +29,8 @@ export function contentHash(value: unknown): string {
 export function changeDigestOf(changes: PlannedChanges): string {
   const preview = [...changes.preview].sort((a, b) => order(a).localeCompare(order(b)));
   const created = [...changes.created].sort();
-  return contentHash({ preview, created });
+  // A source without versions keeps the digest it always had.
+  return contentHash(
+    changes.source ? { preview, created, source: changes.source } : { preview, created },
+  );
 }

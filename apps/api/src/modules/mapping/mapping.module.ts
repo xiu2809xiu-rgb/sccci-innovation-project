@@ -21,6 +21,6 @@ import { TransformerRegistry } from './transformers/transformer-registry.js';
     MappingProposalsService,
     SampleFileReader,
   ],
-  exports: [MappingEngine, MappingConfigsRepository],
+  exports: [MappingEngine, MappingConfigsRepository, SampleFileReader],
 })
 export class MappingModule {}

@@ -26,6 +26,7 @@ function connector(overrides: Partial<ConnectorSummary> & { id: string }): Conne
     lastHealthStatus: null,
     activeMappingVersion: 1,
     latestRun: null,
+    stagedImport: null,
     ...overrides,
   };
 }

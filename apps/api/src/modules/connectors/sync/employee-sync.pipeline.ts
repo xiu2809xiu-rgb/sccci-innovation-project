@@ -69,6 +69,10 @@ export class EmployeeSyncPipeline extends SyncPipeline<
     return super.run(context);
   }
 
+  protected sourceVersion(context: EmployeeSyncContext): string | null {
+    return context.connector.sourceVersion ?? null;
+  }
+
   protected async extract(context: EmployeeSyncContext): Promise<Extracted[]> {
     const items: Extracted[] = [];
     for await (const page of context.connector.fetchEmployees()) {

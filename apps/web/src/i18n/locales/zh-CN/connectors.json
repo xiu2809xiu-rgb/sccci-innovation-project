@@ -38,7 +38,11 @@
       "applied": "预览中的变更已写入员工主数据，每项变更都已记入审计日志。",
       "partial": "出错的记录已跳过，其余变更已写入员工主数据并记入审计日志。",
       "previewFailed": "预览已中止，未写入任何数据。您可以重新预览。",
-      "applyFailed": "同步提前中止。已做出的变更均已记入审计日志；请重新预览以处理其余记录。"
+      "applyFailed": "同步提前中止。已做出的变更均已记入审计日志；请重新预览以处理其余记录。",
+      "nothingToApply": "没有可应用的变更：其余记录与员工主数据一致。请在源系统中更正有错误的记录，然后重新预览。",
+      "allRecordsFailed": "每条记录都有错误，没有可应用的变更。请在源系统中更正这些记录，然后重新预览。",
+      "allRecordsFailedFile": "每一行都有错误，没有可应用的变更。请更正导出文件，在连接器页面重新暂存后再预览。",
+      "nothingToApplyFile": "没有可应用的变更：其余行与员工主数据一致。请在导出文件中更正有错误的行，重新暂存后再预览。"
     },
     "choose": "要同步的系统",
     "lastSync": "最近同步",
@@ -53,7 +57,8 @@
       "WORK_EMAIL_IN_USE": "记录中的工作邮箱已属于另一名员工。请先核实是否为同一人，再在源系统中更正邮箱。",
       "INTERRUPTED": "运行在完成前被中断。",
       "UPSTREAM_UNAVAILABLE": "所连接的系统没有响应。",
-      "SOURCE_CHANGED": "预览之后源系统的数据有变化，因此未写入任何内容。请重新预览，查看当前的变更。"
+      "SOURCE_CHANGED": "预览之后源系统的数据有变化，因此未写入任何内容。请重新预览，查看当前的变更。",
+      "IMPORT_FILE_MISSING": "同步读取之前，暂存的文件已过期或被丢弃。请重新暂存文件。"
     },
     "inSync": "数据已完全同步，无需应用任何变更。",
     "conflictsFound_one": "有 {{count}} 项新冲突需要决定。",
@@ -115,7 +120,17 @@
         "note": "姓名相似绝不会合并两个人：此记录将作为独立档案加入。只有员工编号相同才视为同一人。"
       }
     },
-    "previewAgain": "重新预览"
+    "previewAgain": "重新预览",
+    "recordErrors": {
+      "label": "有错误的记录",
+      "previewTitle_one": "{{count, number}} 条记录有错误，将被跳过：",
+      "previewTitle_other": "{{count, number}} 条记录有错误，将被跳过：",
+      "appliedTitle_one": "{{count, number}} 条记录有错误，已被跳过：",
+      "appliedTitle_other": "{{count, number}} 条记录有错误，已被跳过：",
+      "more_one": "另外 {{count, number}} 条",
+      "more_other": "另外 {{count, number}} 条",
+      "listedOnly": "此处仅列出前 {{listed}} 条。"
+    }
   },
   "actions": {
     "newMapping": "用样本文件新建映射"
@@ -208,6 +223,80 @@
         "WEBHOOK": "由 Webhook 触发",
         "BOOTSTRAP": "首次载入"
       }
+    },
+    "import": {
+      "title": "导入文件",
+      "description": "已批准映射的第 {{version}} 版读取整个导出文件。只保留映射读取的列，含身份证件号码或性别的列一律不保留。",
+      "noMapping": "请先为此系统批准字段映射：导入会通过映射读取文件。",
+      "openWizard": "打开映射向导",
+      "file": "导出文件",
+      "replace": "换成另一个文件",
+      "chosen": "{{name}}（{{size}} KB）",
+      "fileHint": "完整的 .csv 或 .xlsx 导出文件，不超过 {{megabytes}} MB 和 {{rows}} 行。",
+      "fileProblem": {
+        "missing": "请选择要导入的导出文件。",
+        "type": "只能读取 .csv 和 .xlsx 文件。",
+        "size": "文件超过 {{megabytes}} MB。"
+      },
+      "stage": "暂存文件",
+      "staging": "正在读取文件…",
+      "stagedToast_one": "已暂存 {{count, number}} 行。点击“立即同步”即可预览。",
+      "stagedToast_other": "已暂存 {{count, number}} 行。点击“立即同步”即可预览。",
+      "discardedToast": "已丢弃暂存的文件，没有导入任何数据。",
+      "next": "下一步：“立即同步”会预览文件将带来的变更。应用预览之前不会写入任何数据。",
+      "noPermission": "只有具备员工同步权限的人员才能导入文件。",
+      "summary": {
+        "label": "暂存的文件",
+        "rows": "待预览的行",
+        "version": "读取所用映射",
+        "versionValue": "映射第 {{version}} 版",
+        "expires": "删除时间",
+        "expiresHint": "暂存的文件会在 {{minutes}} 分钟后删除；其变更一经应用也会立即删除。",
+        "stale": "此文件由映射第 {{version}} 版读取，但现在生效的是更新的版本。请重新暂存文件后再导入。"
+      },
+      "rejected_one": "有 {{count, number}} 行未被采用：",
+      "rejected_other": "有 {{count, number}} 行未被采用：",
+      "rejectedReason": {
+        "NO_EMPLOYEE_NUMBER": "第 {{line}} 行：没有员工编号",
+        "DUPLICATE_EMPLOYEE_NUMBER": "第 {{line}} 行：员工编号与前面某行重复",
+        "INVALID_EMPLOYEE_NUMBER": "第 {{line}} 行：员工编号格式不符（应为 E123456）",
+        "NATIONAL_ID_VALUE": "第 {{line}} 行：有值的格式与身份证件号码相同，汇通从不存储此类号码",
+        "EXTRA_CELLS": "第 {{line}} 行：值比列标题多，单元格可能错位",
+        "MISSING_CELLS": "第 {{line}} 行：值比列标题少，单元格可能错位",
+        "INVALID_DATE": "第 {{line}} 行：日期单元格中的日期不可能存在"
+      },
+      "rejectedMore_one": "另有 {{count, number}} 行。",
+      "rejectedMore_other": "另有 {{count, number}} 行。",
+      "prohibited": "一律不保留：{{columns}}。汇通不存储身份证件号码或性别。",
+      "notMapped": "映射未读取，因此不保留：{{columns}}。",
+      "discard": "丢弃暂存的文件",
+      "problem": {
+        "title": "文件未能暂存",
+        "COLUMNS_MISSING": "已批准的映射需要读取此文件中没有的列：{{columns}}。请确认导出文件是否正确，或按此文件现有的列批准新的映射版本。",
+        "PROHIBITED_COLUMN_NATIONAL_ID": "映射读取的“{{column}}”列含身份证件号码。汇通从不存储此类号码，因此文件未能暂存。",
+        "PROHIBITED_COLUMN_GENDER": "映射读取的“{{column}}”列含性别信息。汇通从不存储性别，因此文件未能暂存。",
+        "FILE_TOO_LARGE": "文件超过 {{megabytes}} MB。",
+        "WORKBOOK_TOO_LARGE": "工作簿解压后会超过 {{megabytes}} MB，因此未予读取。请另存为 CSV 或减少行数后重新暂存。",
+        "TOO_MANY_ROWS": "文件超过 {{limit}} 行。请拆分为较小的文件后分别导入。",
+        "TOO_MANY_COLUMNS": "文件超过 {{limit}} 列。请删除映射未读取的列后重新暂存。",
+        "UNSUPPORTED_TYPE": "只能读取 .csv 和 .xlsx 文件。",
+        "UNREADABLE": "无法读取此文件。请确认它是未损坏的 .csv 或 .xlsx 导出文件，然后重新暂存。",
+        "NO_HEADER_ROW": "文件没有标题行。",
+        "UNNAMED_COLUMN": "每一列都需要列标题。请为没有标题的列命名或将其删除。",
+        "HEADER_TOO_LONG": "有列标题超过 {{limit}} 个字符。",
+        "DUPLICATE_HEADER": "有两列的标题都是“{{column}}”。请重命名其中一列，使每个标题各不相同。",
+        "NO_DATA": "文件只有标题行，没有数据行。",
+        "NO_ROWS_KEPT": "文件中没有可以导入的行。请更正以下各行后重新暂存文件：",
+        "moreLikeIt_one": "（另有 {{count, number}} 行情况相同）",
+        "moreLikeIt_other": "（另有 {{count, number}} 行情况相同）"
+      },
+      "encodingDescription": "此文件可以按两种文本编码读取。请选择列标题显示正确的一种，汇通将按该方式读取整个文件。",
+      "noMappingReadOnly": "此系统尚未批准字段映射。人力资源人员在映射向导中批准后，导入会通过映射读取文件。",
+      "retired": {
+        "DEPRECATED": "此系统即将停用，不再接收导入文件。",
+        "DISABLED": "此系统已关闭，不再接收导入文件。"
+      },
+      "expiredToast": "暂存的文件已保留 {{minutes}} 分钟并已删除。如需导入，请重新暂存。"
     }
   },
   "transform": {
@@ -328,7 +417,7 @@
       "newConnector": "为此系统新建连接",
       "name": "名称",
       "nameZh": "中文名称",
-      "newHint": "新连接以草稿状态开始：在管理员启用之前不会读取任何数据。",
+      "newHint": "新连接以草稿状态开始：在其页面暂存文件之前不会读取任何数据，首次应用导入后即转为生效。",
       "needsApprover": "您的角色可以审核此提案，但不能批准。它会留在连接器页面，等待有审批权限的人处理。",
       "existingConnector": "为现有的文件连接新建版本",
       "chooseConnector": "选择连接",

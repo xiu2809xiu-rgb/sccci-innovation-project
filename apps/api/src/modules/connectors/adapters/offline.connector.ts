@@ -4,13 +4,12 @@ import { noEmployees } from './connector-capability.error.js';
 import type { ConnectorHealth, ExternalRecord, SystemConnector } from './system-connector.js';
 
 const NOTES: Partial<Record<ConnectorType, string>> = {
-  FILE_IMPORT: 'No live connection: files are imported by hand',
   NOTIFICATION: 'Notifications are mocked in this proof of concept',
 };
 
 /**
- * Systems with no live link to check or pull from: file imports (the Excel
- * master, a new subsidiary's export) and the mocked Teams and DingTalk.
+ * Systems with no live link to check or pull from: the mocked notification
+ * channels and generic REST placeholders. File imports have their own adapter.
  */
 export class OfflineConnector implements SystemConnector {
   readonly canFetchEmployees = false;

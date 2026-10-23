@@ -135,7 +135,7 @@ export abstract class SyncPipeline<
       counts,
       failures,
       preview,
-      changeDigest: changeDigestOf({ preview, created }),
+      changeDigest: changeDigestOf({ preview, created, source: this.sourceVersion(context) }),
     };
     await this.audit(context, summary);
     return summary;
@@ -156,12 +156,15 @@ export abstract class SyncPipeline<
       preview.push(...outcome.preview);
       if (outcome.createdHash) created.push(outcome.createdHash);
     }
-    if (changeDigestOf({ preview, created }) !== context.expectedChanges) {
+    const source = this.sourceVersion(context);
+    if (changeDigestOf({ preview, created, source }) !== context.expectedChanges) {
       throw new SourceChangedError();
     }
   }
 
   protected abstract extract(context: TContext): Promise<TExtracted[]>;
+  /** The version of the source the extract read, when the source names one; otherwise null. */
+  protected abstract sourceVersion(context: TContext): string | null;
   protected abstract map(context: TContext, item: TExtracted): Step<TMapped>;
   protected abstract validate(context: TContext, item: TMapped): Step<TValid>;
   protected abstract load(context: TContext, item: TValid): Promise<LoadOutcome>;

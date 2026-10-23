@@ -21,7 +21,8 @@ function flatten(tree: Tree, prefix = ''): Map<string, string> {
 }
 
 function placeholders(text: string): string[] {
-  return [...text.matchAll(/{{\s*(\w+)\s*}}/g)].map((match) => match[1] ?? '').sort();
+  // A format after the name (`{{count, number}}`) is part of the same variable.
+  return [...text.matchAll(/{{\s*(\w+)\s*(?:,[^}]*)?}}/g)].map((match) => match[1] ?? '').sort();
 }
 
 describe.each(NAMESPACES)('the %s namespace', (namespace) => {

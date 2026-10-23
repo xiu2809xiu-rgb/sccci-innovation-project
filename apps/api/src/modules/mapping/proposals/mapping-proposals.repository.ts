@@ -43,8 +43,11 @@ export class MappingProposalsRepository {
     return { items, total };
   }
 
-  connectorExists(id: string, tx: Tx | PrismaService = this.prisma) {
-    return tx.connector.findUnique({ where: { id }, select: { id: true } });
+  connectorById(id: string, tx: Tx | PrismaService = this.prisma) {
+    return tx.connector.findUnique({
+      where: { id },
+      select: { id: true, type: true, status: true },
+    });
   }
 
   createDraftConnector(

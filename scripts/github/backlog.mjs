@@ -278,6 +278,8 @@ export const EPICS = [
         sprint: 6,
         points: 8,
         priority: 'should',
+        done: true,
+        deliveredBy: 'feat/area1-file-import',
         story:
           "As an HR executive, I want to import another company's export with the mapping I approved, so that a company or a new market joins the master without code changes.",
         acceptance: [
@@ -342,11 +344,13 @@ export const EPICS = [
         sprint: 3,
         points: 5,
         priority: 'must',
+        done: true,
+        deliveredBy: 'feat/area1-file-import',
         story:
           'As the team, we want the Singapore mock to behave like INFO-TECH, with its employee, leave and payroll exports, so that our connector and mappings are tested against the kind of file the client uses.',
         acceptance: [
           'Given the mock, when an export is requested, then employees, leave and payroll come as CSV or Excel with English headers and DD/MM/YYYY dates (assumption A-59).',
-          'Given an export, when HuiTong imports it, then it goes through the mapping engine, so a real export can replace it with only a mapping change.',
+          "Given the employee export, when HuiTong imports it, then it goes through the mapping engine, so a real export can replace it with only a mapping change. The leave and payroll exports feed area 3's leave ingestion (D-1) and single view (D-6).",
           'Given any screen that shows the mock, when it is displayed, then it is labelled "Mock".',
         ],
       },

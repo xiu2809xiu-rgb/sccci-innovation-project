@@ -53,7 +53,11 @@ export class MappingProposalsController {
       'Upload a sample export and get an AI mapping proposal (nothing is saved until approval)',
   })
   @UseInterceptors(
-    FileInterceptor('file', { limits: { fileSize: MAX_SAMPLE_BYTES, files: 1, fields: 10 } }),
+    // Browsers send the file name as UTF-8, so a Chinese name arrives as written.
+    FileInterceptor('file', {
+      defParamCharset: 'utf8',
+      limits: { fileSize: MAX_SAMPLE_BYTES, files: 1, fields: 10 },
+    }),
   )
   async propose(
     @UploadedFile() file: SampleUpload | undefined,

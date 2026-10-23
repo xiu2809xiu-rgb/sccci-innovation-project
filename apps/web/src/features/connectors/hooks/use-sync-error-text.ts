@@ -17,6 +17,7 @@ const TRANSLATED_CODES = [
   'INTERRUPTED',
   'UPSTREAM_UNAVAILABLE',
   'SOURCE_CHANGED',
+  'IMPORT_FILE_MISSING',
 ] as const;
 
 type TranslatedCode = (typeof TRANSLATED_CODES)[number];

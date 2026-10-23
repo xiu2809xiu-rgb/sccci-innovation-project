@@ -64,6 +64,35 @@ export class ConflictError extends AppError {
   }
 }
 
+/** A file connector has no staged file to sync: none was staged, it expired, or it was discarded. */
+export class ImportFileMissingError extends AppError {
+  constructor(connectorId: string) {
+    super(
+      'IMPORT_FILE_MISSING',
+      `No file is staged for ${connectorId}, or it expired: stage the file again`,
+      409,
+    );
+  }
+}
+
+/** A file connector's staged file was read by a mapping version that is no longer active. */
+export class ImportFileOutdatedError extends AppError {
+  constructor() {
+    super(
+      'IMPORT_FILE_OUTDATED',
+      'The mapping changed after the file was staged, so the file has to be staged again',
+      409,
+    );
+  }
+}
+
+/** A connector runs one sync at a time, and its staged file stays put while one runs. */
+export class SyncInProgressError extends AppError {
+  constructor(message: string, details?: unknown) {
+    super('SYNC_IN_PROGRESS', message, 409, details);
+  }
+}
+
 /**
  * A head-start route whose behaviour belongs to an area's owner and is not
  * built yet (CLAUDE.md section 4). The contract is fixed; nothing is changed.

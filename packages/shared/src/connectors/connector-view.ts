@@ -3,6 +3,7 @@ import { z } from 'zod';
 import { entityCodeSchema } from '../org/entities.js';
 import { mappingConfigSchema } from '../mapping/mapping-config.js';
 import { connectorStatusSchema, connectorTypeSchema } from './connector.js';
+import { stagedImportSchema } from './staged-import.js';
 import { syncRunSchema } from './sync-run.js';
 
 export const HEALTH_STATUSES = ['OK', 'FAILED'] as const;
@@ -22,8 +23,10 @@ export const connectorSummarySchema = z.object({
   /** A HuiTong mock stands in for the client's system; every screen that shows the connector says so. */
   isMock: z.boolean(),
   capabilities: z.array(z.string()),
-  /** True when the connector can pull employees into the master. */
+  /** True when the connector can pull employees into the master now; a file connector needs a staged file. */
   syncable: z.boolean(),
+  /** A file connector's staged file, waiting for its preview and apply; null for other connectors. */
+  stagedImport: stagedImportSchema.nullable(),
   lastSyncAt: z.iso.datetime().nullable(),
   lastHealthCheckAt: z.iso.datetime().nullable(),
   lastHealthStatus: healthStatusSchema.nullable(),

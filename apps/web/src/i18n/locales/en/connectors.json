@@ -38,7 +38,11 @@
       "applied": "The previewed changes are in the employee master, and each one is in the audit log.",
       "partial": "Records with errors were skipped. The other changes are in the employee master and the audit log.",
       "previewFailed": "The preview stopped, so nothing was written. You can preview again.",
-      "applyFailed": "The sync stopped early. Any changes it made are in the audit log; preview again to pick up the rest."
+      "applyFailed": "The sync stopped early. Any changes it made are in the audit log; preview again to pick up the rest.",
+      "nothingToApply": "Nothing can be applied: the other records match the employee master. Correct the records with errors at the source, then preview again.",
+      "allRecordsFailed": "Every record has an error, so nothing can be applied. Correct the records at the source, then preview again.",
+      "allRecordsFailedFile": "Every row has an error, so nothing can be applied. Correct the export, stage it again on the connector's page, then preview.",
+      "nothingToApplyFile": "Nothing can be applied: the other rows match the employee master. Correct the rows with errors in the export, stage it again, then preview."
     },
     "choose": "System to sync",
     "lastSync": "Last synced",
@@ -53,7 +57,8 @@
       "WORK_EMAIL_IN_USE": "Records carried a work email another employee already has. Check whether they are the same person, then correct the email at the source.",
       "INTERRUPTED": "The run was interrupted before it finished.",
       "UPSTREAM_UNAVAILABLE": "The connected system did not respond.",
-      "SOURCE_CHANGED": "The source system changed after the preview, so nothing was written. Preview again to see the current changes."
+      "SOURCE_CHANGED": "The source system changed after the preview, so nothing was written. Preview again to see the current changes.",
+      "IMPORT_FILE_MISSING": "The staged file expired or was discarded before the sync read it. Stage the file again."
     },
     "inSync": "Everything is already in sync: there is nothing to apply.",
     "conflictsFound_one": "{{count}} new conflict needs a decision.",
@@ -115,7 +120,17 @@
         "note": "A look-alike name never merges two people: this is added as its own record. Only the same employee number makes two records one person."
       }
     },
-    "previewAgain": "Preview again"
+    "previewAgain": "Preview again",
+    "recordErrors": {
+      "label": "Records with errors",
+      "previewTitle_one": "{{count, number}} record has an error and would be skipped:",
+      "previewTitle_other": "{{count, number}} records have errors and would be skipped:",
+      "appliedTitle_one": "{{count, number}} record had an error and was skipped:",
+      "appliedTitle_other": "{{count, number}} records had errors and were skipped:",
+      "more_one": "{{count, number}} more",
+      "more_other": "{{count, number}} more",
+      "listedOnly": "Only the first {{listed}} are listed here."
+    }
   },
   "actions": {
     "newMapping": "New mapping from a sample file"
@@ -208,6 +223,80 @@
         "WEBHOOK": "From a webhook",
         "BOOTSTRAP": "First load"
       }
+    },
+    "import": {
+      "title": "Import a file",
+      "description": "Version {{version}} of the approved mapping reads the whole export. Only the columns it maps are kept, and columns with national ID numbers or gender never are.",
+      "noMapping": "Approve a field mapping for this system first: the import reads the file through it.",
+      "openWizard": "Open the mapping wizard",
+      "file": "Export file",
+      "replace": "Replace it with another file",
+      "chosen": "{{name}} ({{size}} KB)",
+      "fileHint": "The whole .csv or .xlsx export, of up to {{megabytes}} MB and {{rows}} rows.",
+      "fileProblem": {
+        "missing": "Choose the export file to import.",
+        "type": "Only .csv and .xlsx files can be read.",
+        "size": "The file is larger than {{megabytes}} MB."
+      },
+      "stage": "Stage the file",
+      "staging": "Reading the file…",
+      "stagedToast_one": "{{count, number}} row is staged. Sync now previews it.",
+      "stagedToast_other": "{{count, number}} rows are staged. Sync now previews them.",
+      "discardedToast": "The staged file was discarded. Nothing was imported from it.",
+      "next": "Next: Sync now previews what the file would change. Nothing is written until you apply the preview.",
+      "noPermission": "Only people with permission to sync employees can import a file.",
+      "summary": {
+        "label": "Staged file",
+        "rows": "Rows to preview",
+        "version": "Read with",
+        "versionValue": "Mapping version {{version}}",
+        "expires": "Deleted",
+        "expiresHint": "A staged file is deleted after {{minutes}} minutes, or as soon as its changes are applied.",
+        "stale": "Mapping version {{version}} read this file, but a newer version is active now. Stage the file again to import it."
+      },
+      "rejected_one": "{{count, number}} row was left out:",
+      "rejected_other": "{{count, number}} rows were left out:",
+      "rejectedReason": {
+        "NO_EMPLOYEE_NUMBER": "Line {{line}}: no employee number",
+        "DUPLICATE_EMPLOYEE_NUMBER": "Line {{line}}: the same employee number as an earlier line",
+        "INVALID_EMPLOYEE_NUMBER": "Line {{line}}: the employee number is not in the form E123456",
+        "NATIONAL_ID_VALUE": "Line {{line}}: a value has the shape of a national ID number, which HuiTong never stores",
+        "EXTRA_CELLS": "Line {{line}}: more values than headers, so its cells may have shifted",
+        "MISSING_CELLS": "Line {{line}}: fewer values than headers, so its cells may have shifted",
+        "INVALID_DATE": "Line {{line}}: a date cell holds an impossible date"
+      },
+      "rejectedMore_one": "And {{count, number}} more row.",
+      "rejectedMore_other": "And {{count, number}} more rows.",
+      "prohibited": "Never kept: {{columns}}. HuiTong does not store national ID numbers or gender.",
+      "notMapped": "Not read by the mapping, so not kept: {{columns}}.",
+      "discard": "Discard the staged file",
+      "problem": {
+        "title": "The file was not staged",
+        "COLUMNS_MISSING": "The approved mapping reads columns this file does not have: {{columns}}. Check that it is the right export, or approve a new mapping version for its columns.",
+        "PROHIBITED_COLUMN_NATIONAL_ID": "The mapping reads “{{column}}”, which holds national ID numbers. HuiTong never stores them, so the file was not staged.",
+        "PROHIBITED_COLUMN_GENDER": "The mapping reads “{{column}}”, which holds gender. HuiTong never stores it, so the file was not staged.",
+        "FILE_TOO_LARGE": "The file is larger than {{megabytes}} MB.",
+        "WORKBOOK_TOO_LARGE": "The workbook would unpack to more than {{megabytes}} MB, so it was not read. Save it as CSV, or with fewer rows, and stage it again.",
+        "TOO_MANY_ROWS": "The file has more than {{limit}} rows. Split it into smaller files and import each one.",
+        "TOO_MANY_COLUMNS": "The file has more than {{limit}} columns. Remove the columns the mapping does not read, then stage it again.",
+        "UNSUPPORTED_TYPE": "Only .csv and .xlsx files can be read.",
+        "UNREADABLE": "The file could not be read. Check that it is a .csv or .xlsx export and not damaged, then stage it again.",
+        "NO_HEADER_ROW": "The file has no header row.",
+        "UNNAMED_COLUMN": "Every column needs a header. Name or remove the columns without one.",
+        "HEADER_TOO_LONG": "A column header is longer than {{limit}} characters.",
+        "DUPLICATE_HEADER": "Two columns have the header “{{column}}”. Rename one, so every header is different.",
+        "NO_DATA": "The file has a header row but no data rows.",
+        "NO_ROWS_KEPT": "No row of the file can be imported. Correct these rows and stage the file again:",
+        "moreLikeIt_one": " (and {{count, number}} more row like it)",
+        "moreLikeIt_other": " (and {{count, number}} more rows like it)"
+      },
+      "encodingDescription": "This file can be read in two text encodings. Choose the one whose column headers look correct; HuiTong then reads the whole file that way.",
+      "noMappingReadOnly": "No field mapping has been approved for this system yet. HR approves one in the mapping wizard, and then the import reads the file through it.",
+      "retired": {
+        "DEPRECATED": "This system is being retired, so it takes no file to import.",
+        "DISABLED": "This system is turned off, so it takes no file to import."
+      },
+      "expiredToast": "The staged file was kept for {{minutes}} minutes and has been deleted. Stage it again to import it."
     }
   },
   "transform": {
@@ -328,7 +417,7 @@
       "newConnector": "A new connector for this system",
       "name": "Name",
       "nameZh": "Name in Chinese",
-      "newHint": "The connector starts as a draft: it reads nothing until an administrator activates it.",
+      "newHint": "The connector starts as a draft: it reads nothing until a file is staged on its page, and its first applied import makes it active.",
       "needsApprover": "Your role can review this proposal but not approve it. It stays on the Connectors page, waiting for someone with approval rights.",
       "existingConnector": "A new version for an existing file connector",
       "chooseConnector": "Choose a connector",

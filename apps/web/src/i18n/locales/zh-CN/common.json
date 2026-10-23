@@ -158,6 +158,9 @@
     "SERVICE_UNAVAILABLE": "汇通暂时不可用，请稍后再试。",
     "NOT_IMPLEMENTED": "汇通的这部分功能尚未完成，未作任何更改。",
     "INTERNAL": "我们这边出现了问题。",
+    "IMPORT_FILE_MISSING": "此系统没有暂存的文件，或文件已过期。请在连接器页面重新暂存文件。",
+    "IMPORT_FILE_OUTDATED": "文件暂存后字段映射已更改。请重新暂存文件，以便按当前映射读取。",
+    "SYNC_IN_PROGRESS": "此系统的同步正在进行。请等待同步完成后再试。",
     "NETWORK_ERROR": "无法连接服务器，请检查网络连接。",
     "CONTRACT_MISMATCH": "服务器返回了意外的数据，请刷新页面。"
   },
