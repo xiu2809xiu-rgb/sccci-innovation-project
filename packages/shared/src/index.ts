@@ -15,6 +15,8 @@ export * from './auth/session.js';
 export * from './auth/user-ref.js';
 export * from './connectors/connector-view.js';
 export * from './connectors/connector.js';
+export * from './connectors/staged-import.js';
+export * from './connectors/sync-eligibility.js';
 export * from './connectors/sync-run.js';
 export * from './employees/canonical-employee.js';
 export * from './employees/conflict.js';
