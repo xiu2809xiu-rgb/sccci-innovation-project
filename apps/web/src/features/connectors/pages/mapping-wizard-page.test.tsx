@@ -1,4 +1,9 @@
-import { DEFAULT_ROLE_PERMISSIONS, type MappingProposal, type Permission } from '@huitong/shared';
+import {
+  DEFAULT_ROLE_PERMISSIONS,
+  type ConnectorSummary,
+  type MappingProposal,
+  type Permission,
+} from '@huitong/shared';
 import { screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
@@ -215,5 +220,51 @@ describe('Mapping wizard', () => {
     ).toBeInTheDocument();
     expect(screen.queryByRole('button', { name: 'Approve and save' })).not.toBeInTheDocument();
     expect(screen.queryByRole('button', { name: 'Reject' })).not.toBeInTheDocument();
+  });
+
+  it('offers only file connectors that may still take a mapping as an existing target', async () => {
+    const user = userEvent.setup();
+    const fileConnector = (id: string, name: string, status: ConnectorSummary['status']) => ({
+      id,
+      name,
+      nameZh: name,
+      type: 'FILE_IMPORT' as const,
+      region: 'MY',
+      entityCode: 'MY01' as const,
+      status,
+      isMock: false,
+      capabilities: ['employees.read'],
+      syncable: false,
+      stagedImport: null,
+      lastSyncAt: null,
+      lastHealthCheckAt: null,
+      lastHealthStatus: null,
+      activeMappingVersion: 1,
+      latestRun: null,
+    });
+    const routes = routesFor(HR);
+    routes['GET /connectors'] = {
+      body: {
+        data: [
+          fileConnector('malaysia-hr', 'Malaysia HR export', 'ACTIVE'),
+          fileConnector('excel-master', 'Legacy Excel employee master', 'DEPRECATED'),
+        ],
+      },
+    };
+    renderApp(`/connectors/new-mapping?proposal=${PROPOSAL_ID}`, routes);
+    await user.click(await screen.findByRole('button', { name: 'Continue to approval' }));
+    await user.click(
+      screen.getByRole('radio', { name: 'A new version for an existing file connector' }),
+    );
+    await user.click(
+      screen.getByRole('combobox', { name: 'A new version for an existing file connector' }),
+    );
+    expect(
+      await screen.findByRole('option', { name: 'Malaysia HR export (now version 1)' }),
+    ).toBeInTheDocument();
+    // Being retired, it takes no new mapping: the API refuses it too.
+    expect(
+      screen.queryByRole('option', { name: /Legacy Excel employee master/ }),
+    ).not.toBeInTheDocument();
   });
 });

@@ -158,6 +158,9 @@
     "SERVICE_UNAVAILABLE": "HuiTong is temporarily unavailable. Try again shortly.",
     "NOT_IMPLEMENTED": "This part of HuiTong is not built yet. Nothing was changed.",
     "INTERNAL": "Something went wrong on our side.",
+    "IMPORT_FILE_MISSING": "No file is staged for this system, or it expired. Stage the file again on the connector's page.",
+    "IMPORT_FILE_OUTDATED": "The field mapping changed after the file was staged. Stage the file again, so it is read with the current mapping.",
+    "SYNC_IN_PROGRESS": "A sync of this system is already running. Wait for it to finish, then try again.",
     "NETWORK_ERROR": "We could not reach the server. Check your connection.",
     "CONTRACT_MISMATCH": "The server sent something unexpected. Reload the page."
   },

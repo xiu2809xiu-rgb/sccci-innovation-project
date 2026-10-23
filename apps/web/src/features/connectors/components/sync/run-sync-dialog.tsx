@@ -1,6 +1,6 @@
-import type { ConnectorSummary, SyncRunDetail } from '@huitong/shared';
 import { CheckCircle2, Eye, GitCompareArrows, RotateCw } from 'lucide-react';
-import { useState } from 'react';
+import { useQueryClient } from '@tanstack/react-query';
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router';
 
@@ -16,30 +16,14 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 
-import { useConnectors } from '../../api/connector-queries';
+import { CONNECTORS_KEY, useConnectors } from '../../api/connector-queries';
 import { isFinished, useStartSync, useSyncRun } from '../../api/sync-runs';
 import { useSyncErrorText } from '../../hooks/use-sync-error-text';
 import { ChooseSystem } from './choose-system';
+import { descriptionOf, outcomeOf, recordErrorsOf, type SyncStage } from './sync-outcome';
 import { SyncPreview } from './sync-preview';
+import { SyncRecordErrors } from './sync-record-errors';
 import { SyncRunStatus } from './sync-run-status';
-
-type Stage =
-  | { kind: 'choose' }
-  | { kind: 'preview'; connectorId: string; runId: string }
-  | { kind: 'apply'; connectorId: string; runId: string };
-
-/** Where the flow stands once a run settles, so the dialog never describes a step already past. */
-type Outcome = Stage['kind'] | 'inSync' | 'applied' | 'partial' | 'previewFailed' | 'applyFailed';
-
-const hasChanges = (run: SyncRunDetail) =>
-  run.counts.created + run.counts.updated + run.counts.conflicts > 0;
-
-function outcomeOf(stage: Stage, run: SyncRunDetail | undefined): Outcome {
-  if (stage.kind === 'choose' || !run || !isFinished(run.status)) return stage.kind;
-  if (run.status === 'FAILED') return stage.kind === 'preview' ? 'previewFailed' : 'applyFailed';
-  if (stage.kind === 'apply') return run.status === 'PARTIAL' ? 'partial' : 'applied';
-  return hasChanges(run) ? 'preview' : 'inSync';
-}
 
 /**
  * Run sync: preview first, then apply exactly what was previewed (CLAUDE.md
@@ -74,20 +58,34 @@ function SyncFlow({ connectorId, onClose }: { connectorId?: string; onClose: () 
   const { t, i18n } = useTranslation('connectors');
   const { t: tCommon } = useTranslation();
   const errorText = useSyncErrorText();
+  const queryClient = useQueryClient();
   const connectors = useConnectors();
   const start = useStartSync();
-  const [chosen, setChosen] = useState(connectorId ?? '');
-  const [stage, setStage] = useState<Stage>({ kind: 'choose' });
-  const run = useSyncRun(stage.kind === 'choose' ? null : stage.runId).data;
-  const syncable = (connectors.data ?? []).filter(
-    (connector: ConnectorSummary) => connector.syncable,
+  // The control that opened the dialog, where focus returns when it closes, if it is still there.
+  const [opener] = useState(() =>
+    document.activeElement instanceof HTMLElement ? document.activeElement : null,
   );
-  const picked = syncable.find((connector) => connector.id === chosen);
+  const [chosen, setChosen] = useState(connectorId ?? '');
+  const [stage, setStage] = useState<SyncStage>({ kind: 'choose' });
+  const run = useSyncRun(stage.kind === 'choose' ? null : stage.runId).data;
+  // Any connector, not only syncable ones: a file connector stops being syncable once its file is applied.
+  const picked = (connectors.data ?? []).find((connector) => connector.id === chosen);
   const name = picked ? (i18n.language === 'zh-CN' ? picked.nameZh : picked.name) : chosen;
   const outcome = outcomeOf(stage, run);
   const finished = run !== undefined && isFinished(run.status);
   const readyToApply = stage.kind === 'preview' && finished && outcome === 'preview';
   const failed = outcome === 'previewFailed' || outcome === 'applyFailed';
+  // A file connector would read the same file again: its file has to be corrected first.
+  const canPreviewAgain =
+    failed || (outcome === 'allRecordsFailed' && picked?.type !== 'FILE_IMPORT');
+  const recordErrors = run && finished ? recordErrorsOf(run) : [];
+
+  // A finished run changes the connector (its last sync, a file used up, a draft activated),
+  // and live updates may not reach this browser, so the pages ask again.
+  const finishedRun = finished ? run.id : null;
+  useEffect(() => {
+    if (finishedRun !== null) void queryClient.invalidateQueries({ queryKey: CONNECTORS_KEY });
+  }, [finishedRun, queryClient]);
 
   const preview = (id: string) => {
     start.mutate(
@@ -110,12 +108,22 @@ function SyncFlow({ connectorId, onClose }: { connectorId?: string; onClose: () 
   };
 
   return (
-    <DialogContent className="sm:max-w-2xl">
+    <DialogContent
+      className="max-h-[calc(100dvh-2rem)] overflow-y-auto sm:max-w-2xl"
+      onCloseAutoFocus={(event) => {
+        if (opener?.isConnected) return;
+        // The opener went with the sync (nothing left to sync): focus the page, not the body.
+        event.preventDefault();
+        document.getElementById('main')?.focus();
+      }}
+    >
       <DialogHeader>
         <DialogTitle>
           {stage.kind === 'choose' ? t('sync.title') : t(`sync.titles.${stage.kind}`, { name })}
         </DialogTitle>
-        <DialogDescription>{t(`sync.descriptions.${outcome}`)}</DialogDescription>
+        <DialogDescription>
+          {t(`sync.descriptions.${descriptionOf(outcome, picked?.type)}`)}
+        </DialogDescription>
       </DialogHeader>
 
       {stage.kind === 'choose' ? (
@@ -128,6 +136,9 @@ function SyncFlow({ connectorId, onClose }: { connectorId?: string; onClose: () 
       ) : null}
 
       {stage.kind !== 'choose' && run ? <SyncRunStatus run={run} /> : null}
+      {run && recordErrors.length > 0 ? (
+        <SyncRecordErrors errors={recordErrors} total={run.counts.errors} mode={run.mode} />
+      ) : null}
       {failed && run ? (
         <p role="alert" className="text-sm text-danger">
           {errorText(run.errors.at(-1))}
@@ -181,7 +192,7 @@ function SyncFlow({ connectorId, onClose }: { connectorId?: string; onClose: () 
             {t('sync.preview.action')}
           </Button>
         ) : null}
-        {stage.kind !== 'choose' && failed ? (
+        {stage.kind !== 'choose' && canPreviewAgain ? (
           <Button
             type="button"
             disabled={start.isPending}

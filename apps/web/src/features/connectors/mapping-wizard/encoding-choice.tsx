@@ -15,14 +15,16 @@ export interface EncodingChoiceProps {
   readings: SampleEncodingReadings['readings'];
   disabled: boolean;
   onChoose: (encoding: SampleEncoding) => void;
+  /** What reads the file once HR chooses: the assistant reads a sample, HuiTong a whole export. */
+  description: string;
 }
 
 /**
  * The file's bytes make sense in more than one encoding, so HR picks the
- * reading whose headers look right before anything goes to the assistant.
- * Nothing is guessed (error prevention, recognition over recall).
+ * reading whose headers look right before the file is read further. Nothing
+ * is guessed (error prevention, recognition over recall).
  */
-export function EncodingChoice({ readings, disabled, onChoose }: EncodingChoiceProps) {
+export function EncodingChoice({ readings, disabled, onChoose, description }: EncodingChoiceProps) {
   const { t } = useTranslation('connectors');
   const id = useId();
   const [choice, setChoice] = useState<SampleEncoding | null>(null);
@@ -40,12 +42,14 @@ export function EncodingChoice({ readings, disabled, onChoose }: EncodingChoiceP
           <Languages className="size-4 text-warning" aria-hidden="true" />
           {t('wizard.upload.encoding.title')}
         </h3>
-        <p className="text-sm text-muted-foreground">{t('wizard.upload.encoding.description')}</p>
+        <p className="text-sm text-muted-foreground">{description}</p>
       </div>
       <RadioGroup
         value={choice ?? ''}
         onValueChange={(next) => {
-          setChoice(sampleEncodingSchema.parse(next));
+          // A form reset clears the group with an empty value, which is no choice.
+          const parsed = sampleEncodingSchema.safeParse(next);
+          setChoice(parsed.success ? parsed.data : null);
         }}
         aria-labelledby={`${id}-title`}
         className="gap-2"

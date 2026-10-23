@@ -26,6 +26,7 @@ function connector(
     lastHealthStatus: null,
     activeMappingVersion: null,
     latestRun: null,
+    stagedImport: null,
     ...base,
   };
 }

@@ -15,6 +15,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { useHasPermission } from '@/app/session/use-session';
 
 import { useConnector, useLiveConnectors } from '../api/connector-queries';
+import { ImportFileCard } from '../components/import/import-file-card';
 import { MappingVersions } from '../components/mapping-versions';
 import { RunSyncDialog } from '../components/sync/run-sync-dialog';
 import { SyncRunHistory } from '../components/sync-run-history';
@@ -71,7 +72,10 @@ function DetailSkeleton() {
   );
 }
 
-/** One connector: its settings, health, mapping versions and sync history, with Sync now. */
+/**
+ * One connector: its settings, health, mapping versions and sync history, with
+ * Sync now, and for a file connector the import of its staged file.
+ */
 export function ConnectorDetailPage({ connectorId }: { connectorId: string }) {
   const { t, i18n } = useTranslation('connectors');
   const connector = useConnector(connectorId);
@@ -153,6 +157,7 @@ export function ConnectorDetailPage({ connectorId }: { connectorId: string }) {
             </div>
             {bringsEmployeeData(detail.type) ? (
               <>
+                {detail.type === 'FILE_IMPORT' ? <ImportFileCard connector={detail} /> : null}
                 <MappingVersions configs={detail.mappingConfigs} />
                 <section aria-label={t('detail.runs.caption')} className="space-y-3">
                   <h2 className="text-md font-semibold text-foreground">

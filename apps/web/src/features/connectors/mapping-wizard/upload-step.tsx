@@ -183,6 +183,7 @@ export function UploadStep({ onProposed }: { onProposed: (proposal: MappingPropo
         <EncodingChoice
           readings={readings.data.readings}
           disabled={propose.isPending}
+          description={t('wizard.upload.encoding.description')}
           onChoose={(encoding) => {
             send(form.getValues(), encoding);
           }}

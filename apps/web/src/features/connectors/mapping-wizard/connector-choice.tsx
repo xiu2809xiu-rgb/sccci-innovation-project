@@ -1,4 +1,9 @@
-import { ENTITY_CODES, entityCodeSchema, type MappingProposal } from '@huitong/shared';
+import {
+  ENTITY_CODES,
+  entityCodeSchema,
+  statusAllowsSync,
+  type MappingProposal,
+} from '@huitong/shared';
 import { useId } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -29,8 +34,11 @@ export function ConnectorChoice({ proposal, value, onChange }: ConnectorChoicePr
   const labels = useEmployeeLabels();
   const ids = { new: useId(), existing: useId(), name: useId(), nameZh: useId(), entity: useId() };
   const connectors = useConnectors();
+  // A connector being retired or turned off takes no new mapping: the API refuses it too.
   const fileConnectors = (connectors.data ?? []).filter(
-    (connector) => connector.type === 'FILE_IMPORT' || connector.id === proposal.connectorId,
+    (connector) =>
+      (connector.type === 'FILE_IMPORT' || connector.id === proposal.connectorId) &&
+      statusAllowsSync(connector.type, connector.status),
   );
   const set = (patch: Partial<ConnectorDraft>) => {
     onChange({ ...value, ...patch });
