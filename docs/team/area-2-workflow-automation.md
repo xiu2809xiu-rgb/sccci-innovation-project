@@ -91,11 +91,11 @@ sequenceDiagram
 **Decisions that are yours** (record each in an ADR or an assumption when you make it):
 
 - **One instance per hire.** HR's entry is per hire, so one instance per hire is the natural fit. If one intranet approval covers two hires (the mock's OA-2026-000101 asks for two), it prefills two entries.
-- **Parallel admin steps.** The seeded definition runs laptop, desk and accounts one after another. In practice they run side by side, which needs more than one current step.
-- **When an SLA clock starts.** The sample counts each step from its start. Admin preparation is better anchored to the requested day one ("three working days before"). Decide calendar or working hours too: working hours need the public-holiday calendar that area 3 counts working days with ([A-36](../assumptions.md)).
+- **Parallel admin steps.** The seeded definition runs laptop, desk and accounts one after another. In practice they run side by side, which needs more than one current step. _For now (C-2): one step at a time, as the definition lists them. Parallel steps are a later extension of the state machine._
+- **When an SLA clock starts.** The sample counts each step from its start. Admin preparation is better anchored to the requested day one ("three working days before"). Decide calendar or working hours too: working hours need the public-holiday calendar that area 3 counts working days with ([A-36](../assumptions.md)). _For now (C-2): a task is due `slaHours` calendar hours after its step starts._
 - **CN01 hires.** The definition is Singapore's (its HR steps go to `HR_SG`). Whether HQ's own hires run through HuiTong, and with which roles, is a question for the client (Q-32, Q-33, Q-59).
 - **The Treasury threshold.** One amount in SGD is the working assumption ([A-63](../assumptions.md)). Where it is configured (the tenant configuration, A-12, is a natural home), who may change it, whether a claim at exactly the threshold needs Treasury (the stories read "above" as strictly greater), and whether Treasury approves in HuiTong or in the intranet are yours to settle with Q-60.
-- **A cancelled approval** stops the workflow and flags the started tasks (failure matrix; Q-35).
+- **A cancelled approval** stops the workflow and flags the started tasks (failure matrix; Q-35). _For now (C-2): a task someone has picked up is blocked with the reason, and a task nobody has picked up is skipped. Q-35 may change what counts as started._
 
 ## Step-by-step build plan
 
@@ -112,6 +112,30 @@ sequenceDiagram
 11. **Switch on your end-to-end steps.** Turn off `fixme` for steps 2, 3, 4 and 7 in [`hero-journey.spec.ts`](../../apps/web/e2e/hero-journey.spec.ts) in the pull request that makes each pass.
 
 Lifecycle event names are yours to fix. We suggest `workflow.instance.started`, `workflow.instance.completed`, `workflow.task.overdue` and `workflow.milestones.met`, added to `DOMAIN_EVENTS` and documented here.
+
+## Patterns in area 2
+
+Area 2's entries for the [design patterns register](../architecture/patterns.md), in the same format: what the pattern is, why it earns its place here, where it lives and how to extend it. Each is added as it is built, and copied into the register in a small pull request reviewed by area 1.
+
+### State machine
+
+**What.** A workflow instance is always in exactly one status, and a table lists which status may move to which. Every change goes through that table, so an illegal change is refused in one place.
+
+**Why here.** The board, the API, the queue jobs and the SLA timers all change workflows. If each decided for itself what is legal, they would disagree, for example a retried job completing a workflow that HR had just cancelled. With one table, `COMPLETED`, `FAILED` and `CANCELLED` are final for every caller.
+
+**Where.** [`WorkflowStateMachine`](../../apps/api/src/modules/workflows/workflow-state-machine.ts) runs one version of a definition, one step after another. Its commands (`start`, `completeTask`, `pause`, `resume`, `fail`, `cancel`) take the instance's current state and the time, and return the new state plus the transitions that happened (`task.completed`, `instance.cancelled` and so on). It changes nothing it is given, saves nothing, and calls no Prisma. An illegal command throws a 409 `ConflictError`. The service saves the new state and audits each transition in one transaction. The transition table is `INSTANCE_TRANSITIONS`:
+
+| From        | May move to                                   |
+| ----------- | --------------------------------------------- |
+| `RUNNING`   | `WAITING`, `COMPLETED`, `FAILED`, `CANCELLED` |
+| `WAITING`   | `RUNNING`, `FAILED`, `CANCELLED`              |
+| `COMPLETED` | nothing                                       |
+| `FAILED`    | nothing                                       |
+| `CANCELLED` | nothing                                       |
+
+Its other rules: only the current step's task can be completed, and only from `PENDING` or `IN_PROGRESS`; completing the last step completes the instance; `fail` names the step that failed, is refused when that step is no longer current (so a stale or repeated job cannot fail a later, healthy step), and blocks the step's task with the reason so the board shows where it stopped; `cancel` skips a task nobody has picked up (`PENDING`) and blocks one someone has (`IN_PROGRESS` or `BLOCKED`), so a person is flagged to undo work already under way; `pause`, `fail` and `cancel` take an optional reason (what a pause waits for, why a step failed), carried on each transition for the timeline; a definition that repeats a step key is refused; and an instance runs only on the definition version it started on. Its tests are in [`workflow-state-machine.spec.ts`](../../apps/api/src/modules/workflows/workflow-state-machine.spec.ts).
+
+**Extend.** A new status is a new row in the table and the tests for it. Parallel steps (the admin preparation) would replace the single current step with a set of open steps.
 
 ## The risks
 
