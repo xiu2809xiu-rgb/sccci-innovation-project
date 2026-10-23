@@ -25,6 +25,12 @@ export interface SystemConnector {
   readonly type: ConnectorType;
   /** Whether the adapter can pull employee records into the master. */
   readonly canFetchEmployees: boolean;
+  /**
+   * Which version of the source the last fetch read, when the source can name
+   * one (a staged file's SHA-256). The change digest includes it, so an apply
+   * writes only from the very data its preview saw.
+   */
+  readonly sourceVersion?: string | null;
   checkHealth(): Promise<ConnectorHealth>;
   /** Every employee, a page at a time. */
   fetchEmployees(): AsyncIterable<ExternalRecord[]>;

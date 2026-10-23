@@ -16,13 +16,22 @@ import { QUEUES } from '../../../infrastructure/queues/queue-names.js';
 import { MappingConfigsRepository } from '../../mapping/mapping-configs.repository.js';
 import { ConnectorFactory } from '../connector-factory.js';
 import { ConnectorsRepository } from '../connectors.repository.js';
+import { FileImportService } from '../imports/file-import.service.js';
 import { EmployeeSyncPipeline } from './employee-sync.pipeline.js';
+import type { SystemConnector } from '../adapters/system-connector.js';
+import { retryCanHelp, withRetries } from './retry-policy.js';
 import { SourceChangedError, type SyncSummary } from './sync-pipeline.js';
-import { SyncProgressReporter } from './sync-progress.reporter.js';
+import { SyncProgressReporter, type RunIdentity } from './sync-progress.reporter.js';
 import { SyncRunsRepository } from './sync-runs.repository.js';
 import type { SyncJobData } from './sync.service.js';
 
 const TERMINAL = new Set<SyncRunStatus>(['SUCCEEDED', 'PARTIAL', 'FAILED']);
+
+/** What a completed pipeline hands to the bookkeeping: its summary, and the adapter it read. */
+interface PipelineDone {
+  summary: SyncSummary;
+  adapter: SystemConnector;
+}
 
 function statusOf(summary: SyncSummary): SyncRunStatus {
   if (summary.counts.errors === 0) return 'SUCCEEDED';
@@ -47,6 +56,7 @@ export class SyncProcessor extends WorkerHost {
     private readonly progress: SyncProgressReporter,
     private readonly audit: AuditLogService,
     private readonly realtime: RealtimeService,
+    private readonly fileImports: FileImportService,
     private readonly logger: PinoLogger,
   ) {
     super();
@@ -68,39 +78,91 @@ export class SyncProcessor extends WorkerHost {
     await this.runs.markRunning(run.id, attempt);
 
     try {
-      const connector = await this.connectors.findById(run.connectorId);
-      const mapping = run.mappingConfigId
-        ? await this.mappings.findById(run.mappingConfigId)
-        : null;
-      if (!connector || !mapping)
-        throw new Error('The connector or its mapping version no longer exists');
-
-      const summary = await this.pipeline.run({
-        run: identity,
-        meta,
-        connector: this.factory.create(connector),
-        mappings: mapping.mappings,
-        ...(run.previewRunId
-          ? { expectedChanges: await this.changesPreviewed(run.previewRunId) }
-          : {}),
-      });
-      const status = statusOf(summary);
-      await this.runs.recordFailures(run.id, summary.failures);
-      const preview = run.mode === 'PREVIEW';
-      await this.runs.finish(run.id, {
-        status,
-        counts: summary.counts,
-        preview: preview ? summary.preview.slice(0, MAX_PREVIEW_ITEMS) : null,
-        previewTruncated: summary.preview.length > MAX_PREVIEW_ITEMS,
-        changeDigest: preview ? summary.changeDigest : null,
-      });
-      this.announce(identity, status, summary.counts, status === 'FAILED');
-    } catch (error) {
-      await this.fail(job, identity, meta, attempt, error);
-      // Retrying cannot bring back the data the preview saw: HR previews again.
-      throw error instanceof SourceChangedError ? new UnrecoverableError(error.message) : error;
+      let done: PipelineDone;
+      try {
+        done = await this.runPipeline(run, identity, meta);
+      } catch (error) {
+        await this.fail(job, identity, meta, attempt, error);
+        // Only a failure a retry could fix goes back to BullMQ to be tried again.
+        throw retryCanHelp(error)
+          ? error
+          : new UnrecoverableError(error instanceof Error ? error.message : String(error));
+      }
+      await this.settle(identity, done, meta);
     } finally {
       this.progress.forget(run.id);
+    }
+  }
+
+  private async runPipeline(
+    run: { connectorId: string; mappingConfigId: string | null; previewRunId: string | null },
+    identity: RunIdentity,
+    meta: RequestMeta,
+  ): Promise<PipelineDone> {
+    const connector = await this.connectors.findById(run.connectorId);
+    const mapping = run.mappingConfigId ? await this.mappings.findById(run.mappingConfigId) : null;
+    if (!connector || !mapping)
+      throw new Error('The connector or its mapping version no longer exists');
+    const adapter = this.factory.create(connector);
+    const summary = await this.pipeline.run({
+      run: identity,
+      meta,
+      connector: adapter,
+      mappings: mapping.mappings,
+      ...(run.previewRunId
+        ? { expectedChanges: await this.changesPreviewed(run.previewRunId) }
+        : {}),
+    });
+    return { summary, adapter };
+  }
+
+  /**
+   * Records a run the pipeline completed. Its changes are written by now, so a
+   * failure here is tried again in place, never by running the pipeline again;
+   * should it still fail, the run is left for SyncRecovery to settle.
+   */
+  private async settle(
+    identity: RunIdentity,
+    { summary, adapter }: PipelineDone,
+    meta: RequestMeta,
+  ) {
+    const status = statusOf(summary);
+    const preview = identity.mode === 'PREVIEW';
+    try {
+      await withRetries(() => this.runs.recordFailures(identity.id, summary.failures));
+      // Before the run is marked finished: whoever sees it finished sees the connector up to date.
+      if (!preview && status !== 'FAILED' && adapter.sourceVersion) {
+        await this.afterFileImport(identity.connectorId, adapter.sourceVersion, meta);
+      }
+      await withRetries(() =>
+        this.runs.finish(identity.id, {
+          status,
+          counts: summary.counts,
+          preview: preview ? summary.preview.slice(0, MAX_PREVIEW_ITEMS) : null,
+          previewTruncated: summary.preview.length > MAX_PREVIEW_ITEMS,
+          changeDigest: preview ? summary.changeDigest : null,
+        }),
+      );
+      this.announce(identity, status, summary.counts, status === 'FAILED');
+    } catch (error) {
+      this.logger.error({ err: error, syncRunId: identity.id }, 'sync done but not recorded');
+    }
+  }
+
+  /**
+   * The applied file is no longer needed, and a draft connector becomes active.
+   * The changes are already in the master, so a failure here is logged, not
+   * thrown: the staged file expires on its own, and a draft can still import.
+   */
+  private async afterFileImport(
+    connectorId: string,
+    sha256: string,
+    meta: RequestMeta,
+  ): Promise<void> {
+    try {
+      await this.fileImports.afterApply(connectorId, sha256, meta);
+    } catch (error) {
+      this.logger.warn({ err: error, connectorId }, 'file import clean-up failed');
     }
   }
 
@@ -117,7 +179,7 @@ export class SyncProcessor extends WorkerHost {
     error: unknown,
   ): Promise<void> {
     const sourceChanged = error instanceof SourceChangedError;
-    const final = sourceChanged || attempt >= (job.opts.attempts ?? 1);
+    const final = !retryCanHelp(error) || attempt >= (job.opts.attempts ?? 1);
     const code = sourceChanged ? error.code : error instanceof AppError ? error.code : 'INTERNAL';
     const message =
       sourceChanged || error instanceof AppError ? error.message : 'The sync stopped unexpectedly';

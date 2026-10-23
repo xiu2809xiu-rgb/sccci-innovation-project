@@ -23,6 +23,15 @@ export class ConnectorsRepository {
     });
   }
 
+  /** Makes a draft connector active; false when it was not a draft. */
+  async activateDraft(id: string): Promise<boolean> {
+    const { count } = await this.prisma.connector.updateMany({
+      where: { id, status: 'DRAFT' },
+      data: { status: 'ACTIVE' },
+    });
+    return count > 0;
+  }
+
   displayNames(userIds: readonly string[]) {
     return this.prisma.user.findMany({
       where: { id: { in: [...userIds] } },

@@ -4,6 +4,8 @@ import {
   proposalColumnSchema,
   proposalFixedValueSchema,
   REALTIME_EVENTS,
+  statusAllowsSync,
+  suggestedMappings,
   type ApproveProposalRequest,
   type CreateProposalFields,
   type FieldMapping,
@@ -11,7 +13,6 @@ import {
   type MappingProposalStatus,
   type ProposalColumn,
   type RejectProposalRequest,
-  suggestedMappings,
 } from '@huitong/shared';
 import { z } from 'zod';
 
@@ -22,6 +23,7 @@ import {
 } from '../../../common/errors/app-error.js';
 import type { AuthenticatedUser } from '../../../common/http/authenticated-user.js';
 import type { RequestMeta } from '../../../common/http/request-meta.js';
+import { safeFileName } from '../../../common/http/safe-file-name.js';
 import { AuditLogService } from '../../../infrastructure/audit/audit-log.service.js';
 import { canonicalJson } from '../../../infrastructure/audit/canonical-json.js';
 import { RealtimeService } from '../../../infrastructure/events/realtime.service.js';
@@ -37,11 +39,6 @@ const storedSchema = z.object({
 });
 
 type ProposalRow = NonNullable<Awaited<ReturnType<MappingProposalsRepository['findById']>>>;
-
-function safeFileName(name: string): string {
-  const base = name.split(/[\\/]/).pop() ?? 'sample';
-  return base.replace(/[^\p{L}\p{N}._ -]/gu, '_').slice(0, 120) || 'sample';
-}
 
 function slug(text: string): string {
   return text
@@ -90,7 +87,7 @@ export class MappingProposalsService {
         [{ path: 'file', message: 'Attach a sample file' }],
         'Attach a sample file',
       );
-    if (fields.connectorId && !(await this.proposals.connectorExists(fields.connectorId))) {
+    if (fields.connectorId && !(await this.proposals.connectorById(fields.connectorId))) {
       throw new NotFoundError(`Connector ${fields.connectorId}`);
     }
     const sample = await this.reader.read(file, fields.encoding);
@@ -107,7 +104,7 @@ export class MappingProposalsService {
       connectorId: fields.connectorId ?? null,
       sourceSystemName: fields.sourceSystemName,
       entityCode: fields.entityCode ?? null,
-      fileName: safeFileName(file.originalname),
+      fileName: safeFileName(file.originalname, 'sample'),
       headers: sample.headers,
       sampleRowCount: sample.rows.length,
       proposals: { columns: suggestion.columns, fixedValues: suggestion.fixedValues },
@@ -159,8 +156,13 @@ export class MappingProposalsService {
     await this.proposals.transaction(async (tx) => {
       let connectorId: string;
       if (target.kind === 'existing') {
-        if (!(await this.proposals.connectorExists(target.connectorId, tx))) {
-          throw new NotFoundError(`Connector ${target.connectorId}`);
+        const existing = await this.proposals.connectorById(target.connectorId, tx);
+        if (!existing) throw new NotFoundError(`Connector ${target.connectorId}`);
+        // A connector being retired or turned off takes no new mapping, as it takes no file.
+        if (!statusAllowsSync(existing.type, existing.status)) {
+          throw new ConflictError(
+            `${target.connectorId} is ${existing.status.toLowerCase()}, so it takes no new mapping`,
+          );
         }
         connectorId = target.connectorId;
       } else {
@@ -297,7 +299,7 @@ export class MappingProposalsService {
     const base = `file-${slug(name) || 'import'}`;
     for (let suffix = 1; suffix < 100; suffix += 1) {
       const id = suffix === 1 ? base : `${base}-${String(suffix)}`;
-      if (!(await this.proposals.connectorExists(id, tx))) return id;
+      if (!(await this.proposals.connectorById(id, tx))) return id;
     }
     throw new ConflictError('Could not find a free connector id for this system');
   }

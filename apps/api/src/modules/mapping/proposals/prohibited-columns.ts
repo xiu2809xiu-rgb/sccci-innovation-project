@@ -24,11 +24,9 @@ const NATIONAL_ID_HEADERS: readonly RegExp[] = [
 /** Gender is decided by header only: values such as M and F mean too many other things. */
 const GENDER_HEADERS: readonly RegExp[] = [/\bgender\b/i, /\bsex\b/i, /\bjantina\b/i, /性别/];
 
-const NATIONAL_ID_VALUES: readonly RegExp[] = [
-  /^[STFGM]\d{7}[A-Z]$/i, // Singapore NRIC / FIN
-  /^\d{6}-?\d{2}-?\d{4}$/, // Malaysian MyKad
-  /^\d{17}[\dX]$/i, // PRC resident identity card
-];
+const SG_NRIC = /^[STFGM]\d{7}[A-Z]$/i; // Singapore NRIC / FIN
+const MY_MYKAD = /^\d{6}-?\d{2}-?\d{4}$/; // Malaysian MyKad
+const CN_RESIDENT_ID = /^\d{17}[\dX]$/i; // PRC resident identity card
 
 export interface ProhibitedCheck {
   prohibited: boolean;
@@ -36,19 +34,30 @@ export interface ProhibitedCheck {
   reason: 'HEADER' | 'VALUES' | null;
 }
 
-export function checkProhibited(header: string, values: readonly unknown[]): ProhibitedCheck {
+/**
+ * Whether one cell has the shape of a national ID number. In a phone column
+ * the MyKad shape is left out: a Malaysian number with its country code has
+ * the same twelve digits.
+ */
+export function looksLikeNationalId(value: unknown, { phone = false } = {}): boolean {
+  if (typeof value !== 'string' && typeof value !== 'number') return false;
+  const text = String(value).trim();
+  return SG_NRIC.test(text) || CN_RESIDENT_ID.test(text) || (!phone && MY_MYKAD.test(text));
+}
+
+export function checkProhibited(
+  header: string,
+  values: readonly unknown[],
+  { phone = false } = {},
+): ProhibitedCheck {
   if (NATIONAL_ID_HEADERS.some((pattern) => pattern.test(header)))
     return { prohibited: true, kind: 'NATIONAL_ID', reason: 'HEADER' };
   if (GENDER_HEADERS.some((pattern) => pattern.test(header)))
     return { prohibited: true, kind: 'GENDER', reason: 'HEADER' };
-  const texts = values
-    .filter(
-      (value): value is string | number => typeof value === 'string' || typeof value === 'number',
-    )
-    .map(String);
-  const matching = texts.filter((text) =>
-    NATIONAL_ID_VALUES.some((pattern) => pattern.test(text.trim())),
-  ).length;
+  const texts = values.filter(
+    (value): value is string | number => typeof value === 'string' || typeof value === 'number',
+  );
+  const matching = texts.filter((text) => looksLikeNationalId(text, { phone })).length;
   if (texts.length > 0 && matching / texts.length >= 0.5)
     return { prohibited: true, kind: 'NATIONAL_ID', reason: 'VALUES' };
   return { prohibited: false, kind: null, reason: null };

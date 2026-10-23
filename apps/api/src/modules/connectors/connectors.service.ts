@@ -1,13 +1,16 @@
 import { Injectable } from '@nestjs/common';
 import {
   mappingSetSchema,
+  statusAllowsSync,
   type ConnectorDetail,
   type ConnectorSummary,
   type EntityCode,
   type HealthCheckResult,
   type HealthStatus,
   type MappingConfig,
+  type StagedImport,
 } from '@huitong/shared';
+import { PinoLogger } from 'nestjs-pino';
 
 import { NotFoundError } from '../../common/errors/app-error.js';
 import type { RequestMeta } from '../../common/http/request-meta.js';
@@ -16,6 +19,7 @@ import { AuditLogService } from '../../infrastructure/audit/audit-log.service.js
 import { MappingConfigsRepository } from '../mapping/mapping-configs.repository.js';
 import { ConnectorFactory } from './connector-factory.js';
 import { ConnectorsRepository } from './connectors.repository.js';
+import { StagedImportStore, StagedImportUnavailableError } from './imports/staged-import.store.js';
 import { syncRunView } from './sync/sync-run.view.js';
 import { SyncRunsRepository } from './sync/sync-runs.repository.js';
 import { SyncService } from './sync/sync.service.js';
@@ -42,7 +46,11 @@ export class ConnectorsService {
     private readonly factory: ConnectorFactory,
     private readonly sync: SyncService,
     private readonly audit: AuditLogService,
-  ) {}
+    private readonly staged: StagedImportStore,
+    private readonly logger: PinoLogger,
+  ) {
+    this.logger.setContext(ConnectorsService.name);
+  }
 
   async list(): Promise<ConnectorSummary[]> {
     const rows = await this.connectors.list();
@@ -115,7 +123,15 @@ export class ConnectorsService {
       this.mappings.activeVersions(ids),
     ]);
     const refs = await this.sync.references([...latest.values()]);
+    const stagedFiles = new Map(
+      await Promise.all(
+        rows
+          .filter((row) => row.type === 'FILE_IMPORT')
+          .map(async (row) => [row.id, await this.stagedSummary(row.id)] as const),
+      ),
+    );
     return rows.map((row) => {
+      const stagedImport = stagedFiles.get(row.id) ?? null;
       const run = latest.get(row.id);
       return {
         id: row.id,
@@ -127,7 +143,8 @@ export class ConnectorsService {
         status: row.status,
         isMock: row.isMock,
         capabilities: row.capabilities,
-        syncable: this.factory.create(row).canFetchEmployees,
+        syncable: this.syncable(row, versions.get(row.id) ?? null, stagedImport),
+        stagedImport,
         lastSyncAt: row.lastSyncAt?.toISOString() ?? null,
         lastHealthCheckAt: row.lastHealthCheckAt?.toISOString() ?? null,
         lastHealthStatus: (row.lastHealthStatus as HealthStatus | null) ?? null,
@@ -135,5 +152,27 @@ export class ConnectorsService {
         latestRun: run ? syncRunView(run, refs) : null,
       };
     });
+  }
+
+  /**
+   * Whether Sync now is offered: the same rules SyncService.start enforces. A
+   * live system syncs whenever its adapter can pull; a file connector only with
+   * a file staged for its active mapping version.
+   */
+  private syncable(row: Connector, version: number | null, staged: StagedImport | null): boolean {
+    if (!this.factory.create(row).canFetchEmployees) return false;
+    if (!statusAllowsSync(row.type, row.status)) return false;
+    return row.type !== 'FILE_IMPORT' || (version !== null && staged?.mappingVersion === version);
+  }
+
+  /** A file connector's staged file; a page still loads, without it, when Redis does not answer. */
+  private async stagedSummary(connectorId: string): Promise<StagedImport | null> {
+    try {
+      return (await this.staged.summary(connectorId))?.summary ?? null;
+    } catch (error) {
+      if (!(error instanceof StagedImportUnavailableError)) throw error;
+      this.logger.warn({ connectorId }, 'staged file unknown: Redis did not answer in time');
+      return null;
+    }
   }
 }
