@@ -22,7 +22,7 @@ The register CLAUDE.md section 7 asks for: each design pattern HuiTong uses, why
 
 **Why here.** SG HR, CN HQ's SAP and OA differ in authentication, paging, field names and date formats, and the real systems are unknown until the client meeting. The sync code sees only [`SystemConnector`](../../apps/api/src/modules/connectors/adapters/system-connector.ts) (`checkHealth`, `fetchEmployees`), so replacing a mock with the real system is one class.
 
-**Where.** [`adapters/`](../../apps/api/src/modules/connectors/adapters/): `SgHrRestConnector`, `CnHqSapConnector`, `OaWebhookConnector` and `OfflineConnector`.
+**Where.** [`adapters/`](../../apps/api/src/modules/connectors/adapters/): `SgHrRestConnector`, `CnHqSapConnector`, `OaWebhookConnector`, `FileImportConnector` (a staged file, read through the approved mapping) and `OfflineConnector`.
 
 **Extend.** Implement `SystemConnector` for the new system, validate its responses with a zod schema (through `HttpJsonClient`), and register it in the factory.
 

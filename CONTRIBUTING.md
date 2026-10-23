@@ -45,7 +45,7 @@ The integration tests need PostgreSQL and Redis (`docker compose up -d postgres 
 
 ## Adding a connector
 
-Implement `SystemConnector` in `apps/api/src/modules/connectors/adapters/`, register its type in `connector-factory.ts`, keep credentials in the typed config (never in the database), and add a baseline mapping and its tests. A new subsidiary that only exports files needs no adapter: its mapping comes from a sample file through the AI mapping wizard, and HR approves it before use. Importing the full file through that mapping is story A-5.
+Implement `SystemConnector` in `apps/api/src/modules/connectors/adapters/`, register its type in `connector-factory.ts`, keep credentials in the typed config (never in the database), and add a baseline mapping and its tests. A new subsidiary that only exports files needs no adapter: its mapping comes from a sample file through the AI mapping wizard, and HR approves it before use. HR then stages the whole export on the connector's page, and a sync imports it through that mapping (story A-5).
 
 ## Adding a React Bits item
 

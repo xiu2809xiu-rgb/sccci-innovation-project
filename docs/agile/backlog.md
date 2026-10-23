@@ -151,11 +151,11 @@ Each of LESSO Solar's systems (INFO-TECH, the customised SAP and the HQ intranet
 | [A-2](#a-2-sync-cn-hq-sap-records-with-chinese-fields)                          | Sync CN HQ (SAP) records with Chinese fields                            | 1      | 8      | Must     | Done (`feat/area1-integration-api`) |
 | [A-3](#a-3-receive-oa-approval-webhooks-safely)                                 | Receive OA approval webhooks safely                                     | 1      | 5      | Must     | Done (`feat/area1-integration-api`) |
 | [A-4](#a-4-connectors-page-status-health-settings-mapping-versions-and-history) | Connectors page: status, health, settings, mapping versions and history | 1      | 5      | Must     | Done (`feat/area1-connectors-page`) |
-| [A-5](#a-5-import-another-companys-file-through-its-approved-mapping)           | Import another company's file through its approved mapping              | 6      | 8      | Should   | Planned                             |
+| [A-5](#a-5-import-another-companys-file-through-its-approved-mapping)           | Import another company's file through its approved mapping              | 6      | 8      | Should   | Done (`feat/area1-file-import`)     |
 | [A-6](#a-6-3d-integration-map-driven-by-live-sync-events)                       | 3D integration map driven by live sync events                           | 4      | 8      | Should   | Done (`feat/integration-map-scene`) |
 | [A-7](#a-7-read-chinese-csv-encodings-safely)                                   | Read Chinese CSV encodings safely                                       | 1      | 3      | Must     | Done (`feat/area1-csv-encodings`)   |
 | [A-8](#a-8-label-mocked-systems-and-the-mock-ai)                                | Label mocked systems and the mock AI                                    | 1      | 2      | Must     | Done (`feat/area1-mock-labels`)     |
-| [A-9](#a-9-info-tech-like-sg-hr-mock-with-info-tech-style-exports)              | INFO-TECH-like SG HR mock with INFO-TECH-style exports                  | 3      | 5      | Must     | Planned                             |
+| [A-9](#a-9-info-tech-like-sg-hr-mock-with-info-tech-style-exports)              | INFO-TECH-like SG HR mock with INFO-TECH-style exports                  | 3      | 5      | Must     | Done (`feat/area1-file-import`)     |
 | [A-10](#a-10-hq-intranet-mock-news-policies-claims-and-approvals)               | HQ intranet mock: news, policies, claims and approvals                  | 3      | 5      | Must     | Planned                             |
 | [A-11](#a-11-larkfeishu-notification-adapter-mocked-beside-dingtalk)            | Lark/Feishu notification adapter (mocked) beside DingTalk               | 4      | 3      | Should   | Planned                             |
 | [A-12](#a-12-tenant-configuration-another-company-joins-by-configuration)       | Tenant configuration: another company joins by configuration            | 6      | 5      | Should   | Planned                             |
@@ -250,7 +250,7 @@ As the team, we want the Singapore mock to behave like INFO-TECH, with its emplo
 **Acceptance criteria**
 
 - Given the mock, when an export is requested, then employees, leave and payroll come as CSV or Excel with English headers and DD/MM/YYYY dates (assumption A-59).
-- Given an export, when HuiTong imports it, then it goes through the mapping engine, so a real export can replace it with only a mapping change.
+- Given the employee export, when HuiTong imports it, then it goes through the mapping engine, so a real export can replace it with only a mapping change. The leave and payroll exports feed area 3's leave ingestion (D-1) and single view (D-6).
 - Given any screen that shows the mock, when it is displayed, then it is labelled "Mock".
 
 ### A-10: HQ intranet mock: news, policies, claims and approvals

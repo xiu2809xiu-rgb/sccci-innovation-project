@@ -83,3 +83,12 @@ Adopted from Azri's integrated plan (prompt 002, story B-7). Clearance rules dec
 - The seed's SG01 to CN01 entry no longer covers dates of birth (data minimisation, Q-08): HR_HQ sees them withheld, though its clearance would allow them. This is the demonstration for E2E #3.
 - A new subsidiary's records stay invisible to other entities until a register entry covers them; connecting MY01 (story A-5) includes its entry.
 - Opening another entity's record writes an audit event, which is also the start of the access log that PIPL-style accountability expects.
+
+## Amendment, 23 Oct 2026: a joining company's register entry
+
+The amendment above says that connecting MY01 (story A-5) includes its register entry. The import built in A-5 does not create one. An entry records a decision of the data owner and the DPO, which area 4's register administration (F-4) captures; an upload is not that decision.
+
+**Consequences.**
+
+- Until an ACTIVE entry from the new entity covers them, its imported records stay invisible to HR in every other entity, including the HR who imported them. [`file-import.int-spec.ts`](../../apps/api/test/file-import.int-spec.ts) shows both sides: none of the records without an entry, and only the shared fields with one.
+- The seed has no MY01 entry, so E2E #2 ends with the records in the master and none of them shown in Singapore or at HQ. No one can add that entry until area 4's register administration (F-4) lands, so a demo cannot show them yet; the integration test inserts an entry directly.
