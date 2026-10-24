@@ -92,3 +92,7 @@ The amendment above says that connecting MY01 (story A-5) includes its register 
 
 - Until an ACTIVE entry from the new entity covers them, its imported records stay invisible to HR in every other entity, including the HR who imported them. [`file-import.int-spec.ts`](../../apps/api/test/file-import.int-spec.ts) shows both sides: none of the records without an entry, and only the shared fields with one.
 - The seed has no MY01 entry, so E2E #2 ends with the records in the master and none of them shown in Singapore or at HQ. No one can add that entry until area 4's register administration (F-4) lands, so a demo cannot show them yet; the integration test inserts an entry directly.
+
+## Amendment, 24 Oct 2026: statement #5
+
+Statement #5 ([ADR 0023](0023-retarget-ps5-aspri-ipi.md)) keeps the sessions, RBAC and masking, and changes the roles. `ASSESSOR`, `OPERATIONS`, `TRAINING_MANAGER`, `MANAGEMENT`, `AUDITOR` and `SYSTEM_ADMIN` replace the seven HR roles: the new roles are added first, and the HR roles and their entity scopes leave once no area uses them. The per-destination allowlist (amendment of 21 Oct) becomes a per-agency allowlist: an agency receives only the fields that an ACTIVE entry shares with it.

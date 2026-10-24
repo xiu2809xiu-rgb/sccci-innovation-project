@@ -67,3 +67,7 @@ No mock serves national ID numbers or gender. The MY01 sample carries an identit
 | Random data on every request (Faker at run time) | Tests become non-deterministic, and the same person would not match across systems                                  |
 | Vendor sandboxes                                 | Not available before the client meeting (Q-15); the adapters switch to them when they are                           |
 | Client data exports                              | Ruled out: synthetic data only. Q-50 asks for structures, not records                                               |
+
+## Amendment, 24 Oct 2026: statement #5
+
+Statement #5 ([ADR 0023](0023-retarget-ps5-aspri-ipi.md)) keeps separate Express mock services fed by one synthetic dataset, and replaces the three above. `mock-tms` stands in for the Training Management System (courses, runs, trainees and results, through an API and CSV exports); an agency API mock acknowledges submissions asynchronously; and an agency portal mock accepts the MOM and ITE submission files and returns a validation report. The dataset becomes process-industry courses with their criteria, and trainees, assessors and runs at the brief's volumes. The table above describes the mocks that run until prompt 005's mocks step replaces them.

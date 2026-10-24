@@ -65,3 +65,7 @@ The infrastructure-as-code tool is area 4's choice, recorded in its own ADR. The
 | AWS Lambda with API Gateway                 | A poor fit for NestJS with BullMQ workers and long-lived SSE streams                                                                                                                                                                        |
 | Hosting platforms such as Render or Railway | Less control over region, network isolation and data residency, and not where the client's IT would run it                                                                                                                                  |
 | Alibaba Cloud or Azure                      | Credible for the client (Alibaba Cloud in China; Azure if the Singapore office runs on Microsoft 365, which is to confirm). `CLAUDE.md` fixes AWS for the PoC, and the containers are portable if the client chooses otherwise (Q-37, Q-55) |
+
+## Amendment, 24 Oct 2026: statement #5
+
+Under statement #5 ([ADR 0023](0023-retarget-ps5-aspri-ipi.md)) the client, its trainees and the agencies are all in Singapore, so point 4 (China-side data) no longer applies. A production deployment in AWS's Singapore region keeps trainees' data in Singapore; a service outside it falls under the PDPA's Transfer Limitation Obligation.

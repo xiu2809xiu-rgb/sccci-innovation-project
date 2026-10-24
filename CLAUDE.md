@@ -8,12 +8,12 @@
 
 ## 1. What this project is
 
-**HuiTong 汇通** (working name: "converge and connect") is an HR and administration **integration and workflow layer** for LESSO Solar, the solar division of LESSO Group, which runs a regional hub in Singapore and its HQ in China. It connects the systems each side already uses, so approved data is entered once and flows between them securely, instead of people re-entering it in each system.
+**HuiTong 汇通** (working name: "converge and connect") is an **assessment capture and integration layer** for ASPRI-IPI, the training arm of the Association of Process Industry in Singapore. Assessors record a practical assessment once, on a tablet; HuiTong calculates each trainee's competency from the course's rules and carries the verified results into the Training Management System (TMS) and on to the government portals, through an agency's API where one exists and as an agency-specific submission file where it does not.
 
 - **Module:** IT2134 IT Innovation Project, Diploma in IT, Nanyang Polytechnic, AY2026 Semester 2 (19 Oct 2026 to Feb 2027)
 - **Theme:** SCCCI x NYP AI Innovation Challenge
-- **Client:** LESSO Solar (solar and renewable energy, part of LESSO Group), Problem Statement **#7**. It replaced #17 (Organisation E, financial services) on 22 Oct 2026 (`docs/adr/0022-final-statement-7-lesso-solar.md`).
-- **Team:** 4 Year-2 students: Richie (team lead), Iok Teck, Azri, Angelyn. Ownership areas are at the end of section 4.
+- **Client:** ASPRI-IPI, Problem Statement **#5**, the team's first choice after statement #7 was withdrawn on 23 Oct 2026. The final allocation is announced on 26 Oct; until then, write that #5 is the first choice, not that it was allocated (`docs/adr/0023-retarget-ps5-aspri-ipi.md`). The tag `archive/ps7-lesso-solar` keeps the repository as it stood under #7.
+- **Team:** 4 Year-2 students: Richie (team lead, area 1), Azri (area 2), Iok Teck (area 3) and Angelyn (area 4). Ownership areas are at the end of section 4.
 
 ### Assessment (this shapes how we build)
 
@@ -28,7 +28,7 @@
 
 ### Schedule anchors
 
-W2 (26 Oct) problem allocation · W3 (week of 2 Nov) briefing call with LESSO Solar · W3 project plan · W4 UI prototype · W5 proposal · W8–12 AI-assisted coding · W13 technical review · W14 observability · W15 clickstream analytics · W16 AI token usage tracking · W18 final presentation · W19 client check-in.
+W2 (26 Oct) problem allocation · W3 (week of 2 Nov) briefing call with ASPRI-IPI · W3 project plan · W4 UI prototype · W5 proposal · W8–12 AI-assisted coding · W13 technical review · W14 observability · W15 clickstream analytics · W16 AI token usage tracking · W18 final presentation · W19 client check-in.
 
 ---
 
@@ -45,38 +45,31 @@ Keep `docs/requirements-traceability.md` current: requirement → feature/contro
 
 The module's AI coding tool is AWS Kiro (used here as the IDE). Students "own every line they submit".
 
+
 ---
 
 ## 3. The problem (summary; the analysis is in `docs/problem-statement.md`)
 
-**User:** an HR professional at LESSO Solar's Singapore hub, working with China HQ.
+**Users:** the assessors who observe practical assessments in real training environments, and the operations staff who verify the results and submit them to the agencies.
 
-**Systems today**
-- **Singapore: INFO-TECH** for employee records, leave and payroll.
-- **China HQ: a customised SAP**, and an **intranet** for news, policies, claims and approvals.
+**The client today**
+- About 40 assessment runs a week, more than 30 trainers and assessors, and 2,000 to 2,400 trainees assessed a month. About 80% of the courses are WSQ (half of those MOM-regulated) and 20% are ITE courses.
+- Assessors tick paper checklists, work out each trainee's competency by hand from the detailed criteria, and re-type the results into the **Training Management System (TMS)**.
+- Operations staff check the TMS entries against the paper, then submit the results to the government portals: **MOM (AMS)**, **SSG/WSDA** and **ITE (STEP)**. Some portals have no API.
 
-**Two rules from the brief**
-- A new employee is created in HQ's SAP **before** they get intranet access.
-- Some payments need an **extra HQ Treasury approval**.
+**Where the effort goes:** consolidation and TMS entry take about 60% of the post-assessment effort, portal submissions 20%, verification 10%, rework 5% and filing 5%. At about one hour per run, that is roughly 2,000 assessor hours a year before verification and submission.
 
-**Pain points**
-- The same employee and transaction data is entered in several systems.
-- The SAP-before-intranet order and the Treasury approvals are carried between systems by people.
-- The local and HQ systems use different data structures and formats.
-- No single view of the relevant information across the systems.
-- Access-control and data-protection concerns when employee data crosses entities and countries (PDPA, PIPL).
-
-**Root cause:** the systems are digital but isolated, so task-level digitalisation never became end-to-end automation.
+**Root cause:** the assessment is captured on paper, and the rules that turn it into a result exist only as documents, so every later step re-keys and re-checks it.
 
 **What success looks like** (from the brief):
-- Data integrated or consolidated across the local and HQ systems.
-- A single view of the relevant information, with dashboards and insights.
-- Duplicate data entry minimised.
-- A layer that other Chinese companies operating in Singapore could reuse.
+- Assessors record results on tablet-based digital checklists during the assessment.
+- Competency is calculated automatically from each course's assessment rules.
+- Results flow straight into the TMS, which becomes the single source of truth.
+- Submissions go through an agency's API where one exists, and otherwise as agency-specific submission files.
 
-**Suggested starting point:** prove one flow, onboarding a new hire into both systems, using mock data exports. A Lark/Feishu or DingTalk connector is a possible extension.
+**Priorities:** capture, the competency rules and the TMS output first, because that is where most of the time is lost. Generated submission files are the safer route where a portal has no API.
 
-**Unknowns:** the systems' versions, APIs and export formats, how SAP is customised, the exact onboarding steps, the Treasury threshold, data volumes and real field lists. Until the client's sample exports arrive through the team's data folder, everything external is **mocked**, and every assumption is logged in `docs/assumptions.md`. The brief and any client sample data are never committed.
+**Unknowns:** the TMS product, its API and its export formats; each agency's channel (an API or a file) and its format; how checklists and course rules are written today; the verification steps; which trainee identifier each agency requires; the tablets and the connectivity in the training environments; the volumes per agency. Until the client's samples arrive through the team's data folder, everything external is **mocked**, and every assumption is logged in `docs/assumptions.md`. The brief and any client sample data are never committed.
 
 ---
 
@@ -87,51 +80,51 @@ The module's AI coding tool is AWS Kiro (used here as the IDE). Students "own ev
 | Role | Access |
 |---|---|
 | `SYSTEM_ADMIN` | Full system administration |
-| `HR_SG` | Singapore HR work |
-| `HR_HQ` | China HQ HR work |
-| `HIRING_MANAGER` | Hires and their onboarding progress |
-| `ADMIN_OPS` | Admin preparation tasks |
-| `MANAGEMENT` | Single view, dashboards and reports, read-only |
-| `AUDITOR` | Audit log, read-only |
+| `ASSESSOR` | Records the assessments of their own runs on a tablet; sees those runs' trainees and checklists |
+| `OPERATIONS` | Verifies results, corrects them with a reason, sends them to the TMS and the agencies, and tracks the submissions |
+| `TRAINING_MANAGER` | Owns the courses and their assessment rules; approves rules, AI drafts included |
+| `MANAGEMENT` | Dashboards and reports, read-only |
+| `AUDITOR` | Audit trail, read-only |
 
-HQ Treasury gives the extra approval for claims and payments above the threshold. Whether that is a HuiTong role or a step in the intranet is open (Q-60); area 2 decides it with the client.
+These replace the earlier statement's HR roles additively: the new roles come first, and the HR roles leave once no area uses them (ADR 0023).
 
 ### Capabilities
 
 | # | Capability | Summary |
 |---|---|---|
-| A | Connector hub | One adapter per external system behind a common `SystemConnector` interface. Mock services cover INFO-TECH (`mock-sg-hr`: employee records, leave and payroll, with INFO-TECH-style exports), the customised SAP (`mock-cn-hq`: Chinese field names and formats) and the HQ intranet (`mock-oa`: news, policies, claims and approvals, with signed webhooks), plus Excel/CSV import and the Lark/Feishu and DingTalk notification adapters (mocked). Another company joins through a tenant configuration: company name, connector set, field mappings and theme tokens. |
-| B | Canonical employee master | One consolidated employee record, with a source of truth for each field, change history, and conflict detection across systems. |
-| C | Onboarding and approval workflows | **Onboarding:** one new-hire entry (prefilled from the intranet's approval where one arrives) → a **draft** (`PRE_HIRE`) employee record in the master → the SAP and INFO-TECH records, each written after that system's data steward approves a preview → intranet access, requested only once the SAP record exists → admin preparation (laptop, desk, accounts) → notifications (Lark/Feishu or DingTalk, mocked). The record becomes active only after the onboarding milestones and the verified INFO-TECH record. **Claims and payments:** a claim or payment above a configurable threshold gets an extra HQ Treasury approval step, and nothing above it is payable before that approval. Idempotent, retried and audited. |
-| D | Single view, dashboards and insights | One consolidated view across INFO-TECH, SAP and the intranet: dashboards for headcount, joiners and leavers, leave and payroll summaries, data consistency and duplicate entry, and management insights drawn from authorised sources. Leave consolidation is one part of it: pull from SG and CN, map leave categories (e.g. 年假 ↔ Annual Leave, 病假 ↔ Sick Leave, 调休 ↔ Time-off in lieu), validate, render into the company reporting template, and export to .xlsx. |
-| E | AI assistance (human in the loop) | **Schema-mapping assistant:** proposes mappings from a new system's sample file (including Chinese headers) to the canonical model, with a confidence score and a rationale. HR approves before anything is used. **Discrepancy explainer:** explains conflicts between systems in plain English or 中文. AI never writes to systems of record without human approval. |
-| F | Governance and compliance | RBAC, field-level masking, an append-only audit log, data-classification tags, a cross-border transfer register (Singapore PDPA and China PIPL considerations), and retention settings. |
+| A | Connector hub | One adapter per external system behind a common `SystemConnector` interface. The TMS (`mock-tms`: courses, runs, trainees and results through an API and CSV exports); each agency through its API where it has one (a mock with asynchronous acknowledgement), and otherwise through a generated file delivered to its portal (a mock that validates the MOM and ITE files and returns a report), with every submission's status tracked; and Excel/CSV import through the mapping engine. Another training provider joins through a tenant configuration: its name, connector set, field mappings, course rules and theme tokens. |
+| B | Master data | Trainees, assessors, courses and course runs, with a source of truth for each field and its change history. |
+| C | Assessment capture and verification | The tablet checklist, which keeps working through a dropped connection and syncs afterwards; the run's lifecycle from planned to submitted; operations' verification queue; corrections with a reason; SLA reminders. Idempotent, retried and audited. |
+| D | Competency, submissions and insights | Course-specific rules (criteria, critical items, outcomes) as versioned configuration; automatic competency calculation; agency submission files rendered from templates; dashboards and insights for management and operations. |
+| E | AI assistance (human in the loop) | **Rule-drafting assistant:** drafts a course's rules from its assessment plan, with a confidence and a rationale, for a training manager to approve (the mapping assistant's pattern). **Mapping assistant:** proposes mappings for TMS exports and agency layouts. **Verification assistant:** flags unusual records for operations to review. AI never changes a result. |
+| F | Governance and compliance | RBAC, field-level masking, a tamper-evident audit trail of every result, correction and submission, data-classification tags, PDPA for trainee data, retention settings, and a per-agency field allowlist that denies by default (the cross-entity allowlist mechanism, reused). |
 | G | Monitoring and analytics | Observability (structured logs, traces, metrics, health checks), first-party clickstream analytics, and AI token usage and cost tracking, each with an in-app dashboard. |
 
 ### Data rules
 
 - **Synthetic data only.** All data is synthetic. Label it "Synthetic demo data" in the UI.
-- **No national ID numbers.** Never store NRIC/FIN or PRC resident ID numbers; use internal employee IDs.
-- **Masking.** Mask sensitive fields (salary, bank details, date of birth) by role.
-- **Identity matching.** Never match people on names, romanisation or name similarity alone. Only the same group employee number (or an audited HR decision) confirms that two records are one person; a look-alike name is a possible match, shown for HR to review and never merged. A work email that another employee already has is refused as a sync error.
-- **Draft before active.** A new hire's one entry creates only a draft (`PRE_HIRE`) employee record. It becomes active only after the agreed onboarding milestones and verified input from the HR system of record (INFO-TECH for Singapore). Intranet access is requested only once the SAP record exists.
-- **No identifiers to AI.** Employee identifiers (the employee number, names, work email and phone, a manager's number) and sensitive HR data are never sent to a third-party AI service without the client's written permission. Prompts carry headers, value shapes and category codes; values above INTERNAL or that identify a person are withheld.
-- **Default deny across entities.** A user sees another entity's employee data only for the fields that an ACTIVE entry in the cross-border transfer register shares with their own entity; everything else is withheld, in the API and in exports. A change to an entry raises its version and is audited.
-- **Write-back needs approval.** A write to a system of record needs an explicit, audited approval by that system's data steward after a preview. Against the client's real systems it is out of scope until the client approves it; the mocks may demonstrate it, labelled as mocks.
-- **Bilingual UI.** The UI is bilingual (English and 简体中文), switchable at runtime. No hard-coded user-facing strings.
+- **No national ID numbers.** Never store NRIC/FIN numbers; use internal trainee IDs. Real submissions need trainees' ID numbers, so how an agency file gets one is an assumption and a client question; until it is answered, generated files carry the internal trainee ID.
+- **Masking.** Mask sensitive fields (contact details, date of birth, and results outside a user's own runs) by role.
+- **Identity matching.** Match trainees on the TMS trainee ID, never on names alone. A look-alike name is a possible match, shown for review and never merged.
+- **Verified before it leaves.** A result reaches the TMS and the agencies only after operations verify it. A correction needs a reason, keeps the original value, and is audited. AI never changes a result.
+- **Rules are versioned.** A run is assessed against the version of the course rules it started with. A new version needs a training manager's approval and no code change.
+- **No identifiers to AI.** Trainee identifiers, results and other personal data are never sent to a third-party AI service without the client's written permission. The rule-drafting assistant reads a course's assessment plan, not trainee data. Prompts carry headers, value shapes and category codes; values above INTERNAL or that identify a person are withheld.
+- **Default deny per agency.** An agency receives only the fields that an ACTIVE entry in its allowlist shares; everything else is withheld, in the API and in files. A change to an entry raises its version and is audited.
+- **Write-back needs approval.** A write to the TMS or a submission to an agency needs an explicit, audited approval by operations after a preview. Against the client's real systems it is out of scope until the client approves it; the mocks may demonstrate it, labelled as mocks.
+- **Bilingual UI.** The UI is bilingual (English and 简体中文), switchable at runtime, to be confirmed at the briefing call. No hard-coded user-facing strings.
 
 ### Ownership areas (each is deep enough to earn an A)
 
 | Area | Owner | Scope |
 |---|---|---|
-| 1. Integration Core + platform base | Richie | **Platform:** architecture, monorepo, design system and app shell, auth/RBAC baseline, CI/CD, Docker, mock systems, the tenant configuration. **Integration:** connector framework (Adapter + Factory) with connectors for INFO-TECH, SAP, the intranet and Lark/DingTalk, canonical employee master with provenance, mapping engine (Strategy transformers), SG ↔ CN sync with conflict resolution, AI schema-mapping assistant, China-side systems (Chinese schemas), 3D integration map. |
-| 2. Onboarding and approval workflows | TBD | The new-hire flow into SAP and INFO-TECH from one entry, with the SAP-before-intranet rule; claims and payments with the HQ Treasury step above a configurable threshold. Workflow state machine, event-driven jobs with retries and idempotency, SLA reminders and escalations, notifications (Lark/Feishu or DingTalk, mocked), workflow board UI. |
-| 3. Single view, dashboards and insights | TBD | The consolidated cross-system view the brief asks for: leave and payroll summaries from INFO-TECH, data-consistency and duplicate-entry metrics, management dashboards and insights from multiple authorised sources. Leave consolidation is one part: attendance and leave ingestion from SG and CN, leave-category mapping rules, validation and exception reports, the company reporting-template engine, .xlsx export. |
-| 4. Governance, security and monitoring | TBD | RBAC and field-masking administration, audit-log viewer, data classification, cross-border transfer register and retention (PDPA/PIPL), OpenTelemetry tracing and metrics, clickstream analytics, AI token usage and cost dashboards, AWS deployment with CloudWatch. |
+| 1. Integration core and platform | Richie | **Platform:** architecture, monorepo, design system and app shell, auth/RBAC baseline, CI/CD, Docker, mock systems, the tenant configuration (another training provider joins by configuration). **Integration:** connector framework (Adapter + Factory) with connectors for the TMS, the agency APIs and the delivery of agency files with their submission status; master data (trainees, assessors, courses, runs) with provenance; mapping engine (Strategy transformers) for TMS exports and agency templates, with its AI assistant; the per-agency allowlist's enforcement; 3D integration map. |
+| 2. Assessment capture and verification | Azri | The tablet checklist with offline sync; the run's state machine, with Azri's workflow state machine at its core; the verification queue, with the verification assistant (proposed in ADR 0023); corrections with a reason; SLA reminders and notifications; the capture and verification screens. |
+| 3. Competency, submissions and insights | Iok Teck | Course rules (criteria, critical items, outcomes); competency calculation; the rule-drafting assistant (through the `LlmGateway`); agency submission files rendered from templates; dashboards and insights for management and operations. |
+| 4. Governance, security and monitoring | Angelyn | RBAC and field-masking administration, the audit-log viewer and audit readiness, data classification, PDPA and retention, the per-agency allowlist's administration; OpenTelemetry tracing and metrics, clickstream analytics, AI token usage and cost dashboards, AWS deployment with CloudWatch. |
 
 **Rules**
 - **Area 1 is the shared base.** Shared platform code (auth, layout, design system, API client, queues, logging, health, AI usage recording) belongs to area 1.
-- **Owners write their own domain logic.** The core domain logic of areas 2–4 is implemented by their owners. Until then, those areas get scaffolding, data models, API contracts, high-fidelity UI wired to typed mock data, test skeletons and an implementation guide (`docs/team/`), but not the owner's core logic, unless that owner asks for it.
+- **Owners write their own domain logic.** Azri, Iok Teck and Angelyn write the core logic of areas 2 to 4. A change in their folders is a pull request the owner reviews (`docs/team/module-ownership.md`). Area 1 keeps each area's implementation guide in `docs/team/` current and makes additive changes to the shared contracts, each in a pull request the owner reviews; it reworks an area's head start (scaffolding, data models, the area's API contracts, typed sample data, screens and test skeletons) only when the owner asks.
 
 ---
 
@@ -166,6 +159,8 @@ Small Express + TypeScript apps with deliberately different schemas:
 | `mock-sg-hr` | INFO-TECH-like: English field names and ISO dates in its API; UTF-8 CSV exports of employees, leave and payroll with `DD/MM/YYYY` dates (`MM/YYYY` pay periods) |
 | `mock-cn-hq` | Chinese keys, `YYYY/MM/DD` dates, SAP-like codes |
 | `mock-oa` | Approval workflows plus an HMAC-signed webhook emitter |
+
+These three are the previous statement's mocks, still running while the code is retargeted. Prompt 005 step 4 replaces them with `mock-tms`, an agency API mock and an agency portal mock (section 4, capability A; ADR 0023).
 
 **Shared (`packages/shared`)**
 - Canonical types, zod schemas, enums and i18n keys shared by web and api.
@@ -324,7 +319,7 @@ Document each pattern in `docs/architecture/patterns.md`, with file references.
 
 ## 8. UI and design rules (strict)
 
-The audience is busy HR professionals doing data-heavy work every day. The product must feel calm, trustworthy and premium: Linear or Stripe-dashboard quality, never a generic template.
+The audience is assessors recording practical assessments on tablets in real training environments, and operations staff doing data-heavy work every day. The product must feel calm, trustworthy and premium: Linear or Stripe-dashboard quality, never a generic template.
 
 ### Visual system
 
@@ -336,7 +331,7 @@ The audience is busy HR professionals doing data-heavy work every day. The produ
 - **Typography:**
   - Geist for Latin text and Noto Sans SC for Chinese, with matched sizing.
   - Tabular numerals in tables and KPIs; at most 7 type sizes; 60–80 characters per line for prose.
-- **Layout:** an 8-pt spacing grid and a 12-column responsive grid. Every page follows the same anatomy: page header → filters/actions → content. Desktop-first, fully usable at 1024 px and on tablet.
+- **Layout:** an 8-pt spacing grid and a 12-column responsive grid. Every page follows the same anatomy: page header → filters/actions → content. Desktop-first for operations and management, fully usable at 1024 px; the assessor's checklist is tablet-first, with touch targets of at least 44 px, and keeps working offline.
 
 ### Behaviour
 

@@ -28,7 +28,7 @@ In every diagram:
 
 ![Today: approvals copied from OA, exports from China HQ's HR system and SAP, and questions on the chat tools all reach HR, who re-keys the values into the Excel master and SG HR and consolidates the management reports by hand](../diagrams/current-state.svg)
 
-Every system is digital, and none of them passes data to another, so HR does: approvals are copied out of OA, the HR systems' exports arrive as CSV and Excel files with different headers and formats, and the Excel master is the only consolidated view ([the superseded statement #17](../problem-statement.md#appendix-a-the-superseded-statement-17)). The rest of this page is the layer that takes that work away.
+Every system is digital, and none of them passes data to another, so HR does: approvals are copied out of OA, the HR systems' exports arrive as CSV and Excel files with different headers and formats, and the Excel master is the only consolidated view ([the superseded statement #17](https://github.com/xiu2809xiu-rgb/sccci-innovation-project/blob/archive/ps7-lesso-solar/docs/problem-statement.md#appendix-a-the-superseded-statement-17)). The rest of this page is the layer that takes that work away.
 
 ## With HuiTong
 

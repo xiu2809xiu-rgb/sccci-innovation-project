@@ -6,7 +6,7 @@
 
 ## Context
 
-HuiTong's users work in two languages: Singapore HR mostly in English and HQ HR mostly in 中文 ([problem statement 2.4](../problem-statement.md#24-constraints)). `CLAUDE.md` requires:
+HuiTong's users work in two languages: Singapore HR mostly in English and HQ HR mostly in 中文 ([problem statement 2.4, as written for statement #7](https://github.com/xiu2809xiu-rgb/sccci-innovation-project/blob/archive/ps7-lesso-solar/docs/problem-statement.md#24-constraints)). `CLAUDE.md` requires:
 
 - a bilingual UI (English and 简体中文), switchable at runtime, with no hard-coded user-facing strings;
 - Geist for Latin text and Noto Sans SC for Chinese, with matched sizing and tabular numerals in tables and KPIs.
@@ -80,3 +80,7 @@ Every namespace was bundled into the entry chunk, so the first render always had
 - **Unchanged:** the full catalogue, [`resources.ts`](../../apps/web/src/i18n/resources.ts), still types every key and feeds the parity test. A new test checks that each namespace is either bundled or lazy, never both. No dependency is added; `i18next-resources-to-backend` would do the same in a package.
 
 A new area namespace goes into `LAZY_NAMESPACES`, unless the shell needs it at first paint.
+
+## Amendment, 24 Oct 2026: statement #5
+
+Under statement #5 ([ADR 0023](0023-retarget-ps5-aspri-ipi.md)) English and 中文 stay until the briefing call confirms which languages ASPRI-IPI's staff need. The users the context above describes are statement #7's.
