@@ -401,6 +401,8 @@ export const EPICS = [
         sprint: 3,
         points: 2,
         priority: 'must',
+        done: true,
+        deliveredBy: 'docs/area1-data-formats',
         labels: ['req: M2 GRS by design'],
         story:
           "As a developer, I want each system's export format written down, and a samples folder git ignores, so that real exports can be tried locally without ever reaching the public repository.",

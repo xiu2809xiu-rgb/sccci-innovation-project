@@ -40,7 +40,7 @@ An issue is assigned to the one person doing it. Pairing is welcome; the assigne
 
 1. **Pick** a story from the sprint, assign yourself, and move it to In Progress.
 2. **Branch** from an up-to-date `main`, one task per branch: `feat/<area>-<description>`, `fix/…`, `docs/…`, `chore/…`, `ci/…` or `test/…`.
-3. **Commit** in small Conventional Commits; the hooks run lint, format and the licence-key guard.
+3. **Commit** in small Conventional Commits; the hooks run lint, format, the licence-key guard and the samples guard.
 4. **Open a pull request** with the template filled in: `Closes #<story>`, the acceptance criteria with evidence, and screenshots for UI.
 5. **Checks.** CI, CodeQL, dependency review and the Trivy scans must be green. A finding is fixed or triaged ([security testing](../security/security-testing.md)), never ignored.
 6. **Review.** The code owner of the touched folder reviews, or the team lead for shared files. While the team lead builds the platform base alone, the lead's pull requests are checked against the Definition of Done before merging, and teammates may review them afterwards.

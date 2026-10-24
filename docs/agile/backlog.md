@@ -159,7 +159,7 @@ Each of LESSO Solar's systems (INFO-TECH, the customised SAP and the HQ intranet
 | [A-10](#a-10-hq-intranet-mock-news-policies-claims-and-approvals)               | HQ intranet mock: news, policies, claims and approvals                  | 3      | 5      | Must     | Planned                             |
 | [A-11](#a-11-larkfeishu-notification-adapter-mocked-beside-dingtalk)            | Lark/Feishu notification adapter (mocked) beside DingTalk               | 4      | 3      | Should   | Planned                             |
 | [A-12](#a-12-tenant-configuration-another-company-joins-by-configuration)       | Tenant configuration: another company joins by configuration            | 6      | 5      | Should   | Planned                             |
-| [A-13](#a-13-document-the-data-formats-keep-real-samples-out-of-git)            | Document the data formats; keep real samples out of git                 | 3      | 2      | Must     | Planned                             |
+| [A-13](#a-13-document-the-data-formats-keep-real-samples-out-of-git)            | Document the data formats; keep real samples out of git                 | 3      | 2      | Must     | Done (`docs/area1-data-formats`)    |
 
 ### A-1: Sync SG HR employees into HuiTong
 
