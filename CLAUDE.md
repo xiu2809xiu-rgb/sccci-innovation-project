@@ -76,7 +76,7 @@ The module's AI coding tool is AWS Kiro (used here as the IDE). Students "own ev
 
 **Suggested starting point:** prove one flow, onboarding a new hire into both systems, using mock data exports. A Lark/Feishu or DingTalk connector is a possible extension.
 
-**Unknowns:** the systems' versions, APIs and export formats, how SAP is customised, the exact onboarding steps, the Treasury threshold, data volumes and real field lists. Until the client's sample exports arrive through the team's data folder, everything external is **mocked**, and every assumption is logged in `docs/assumptions.md`. The brief and any client sample data are never committed.
+**Unknowns:** the systems' versions, APIs and export formats, how SAP is customised, the exact onboarding steps, the Treasury threshold, data volumes and real field lists. Until the client's sample exports arrive through the team's data folder, everything external is **mocked**, and every assumption is logged in `docs/assumptions.md`. The brief and any client sample data are never committed: samples are tried locally in the git-ignored `samples/` folder, and each system's expected formats are in `docs/data-formats.md`.
 
 ---
 
@@ -116,6 +116,7 @@ HQ Treasury gives the extra approval for claims and payments above the threshold
 - **Identity matching.** Never match people on names, romanisation or name similarity alone. Only the same group employee number (or an audited HR decision) confirms that two records are one person; a look-alike name is a possible match, shown for HR to review and never merged. A work email that another employee already has is refused as a sync error.
 - **Draft before active.** A new hire's one entry creates only a draft (`PRE_HIRE`) employee record. It becomes active only after the agreed onboarding milestones and verified input from the HR system of record (INFO-TECH for Singapore). Intranet access is requested only once the SAP record exists.
 - **No identifiers to AI.** Employee identifiers (the employee number, names, work email and phone, a manager's number) and sensitive HR data are never sent to a third-party AI service without the client's written permission. Prompts carry headers, value shapes and category codes; values above INTERNAL or that identify a person are withheld.
+- **Client samples.** The client's sample exports exist only in the git-ignored `samples/` folder and on the throwaway stack described in `docs/data-formats.md`. AI agents never open, read or search a file in `samples/` other than its README, and never put a value from one into a prompt.
 - **Default deny across entities.** A user sees another entity's employee data only for the fields that an ACTIVE entry in the cross-border transfer register shares with their own entity; everything else is withheld, in the API and in exports. A change to an entry raises its version and is audited.
 - **Write-back needs approval.** A write to a system of record needs an explicit, audited approval by that system's data steward after a preview. Against the client's real systems it is out of scope until the client approves it; the mocks may demonstrate it, labelled as mocks.
 - **Bilingual UI.** The UI is bilingual (English and 简体中文), switchable at runtime. No hard-coded user-facing strings.
@@ -224,7 +225,7 @@ Small Express + TypeScript apps with deliberately different schemas:
 │   ├── shared/  eslint-config/  tsconfig/
 ├── assets-src/3d/                # Blender Python scripts + README (source of .glb assets)
 ├── docs/
-│   ├── problem-statement.md  assumptions.md  requirements-traceability.md  BUILD_REPORT.md
+│   ├── problem-statement.md  assumptions.md  data-formats.md  requirements-traceability.md  BUILD_REPORT.md
 │   ├── design-thinking/          # personas, journey maps, HMW, success metrics
 │   ├── grs/  architecture/  diagrams/   # diagrams: Mermaid .mmd + rendered .svg
 │   ├── adr/  api/  design/  client/  team/
@@ -232,6 +233,7 @@ Small Express + TypeScript apps with deliberately different schemas:
 │   └── slides/                   # Marp deck, theme, dist/
 ├── infra/
 │   ├── docker/  aws/
+├── samples/                      # git-ignored but for its README: the client's sample exports, tried locally
 ├── .github/                      # workflows/, pull_request_template.md, ISSUE_TEMPLATE/
 ├── docker-compose.yml  .env.example  README.md  CONTRIBUTING.md  CLAUDE.md
 ```

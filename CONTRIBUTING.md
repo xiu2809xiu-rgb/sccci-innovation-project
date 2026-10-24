@@ -22,7 +22,7 @@ Read [CLAUDE.md](CLAUDE.md) first: it sets the context, the stack and the standa
    | `ci/`    | Workflows and checks          | `ci/zap-baseline`                |
    | `chore/` | Tooling, dependencies, upkeep | `chore/node-24-22`               |
 
-3. Commit with [Conventional Commits](https://www.conventionalcommits.org/) (`feat(area2): open a requisition when OA approves a manpower request`). commitlint refuses anything else, and the pre-commit hook lints, formats and refuses the React Bits licence key.
+3. Commit with [Conventional Commits](https://www.conventionalcommits.org/) (`feat(area2): open a requisition when OA approves a manpower request`). commitlint refuses anything else, and the pre-commit hook lints, formats, and refuses the React Bits licence key and the client's sample exports (anything in `samples/` but its README); the pre-push hook checks the commits you push for those samples too.
 4. Push and open a pull request to `main`. Fill in the template: `Closes #<story>`, the acceptance criteria with evidence, how you verified it, and screenshots for UI changes.
 5. All checks must pass: CI (lint, typecheck, unit and integration tests, build, Docker build and image scan), CodeQL, dependency review and the configuration scan.
 6. The code owner of the touched folders reviews; the team lead reviews shared files.

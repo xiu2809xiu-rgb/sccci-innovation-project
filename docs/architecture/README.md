@@ -4,7 +4,7 @@ HuiTong is an integration and workflow layer between the systems LESSO Solar alr
 
 > **Diagrams still show statement #17.** They name OA, the Singapore HR system and the Excel master, the systems of the superseded statement. They are redrawn for statement #7 with the slides ([ADR 0022](../adr/0022-final-statement-7-lesso-solar.md)); OA corresponds to the intranet, and the Singapore HR system to INFO-TECH.
 
-The diagrams below start from the problem and go from the outside in: what HR does today without HuiTong, who uses HuiTong, what it is made of, where it runs, how its key flows work, where data crosses a trust boundary, and the data model. The design patterns are in [patterns.md](patterns.md), the data formats in [data-formats.md](data-formats.md), and every decision in the [ADR index](../adr/README.md).
+The diagrams below start from the problem and go from the outside in: what HR does today without HuiTong, who uses HuiTong, what it is made of, where it runs, how its key flows work, where data crosses a trust boundary, and the data model. The design patterns are in [patterns.md](patterns.md), dates, time zones and encodings in [dates-and-encodings.md](dates-and-encodings.md), each system's data formats in [data-formats.md](../data-formats.md), and every decision in the [ADR index](../adr/README.md).
 
 ## Reading and rebuilding the diagrams
 

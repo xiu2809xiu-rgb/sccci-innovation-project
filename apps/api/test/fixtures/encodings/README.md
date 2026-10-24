@@ -1,6 +1,6 @@
 # Encoding fixtures
 
-Small CSV and Excel samples for the encoding tests ([`text-encoding.spec.ts`](../../../src/modules/mapping/proposals/text-encoding.spec.ts), [`mapping-proposals.int-spec.ts`](../../mapping-proposals.int-spec.ts)). The rules they test are in [docs/architecture/data-formats.md](../../../../../docs/architecture/data-formats.md). Every person in them is synthetic.
+Small CSV and Excel samples for the encoding tests ([`text-encoding.spec.ts`](../../../src/modules/mapping/proposals/text-encoding.spec.ts), [`mapping-proposals.int-spec.ts`](../../mapping-proposals.int-spec.ts)). The rules they test are in [docs/architecture/dates-and-encodings.md](../../../../../docs/architecture/dates-and-encodings.md). Every person in them is synthetic.
 
 | File                   | What it is                                                                                                            | Read as                     |
 | ---------------------- | --------------------------------------------------------------------------------------------------------------------- | --------------------------- |
