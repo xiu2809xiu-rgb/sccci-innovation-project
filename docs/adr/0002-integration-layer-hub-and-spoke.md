@@ -6,7 +6,7 @@
 
 ## Context
 
-LESSO Solar's Singapore hub and China HQ each run systems suited to local requirements (see [`../problem-statement.md`](../problem-statement.md)):
+Statement #7's client runs systems suited to local requirements in its Singapore hub and its China HQ (the [problem statement as written for #7](https://github.com/xiu2809xiu-rgb/sccci-innovation-project/blob/archive/ps7-lesso-solar/docs/problem-statement.md); statement #5 is in the amendment at the end):
 
 - a locally compliant Singapore HR system for attendance, leave and payroll;
 - HQ ERP and SAP, with customised features;
@@ -102,3 +102,7 @@ Adopted from Azri's integrated plan (prompt 002). Point 3 above named work email
 
 - **Confirmed match:** the same group employee number (`E1xxxxx`). Nothing else makes two records one person, except a future HR decision to link them, which would be audited.
 - **Possible match:** a look-alike name (the same Chinese name, the same romanisation, the same names in another order), or the same work email in another letter case. A work email is unique in the master, so a record carrying one that another employee already has is refused as a sync error (`WORK_EMAIL_IN_USE`) for HR to sort out, never created beside them or merged into them. Romanisation is a weak signal: 陈伟 and 陈玮 are different people who are both "Chen Wei", and Hokkien "Tan" and Mandarin "Chen" are the same surname, 陈. A sync preview lists the possible matches of every new record for HR to check, and the sync still creates the record on its own (story B-5, `identity-matcher.ts`).
+
+## Amendment, 24 Oct 2026: statement #5
+
+Statement #5 ([ADR 0023](0023-retarget-ps5-aspri-ipi.md)) keeps the hub and its spokes and changes what sits at the centre. Trainees, assessors, courses and course runs replace the canonical employee model, each field still with its source of truth and its history, and trainees are matched on the TMS trainee ID, never on names alone, instead of HQ's employee number. The spokes become the TMS and each agency, through its API or a delivered file. The context above describes statement #7's systems, which the tag `archive/ps7-lesso-solar` keeps.

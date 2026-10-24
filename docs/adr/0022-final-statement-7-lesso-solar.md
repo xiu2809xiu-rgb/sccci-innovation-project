@@ -1,6 +1,6 @@
 # ADR 0022: The final statement, #7 LESSO Solar
 
-- **Status:** Accepted
+- **Status:** Superseded by [ADR 0023](0023-retarget-ps5-aspri-ipi.md): LESSO Solar withdrew on 23 Oct 2026
 - **Date:** 2026-10-22
 - **Traceability:** M1 (design thinking) · M2 (GRS by design) · capabilities A to G
 
@@ -8,7 +8,7 @@
 
 The team built its first analysis and prototype on Problem Statement #17: Organisation E, an anonymised financial-services group with an OA platform, a Singapore HR system, HQ's ERP and SAP, and an Excel master as the only consolidated view. On 22 Oct 2026 the team was allocated the renumbered statement **#7, LESSO Solar**, which replaces #17. Prompt 003 ([`../ai/prompts/003-lessosolar-statement.md`](../ai/prompts/003-lessosolar-statement.md)) sets out the changes.
 
-LESSO Solar is the solar division of LESSO Group, with a regional hub in Singapore. Singapore runs INFO-TECH for employee records, leave and payroll; China HQ runs a customised SAP and an intranet for news, policies, claims and approvals. The brief adds two rules: a new employee is created in HQ's SAP before they get intranet access, and some payments need an extra HQ Treasury approval. It asks for integrated or consolidated data, a single view with dashboards and insights, less duplicate entry, and reuse by other Chinese companies in Singapore ([problem-statement.md](../problem-statement.md)).
+LESSO Solar is the solar division of LESSO Group, with a regional hub in Singapore. Singapore runs INFO-TECH for employee records, leave and payroll; China HQ runs a customised SAP and an intranet for news, policies, claims and approvals. The brief adds two rules: a new employee is created in HQ's SAP before they get intranet access, and some payments need an extra HQ Treasury approval. It asks for integrated or consolidated data, a single view with dashboards and insights, less duplicate entry, and reuse by other Chinese companies in Singapore ([problem statement as written for #7](https://github.com/xiu2809xiu-rgb/sccci-innovation-project/blob/archive/ps7-lesso-solar/docs/problem-statement.md)).
 
 Both statements describe the same pattern, so the architecture, the stack, the four ownership areas and what is built all stay. The question is what to change, and how much.
 
