@@ -45,6 +45,16 @@ overrides:
   # speech-rule-engine (Marp's MathJax) pins @xmldom/xmldom 0.9.10; 0.9.12 is the patch
   # release that fixes its advisories. Drop this when it asks for 0.9.12. Review: 2026-12-01.
   'speech-rule-engine>@xmldom/xmldom': 0.9.12
+  # Express 5 (the mocks, and the API through @nestjs/platform-express) resolves body-parser
+  # 2.3.0, open to a denial of service through trailing bytes after a compressed body
+  # (GHSA-27r3-jxmh-p828); 2.4.0 fixes it inside express's own ^2 range. Drop this when the
+  # lockfile resolves 2.4.0 or later without it. Review: 2026-12-01.
+  'express>body-parser': 2.4.0
+  # @nestjs/platform-express 12.1.3 resolves multer 2.4.0, open to a denial of service through
+  # a pending asynchronous fileFilter (GHSA-q7qp-rjg7-q26m); 2.5.0 fixes it. Multer parses the
+  # file uploads (the mapping wizard and the file import). Drop this when Nest depends on
+  # multer 2.5.0 or later. Review: 2026-12-01.
+  '@nestjs/platform-express>multer': 2.5.0
 
 # Accepted advisories. Each entry needs a reason and a review date.
 auditConfig:
