@@ -6,6 +6,11 @@
 .env.*
 !.env.example
 
+# The client's sample exports are tried locally and never committed
+# (docs/data-formats.md); only the folder's README is tracked.
+/samples/*
+!/samples/README.md
+
 # Claude Code: personal settings stay local; shared settings.json is tracked.
 .claude/settings.local.json
 

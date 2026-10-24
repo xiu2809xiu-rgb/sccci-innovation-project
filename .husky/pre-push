@@ -1,0 +1,10 @@
+# A client's sample export never reaches GitHub: check every commit this push would publish.
+# git passes one line per ref: <local ref> <local sha> <remote ref> <remote sha>; a deletion's
+# local sha is all zeros.
+revs=""
+while read -r _local_ref local_sha _remote_ref _remote_sha; do
+  case "$local_sha" in
+    *[!0]*) revs="$revs $local_sha" ;;
+  esac
+done
+[ -z "$revs" ] || node scripts/check-samples.mjs --push $revs

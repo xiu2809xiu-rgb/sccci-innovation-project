@@ -1,0 +1,25 @@
+# A throwaway stack for trying a client's sample export (docs/data-formats.md, "Trying a
+# client's sample export"). Only the web app is published, on this machine's loopback address,
+# and the employee master starts empty. Run it under its own project name, so that its database
+# and Redis volumes are not your usual stack's:
+#   docker compose -p huitong-samples -f docker-compose.yml -f infra/docker/compose.samples.yml up --build --detach
+#   docker compose -p huitong-samples -f docker-compose.yml -f infra/docker/compose.samples.yml down -v
+# !reset and !override need Docker Compose 2.24.4 or later.
+services:
+  postgres:
+    ports: !reset []
+  redis:
+    ports: !reset []
+  mock-sg-hr:
+    ports: !reset []
+  mock-cn-hq:
+    ports: !reset []
+  mock-oa:
+    ports: !reset []
+  api:
+    ports: !reset []
+    environment:
+      BOOTSTRAP_SYNC: 'false'
+  web:
+    ports: !override
+      - '127.0.0.1:8080:8080'

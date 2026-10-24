@@ -18,6 +18,7 @@
 .claude
 .mcp.json
 docs
+samples
 assets-src
 infra/aws
 **/*.log
