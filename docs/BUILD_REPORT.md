@@ -135,6 +135,8 @@ Azri wrote a separate plan for Problem Statement #17. The team kept its own stac
 
 ## Prompt 003 checklist: the final statement #7, LESSO Solar
 
+**Cancelled on 24 Oct 2026.** LESSO Solar withdrew on 23 Oct, so [prompt 005](ai/prompts/005-retarget-ps5-aspri-ipi.md) cancelled this prompt ([ADR 0023](adr/0023-retarget-ps5-aspri-ipi.md)). The items below record how far it got. Its unfinished data-formats story (A-13) was committed to `docs/area1-data-formats` and pushed without a pull request; the tag `archive/ps7-lesso-solar` keeps `main` as it stood.
+
 On 22 Oct 2026 the team was allocated Problem Statement #7, LESSO Solar, which replaces #17. [Prompt 003](ai/prompts/003-lessosolar-statement.md) retargets the project by editing what exists, and [ADR 0022](adr/0022-final-statement-7-lesso-solar.md) records the decisions. The work goes through one pull request per step (the mocks and data step is split into several), in this order: the brief and its analysis (#133); the backlog; the areas and the hero journey; the mocks and data; the tenant configuration; the slides and diagrams (the backlog moved second, [ADR 0022 amendment](adr/0022-final-statement-7-lesso-solar.md#amendment-22-oct-2026-the-backlog-moves-second)). Legend as above.
 
 - [~] **1. Naming everywhere.** Done in the documents: the problem statement is rewritten to the brief, in our own words and quoting nothing, with #17 kept as a short superseded appendix; CLAUDE.md sections 1 and 3, the README, the wiki home, ADRs 0001 to 0003, 0011, 0013 and 0014 and the ADR index; the design-thinking set; the GRS (the MAS guidance out, PDPA and PIPL kept); the assumptions and client questions; the test plan and working agreement; the architecture README's prose; and the traceability matrix. CLAUDE.md section 4, module ownership, the area guides, the hero journey, the GitHub issue forms and pull request template followed with the areas. Still to do: the i18n copy and seed text (with the mocks), and the deck and diagrams (last).
@@ -146,7 +148,25 @@ On 22 Oct 2026 the team was allocated Problem Statement #7, LESSO Solar, which r
 - [x] **7. Client questions and assumptions.** The brief's answers marked (Q-01 to Q-03 partly; Q-10 superseded; Q-11 dropped), the call re-prioritised for the week of 2 Nov, and Q-58 to Q-63 added: INFO-TECH's exports and API, the onboarding steps and order, the Treasury threshold, Lark or DingTalk, the use of the brand, and HR staff trying the prototype. A-13, A-41 and A-43 revised, the rows the brief touches reworded, and A-59 to A-63 added.
 - [~] **8. Data and document formats.** Recorded as assumptions A-59 to A-61 to confirm at the briefing call. Every importer goes through the mapping engine: the file import (A-5) reads CSV and Excel exports through an approved mapping version, and a test imports the INFO-TECH mock's employee export through a mapping that differs from the SG HR one only in its column names and date layout, without the pay and bank fields that export does not carry. The formats in the mocks, their documentation and the git-ignored `samples/` folder come with the mocks.
 - [x] **9. Backlog and timeline.** In [`scripts/github/backlog.mjs`](../scripts/github/backlog.mjs): the briefing call is T-2 in sprint 3 (the week of 2 Nov), and sprints 2 and 3 say so; epics C and D are renamed for the reshaped areas; new stories cover the INFO-TECH and intranet mocks (A-9, A-10), the Lark adapter (A-11), the tenant configuration (A-12), the data formats (A-13), intranet access after the SAP record (C-7), the Treasury step (C-8) and the dashboards (D-6, D-7); C-1, C-3, C-5, D-1, A-5, P-9 and T-9 are refined. [`backlog.md`](agile/backlog.md) and the wiki's sprint calendar are regenerated from it, and the GitHub issues follow after the merge.
-- [ ] **Finish.** Every check, the traceability matrix and this report, with a summary per item.
+- [ ] **Finish.** Cancelled with the prompt; prompt 005 finishes in its place.
+
+## Prompt 005 checklist: Problem Statement #5, ASPRI-IPI
+
+LESSO Solar withdrew on 23 Oct 2026. The team resubmitted its choices with #5 ASPRI-IPI first, and the allocation is announced on 26 Oct, so #5 is written as the team's first choice until then. [Prompt 005](ai/prompts/005-retarget-ps5-aspri-ipi.md) retargets the project by editing what exists, and [ADR 0023](adr/0023-retarget-ps5-aspri-ipi.md) records the decisions. Before step 1, the team lead's review of Azri's #147 (the workflow state machine) was done and the pull request merged, and `main` was tagged `archive/ps7-lesso-solar`. One pull request per step, the bigger steps split; the assumptions and client questions (step 8) move up to follow step 1, and the backlog (step 9) comes before the area guides that name its stories. Legend as above.
+
+- [x] **1. Archive, decide and reframe.** The tag `archive/ps7-lesso-solar` on `main` after #147. ADR 0023 (the withdrawal, why #5, what carries over and what changes, what prompt 003 leaves behind, the order of the work), with ADR 0022 superseded. The README, CLAUDE.md sections 1, 3 and 4 (and section 8's audience and tablet-first lines), and the problem statement rewritten for #5, with no appendix about earlier statements.
+- [~] **2. Product scope.** CLAUDE.md section 4's capabilities A to G, the six roles and the data rules are rewritten with step 1. Still to do: the roles in code (added beside the HR roles, which leave once no area uses them), and the national-ID assumption and question with step 8.
+- [~] **3. The areas.** CLAUDE.md's ownership table names Azri, Iok Teck and Angelyn with their #5 scopes. Still to do: module ownership and the area 1 guide.
+- [ ] **4. Mocks and synthetic data.**
+- [ ] **5. Area 1 in code.**
+- [ ] **6. Areas 2 to 4.**
+- [ ] **7. Hero journey and tests.**
+- [ ] **8. Design thinking, GRS, assumptions and client questions.**
+- [ ] **9. GitHub.**
+- [ ] **10. CI and Docker.**
+- [ ] **11. Slides, diagrams and screenshots.**
+- [ ] **12. Team setup.**
+- [ ] **Finish.** Every check, the traceability matrix, the AI usage log and this report, with a summary per step.
 
 ## Verification log
 
