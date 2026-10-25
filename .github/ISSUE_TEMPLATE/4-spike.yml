@@ -7,7 +7,7 @@ body:
     id: question
     attributes:
       label: Question to answer
-      placeholder: Can the CN HQ SAP export be pulled through an OData API instead of a CSV file?
+      placeholder: Can the TMS take verified results through an API, or only as an imported CSV file?
     validations:
       required: true
   - type: dropdown

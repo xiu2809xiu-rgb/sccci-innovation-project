@@ -8,9 +8,9 @@ body:
     attributes:
       label: Ownership area
       options:
-        - 'Area 1: Integration Core + platform base'
-        - 'Area 2: Onboarding and approval workflows'
-        - 'Area 3: Single view, dashboards and insights'
+        - 'Area 1: Integration core and platform'
+        - 'Area 2: Assessment capture and verification'
+        - 'Area 3: Competency, submissions and insights'
         - 'Area 4: Governance, security and monitoring'
         - 'Team: assessments and process'
     validations:
@@ -19,7 +19,7 @@ body:
     id: goal
     attributes:
       label: Goal and user value
-      description: The outcome for Organisation E's HR team, in one or two sentences.
+      description: The outcome for ASPRI-IPI's assessors, operations staff or training managers, in one or two sentences.
     validations:
       required: true
   - type: textarea

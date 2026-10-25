@@ -12,9 +12,9 @@ Closes #
 
 ## Ownership area
 
-- [ ] Area 1: Integration Core + platform base
-- [ ] Area 2: Onboarding and approval workflows
-- [ ] Area 3: Single view, dashboards and insights
+- [ ] Area 1: Integration core and platform
+- [ ] Area 2: Assessment capture and verification
+- [ ] Area 3: Competency, submissions and insights
 - [ ] Area 4: Governance, security and monitoring
 - [ ] Team: assessments and process
 

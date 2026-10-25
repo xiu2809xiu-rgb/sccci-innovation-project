@@ -1,18 +1,19 @@
 # Code owners (placeholder).
 #
 # GitHub requests a review from the owner of every path a pull request touches.
-# Replace the handles below with each member's GitHub username once areas 2-4
-# are assigned (see docs/team/module-ownership.md), then uncomment the lines.
+# The owners of areas 2-4 are agreed (CLAUDE.md section 4). Replace the handles
+# below with each member's GitHub username when the backups are agreed (story
+# T-1, docs/team/module-ownership.md), then uncomment the lines.
 # Later rules override earlier ones.
 
-# Area 1: Integration Core + platform base (default owner for shared code)
+# Area 1: Integration core and platform (default owner for shared code)
 # *                                        @richie-github-username
 
-# Area 2: Onboarding and approval workflows
+# Area 2: Assessment capture and verification
 # /apps/api/src/modules/workflows/         @area-2-github-username
 # /apps/web/src/features/workflows/        @area-2-github-username
 
-# Area 3: Single view, dashboards and insights
+# Area 3: Competency, submissions and insights
 # /apps/api/src/modules/attendance-leave/  @area-3-github-username
 # /apps/api/src/modules/reports/           @area-3-github-username
 # /apps/web/src/features/attendance-leave/ @area-3-github-username

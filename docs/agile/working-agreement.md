@@ -4,11 +4,11 @@ How the four of us plan, build, review and ship HuiTong. It turns module require
 
 ## Roles
 
-| Role                        | Who                                        | Responsibilities                                                                                                                                                                                                                                     |
-| --------------------------- | ------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Product owner and team lead | Richie                                     | Owns the backlog and its priorities, speaks for LESSO Solar between client sessions, runs the ceremonies, and owns area 1 and the platform base                                                                                                      |
-| Area owners                 | Richie (area 1); areas 2 to 4 agreed in W3 | Write their area's core logic and tests, keep its guide in `docs/team/` current, and review pull requests that touch their folders ([module-ownership.md](../team/module-ownership.md), [T-1](backlog.md#t-1-agree-area-owners-and-fill-codeowners)) |
-| Reviewer of the day         | Whoever is not the author                  | Reviews open pull requests within one working day                                                                                                                                                                                                    |
+| Role                        | Who                                                                 | Responsibilities                                                                                                                                                                                                                                     |
+| --------------------------- | ------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Product owner and team lead | Richie                                                              | Owns the backlog and its priorities, speaks for ASPRI-IPI between client sessions, runs the ceremonies, and owns area 1 and the platform base                                                                                                        |
+| Area owners                 | Richie (area 1), Azri (area 2), Iok Teck (area 3), Angelyn (area 4) | Write their area's core logic and tests, keep its guide in `docs/team/` current, and review pull requests that touch their folders ([module-ownership.md](../team/module-ownership.md), [T-1](backlog.md#t-1-agree-area-owners-and-fill-codeowners)) |
+| Reviewer of the day         | Whoever is not the author                                           | Reviews open pull requests within one working day                                                                                                                                                                                                    |
 
 ## The sprint
 
@@ -50,5 +50,5 @@ An issue is assigned to the one person doing it. Pairing is welcome; the assigne
 ## Communication
 
 - Decisions that change the architecture or a CLAUDE.md rule become an ADR in `docs/adr/`.
-- Questions for LESSO Solar go into [questions-for-client.md](../client/questions-for-client.md), and their answers into [assumptions.md](../assumptions.md).
+- Questions for ASPRI-IPI go into [questions-for-client.md](../client/questions-for-client.md), and their answers into [assumptions.md](../assumptions.md).
 - AI-assisted work is logged in [ai-usage-log.md](../ai/ai-usage-log.md). Nothing in commits, pull requests or code carries AI attribution.
