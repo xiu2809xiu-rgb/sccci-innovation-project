@@ -4,26 +4,26 @@
 
 One sprint per module week, Monday to Sunday, from W1 on 19 October 2026. Each sprint is a milestone and an iteration on the **HuiTong delivery** board. The dates assume no term break; if the academic calendar has one, the sprints after it move.
 
-| Sprint          | Dates                     | Goal                                                                                              |
-| --------------- | ------------------------- | ------------------------------------------------------------------------------------------------- |
-| Sprint 01 (W1)  | 19 Oct 2026 – 25 Oct 2026 | Platform base, security scanning and the Agile workflow in GitHub                                 |
-| Sprint 02 (W2)  | 26 Oct 2026 – 1 Nov 2026  | Problem allocation (#7, LESSO Solar); retarget the docs; prepare the briefing call                |
-| Sprint 03 (W3)  | 2 Nov 2026 – 8 Nov 2026   | Briefing call with LESSO Solar; project plan; area owners agreed; answers folded into the backlog |
-| Sprint 04 (W4)  | 9 Nov 2026 – 15 Nov 2026  | UI prototype across every area                                                                    |
-| Sprint 05 (W5)  | 16 Nov 2026 – 22 Nov 2026 | Proposal presentation (25%)                                                                       |
-| Sprint 06 (W6)  | 23 Nov 2026 – 29 Nov 2026 | Backlog refinement; area owners start their core logic                                            |
-| Sprint 07 (W7)  | 30 Nov 2026 – 6 Dec 2026  | Mock job interview (15%): each member explains their own code                                     |
-| Sprint 08 (W8)  | 7 Dec 2026 – 13 Dec 2026  | AI-assisted coding: workflow, consolidation and governance cores                                  |
-| Sprint 09 (W9)  | 14 Dec 2026 – 20 Dec 2026 | AI-assisted coding: end-to-end paths between the areas                                            |
-| Sprint 10 (W10) | 21 Dec 2026 – 27 Dec 2026 | AI-assisted coding: reports and administration screens                                            |
-| Sprint 11 (W11) | 28 Dec 2026 – 3 Jan 2027  | AI-assisted coding: hardening and integration tests                                               |
-| Sprint 12 (W12) | 4 Jan 2027 – 10 Jan 2027  | AI-assisted coding: freeze features for the technical review                                      |
-| Sprint 13 (W13) | 11 Jan 2027 – 17 Jan 2027 | Technical review (25%)                                                                            |
-| Sprint 14 (W14) | 18 Jan 2027 – 24 Jan 2027 | Observability: tracing, metrics and dashboards                                                    |
-| Sprint 15 (W15) | 25 Jan 2027 – 31 Jan 2027 | Clickstream analytics                                                                             |
-| Sprint 16 (W16) | 1 Feb 2027 – 7 Feb 2027   | AI token usage and cost tracking                                                                  |
-| Sprint 17 (W17) | 8 Feb 2027 – 14 Feb 2027  | Deployment hardening, DAST and rehearsal                                                          |
-| Sprint 18 (W18) | 15 Feb 2027 – 21 Feb 2027 | Final presentation (35%)                                                                          |
-| Sprint 19 (W19) | 22 Feb 2027 – 28 Feb 2027 | Client check-in and handover                                                                      |
+| Sprint          | Dates                     | Goal                                                                                                          |
+| --------------- | ------------------------- | ------------------------------------------------------------------------------------------------------------- |
+| Sprint 01 (W1)  | 19 Oct 2026 – 25 Oct 2026 | Platform base, security scanning and the Agile workflow in GitHub                                             |
+| Sprint 02 (W2)  | 26 Oct 2026 – 1 Nov 2026  | Problem allocation; retarget the project to #5 (ASPRI-IPI), the team's first choice; the TMS and agency mocks |
+| Sprint 03 (W3)  | 2 Nov 2026 – 8 Nov 2026   | Briefing call with ASPRI-IPI; project plan; backup owners agreed; answers folded into the backlog             |
+| Sprint 04 (W4)  | 9 Nov 2026 – 15 Nov 2026  | UI prototype across every area, the tablet checklist first                                                    |
+| Sprint 05 (W5)  | 16 Nov 2026 – 22 Nov 2026 | Proposal presentation (25%)                                                                                   |
+| Sprint 06 (W6)  | 23 Nov 2026 – 29 Nov 2026 | Backlog refinement; area owners start their core logic                                                        |
+| Sprint 07 (W7)  | 30 Nov 2026 – 6 Dec 2026  | Mock job interview (15%): each member explains their own code                                                 |
+| Sprint 08 (W8)  | 7 Dec 2026 – 13 Dec 2026  | AI-assisted coding: the state machine, course rules, access and the agency allowlist                          |
+| Sprint 09 (W9)  | 14 Dec 2026 – 20 Dec 2026 | AI-assisted coding: the tablet checklist, verification, competency and the TMS write                          |
+| Sprint 10 (W10) | 21 Dec 2026 – 27 Dec 2026 | AI-assisted coding: offline sync, submission files and agency submissions                                     |
+| Sprint 11 (W11) | 28 Dec 2026 – 3 Jan 2027  | AI-assisted coding: corrections, reminders, file delivery, rule drafting and audit readiness                  |
+| Sprint 12 (W12) | 4 Jan 2027 – 10 Jan 2027  | AI-assisted coding: dashboards and the end-to-end journeys; features frozen for the technical review          |
+| Sprint 13 (W13) | 11 Jan 2027 – 17 Jan 2027 | Technical review (25%)                                                                                        |
+| Sprint 14 (W14) | 18 Jan 2027 – 24 Jan 2027 | Observability: tracing, metrics and dashboards                                                                |
+| Sprint 15 (W15) | 25 Jan 2027 – 31 Jan 2027 | Clickstream analytics                                                                                         |
+| Sprint 16 (W16) | 1 Feb 2027 – 7 Feb 2027   | AI token usage and cost tracking                                                                              |
+| Sprint 17 (W17) | 8 Feb 2027 – 14 Feb 2027  | Deployment hardening, DAST and rehearsal                                                                      |
+| Sprint 18 (W18) | 15 Feb 2027 – 21 Feb 2027 | Final presentation (35%)                                                                                      |
+| Sprint 19 (W19) | 22 Feb 2027 – 28 Feb 2027 | Client check-in and handover                                                                                  |
 
 The stories planned for each sprint are in the [backlog](https://github.com/xiu2809xiu-rgb/sccci-innovation-project/blob/main/docs/agile/backlog.md#sprints).

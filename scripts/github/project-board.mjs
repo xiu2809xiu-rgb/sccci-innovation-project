@@ -9,10 +9,14 @@ import { sprintDates, sprintTitle } from './sprints.mjs';
 
 const AREAS = [
   { label: 'area: 1 integration core', name: '1 Integration core', color: 'GREEN' },
-  { label: 'area: 2 workflow automation', name: '2 Workflow automation', color: 'BLUE' },
   {
-    label: 'area: 3 attendance and reporting',
-    name: '3 Attendance and reporting',
+    label: 'area: 2 capture and verification',
+    name: '2 Capture and verification',
+    color: 'BLUE',
+  },
+  {
+    label: 'area: 3 competency and submissions',
+    name: '3 Competency and submissions',
     color: 'ORANGE',
   },
   {
@@ -90,6 +94,8 @@ function fieldsOf(projectId) {
                   options {
                     id
                     name
+                    color
+                    description
                   }
                 }
                 ... on ProjectV2IterationField {
@@ -158,9 +164,62 @@ function ensureFields(projectId) {
         description: area.label,
       })),
     });
+  } else {
+    syncAreaOptions(fields.get('Area'));
   }
   fields = fieldsOf(projectId);
   return fields;
+}
+
+/**
+ * Renames the Area options to match AREAS. An option is matched by its first
+ * word (the area number, or Team) and keeps its id, so every item keeps its
+ * area; options the team added by hand are kept as they are.
+ */
+function syncAreaOptions(field) {
+  const firstWord = (name) => name.split(' ')[0];
+  const pairs = AREAS.map((area) => ({
+    area,
+    option: field.options.find((option) => firstWord(option.name) === firstWord(area.name)),
+  }));
+  const current = pairs.every(
+    ({ area, option }) =>
+      option?.name === area.name &&
+      option.description === area.label &&
+      option.color === area.color,
+  );
+  if (current) return;
+  const matched = new Set(pairs.map(({ option }) => option?.id).filter(Boolean));
+  graphql(
+    `
+      mutation ($input: UpdateProjectV2FieldInput!) {
+        updateProjectV2Field(input: $input) {
+          projectV2Field {
+            ... on ProjectV2FieldCommon {
+              id
+            }
+          }
+        }
+      }
+    `,
+    {
+      input: {
+        fieldId: field.id,
+        singleSelectOptions: [
+          ...pairs.map(({ area, option }) => ({
+            ...(option ? { id: option.id } : {}),
+            name: area.name,
+            color: area.color,
+            description: area.label,
+          })),
+          ...field.options
+            .filter((option) => !matched.has(option.id))
+            .map(({ id, name, color, description }) => ({ id, name, color, description })),
+        ],
+      },
+    },
+  );
+  console.log('updated the Area field options');
 }
 
 /**

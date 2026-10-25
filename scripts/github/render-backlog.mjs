@@ -3,11 +3,29 @@
 // Usage: node scripts/github/render-backlog.mjs
 import { writeFileSync } from 'node:fs';
 
-import { EPICS, SPRINTS } from './backlog.mjs';
+import { EPICS, RETIRED, SPRINTS } from './backlog.mjs';
 import { sprintDates, sprintTitle } from './sprints.mjs';
 
 const PRIORITY = { must: 'Must', should: 'Should', could: 'Could' };
 const stories = EPICS.flatMap((epic) => epic.stories.map((story) => ({ ...story, epic })));
+
+/** Writes consecutive keys as a range ("C-1 to C-8"), so the retired list stays readable. */
+function keyRanges(keys) {
+  const runs = [];
+  for (const key of keys) {
+    const [letter, digits] = key.split('-');
+    const number = Number(digits);
+    const last = runs.at(-1);
+    if (last?.letter === letter && last.to + 1 === number) last.to = number;
+    else runs.push({ letter, from: number, to: number });
+  }
+  const parts = runs.map(({ letter, from, to }) =>
+    from === to
+      ? `${letter}-${String(from)}`
+      : `${letter}-${String(from)} to ${letter}-${String(to)}`,
+  );
+  return parts.length > 1 ? `${parts.slice(0, -1).join(', ')} and ${parts.at(-1)}` : parts[0];
+}
 
 const lines = [
   '# Product backlog',
@@ -16,7 +34,9 @@ const lines = [
   '',
   `${String(EPICS.length)} epics and ${String(stories.length)} stories, ${String(stories.reduce((sum, story) => sum + story.points, 0))} story points in all. Each story becomes a GitHub issue under its epic, in the milestone of its sprint (\`node scripts/github/seed-backlog.mjs\`). Stories marked done were delivered by the branch named beside them; the seed closes them once that pull request is merged.`,
   '',
-  'Estimates use story points (1, 2, 3, 5, 8, 13) and priorities use MoSCoW. Owners pick up the stories of their area at sprint planning ([working agreement](working-agreement.md)); areas 2 to 4 have no owner until [T-1](#t-1-agree-area-owners-and-fill-codeowners) is done.',
+  'Estimates use story points (1, 2, 3, 5, 8, 13) and priorities use MoSCoW. Owners pick up the stories of their area at sprint planning ([working agreement](working-agreement.md)); [module-ownership.md](../team/module-ownership.md) names the owner of each area.',
+  '',
+  `The stories marked done built the platform that carries over to statement #5. The stories that served only an earlier problem statement were dropped by [ADR 0023](../${RETIRED.decision.replace(/^docs\//, '')}): ${keyRanges(RETIRED.keys)}. Keys are never reused, their issues are closed, and the stories stay in the archive tag the ADR names.`,
   '',
   '## Sprints',
   '',
