@@ -247,7 +247,7 @@ These three are the previous statement's mocks, still running while the code is 
 - NestJS modules and controllers (thin).
 - Services (use cases).
 - Repositories (the only place Prisma is called).
-- Domain classes and value objects that hold the invariants (`Employee`, `EmployeeId`, `LeaveType`, `DateRange`, ...).
+- Domain classes and value objects that hold the invariants (`Trainee`, `TraineeId`, `RuleVersion`, `DateRange`, ...).
 
 **Patterns, used only where they earn their place**
 
@@ -255,7 +255,7 @@ These three are the previous statement's mocks, still running while the code is 
 |---|---|
 | Adapter | Each external system sits behind `SystemConnector` |
 | Factory | Creates connectors from configuration |
-| Strategy | Field transformers, leave-category mappers, report renderers |
+| Strategy | Field transformers, outcome rules, agency file renderers |
 | Template Method | Base sync job: extract → map → validate → load → audit |
 | Observer / domain events | Workflow triggers |
 | Repository | Data access |
