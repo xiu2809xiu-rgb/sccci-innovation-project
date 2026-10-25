@@ -36,4 +36,4 @@ node scripts/github/seed-backlog.mjs --dry-run
 node scripts/github/seed-backlog.mjs --project
 ```
 
-The scripts use the GitHub CLI signed in as a maintainer (`gh auth login`, with the `project` scope for the board). Running them again only adds what is missing and closes stories whose pull request has merged.
+The scripts use the GitHub CLI signed in as a maintainer (`gh auth login`, with the `project` scope for the board). Running them again only adds what is missing, closes stories whose pull request has merged, and closes the open issues of retired keys as not planned. Issues are matched by their key, so a story whose title changes keeps its issue, and an area whose name changes keeps its label and its option on the board. After the plan changes, `--refresh` also rewrites the open issues and the sprint goals from the data; it leaves alone an issue with a ticked box.

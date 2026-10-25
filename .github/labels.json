@@ -27,22 +27,22 @@
   {
     "name": "area: 1 integration core",
     "color": "0b7a75",
-    "description": "Connectors, employee master, mapping, AI mapping, platform base"
+    "description": "Connectors, master data, mapping, the per-agency allowlist, platform base"
   },
   {
-    "name": "area: 2 workflow automation",
+    "name": "area: 2 capture and verification",
     "color": "2f6f9f",
-    "description": "OA approvals to recruitment, onboarding and admin preparation"
+    "description": "The tablet checklist, the run state machine, verification, corrections, SLA"
   },
   {
-    "name": "area: 3 attendance and reporting",
+    "name": "area: 3 competency and submissions",
     "color": "8a5a00",
-    "description": "Attendance and leave consolidation, report templates, exports"
+    "description": "Course rules, competency, rule drafting, agency files, dashboards"
   },
   {
     "name": "area: 4 governance and monitoring",
     "color": "6b3fa0",
-    "description": "RBAC admin, audit, PDPA/PIPL, observability, analytics, AI cost"
+    "description": "RBAC admin, audit, PDPA, agency allowlists, observability, analytics, AI cost"
   },
   {
     "name": "area: team",
@@ -93,7 +93,7 @@
   {
     "name": "status: needs client input",
     "color": "f9d0c4",
-    "description": "Waiting on an answer from Organisation E"
+    "description": "Waiting on an answer from the client"
   },
   { "name": "dependencies", "color": "0366d6", "description": "Dependency updates (Dependabot)" }
 ]
