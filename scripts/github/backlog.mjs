@@ -31,21 +31,24 @@ export const SPRINTS = [
   { number: 7, goal: 'Mock job interview (15%): each member explains their own code' },
   {
     number: 8,
-    goal: 'AI-assisted coding: the state machine, course rules, competency and access cores',
+    goal: 'AI-assisted coding: the state machine, course rules, access and the agency allowlist',
   },
   {
     number: 9,
-    goal: 'AI-assisted coding: the tablet checklist, verification, submission files and the TMS write',
+    goal: 'AI-assisted coding: the tablet checklist, verification, competency and the TMS write',
   },
   {
     number: 10,
-    goal: 'AI-assisted coding: offline sync, corrections, agency submissions and the rule-drafting assistant',
+    goal: 'AI-assisted coding: offline sync, submission files and agency submissions',
   },
   {
     number: 11,
-    goal: 'AI-assisted coding: reminders, dashboards, audit readiness and the end-to-end journeys',
+    goal: 'AI-assisted coding: corrections, reminders, file delivery, rule drafting and audit readiness',
   },
-  { number: 12, goal: 'AI-assisted coding: freeze features for the technical review' },
+  {
+    number: 12,
+    goal: 'AI-assisted coding: dashboards and the end-to-end journeys; features frozen for the technical review',
+  },
   { number: 13, goal: 'Technical review (25%)' },
   { number: 14, goal: 'Observability: tracing, metrics and dashboards' },
   { number: 15, goal: 'Clickstream analytics' },
@@ -199,7 +202,7 @@ export const EPICS = [
       {
         key: 'P-9',
         title: 'Hero journey and proof points as end-to-end tests',
-        sprint: 11,
+        sprint: 12,
         points: 8,
         priority: 'must',
         labels: ['req: M4 best practices'],
@@ -461,7 +464,7 @@ export const EPICS = [
       {
         key: 'A-19',
         title: "Deliver an agency's file and record the portal's validation report",
-        sprint: 10,
+        sprint: 11,
         points: 5,
         priority: 'must',
         story:
@@ -626,7 +629,7 @@ export const EPICS = [
       {
         key: 'B-9',
         title: 'Each agency receives only its allowlisted fields',
-        sprint: 9,
+        sprint: 8,
         points: 5,
         priority: 'must',
         labels: ['req: M2 GRS by design', 'type: security'],
@@ -698,7 +701,7 @@ export const EPICS = [
       {
         key: 'E-4',
         title: 'Run the assistants on AWS Bedrock',
-        sprint: 12,
+        sprint: 16,
         points: 5,
         priority: 'should',
         story:
@@ -754,7 +757,7 @@ export const EPICS = [
         key: 'C-2',
         title: 'Workflow state machine',
         sprint: 8,
-        points: 8,
+        points: 3,
         priority: 'must',
         labels: ['req: M4 best practices'],
         story:
@@ -830,7 +833,7 @@ export const EPICS = [
       {
         key: 'C-13',
         title: 'Correct a result with a reason, keeping the original',
-        sprint: 10,
+        sprint: 11,
         points: 3,
         priority: 'must',
         labels: ['req: M2 GRS by design'],
@@ -860,7 +863,7 @@ export const EPICS = [
       {
         key: 'C-15',
         title: 'Verification assistant: flag unusual records for review',
-        sprint: 11,
+        sprint: 12,
         points: 5,
         priority: 'should',
         labels: ['req: M3 AI-assisted coding', 'req: M2 GRS by design'],
@@ -900,7 +903,7 @@ export const EPICS = [
       {
         key: 'D-9',
         title: 'Calculate competency automatically from the rules',
-        sprint: 8,
+        sprint: 9,
         points: 5,
         priority: 'must',
         story:
@@ -915,7 +918,7 @@ export const EPICS = [
       {
         key: 'D-10',
         title: "Rule-drafting assistant: draft a course's rules from its assessment plan",
-        sprint: 10,
+        sprint: 11,
         points: 8,
         priority: 'must',
         labels: ['req: M3 AI-assisted coding', 'req: M2 GRS by design'],
@@ -931,7 +934,7 @@ export const EPICS = [
       {
         key: 'D-11',
         title: 'Render agency submission files from templates',
-        sprint: 9,
+        sprint: 10,
         points: 8,
         priority: 'must',
         story:
@@ -946,7 +949,7 @@ export const EPICS = [
       {
         key: 'D-12',
         title: 'Dashboards for operations and management',
-        sprint: 11,
+        sprint: 12,
         points: 5,
         priority: 'should',
         story:
@@ -960,7 +963,7 @@ export const EPICS = [
       {
         key: 'D-13',
         title: 'Insights: effort saved, first-time acceptance and rework',
-        sprint: 11,
+        sprint: 12,
         points: 3,
         priority: 'should',
         story:
@@ -1075,7 +1078,7 @@ export const EPICS = [
       {
         key: 'F-9',
         title: "PDPA: find a trainee's data for an access request",
-        sprint: 11,
+        sprint: 12,
         points: 3,
         priority: 'could',
         story:

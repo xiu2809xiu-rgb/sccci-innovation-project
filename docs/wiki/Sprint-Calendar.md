@@ -13,11 +13,11 @@ One sprint per module week, Monday to Sunday, from W1 on 19 October 2026. Each s
 | Sprint 05 (W5)  | 16 Nov 2026 – 22 Nov 2026 | Proposal presentation (25%)                                                                                   |
 | Sprint 06 (W6)  | 23 Nov 2026 – 29 Nov 2026 | Backlog refinement; area owners start their core logic                                                        |
 | Sprint 07 (W7)  | 30 Nov 2026 – 6 Dec 2026  | Mock job interview (15%): each member explains their own code                                                 |
-| Sprint 08 (W8)  | 7 Dec 2026 – 13 Dec 2026  | AI-assisted coding: the state machine, course rules, competency and access cores                              |
-| Sprint 09 (W9)  | 14 Dec 2026 – 20 Dec 2026 | AI-assisted coding: the tablet checklist, verification, submission files and the TMS write                    |
-| Sprint 10 (W10) | 21 Dec 2026 – 27 Dec 2026 | AI-assisted coding: offline sync, corrections, agency submissions and the rule-drafting assistant             |
-| Sprint 11 (W11) | 28 Dec 2026 – 3 Jan 2027  | AI-assisted coding: reminders, dashboards, audit readiness and the end-to-end journeys                        |
-| Sprint 12 (W12) | 4 Jan 2027 – 10 Jan 2027  | AI-assisted coding: freeze features for the technical review                                                  |
+| Sprint 08 (W8)  | 7 Dec 2026 – 13 Dec 2026  | AI-assisted coding: the state machine, course rules, access and the agency allowlist                          |
+| Sprint 09 (W9)  | 14 Dec 2026 – 20 Dec 2026 | AI-assisted coding: the tablet checklist, verification, competency and the TMS write                          |
+| Sprint 10 (W10) | 21 Dec 2026 – 27 Dec 2026 | AI-assisted coding: offline sync, submission files and agency submissions                                     |
+| Sprint 11 (W11) | 28 Dec 2026 – 3 Jan 2027  | AI-assisted coding: corrections, reminders, file delivery, rule drafting and audit readiness                  |
+| Sprint 12 (W12) | 4 Jan 2027 – 10 Jan 2027  | AI-assisted coding: dashboards and the end-to-end journeys; features frozen for the technical review          |
 | Sprint 13 (W13) | 11 Jan 2027 – 17 Jan 2027 | Technical review (25%)                                                                                        |
 | Sprint 14 (W14) | 18 Jan 2027 – 24 Jan 2027 | Observability: tracing, metrics and dashboards                                                                |
 | Sprint 15 (W15) | 25 Jan 2027 – 31 Jan 2027 | Clickstream analytics                                                                                         |
