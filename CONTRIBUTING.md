@@ -16,7 +16,7 @@ Read [CLAUDE.md](CLAUDE.md) first: it sets the context, the stack and the standa
    | Prefix   | For                           | Example                          |
    | -------- | ----------------------------- | -------------------------------- |
    | `feat/`  | A feature, named by area      | `feat/area2-requisition-from-oa` |
-   | `fix/`   | A bug fix                     | `fix/leave-overlap-validation`   |
+   | `fix/`   | A bug fix                     | `fix/offline-sync-duplicates`    |
    | `docs/`  | Documentation only            | `docs/area3-guide`               |
    | `test/`  | Tests only                    | `test/e2e-consolidation`         |
    | `ci/`    | Workflows and checks          | `ci/zap-baseline`                |

@@ -12,9 +12,9 @@ body:
     attributes:
       label: Ownership area
       options:
-        - 'Area 1: Integration Core + platform base'
-        - 'Area 2: Onboarding and approval workflows'
-        - 'Area 3: Single view, dashboards and insights'
+        - 'Area 1: Integration core and platform'
+        - 'Area 2: Assessment capture and verification'
+        - 'Area 3: Competency, submissions and insights'
         - 'Area 4: Governance, security and monitoring'
         - 'Team: assessments and process'
     validations:
@@ -24,7 +24,7 @@ body:
     attributes:
       label: Story
       description: Who wants it, what they want, and why. Use a persona from docs/design-thinking/personas.md.
-      placeholder: As a Singapore HR executive, I want …, so that …
+      placeholder: As an assessor, I want …, so that …
     validations:
       required: true
   - type: textarea

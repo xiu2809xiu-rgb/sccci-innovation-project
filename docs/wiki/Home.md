@@ -1,6 +1,6 @@
 # HuiTong 汇通 team wiki
 
-HuiTong is the HR and administration integration layer we are building for LESSO Solar (Problem Statement #7, SCCCI x NYP AI Innovation Challenge, IT2134). It connects INFO-TECH in Singapore with China HQ's customised SAP and intranet, so a new hire is entered once and approved data flows between the systems instead of being re-entered in each. All data is synthetic.
+HuiTong is the assessment capture and integration layer we are building for ASPRI-IPI, the training arm of the Association of Process Industry (Problem Statement #5, the team's first choice; SCCCI x NYP AI Innovation Challenge, IT2134). Assessors record a practical assessment once, on a tablet. HuiTong calculates each trainee's competency from the course's rules and carries the verified results into the Training Management System and on to the government portals, by an agency's API where it has one and as a submission file where it does not. All data is synthetic.
 
 These pages are a map. The documents they point to live in the repository, where every change is reviewed in a pull request.
 
@@ -18,7 +18,7 @@ These pages are a map. The documents they point to live in the repository, where
 | Document                                                                                                                            | Why read it                                                      |
 | ----------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------- |
 | [CLAUDE.md](https://github.com/xiu2809xiu-rgb/sccci-innovation-project/blob/main/CLAUDE.md)                                         | The project's context, stack and engineering standards           |
-| [Problem statement](https://github.com/xiu2809xiu-rgb/sccci-innovation-project/blob/main/docs/problem-statement.md)                 | LESSO Solar's problem and our analysis of it                     |
+| [Problem statement](https://github.com/xiu2809xiu-rgb/sccci-innovation-project/blob/main/docs/problem-statement.md)                 | ASPRI-IPI's problem and our analysis of it                       |
 | [Design thinking](https://github.com/xiu2809xiu-rgb/sccci-innovation-project/tree/main/docs/design-thinking)                        | Personas, journey maps, how-might-we statements, success metrics |
 | [Backlog](https://github.com/xiu2809xiu-rgb/sccci-innovation-project/blob/main/docs/agile/backlog.md)                               | Every epic and story with its acceptance criteria                |
 | [Test plan](https://github.com/xiu2809xiu-rgb/sccci-innovation-project/blob/main/docs/agile/test-plan.md)                           | Test levels, environments, schedule and defect handling          |
