@@ -1,166 +1,144 @@
 # Journey maps
 
-Three journeys carry most of the pain in Problem Statement #7: a new hire onboarded into INFO-TECH, SAP and the intranet; the monthly management summary; and a claim that needs HQ Treasury's extra approval. Each is mapped twice: as it works today, and as it works with HuiTong.
+Three journeys carry most of the pain in Problem Statement #5: a practical assessment run, from the training ground to the agencies; a change to a course's rules; and a submission an agency rejects. Each is mapped twice: as it works today on paper, and as it works with HuiTong. They are lettered D to F, because ids are never reused: journeys A to C belonged to the earlier statements and are kept in the tag `archive/ps7-lesso-solar`.
 
-**Status: Assumed.** The stages come from the brief and desk research. Timings use the assumed baselines in [A-12](../assumptions.md) and are confirmed or corrected at the briefing call ([Q-33](../client/questions-for-client.md), [Q-48](../client/questions-for-client.md), [Q-59](../client/questions-for-client.md), [Q-60](../client/questions-for-client.md)). Feelings are our reading of the brief, to be checked with the participants.
+**Status: Assumed.** The stages come from the brief and desk research. Timings use the brief's figures and our arithmetic ([A-76](../assumptions.md)), and are confirmed or corrected at the briefing call ([Q-74](../client/questions-for-client.md), [Q-76](../client/questions-for-client.md), [Q-77](../client/questions-for-client.md)).
 
-People: Tan Mei Ling (SG HR executive), Zhou Xinyi 周欣怡 (China HQ HR partner), Arjun Menon (hiring manager), Nur Aisyah (admin operations), Farhan Ismail (IT) and an HQ Treasury approver. See [personas.md](personas.md).
+People: Hafiz Rahman (assessor), Joanne Lim (operations executive), Priya Nair (training manager), Ronald Seah (head of training operations) and Tan Wei Jie (a trainee). See [personas.md](personas.md).
 
 ---
 
-## Journey A: a new hire, from one entry to day 1
+## Journey D: a run, from the training ground to the agencies
 
-### A.1 Current state
+### D.1 Current state
 
-| #   | Stage                     | Who                                          | What happens                                                                                                | Systems                      | Hand-off                     | Time (assumed)                | Feeling                      | Pain points         |
-| --- | ------------------------- | -------------------------------------------- | ----------------------------------------------------------------------------------------------------------- | ---------------------------- | ---------------------------- | ----------------------------- | ---------------------------- | ------------------- |
-| 1   | Approve the hire          | Arjun, approvers ([A-10](../assumptions.md)) | The hire is approved, in the intranet or elsewhere                                                          | Intranet, email              | Approvers to HR              | Varies                        | Impatient                    | PP-03               |
-| 2   | Recruit                   | Mei Ling, Arjun                              | Advertising, interviews and the offer happen outside HuiTong ([A-38](../assumptions.md))                    | Job portals, agencies, email |                              | Weeks                         | Busy                         | PP-03               |
-| 3   | Record the hire           | Mei Ling                                     | Types the new hire into INFO-TECH: the record, leave entitlement and payroll details                        | INFO-TECH                    |                              | 1 h per hire                  | Tedious                      | PP-01, PP-05        |
-| 4   | Ask HQ for the SAP record | Mei Ling                                     | Emails HQ HR the same details in a spreadsheet, with Singapore codes and dates                              | Email, Excel                 | HR to HQ                     | Same day                      | Easy to drop                 | PP-01, PP-02, PP-11 |
-| 5   | Create the SAP record     | Xinyi                                        | Re-keys the hire into SAP with HQ's codes and Chinese fields, and asks about the fields that are missing    | SAP, WeChat                  | HQ back to HR with questions | 1-2 working days              | Frustrated by missing fields | PP-01, PP-05, PP-09 |
-| 6   | Request intranet access   | Mei Ling, Farhan                             | Once HQ confirms the SAP record, HR asks IT for the new hire's intranet account, which IT types in again    | Email, IT ticket queue       | HR to IT                     | 1 working day                 | Waiting                      | PP-01, PP-02        |
-| 7   | Prepare for day 1         | Nur Aisyah, Farhan                           | Laptop, desk, access card and accounts are requested by email; status lives in inboxes                      | Email, IT ticket queue       | Admin and IT back to HR      | 2-5 working days              | Rushed                       | PP-04               |
-| 8   | Chase                     | Arjun, Mei Ling                              | Arjun asks HR for status; HR asks HQ, admin and IT                                                          | Chat tools, email, phone     | Everyone to everyone         | 30 min a day in the last week | Anxious                      | PP-03, PP-12        |
-| 9   | Day 1                     | New hire                                     | Some items are missing (laptop, intranet account), so the new hire cannot read the policies or file a claim |                              |                              |                               | Poor first impression        | PP-04               |
+| #   | Stage                | Who             | What happens                                                                                                                                          | Systems                                         | Hand-off                        | Time (assumed)                                    | Feeling             | Pain points  |
+| --- | -------------------- | --------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------- | ------------------------------- | ------------------------------------------------- | ------------------- | ------------ |
+| 1   | Prepare the run      | Hafiz           | Prints a checklist per trainee from the course's current documents                                                                                    | Paper, the TMS's class list                     |                                 | 15 min                                            | Routine             | PP-23        |
+| 2   | Assess               | Hafiz, trainees | Watches each trainee carry out the practical tasks and ticks the paper checklist, often in gloves and safety gear, sometimes where there is no signal | Paper                                           |                                 | The run itself                                    | Focused, encumbered | PP-16, PP-24 |
+| 3   | Work out the results | Hafiz           | Tallies each trainee's criteria against the outcome rule and the critical items                                                                       | Paper, calculator                               |                                 | Part of the hour                                  | Error-prone         | PP-17        |
+| 4   | Type into the TMS    | Hafiz           | Types every result into the TMS at a shared desktop                                                                                                   | The TMS                                         | Assessor to operations          | ~1 h a run, ~60% of the work after the assessment | Tedious             | PP-18        |
+| 5   | Verify               | Joanne          | Checks the TMS entries against the paper, and calls the assessor about mismatches                                                                     | The TMS, paper, phone                           | Operations back to the assessor | ~10 min a run (10%)                               | Detective work      | PP-19        |
+| 6   | Submit               | Joanne          | Keys or uploads the results into each agency's portal; builds a file where a portal takes no API                                                      | The MOM, SSG/WSDA and ITE portals, spreadsheets | Operations to each agency       | ~20 min a run (20%)                               | Repetitive          | PP-20        |
+| 7   | Rework               | Joanne, Hafiz   | Fixes results and rows that come back wrong                                                                                                           | The portals, the TMS                            | Agency back to operations       | ~5 min a run (5%)                                 | Frustrated          | PP-21, PP-26 |
+| 8   | File                 | Joanne          | Files the paper so it can be found when an agency checks                                                                                              | Filing cabinets                                 |                                 | ~5 min a run (5%)                                 | Low value           | PP-22        |
+| 9   | Wait                 | Wei Jie         | Waits for his result to reach the agency before he is certified                                                                                       |                                                 |                                 | Unknown (Q-76)                                    | Uncertain           | PP-25        |
 
-From a new hire's entry to their intranet access: **2-3 working days**, with the SAP-before-intranet order held together by email. Each new-hire field is typed about **three times** (INFO-TECH, SAP, intranet).
+The work after the assessment takes about **1 hour 40 minutes a run** (our arithmetic: the brief's hour is the 60% share), and every result is written once and typed at least once more.
 
 ```mermaid
 journey
-  title A new hire to day 1 today (5 = good, 1 = bad)
-  section Approve and recruit
-    Approve the hire: 3: Arjun
-    Recruit outside HuiTong: 3: Mei Ling, Arjun
-  section Three systems by hand
-    Type the hire into INFO-TECH: 2: Mei Ling
-    Email HQ the details: 2: Mei Ling
-    Re-key the hire into SAP: 1: Xinyi
-    Ask IT for intranet access: 2: Mei Ling
-  section Day 1
-    Request laptop, desk and accounts by email: 2: Aisyah
-    Chase status: 1: Arjun, Mei Ling
-    First day without intranet access: 1: Arjun
+  title A run today (5 = good, 1 = bad)
+  section On the training ground
+    Print the checklists: 3: Hafiz
+    Assess on paper: 3: Hafiz
+    Tally the results: 2: Hafiz
+  section After the run
+    Type the results into the TMS: 1: Hafiz
+    Verify against the paper: 2: Joanne
+    Key into three portals: 1: Joanne
+    Rework rejected rows: 1: Joanne, Hafiz
+    File the paper: 2: Joanne
 ```
 
-### A.2 Future state with HuiTong
+### D.2 Future state with HuiTong
 
-| #   | Stage                      | Who                             | What happens                                                                                                                                                                                                                                                                  | Systems                                 | Time (target)         | Feeling          | Capability |
-| --- | -------------------------- | ------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------- | --------------------- | ---------------- | ---------- |
-| 1   | Approve and recruit        | Arjun, approvers, Mei Ling      | Unchanged: approvals and recruiting stay where they are                                                                                                                                                                                                                       | Intranet, job portals                   | Unchanged             | Routine          |            |
-| 2   | Enter the hire once        | Mei Ling                        | Enters the new hire once in HuiTong, prefilled from the approval where the intranet sends one. HuiTong creates a draft (`PRE_HIRE`) record in the master                                                                                                                      | HuiTong                                 | 10 min                | Relieved         | B, C       |
-| 3   | Write to SAP and INFO-TECH | Mei Ling, Xinyi, then automatic | Each system's data steward approves a preview of the write into it: Xinyi for SAP, Mei Ling for INFO-TECH. HuiTong then creates both records, each write audited ([A-21](../assumptions.md), [A-62](../assumptions.md)). In the PoC both systems are mocks, labelled as mocks | HuiTong, SAP, INFO-TECH (mocked)        | Minutes of review     | In control       | A, C, F    |
-| 4   | HQ view                    | Xinyi                           | Sees the new hire in the master in HQ's structure, with only the fields HQ may hold (masking, cross-border register), instead of re-keying them                                                                                                                               | HuiTong                                 | Same day              | Trusting         | B, F       |
-| 5   | Intranet access            | Automatic, then Farhan          | Only once SAP confirms the record does HuiTong request the intranet account: the rule is enforced, not remembered                                                                                                                                                             | HuiTong, intranet (mocked)              | Same day as the entry | Nothing to chase | A, C       |
-| 6   | Prepare for day 1          | Nur Aisyah, Farhan              | Admin preparation tasks (laptop, desk, accounts) are created with SLAs; reminders and escalations go to Lark/Feishu or DingTalk                                                                                                                                               | HuiTong, Lark/Feishu, DingTalk (mocked) | Before the start date | Calm             | C          |
-| 7   | Day 1                      | New hire                        | Everything is ready. With the onboarding milestones met and the verified INFO-TECH record in, the draft becomes active; the workflow closes and the audit trail records each step                                                                                             | HuiTong                                 |                       | Welcomed         | C, F       |
+| #   | Stage                | Who                    | What happens                                                                                                                                                                                         | Capability | Pain points removed |
+| --- | -------------------- | ---------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------- | ------------------- |
+| 1   | Prepare the run      | Automatic              | HuiTong reads the run and its trainees from the TMS, with the course's approved rule version, and loads them onto Hafiz's tablet                                                                     | A, B, D    | PP-23               |
+| 2   | Assess on the tablet | Hafiz                  | Marks each criterion on the tablet as he watches; the checklist keeps working without a signal and syncs when it finds one                                                                           | C          | PP-16, PP-24        |
+| 3   | Competency           | Automatic              | HuiTong calculates each outcome from the course's rules; a trainee cannot be finished with a critical item unmarked                                                                                  | D          | PP-17               |
+| 4   | Verify               | Joanne                 | Verifies the run in a queue, with the evidence beside each result; corrects one result with a reason, keeping the original. The verification assistant flags unusual records for her to look at      | C, E       | PP-19, PP-26        |
+| 5   | Into the TMS         | Joanne, then automatic | After a preview, she approves the write; the verified results reach the TMS without re-typing (a mock in the PoC, labelled)                                                                          | A          | PP-18               |
+| 6   | Submit               | Joanne, then automatic | One agency gets the results through its API, with an acknowledgement; another gets a file rendered from its template and validated before delivery. Each agency receives only its allowlisted fields | A, D, F    | PP-20, PP-21        |
+| 7   | Track                | Joanne, Ronald         | The run's status shows per agency, with deadlines and any rejection                                                                                                                                  | C, D       | PP-21, PP-25        |
+| 8   | Evidence             | Automatic              | Every result, correction and submission is in the tamper-evident audit trail, kept for the agreed period                                                                                             | F          | PP-22               |
 
-Targets: the **same day** from entry to intranet access (SM-03), **100%** of SAP records before intranet access (SM-10), **≥ 95%** of hires fully prepared by day 1 (SM-04), each field typed **once** (SM-05). See [success-metrics.md](success-metrics.md).
-
----
-
-## Journey B: the monthly management summary
-
-### B.1 Current state
-
-| #   | Stage                     | Who                   | What happens                                                                                                                                                                       | Systems                       | Hand-off         | Time (assumed)              | Feeling                  | Pain points  |
-| --- | ------------------------- | --------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------- | ---------------- | --------------------------- | ------------------------ | ------------ |
-| 1   | Export Singapore data     | Mei Ling              | Exports leave and payroll summaries to CSV or Excel from INFO-TECH                                                                                                                 | INFO-TECH, Excel              |                  | 30 min                      | Routine                  | PP-06        |
-| 2   | Ask HQ for China data     | Mei Ling              | Messages Xinyi for the HQ extract                                                                                                                                                  | Chat tools, email             | HR to HQ         | 1-2 working days of waiting | Dependent                | PP-08, PP-12 |
-| 3   | Receive the HQ file       | Xinyi                 | Sends an Excel file with Chinese or SAP-coded headers, `YYYY/MM/DD` dates and SAP codes, sometimes GBK-encoded                                                                     | SAP export, email             | HQ to HR         | 1 h                         | Doing someone else's job | PP-05, PP-11 |
-| 4   | Reformat and map          | Mei Ling              | Renames columns, fixes dates and encodings, maps categories by hand (年假 to Annual Leave, 病假 to Sick Leave, 调休 to Time-off in lieu); asks what to do with 探亲假 (home leave) | Excel                         |                  | 5-6 h                       | Tedious                  | PP-05, PP-07 |
-| 5   | Reconcile headcount       | Mei Ling              | Checks joiners and leavers across INFO-TECH and SAP; finds mismatches between systems                                                                                              | Excel, INFO-TECH, email to HQ | HR to HQ         | 3-4 h                       | Worried about accuracy   | PP-09, PP-10 |
-| 6   | Fill the company template | Mei Ling              | Pastes into the reporting template, checks formulas and totals                                                                                                                     | Excel                         |                  | 3 h                         | Careful                  | PP-06        |
-| 7   | Review and correct        | Mei Ling, her manager | Corrections loop back to step 4                                                                                                                                                    | Excel, email                  |                  | 2 h                         | Pressured                | PP-13        |
-| 8   | Send to management        | Mei Ling              | Emails the workbook; it contains personal data and sometimes crosses borders                                                                                                       | Email                         | HR to management | 15 min                      | Uneasy                   | PP-11, PP-13 |
-
-Total: about **16 HR hours a month** spread over **about two working days** of elapsed time ([A-12](../assumptions.md)).
+Targets: consolidation and TMS entry **under 5 minutes** a run (SM-12), **no result typed by hand** after the assessment (SM-13), **100%** of rule-defined outcomes calculated (SM-14), **no record lost** by an offline sync (SM-19). See [success-metrics.md](success-metrics.md).
 
 ```mermaid
 journey
-  title Monthly management summary today (5 = good, 1 = bad)
-  section Collect
-    Export INFO-TECH to CSV: 3: Mei Ling
-    Wait for the HQ extract: 1: Mei Ling
-    Prepare the HQ extract: 2: Xinyi
-  section Transform
-    Reformat columns and dates: 1: Mei Ling
-    Map leave categories by hand: 1: Mei Ling
-    Reconcile headcount: 2: Mei Ling
-  section Report
-    Fill the template: 2: Mei Ling
-    Email the workbook: 2: Mei Ling
+  title A run with HuiTong (5 = good, 1 = bad)
+  section On the training ground
+    The run loads onto the tablet: 4: Hafiz
+    Assess on the tablet, offline if need be: 4: Hafiz
+    Outcomes calculated: 5: Hafiz
+  section After the run
+    Verify with the evidence beside each result: 4: Joanne
+    Approve the write to the TMS: 5: Joanne
+    Submit by API or validated file: 4: Joanne
+    See each submission's status: 5: Joanne, Ronald
 ```
-
-### B.2 Future state with HuiTong
-
-| #   | Stage                  | Who                   | What happens                                                                                                                                                  | Systems            | Time (target) | Feeling           | Capability |
-| --- | ---------------------- | --------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------ | ------------- | ----------------- | ---------- |
-| 1   | Pull every source      | Automatic or Mei Ling | Connectors pull leave, payroll summaries and headcount from INFO-TECH and SAP on a schedule or on demand                                                      | HuiTong connectors | Minutes       | Nothing to chase  | A, D       |
-| 2   | Map categories         | Automatic             | Approved, versioned rules translate both lists to canonical categories (年假 to ANNUAL, 调休 to TIME_OFF_IN_LIEU)                                             | HuiTong            | Seconds       | Confident         | D          |
-| 3   | Validate               | Automatic             | Checks produce an exception list: unmapped categories (探亲假), overlapping leave, unknown employees, records that disagree                                   | HuiTong            | Seconds       | Focused           | D          |
-| 4   | Clear exceptions       | Mei Ling              | Works only the exceptions, each with its source record; decisions are audited                                                                                 | HuiTong            | ≤ 1 h         | In control        | D, F       |
-| 5   | Review the single view | Mei Ling, management  | Dashboards show headcount, joiners and leavers, leave and payroll summaries and data-consistency measures, with provenance; cross-entity views are aggregates | HuiTong            | 15 min        | Reassured         | D, F       |
-| 6   | Export and publish     | Mei Ling              | Exports the company template as .xlsx where one is still needed; management reads the same numbers in HuiTong instead of an email attachment                  | HuiTong            | 15 min        | Done the same day | D, F       |
-
-Targets: **≤ 2 HR hours** a month (SM-01), the summary final **the same day** (SM-07), records consistent across systems **≥ 98%** (SM-02).
 
 ---
 
-## Journey C: a claim above the Treasury threshold
+## Journey E: a course's rules change
 
-### C.1 Current state
+### E.1 Current state
 
-| #   | Stage                     | Who                         | What happens                                                                                                    | Systems           | Hand-off             | Time (assumed)   | Feeling        | Pain points  |
-| --- | ------------------------- | --------------------------- | --------------------------------------------------------------------------------------------------------------- | ----------------- | -------------------- | ---------------- | -------------- | ------------ |
-| 1   | Submit the claim          | Arjun                       | Submits a claim with its receipts in the intranet                                                               | Intranet          |                      | 15 min           | Routine        |              |
-| 2   | Usual approvals           | Department head, SG finance | Approve in the intranet in turn ([A-63](../assumptions.md))                                                     | Intranet          | Between approvers    | 1-3 working days | Waiting        |              |
-| 3   | Treasury's extra approval | HQ Treasury                 | Above the threshold, Treasury must approve as well; nobody in Singapore can see that the claim is waiting there | Intranet, email   | Singapore to HQ      | Unknown (Q-60)   | Uncertain      | PP-15        |
-| 4   | Chase                     | Arjun, Mei Ling             | Arjun asks finance or HR where the claim is; they ask HQ by message                                             | Chat tools, email | Everyone to everyone | Unknown          | Frustrated     | PP-12, PP-15 |
-| 5   | Payment                   | SG finance                  | Pays once every approval is in, checked by hand against the threshold                                           | Payment system    |                      |                  | Relieved, late | PP-15        |
+| #   | Stage                 | Who   | What happens                                                                   | Time (assumed) | Pain points  |
+| --- | --------------------- | ----- | ------------------------------------------------------------------------------ | -------------- | ------------ |
+| 1   | A requirement changes | Priya | An agency changes a course's requirements, or a new course is added            |                |              |
+| 2   | Rewrite the plan      | Priya | Updates the assessment plan and rewrites the checklist by hand                 | Hours to days  | PP-23        |
+| 3   | Tell the assessors    | Priya | Emails the assessors and prints new checklists                                 |                | PP-23        |
+| 4   | Old checklists linger | Hafiz | An old checklist turns up in a run; assessors interpret the change differently |                | PP-17, PP-23 |
+| 5   | Decide                | Priya | Finds the mismatch later and decides whether the run's results stand           |                | PP-26        |
 
-### C.2 Future state with HuiTong
+### E.2 Future state with HuiTong
 
-| #   | Stage                     | Who            | What happens                                                                                                                                 | Systems                          | Time (target)  | Feeling       | Capability |
-| --- | ------------------------- | -------------- | -------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------- | -------------- | ------------- | ---------- |
-| 1   | Submit the claim          | Arjun          | Unchanged, in the intranet                                                                                                                   | Intranet                         | 15 min         | Routine       |            |
-| 2   | The claim reaches HuiTong | Automatic      | The intranet sends a signed event; HuiTong verifies it, stores it once and checks the amount against the configured threshold                | Intranet (mocked), HuiTong       | Seconds        | Nothing to do | A, C       |
-| 3   | Route                     | Automatic      | Below the threshold the usual approvals suffice; above it, an HQ Treasury approval step follows them                                         | HuiTong                          | Seconds        | Certain       | C          |
-| 4   | Treasury decides          | HQ Treasury    | Sees only the claims and payments that need it, with what it needs to decide; the decision is audited                                        | HuiTong or the intranet (mocked) | Within the SLA | In control    | C, F       |
-| 5   | Status and payment        | Arjun, finance | The claimant and HR see where the claim stands on the workflow board; nothing above the threshold is marked payable before Treasury approves | HuiTong                          |                | Informed      | C, F       |
+| #   | Stage   | Who                                | What happens                                                                                                                                                                     | Capability | Pain points removed |
+| --- | ------- | ---------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------- | ------------------- |
+| 1   | Draft   | Priya, the rule-drafting assistant | Uploads the new assessment plan; the AI drafts the criteria, critical items and outcome rule, each with a confidence and a rationale, labelled "Mock AI" on the default provider | E          | PP-23               |
+| 2   | Approve | Priya                              | Corrects the draft and approves it as a new rule version; nothing is used before she approves                                                                                    | D, E       | PP-23               |
+| 3   | Use     | Automatic                          | The next run uses the new version with no code change; runs already started keep theirs                                                                                          | D          | PP-17, PP-23        |
+| 4   | Show    | Priya, Grace (auditor)             | Any result shows the rule version it was assessed against                                                                                                                        | D, F       | PP-26               |
 
-Targets: **100%** of payments above the threshold approved by Treasury before payment (SM-11), and replayed events create no duplicate approvals (GR-06).
+---
+
+## Journey F: an agency rejects a submission
+
+### F.1 Current state
+
+| #   | Stage                 | Who           | What happens                                                                      | Time (assumed) | Pain points  |
+| --- | --------------------- | ------------- | --------------------------------------------------------------------------------- | -------------- | ------------ |
+| 1   | The rejection arrives | Joanne        | An email or a portal report says a row was rejected, days after the submission    | Days later     | PP-21        |
+| 2   | Find the evidence     | Joanne        | Pulls the paper from the cabinet and finds the run in the TMS                     | 15 to 30 min   | PP-22        |
+| 3   | Fix and resubmit      | Joanne, Hafiz | Corrects the result or the format, resubmits, and hopes nothing else was affected | Varies         | PP-21, PP-26 |
+
+### F.2 Future state with HuiTong
+
+| #   | Stage                   | Who       | What happens                                                                                                                                                           | Capability | Pain points removed |
+| --- | ----------------------- | --------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------- | ------------------- |
+| 1   | Caught early            | Automatic | A file is validated against the agency's rules before delivery; the portal mock's validation report or the API's acknowledgement comes back to the submission's status | A, D       | PP-21               |
+| 2   | Corrected with a reason | Joanne    | A correction after submission goes back through verification, keeps the original value and records the reason                                                          | C, F       | PP-26               |
+| 3   | Resubmitted once        | Automatic | The resubmission carries an idempotency key, so the agency never receives a duplicate                                                                                  | A          | PP-21               |
 
 ---
 
 ## Pain-point register
 
-Severity is an assumption until the participants rank the pain points at the briefing call (see [README.md](README.md)). The "In the brief" column gives the number of the pain point in [problem-statement.md, section 2.2](../problem-statement.md#22-current-state-pain-points).
+Severity is an assumption until the participants rank the pain points at the briefing call (see [README.md](README.md)). The "In the brief" column gives the number of the pain point in [problem-statement.md, section 2.2](../problem-statement.md#22-current-state-pain-points). Ids continue from PP-16: PP-01 to PP-15 belonged to the earlier statements.
 
-| ID    | Pain point                                                                                     | Journey (stage) | Felt by                                | In the brief                                       | Severity (assumed)     | Addressed by                                                     |
-| ----- | ---------------------------------------------------------------------------------------------- | --------------- | -------------------------------------- | -------------------------------------------------- | ---------------------- | ---------------------------------------------------------------- |
-| PP-01 | Each new-hire field is typed into INFO-TECH, SAP and the intranet                              | A3, A4, A5, A6  | Mei Ling, Xinyi, Farhan                | 1. Duplicate entry                                 | High                   | B master, C workflow                                             |
-| PP-02 | The SAP-before-intranet order is carried by people: HR waits for HQ's SAP record, then asks IT | A4, A5, A6      | Mei Ling, Farhan, new hires            | 2. SAP before intranet                             | High                   | A connectors, C workflow                                         |
-| PP-03 | After approval, the hiring manager cannot see where a hire stands                              | A1, A2, A8      | Arjun                                  | Our analysis                                       | Medium                 | C workflow board                                                 |
-| PP-04 | Laptop, desk, accounts and intranet access are requested late, so day 1 is not ready           | A7, A9          | Aisyah, Farhan, Arjun                  | 2. SAP before intranet                             | High                   | C admin tasks with SLAs                                          |
-| PP-05 | Singapore and HQ data differ in structure, language, date formats and codes                    | A3, A5, B3, B4  | Mei Ling, Xinyi                        | 4. Different structures                            | High                   | A connectors, mapping engine                                     |
-| PP-06 | The same CSV and Excel exports and imports are repeated every month                            | B1, B6          | Mei Ling                               | 1. Duplicate entry                                 | High                   | A connectors, D single view                                      |
-| PP-07 | Leave categories are mapped by hand, and some have no counterpart (探亲假)                     | B4              | Mei Ling                               | 4. Different structures                            | High                   | D category mapping rules                                         |
-| PP-08 | Waiting for HQ data that has to be requested person to person                                  | B2              | Mei Ling                               | 5. No single view                                  | Medium                 | A CN HQ connector                                                |
-| PP-09 | Records disagree across INFO-TECH, SAP and spreadsheet copies, and nobody knows which is right | A5, B5          | Mei Ling, Xinyi                        | 1. Duplicate entry                                 | High                   | B source of truth and conflict queue                             |
-| PP-10 | No single view: the consolidated picture is a spreadsheet kept up by hand                      | B5              | Mei Ling, management                   | 5. No single view                                  | High                   | B canonical master, D single view                                |
-| PP-11 | Spreadsheets with pay and bank data travel by email, sometimes across borders                  | A4, B3, B8      | Mei Ling, Xinyi, compliance            | 6. Data moves between Singapore and China          | High                   | F masking, register, audit                                       |
-| PP-12 | Messages and status are split across chat tools and email, in Singapore and at HQ              | A8, B2, C4      | Everyone                               | Our analysis (the brief suggests Lark or DingTalk) | Medium                 | C notifications (mocked)                                         |
-| PP-13 | Management reporting waits for the manual summary                                              | B7, B8          | Management, Mei Ling                   | 5. No single view                                  | Medium                 | D single view and dashboards                                     |
-| PP-14 | Each new market, or another company, adds another isolated, locally compliant system           | (future)        | HQ IT, HR, other companies             | 7. Reuse                                           | Medium now, high later | A connector framework, tenant configuration, E mapping assistant |
-| PP-15 | Payments above the threshold wait on an HQ Treasury approval that nobody in Singapore can see  | C3, C4, C5      | Claimants, finance, Mei Ling, Treasury | 3. Treasury approval                               | High                   | C Treasury step (area 2)                                         |
+| ID    | Pain point                                                                                           | Journey (stage) | Felt by                  | In the brief                             | Severity (assumed) | Addressed by                                 |
+| ----- | ---------------------------------------------------------------------------------------------------- | --------------- | ------------------------ | ---------------------------------------- | ------------------ | -------------------------------------------- |
+| PP-16 | Paper checklists in the training environment: ticks missed, smudged or lost                          | D2              | Hafiz, trainees          | 1. Paper checklists                      | High               | C tablet checklist                           |
+| PP-17 | Competency is tallied by hand, so a missed critical item or a different sum gives a different result | D3, E4          | Hafiz, Priya, trainees   | 2. Competency by hand                    | High               | D course rules and competency calculation    |
+| PP-18 | Every result is typed into the TMS after the run: about an hour a run                                | D4              | Hafiz                    | 3. Re-typed into the TMS                 | High               | A TMS connector, C capture                   |
+| PP-19 | Verification needs the paper beside the screen, and a mismatch means chasing the assessor            | D5              | Joanne, Hafiz            | 4. Checked against the paper             | Medium             | C verification queue                         |
+| PP-20 | Three portals, three formats, some without an API: the same results keyed or uploaded again          | D6              | Joanne                   | 5. Submissions to three agencies         | High               | A agency connectors, D submission files      |
+| PP-21 | Rejections come back late, and fixing one means retracing the run                                    | D7, F1, F3      | Joanne, Hafiz            | 6. Rework                                | Medium             | D validated files, A submission status       |
+| PP-22 | Paper is filed for audits and is slow to find when an agency checks                                  | D8, F2          | Joanne, compliance       | 6. Filing                                | Medium             | F tamper-evident audit trail                 |
+| PP-23 | Course rules live in documents, and a change spreads unevenly                                        | D1, E2, E3, E4  | Priya, Hafiz             | Our analysis (2. Competency by hand)     | High               | D versioned rules, E rule-drafting assistant |
+| PP-24 | Parts of the training environment have no signal                                                     | D2              | Hafiz                    | Our analysis ([A-67](../assumptions.md)) | High               | C offline checklist                          |
+| PP-25 | Nobody can see at a glance where a run stands                                                        | D9              | Ronald, Joanne, trainees | Our inference, to confirm                | Medium             | D dashboards, C run status                   |
+| PP-26 | A correction after verification or submission is hard to trace                                       | D7, E5, F3      | Joanne, auditors         | Our analysis                             | Medium             | C corrections with reasons, F audit trail    |
 
 ## Moments that matter
 
-- **The SAP record** (A4-A5): today it depends on an email and a re-keying at HQ; with HuiTong it is a previewed, approved write in a tracked workflow, and the intranet waits for it.
-- **Typing the hire** (A3): the single biggest source of duplicate work and of later inconsistencies.
-- **Mapping 年假 to Annual Leave** (B4): small per row, large per month, and a frequent source of errors.
-- **Sending the workbook** (B8): the point where data protection is most at risk.
-- **A claim over the threshold** (C3): the point where a payment either waits visibly for Treasury or slips through unseen.
+- **Ticking a criterion** (D2): the one moment a result is born; captured once here, it never needs typing again.
+- **A critical item** (D3): a single unmarked item changes the outcome, so the checklist must make it impossible to skip.
+- **Typing into the TMS** (D4): the single biggest cost, and the source of most errors.
+- **The portal without an API** (D6): where a generated, validated file saves the most rework.
+- **A rule change** (E2-E3): where consistency is won or lost across every assessor.
 
 These moments drive the prioritised How-Might-We statements in [how-might-we.md](how-might-we.md).
