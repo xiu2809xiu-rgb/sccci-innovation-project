@@ -156,7 +156,7 @@ LESSO Solar withdrew on 23 Oct 2026. The team resubmitted its choices with #5 AS
 
 - [x] **1. Archive, decide and reframe.** The tag `archive/ps7-lesso-solar` on `main` after #147. ADR 0023 (the withdrawal, why #5, what carries over and what changes, what prompt 003 leaves behind, the order of the work), with ADR 0022 superseded. The README, CLAUDE.md sections 1, 3 and 4 (and section 8's audience and tablet-first lines), and the problem statement rewritten for #5, with no appendix about earlier statements.
 - [~] **2. Product scope.** CLAUDE.md section 4's capabilities A to G, the six roles and the data rules are rewritten with step 1. Still to do: the roles in code (added beside the HR roles, which leave once no area uses them). The national-ID assumption and question came with step 8 (A-69, Q-69).
-- [~] **3. The areas.** CLAUDE.md's ownership table names Azri, Iok Teck and Angelyn with their #5 scopes. Still to do: module ownership and the area 1 guide.
+- [x] **3. The areas.** CLAUDE.md's ownership table names Azri, Iok Teck and Angelyn with their #5 scopes, and its domain and Strategy examples follow #5. Module ownership is rewritten for #5: the four owners (backups TBD with T-1), each area's scope, folders, the interfaces between the areas, the W7 interview topics and when the area is done, citing the new backlog's stories. The area 1 guide describes the mechanisms that carry over, says where the code still holds the earlier statement's adapters and mocks, and names the stories that replace them. The guides of areas 2 to 4, their file names and the links into them follow in step 6, in pull requests their owners review.
 - [ ] **4. Mocks and synthetic data.**
 - [ ] **5. Area 1 in code.**
 - [ ] **6. Areas 2 to 4.**
