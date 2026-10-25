@@ -3,11 +3,13 @@
 // sub-issues) and `render-backlog.mjs` writes docs/agile/backlog.md from it,
 // so the plan is reviewed in a pull request before anything is created.
 // Stories already delivered name the branch that delivered them (`deliveredBy`).
+// Keys are never reused: GitHub issues are matched by key, so a story whose
+// title changes keeps its issue, and a dropped story's key moves to RETIRED.
 
 const AREA = {
   1: 'area: 1 integration core',
-  2: 'area: 2 workflow automation',
-  3: 'area: 3 attendance and reporting',
+  2: 'area: 2 capture and verification',
+  3: 'area: 3 competency and submissions',
   4: 'area: 4 governance and monitoring',
   team: 'area: team',
 };
@@ -17,20 +19,32 @@ export const SPRINTS = [
   { number: 1, goal: 'Platform base, security scanning and the Agile workflow in GitHub' },
   {
     number: 2,
-    goal: 'Problem allocation (#7, LESSO Solar); retarget the docs; prepare the briefing call',
+    goal: "Problem allocation; retarget the project to #5 (ASPRI-IPI), the team's first choice; the TMS and agency mocks",
   },
   {
     number: 3,
-    goal: 'Briefing call with LESSO Solar; project plan; area owners agreed; answers folded into the backlog',
+    goal: 'Briefing call with ASPRI-IPI; project plan; backup owners agreed; answers folded into the backlog',
   },
-  { number: 4, goal: 'UI prototype across every area' },
+  { number: 4, goal: 'UI prototype across every area, the tablet checklist first' },
   { number: 5, goal: 'Proposal presentation (25%)' },
   { number: 6, goal: 'Backlog refinement; area owners start their core logic' },
   { number: 7, goal: 'Mock job interview (15%): each member explains their own code' },
-  { number: 8, goal: 'AI-assisted coding: workflow, consolidation and governance cores' },
-  { number: 9, goal: 'AI-assisted coding: end-to-end paths between the areas' },
-  { number: 10, goal: 'AI-assisted coding: reports and administration screens' },
-  { number: 11, goal: 'AI-assisted coding: hardening and integration tests' },
+  {
+    number: 8,
+    goal: 'AI-assisted coding: the state machine, course rules, competency and access cores',
+  },
+  {
+    number: 9,
+    goal: 'AI-assisted coding: the tablet checklist, verification, submission files and the TMS write',
+  },
+  {
+    number: 10,
+    goal: 'AI-assisted coding: offline sync, corrections, agency submissions and the rule-drafting assistant',
+  },
+  {
+    number: 11,
+    goal: 'AI-assisted coding: reminders, dashboards, audit readiness and the end-to-end journeys',
+  },
   { number: 12, goal: 'AI-assisted coding: freeze features for the technical review' },
   { number: 13, goal: 'Technical review (25%)' },
   { number: 14, goal: 'Observability: tracing, metrics and dashboards' },
@@ -77,7 +91,7 @@ export const EPICS = [
         story:
           'As the team, we want the problem, users, risks and decisions written down, so that every feature traces back to a real need and a recorded choice.',
         acceptance: [
-          'Given the docs, when an assessor reads them, then personas, journey maps, how-might-we statements and success metrics are there.',
+          'Given the docs, when a reviewer reads them, then personas, journey maps, how-might-we statements and success metrics are there.',
           'Given the GRS register, when a risk is listed, then it has an owner, a mitigation and inherent and residual ratings.',
           'Given a stack choice, when it differs from CLAUDE.md, then an ADR explains it.',
         ],
@@ -91,12 +105,12 @@ export const EPICS = [
         done: true,
         deliveredBy: 'feat/platform-base',
         story:
-          'As an HR user, I want to sign in safely and see only the data my role allows, so that employee data is protected from the first screen.',
+          'As a user of HuiTong, I want to sign in safely and see only the data my role allows, so that personal data is protected from the first screen.',
         acceptance: [
           'Given a password sign-in, when the password is wrong, then the response takes as long as for an unknown email and reveals neither.',
-          'Given a role without clearance, when it reads a salary, then the value comes back masked with the reason.',
+          'Given a role without clearance, when it reads a restricted field, then the value comes back masked with the reason.',
           'Given any write, when it succeeds, then an append-only audit event records who, what and when.',
-          'Given the mock SG HR, CN HQ and OA systems, when they start, then they serve synthetic data in their own schemas.',
+          'Given the mock external systems, when they start, then they serve synthetic data in their own schemas.',
         ],
       },
       {
@@ -108,7 +122,7 @@ export const EPICS = [
         done: true,
         deliveredBy: 'feat/platform-base',
         story:
-          'As an HR user, I want a calm, bilingual app shell with an overview of sync health and my queues, so that I know what needs me as soon as I sign in.',
+          'As a user, I want a calm, bilingual app shell with an overview of sync health and my queues, so that I know what needs me as soon as I sign in.',
         acceptance: [
           'Given the app, when I switch between English and 简体中文 or light and dark, then every string and colour follows without a reload.',
           'Given the overview, when a connector fails, then the page says the figures may be incomplete.',
@@ -151,15 +165,16 @@ export const EPICS = [
       {
         key: 'P-7',
         title: 'Head starts for areas 2 to 4',
-        sprint: 2,
+        sprint: 3,
         points: 8,
         priority: 'must',
         story:
-          'As an area owner, I want my module scaffolded with data models, API contracts, screens on typed mock data and an implementation guide, so that I can start on my core logic in week 6.',
+          'As an area owner, I want a guide to my area for statement #5 and, if I ask for it, my head start reworked for #5, so that I can start on my core logic in week 6.',
         acceptance: [
-          'Given areas 2, 3 and 4, when an owner opens their module, then routes return typed mock data documented in Swagger.',
-          'Given each area, when the owner opens docs/team/, then a guide explains the domain, the interfaces and where to start.',
-          'Given each area, when tests run, then skeleton tests exist for the core logic the owner will write.',
+          "Given each of areas 2 to 4, when the owner opens docs/team/, then a guide explains the area's #5 scope, what its folders hold today, what to change first, and its interfaces and stories.",
+          "Given an owner who asks for a reworked head start (scaffolding, data models, contracts, typed sample data, screens and test skeletons), when it is delivered, then it comes in one pull request for that area, reviewed by the owner, and changes none of the owner's own code.",
+          "Given an owner who reworks the head start themselves, when the guide is merged, then nobody else changes that area's folders.",
+          'Given a shared contract (roles, events, schemas) that #5 needs, when it is added, then no existing consumer breaks.',
         ],
       },
       {
@@ -185,16 +200,31 @@ export const EPICS = [
         key: 'P-9',
         title: 'Hero journey and proof points as end-to-end tests',
         sprint: 11,
-        points: 5,
+        points: 8,
         priority: 'must',
         labels: ['req: M4 best practices'],
         story:
           'As the team, we want the hero journey and its two proof points to run end to end in CI, so that the demo we present is the product we test.',
         acceptance: [
-          "Given E2E #1, when it runs, then a new hire entered once travels through the SAP and INFO-TECH writes, intranet access after the SAP record, activation, reconciliation with HQ, a claim through HQ Treasury, the single view and HQ's summary to the overview, each step named with its owning area.",
-          "Given E2E #2, when another company's unfamiliar CSV is uploaded, then the AI suggestions approved by HR are saved as a mapping version and import the file with no code change.",
-          'Given E2E #3, when HQ HR asks for a field missing from its allowlist through the UI, the raw API or a report export, then it is refused each time and each refusal is audited.',
+          'Given E2E #1, when it runs, then an assessor records a run on a tablet (one record syncs after a dropped connection), the competency is calculated, operations verifies the run and corrects one result with a reason, the results reach the TMS mock, one agency receives them through its API and another as a validated file, the dashboard shows their status and the audit trail shows every step, each step named with its owning area.',
+          'Given E2E #2, when a new course\'s assessment plan is uploaded, then the AI\'s draft rules carry the "Mock AI" badge, a training manager approves them, and the next run uses them with no code change.',
+          "Given E2E #3, when a submission would carry a field missing from the agency's allowlist, through the UI, the raw API or a file, then the agency never receives it and each denial is audited.",
           'Given a step whose story is not done, when the suite runs, then the step is marked fixme with the story key, never deleted.',
+        ],
+      },
+      {
+        key: 'P-10',
+        title: 'Overview: runs, verification, the TMS and submissions',
+        sprint: 3,
+        points: 5,
+        priority: 'must',
+        story:
+          "As an operations executive, I want the overview to show this week's runs, the verification queue, the TMS sync and the submissions due, so that I know what needs me as soon as I sign in.",
+        acceptance: [
+          "Given the overview, when it loads, then it shows the week's runs by state, the runs waiting for verification, the TMS connector's health and the submissions near their deadline, each linking to its page.",
+          'Given a connector that is down, when the overview loads, then it says which figures may be out of date.',
+          'Given an area whose summary is not built yet, when the overview loads, then its tile says so instead of showing a number.',
+          'Given the mock systems, when they appear on the overview, then each carries the "Mock" badge.',
         ],
       },
     ],
@@ -204,20 +234,20 @@ export const EPICS = [
     title: 'Connector hub',
     area: AREA[1],
     labels: ['req: M4 best practices'],
-    goal: "Each of LESSO Solar's systems (INFO-TECH, the customised SAP and the HQ intranet) plugs in behind one connector interface, so data flows between Singapore and HQ without re-entry or CSV exports.",
+    goal: 'The TMS and each agency plug in behind one connector interface: the TMS through its API or its exports, and an agency through its API where it has one and otherwise through a generated file delivered to its portal, with the status of every submission tracked.',
     stories: [
       {
         key: 'A-1',
-        title: 'Sync SG HR employees into HuiTong',
+        title: 'Sync a source system with preview and apply',
         sprint: 1,
         points: 8,
         priority: 'must',
         done: true,
         deliveredBy: 'feat/area1-integration-api',
         story:
-          'As a Singapore HR executive, I want SG HR records to flow into HuiTong on demand, so that I stop re-keying them into Excel.',
+          "As the person who keeps a system's records in step, I want every sync previewed before it writes, so that nothing changes in HuiTong without my say.",
         acceptance: [
-          'Given SG HR, when I preview a sync, then I see what would change and nothing is written.',
+          'Given a connected system, when I preview a sync, then I see what would change and nothing is written.',
           'Given a recent preview, when I apply it, then the records are created or updated and every change is audited.',
           'Given an unchanged source, when the same sync runs twice, then the second run changes nothing.',
           'Given an apply request without a preview, when it reaches the API, then it is refused.',
@@ -225,23 +255,23 @@ export const EPICS = [
       },
       {
         key: 'A-2',
-        title: 'Sync CN HQ (SAP) records with Chinese fields',
+        title: "Map a source's own field names, codes and dates",
         sprint: 1,
         points: 8,
         priority: 'must',
         done: true,
         deliveredBy: 'feat/area1-integration-api',
         story:
-          'As a China HQ HR partner, I want HQ records with Chinese field names and YYYY/MM/DD dates mapped into the same master, so that HQ and Singapore see one consistent record.',
+          'As the team connecting a system, we want its field names, codes and date formats mapped into canonical fields, so that each system keeps its own schema and nobody converts values by hand.',
         acceptance: [
-          'Given CN HQ, when a sync runs, then 部门 and SAP status codes become canonical values.',
-          "Given a field owned by SG HR, when HQ holds a different value, then the master keeps the owner's value and records HQ's as provenance.",
-          'Given a field with no single owner, when the systems disagree, then a conflict opens for HR.',
+          'Given a source with Chinese field names, YYYY/MM/DD dates and its own status codes, when a sync runs, then they become canonical fields and values.',
+          "Given a field another source owns, when this source holds a different value, then the master keeps the owner's value and records this one as provenance.",
+          'Given a field with no single owner, when the sources disagree, then a conflict opens for review.',
         ],
       },
       {
         key: 'A-3',
-        title: 'Receive OA approval webhooks safely',
+        title: 'Receive signed webhooks safely',
         sprint: 1,
         points: 5,
         priority: 'must',
@@ -249,11 +279,11 @@ export const EPICS = [
         deliveredBy: 'feat/area1-integration-api',
         labels: ['req: M4 best practices'],
         story:
-          'As the workflow area, I want approved OA requests delivered as a verified event, so that recruitment can start without anyone copying approvals by hand.',
+          "As the team, we want an outside system's events accepted only when they are signed and new, so that a forged or replayed event never changes anything.",
         acceptance: [
-          'Given an OA delivery, when its HMAC signature or timestamp is wrong, then it is refused and audited, and nothing is stored.',
+          'Given a delivery, when its HMAC signature or timestamp is wrong, then it is refused and audited, and nothing is stored.',
           'Given the same event twice, when it arrives again, then it is stored once.',
-          'Given a subscriber, when an approval arrives, then `oa.approval.completed` is published and the event marked processed.',
+          'Given a subscriber, when an event arrives, then a domain event is published and the stored event marked processed.',
         ],
       },
       {
@@ -265,7 +295,7 @@ export const EPICS = [
         done: true,
         deliveredBy: 'feat/area1-connectors-page',
         story:
-          'As an HR user, I want to see each connected system, its health and its sync history, so that I know whether the master is up to date.',
+          'As a user who depends on the connected systems, I want to see each one, its health and its sync history, so that I know whether HuiTong is up to date.',
         acceptance: [
           'Given the connectors page, when it loads, then each system shows its status, last sync, health and mapping version.',
           'Given a connector, when I check its health, then the result is shown and audited.',
@@ -274,19 +304,19 @@ export const EPICS = [
       },
       {
         key: 'A-5',
-        title: "Import another company's file through its approved mapping",
+        title: 'Import a file through its approved mapping',
         sprint: 6,
         points: 8,
         priority: 'should',
         done: true,
         deliveredBy: 'feat/area1-file-import',
         story:
-          "As an HR executive, I want to import another company's export with the mapping I approved, so that a company or a new market joins the master without code changes.",
+          "As the team, we want a system's full export imported through the mapping a person approved, so that a new source joins HuiTong without code changes.",
         acceptance: [
           'Given an approved mapping for a file connector, when I upload the full export, then I see a preview of the records it would create.',
-          'Given the preview, when I apply it, then the records join the master with that connector as their source.',
+          'Given the preview, when I apply it, then the records join HuiTong with that connector as their source.',
           'Given a column with national ID numbers, when the file is read, then it is never stored.',
-          'Given the imported records, when HR in another entity reads them, then only the fields an ACTIVE transfer register entry shares with that entity are shown (B-7).',
+          'Given the imported records, when a user elsewhere reads them, then only the fields an ACTIVE allowlist entry shares are shown (B-7).',
         ],
       },
       {
@@ -314,7 +344,7 @@ export const EPICS = [
         done: true,
         deliveredBy: 'feat/area1-csv-encodings',
         story:
-          'As a China HQ HR partner, I want files saved from Chinese Excel to read correctly whatever their encoding, so that headers and names are never garbled.',
+          'As someone who uploads a file saved from Chinese-locale Excel, I want it read correctly whatever its encoding, so that headers and names are never garbled.',
         acceptance: [
           'Given a CSV in UTF-8, UTF-8 with a byte-order mark, GBK or GB18030, when it is uploaded, then its Chinese headers and values read correctly.',
           'Given a file whose encoding cannot be told apart, when it is uploaded, then I see both readings and choose one before anything is proposed.',
@@ -339,95 +369,157 @@ export const EPICS = [
         ],
       },
       {
-        key: 'A-9',
-        title: 'INFO-TECH-like SG HR mock with INFO-TECH-style exports',
-        sprint: 3,
-        points: 5,
+        key: 'A-13',
+        title: 'Document the data formats; keep real samples out of git',
+        sprint: 2,
+        points: 3,
         priority: 'must',
-        done: true,
-        deliveredBy: 'feat/area1-file-import',
+        labels: ['req: M2 GRS by design'],
         story:
-          'As the team, we want the Singapore mock to behave like INFO-TECH, with its employee, leave and payroll exports, so that our connector and mappings are tested against the kind of file the client uses.',
+          "As a developer, I want the TMS's and each agency's formats written down, and a samples folder git ignores, so that the client's samples can be tried locally without ever reaching the public repository.",
         acceptance: [
-          'Given the mock, when an export is requested, then employees, leave and payroll come as CSV or Excel with English headers and DD/MM/YYYY dates (assumption A-59).',
-          "Given the employee export, when HuiTong imports it, then it goes through the mapping engine, so a real export can replace it with only a mapping change. The leave and payroll exports feed area 3's leave ingestion (D-1) and single view (D-6).",
+          "Given docs/data-formats.md, when it is read, then the TMS's API and exports, each agency's API and each submission file have their file type, encoding, key fields, codes, date format, the mock that emulates them and the questions for the briefing call.",
+          'Given a sample from the client, when it is copied into samples/, then git ignores it, and a check refuses a push that contains one.',
+        ],
+      },
+      {
+        key: 'A-14',
+        title: 'TMS mock: courses, runs, trainees and results',
+        sprint: 2,
+        points: 8,
+        priority: 'must',
+        story:
+          "As the team, we want a TMS mock that serves courses, runs, trainees and results through an API and CSV exports, so that capture, verification and submission can be built before we reach the client's TMS.",
+        acceptance: [
+          'Given the mock, when its API is called, then it serves synthetic process-industry courses, runs and enrolled trainees, each trainee with a TMS ID, at the volumes of assumption A-71.',
+          'Given an export request, when it runs, then courses, runs and trainees come as CSV in the format docs/data-formats.md documents (A-13).',
+          "Given verified results written to it, when the same write arrives again, then the mock stores them once and returns each result's TMS status.",
           'Given any screen that shows the mock, when it is displayed, then it is labelled "Mock".',
         ],
       },
       {
-        key: 'A-10',
-        title: 'HQ intranet mock: news, policies, claims and approvals',
+        key: 'A-15',
+        title: 'Agency mocks: an API that acknowledges later, and a portal that validates files',
+        sprint: 2,
+        points: 8,
+        priority: 'must',
+        story:
+          "As the team, we want an agency API mock that acknowledges a submission later and a portal mock that validates the MOM and ITE files, so that both submission routes are built and tested before we know each agency's channel.",
+        acceptance: [
+          'Given a submission to the agency API mock, when it is accepted, then the mock replies at once with a reference and later sends a signed acknowledgement that accepts or rejects each row (assumption A-65).',
+          'Given a MOM or ITE file uploaded to the portal mock, when it is validated, then the mock returns a report of the rows accepted and rejected, with a reason for each rejected row (assumption A-66).',
+          'Given the same submission twice, when it reaches either mock, then it is recognised as a duplicate and recorded once.',
+          'Given any screen that shows an agency mock, when it is displayed, then it is labelled "Mock".',
+        ],
+      },
+      {
+        key: 'A-16',
+        title: 'Read courses, runs and trainees from the TMS',
         sprint: 3,
+        points: 8,
+        priority: 'must',
+        story:
+          "As an operations executive, I want each week's runs, with their courses and enrolled trainees, read from the TMS, so that assessors find their runs on the tablet without anyone typing them in.",
+        acceptance: [
+          'Given the TMS connector, when a sync is previewed and applied, then courses, runs and trainees reach master data with the TMS as their source, through the preview, apply and audit of every sync (A-1).',
+          'Given a TMS export instead of the API, when it is imported through its approved mapping, then the result is the same (A-5).',
+          'Given a trainee, when the records are matched, then only the TMS trainee ID confirms a match, and a look-alike name is a possible match for review (B-5).',
+          'Given the TMS is down, when a sync runs, then it retries with backoff and the overview says the data may be out of date.',
+        ],
+      },
+      {
+        key: 'A-17',
+        title: 'Write verified results to the TMS after an approved preview',
+        sprint: 9,
+        points: 5,
+        priority: 'must',
+        labels: ['req: M2 GRS by design'],
+        story:
+          "As an operations executive, I want a run's verified results written to the TMS only after I approve a preview, so that the TMS becomes the single source of truth without anyone re-typing them.",
+        acceptance: [
+          'Given a verified run, when I preview the write, then I see each result as the TMS will receive it, and nothing is written.',
+          'Given my approval of the preview, when the write runs, then exactly those results reach the TMS mock, once, and the write is audited and labelled as a write to a mock.',
+          'Given a result that operations have not verified, when a write is requested, then it is refused.',
+          "Given a row the TMS rejects, when the write finishes, then the row shows the TMS's reason and the run is not marked as in the TMS.",
+        ],
+      },
+      {
+        key: 'A-18',
+        title: 'Submit results through an agency API and track each submission',
+        sprint: 10,
+        points: 8,
+        priority: 'must',
+        story:
+          "As an operations executive, I want verified results submitted through an agency's API after I approve a preview, and each submission followed to its acknowledgement, so that I stop keying results into the portal.",
+        acceptance: [
+          'Given a verified run and an agency with an API, when I approve the preview, then one submission is sent with an idempotency key, and a retry never submits twice (GRS R-28).',
+          "Given the agency's signed acknowledgement, when it arrives, then the submission becomes accepted, partly accepted or rejected, with each rejected row's reason (A-3).",
+          'Given no acknowledgement by the deadline, when the SLA passes, then the submission is flagged for operations.',
+          "Given the submission, when it is built, then it holds only the fields the agency's ACTIVE allowlist entries share (B-9).",
+        ],
+      },
+      {
+        key: 'A-19',
+        title: "Deliver an agency's file and record the portal's validation report",
+        sprint: 10,
         points: 5,
         priority: 'must',
         story:
-          'As the workflow area, I want an intranet mock that sends signed claim and approval events and exports them to Excel, so that onboarding and the Treasury step can be built before the real intranet is reachable.',
+          "As an operations executive, I want an agency's file delivered to its portal and the portal's validation report recorded against each trainee, so that I see which rows were accepted without reading the report myself.",
         acceptance: [
-          'Given a claim or an approval that completes, when the mock emits it, then a signed JSON event reaches HuiTong and is verified (HMAC, replay window) (assumption A-61).',
-          'Given an export request, when it runs, then claims and approvals come out as Excel in the documented format.',
-          "Given a request for a new hire's intranet account without an SAP personnel number, when it reaches the mock, then it is refused.",
+          "Given a file rendered from the agency's template (D-11) and approved by operations, when it is delivered, then the validation report is stored with the submission and each row's status shows against its trainee.",
+          'Given a portal with no API, when a file is delivered, then operations upload it and attach the report; in the demo the portal mock does both, labelled "Mock".',
+          'Given a rejected row, when it is corrected and resubmitted, then only that row is resubmitted, linked to the first submission.',
+          'Given the same file delivered twice, when the second delivery runs, then it is recognised and recorded once.',
         ],
       },
       {
-        key: 'A-11',
-        title: 'Lark/Feishu notification adapter (mocked) beside DingTalk',
-        sprint: 4,
-        points: 3,
-        priority: 'should',
-        story:
-          'As a hiring manager, I want reminders and status updates in Lark or DingTalk, whichever my office uses, so that I do not have to check HuiTong.',
-        acceptance: [
-          'Given a notification, when the entity uses Lark, then it goes to the mocked Lark adapter, appears in its delivery log and is labelled "Mock".',
-          'Given the seeded connectors, when they are listed, then Teams is not among them, and no placeholder adapter is counted as healthy (#129).',
-        ],
-      },
-      {
-        key: 'A-12',
-        title: 'Tenant configuration: another company joins by configuration',
+        key: 'A-20',
+        title: 'Tenant configuration: another training provider joins by configuration',
         sprint: 6,
         points: 5,
         priority: 'should',
         story:
-          'As another Chinese company in Singapore, we want to join through a configuration of our name, connectors, field mappings and colours, so that we reuse HuiTong without new code.',
+          'As another training provider, we want to join through a configuration of our name, connectors, field mappings, course rules and theme tokens, so that we reuse HuiTong without new code.',
         acceptance: [
-          'Given a tenant configuration, when it is loaded, then its company name, connector set, field mappings and theme tokens apply without code changes.',
+          'Given a tenant configuration, when it is loaded, then its name, connector set, field mappings, course rules and theme tokens apply without code changes.',
           "Given a tenant's theme tokens, when the UI renders, then its colours follow and still meet the contrast rules.",
-          "Given the default tenant, when the app starts, then it carries HuiTong's own identity; no client theme or brand is added without that client's permission (Q-62).",
+          "Given the default tenant, when the app starts, then it carries HuiTong's own identity; no client's brand is added without that client's permission (Q-62).",
         ],
       },
       {
-        key: 'A-13',
-        title: 'Document the data formats; keep real samples out of git',
-        sprint: 3,
-        points: 2,
-        priority: 'must',
-        labels: ['req: M2 GRS by design'],
+        key: 'A-21',
+        title: 'Integration map: from the tablets to the TMS and the agencies',
+        sprint: 4,
+        points: 5,
+        priority: 'should',
         story:
-          "As a developer, I want each system's export format written down, and a samples folder git ignores, so that real exports can be tried locally without ever reaching the public repository.",
+          'As a manager, I want the integration map to show results flowing from the tablets through HuiTong to the TMS and each agency, so that I see at a glance where results stand.',
         acceptance: [
-          'Given the data-formats document, when it is read, then each system has its file type, encoding, key fields, date format, the mock that emulates it and the open questions.',
-          'Given a real sample export, when it is copied into samples/, then git ignores it.',
+          'Given the map, when a tablet syncs, a write reaches the TMS or a submission reaches an agency, then that flow lights up and the node shows its status.',
+          'Given an agency reached by file, when it is drawn, then it shows as a portal, distinct from an API.',
+          'Given reduced motion or a keyboard user, when the page opens, then the still frame and the list of nodes from A-6 still apply.',
         ],
       },
     ],
   },
   {
     key: 'B',
-    title: 'Canonical employee master',
+    title: 'Master data',
     area: AREA[1],
     labels: ['req: M2 GRS by design'],
-    goal: 'One trusted record per employee, with the source of every field, its history and the conflicts between systems.',
+    goal: 'One trusted record per trainee, assessor, course and course run, with the source of every field, its history and the conflicts between systems; trainees are matched on the TMS trainee ID, never on names alone.',
     stories: [
       {
         key: 'B-1',
-        title: 'One record per employee with field provenance',
+        title: 'One record per person with field provenance',
         sprint: 1,
         points: 8,
         priority: 'must',
         done: true,
         deliveredBy: 'feat/area1-integration-api',
         story:
-          'As an HR executive, I want one record per employee that says where each field came from, so that I can trust and explain the data.',
+          'As the person who checks the records, I want one record per person that says where each field came from, so that I can trust and explain the data.',
         acceptance: [
           'Given a record, when I open it, then every field shows each system value beside the master value and its source of truth.',
           'Given a change from a sync, when it is applied, then the record history shows the old value, the new value and the source.',
@@ -442,7 +534,7 @@ export const EPICS = [
         done: true,
         deliveredBy: 'feat/area1-employees-page',
         story:
-          'As an HR executive, I want to choose which system is right when they disagree, so that the master is correct and later syncs keep my decision.',
+          'As the person who keeps the records right, I want to choose which system is right when they disagree, so that the master is correct and later syncs keep my decision.',
         acceptance: [
           'Given an open conflict, when I keep one system value, then that system becomes the source of truth for the field on that record.',
           'Given a typed value, when I save it without a note, then it is refused.',
@@ -451,30 +543,30 @@ export const EPICS = [
       },
       {
         key: 'B-3',
-        title: 'Employees page: search, filters and the record drawer',
+        title: 'Records page: search, filters and the record drawer',
         sprint: 1,
         points: 8,
         priority: 'must',
         done: true,
         deliveredBy: 'feat/area1-employees-page',
         story:
-          'As an HR executive, I want to find any employee and see their record beside every source, masked for my role, so that I can answer questions in seconds.',
+          'As the person who answers questions about a record, I want to find any record and see it beside every source, masked for my role, so that I can answer in seconds.',
         acceptance: [
-          'Given the list, when I search by name, number or email or filter by entity, department or status, then the results update and the filters stay in the URL.',
+          'Given the list, when I search or filter, then the results update and the search and filters stay in the URL.',
           'Given a field my role may not see, when it is shown, then it is masked with a "why is this hidden" explanation.',
           'Given the record drawer, when I open History, then every change appears with who or what made it.',
         ],
       },
       {
         key: 'B-4',
-        title: 'Run a sync from the Employees page with live progress',
+        title: 'Run a sync with live progress',
         sprint: 1,
         points: 5,
         priority: 'must',
         done: true,
         deliveredBy: 'feat/area1-employees-page',
         story:
-          'As an HR executive, I want to preview and apply a sync with live progress, so that I control when the master changes.',
+          'As the person who keeps the records in step, I want to preview and apply a sync with live progress, so that I control when the master changes.',
         acceptance: [
           'Given the Run sync dialog, when I preview, then progress updates live and the changes are listed before anything is written.',
           'Given a preview with changes, when I slide (or tap twice) to apply, then exactly the previewed changes are written.',
@@ -483,7 +575,7 @@ export const EPICS = [
       },
       {
         key: 'B-5',
-        title: 'Possible matches for HR review, never name-only merges',
+        title: 'Possible matches for review, never name-only merges',
         sprint: 1,
         points: 5,
         priority: 'must',
@@ -491,27 +583,11 @@ export const EPICS = [
         deliveredBy: 'feat/area1-possible-matches',
         labels: ['req: M2 GRS by design'],
         story:
-          'As an HR executive, I want look-alike names flagged as possible matches for me to decide, so that two different people are never merged and one person is never split by accident.',
+          'As the person who checks new records, I want look-alike names flagged as possible matches for me to decide, so that two different people are never merged and one person is never split by accident.',
         acceptance: [
           'Given two people whose Chinese or romanised names look alike, when their records sync, then they stay separate records.',
-          'Given a new record whose name looks like an existing employee, when I preview the sync, then that employee is shown as a possible match, and nothing is merged.',
-          'Given the same group employee number from two systems, when the records arrive, then they are confirmed as one person.',
-        ],
-      },
-      {
-        key: 'B-6',
-        title: 'Draft records and verified activation',
-        sprint: 9,
-        points: 5,
-        priority: 'must',
-        labels: ['req: M2 GRS by design'],
-        story:
-          'As an HR executive, I want an approved request to create only a draft record, which becomes active once onboarding and the verified HR record agree, so that nobody counts as an employee too early.',
-        acceptance: [
-          'Given an approved manpower request, when the hire is confirmed, then the master holds a PRE_HIRE draft linked to the request, and no active record exists.',
-          'Given a draft, when the verified SG HR record arrives before the onboarding milestones are met, then it stays a draft and shows what it is waiting for.',
-          'Given both conditions met, when the record becomes active, then the activation is audited with both pieces of evidence.',
-          "Given a write-back to a system of record, when it is requested, then it needs HR's explicit, audited approval, and runs only against a mock until the client approves it.",
+          "Given a new record whose name looks like an existing person's, when I preview the sync, then that person is shown as a possible match, and nothing is merged.",
+          'Given the same identifier from two systems, when the records arrive, then they are confirmed as one person.',
         ],
       },
       {
@@ -524,12 +600,43 @@ export const EPICS = [
         deliveredBy: 'feat/area1-destination-allowlist',
         labels: ['req: M2 GRS by design', 'type: security'],
         story:
-          'As a data protection officer, I want each destination to receive only the fields allowlisted for it, so that HQ never sees Singapore data that no approved transfer covers.',
+          'As a data protection officer, I want each destination to receive only the fields allowlisted for it, so that nobody receives data that no approved entry covers.',
         acceptance: [
-          "Given a field missing from HQ's allowlist, when HQ HR reads a Singapore record in the UI or through the raw API, then the field is withheld with the reason.",
-          'Given the allowlist, when it is worked out, then it comes from the ACTIVE entries of the cross-border transfer register, not from a second list.',
-          'Given a response that withholds fields from a destination, when it is sent, then the audit log records which fields were withheld and under which policy version.',
-          'Given a report export, when area 3 builds it, then the same allowlist service leaves out every field not listed.',
+          "Given a field missing from a destination's allowlist, when a user of that destination reads a record in the UI or through the raw API, then the field is withheld with the reason.",
+          'Given the allowlist, when it is worked out, then it comes from the ACTIVE entries of one register, not from a second list.',
+          'Given a response that withholds fields, when it is sent, then the audit log records which fields were withheld and under which entry versions.',
+          'Given an export, when it is built, then the same allowlist service names every field to leave out.',
+        ],
+      },
+      {
+        key: 'B-8',
+        title: 'Trainees, assessors, courses and runs in master data',
+        sprint: 3,
+        points: 8,
+        priority: 'must',
+        story:
+          'As an operations executive, I want one record per trainee, assessor, course and course run, each field with its source and history, so that every screen and submission draws on the same facts.',
+        acceptance: [
+          'Given the TMS connector, when it syncs, then trainees, assessors, courses and runs are stored with the TMS as the source of truth of each field it owns, and every change in their history.',
+          'Given a trainee, when the record is stored, then it is keyed by the TMS trainee ID, and no national ID number is stored (assumptions A-68 and A-69).',
+          'Given the trainees page, when I open a record, then contact details, the date of birth and results outside my own runs are masked for my role, with the reason.',
+          "Given area 1's screens and routes, when this story is done, then none of them still speaks of employees.",
+        ],
+      },
+      {
+        key: 'B-9',
+        title: 'Each agency receives only its allowlisted fields',
+        sprint: 9,
+        points: 5,
+        priority: 'must',
+        labels: ['req: M2 GRS by design', 'type: security'],
+        story:
+          "As ASPRI-IPI's data protection officer, I want each agency to receive only the fields an ACTIVE entry of its allowlist shares, so that no submission carries data the agency does not need.",
+        acceptance: [
+          "Given a submission to an agency, by API or by file, when it is built, then it holds only the fields the agency's ACTIVE allowlist entries share, and every other field is withheld (GR-04).",
+          'Given a field withheld from a submission, when the submission is sent, then the audit log records the fields withheld and the entry versions.',
+          'Given an agency with no ACTIVE entry, when a submission is requested, then it is refused with the reason.',
+          'Given the allowlist, when it is worked out, then it reuses the register and the field masker from B-7, not a second mechanism.',
         ],
       },
     ],
@@ -539,7 +646,7 @@ export const EPICS = [
     title: 'AI assistance with a human in the loop',
     area: AREA[1],
     labels: ['req: M3 AI-assisted coding', 'req: M2 GRS by design'],
-    goal: 'AI proposes and explains; HR decides. No AI output reaches a system of record without approval, and every call is costed.',
+    goal: 'AI proposes and explains; people decide. Every call goes through the LlmGateway and is costed, no trainee identifier or result reaches an outside AI service, and AI never changes a result. The rule-drafting assistant (D-10) and the verification assistant (C-15) follow the same pattern in their areas.',
     stories: [
       {
         key: 'E-1',
@@ -550,7 +657,7 @@ export const EPICS = [
         done: true,
         deliveredBy: 'feat/area1-integration-api',
         story:
-          "As an HR executive, I want the AI to propose how a new system's columns map to the master, with a confidence and a reason for each, so that connecting a subsidiary takes a day, not weeks.",
+          "As the person connecting a system, I want the AI to propose how its columns map to HuiTong's fields, with a confidence and a reason for each, so that connecting a system takes a day, not weeks.",
         acceptance: [
           'Given a sample CSV or Excel file with Chinese headers, when I upload it, then each column gets a proposed field, a transform, a confidence and a rationale.',
           'Given a column of national ID numbers, when the file is read, then it is flagged as prohibited and can never be mapped.',
@@ -566,7 +673,7 @@ export const EPICS = [
         done: true,
         deliveredBy: 'feat/area1-connectors-page',
         story:
-          'As an HR executive, I want to review, edit and explicitly approve a proposed mapping, so that nothing the AI suggests is used until I agree.',
+          'As the person connecting a system, I want to review, edit and explicitly approve a proposed mapping, so that nothing the AI suggests is used until I agree.',
         acceptance: [
           'Given a proposal, when I change a target or drop a constant, then the wizard shows problems such as a field mapped twice before I can approve.',
           'Given my approval, when I confirm, then a new mapping version is saved and the old one archived, with my name and the number of edits audited.',
@@ -582,7 +689,7 @@ export const EPICS = [
         done: true,
         deliveredBy: 'feat/area1-employees-page',
         story:
-          'As a China HQ HR partner, I want a plain-language explanation of why two systems disagree, in Chinese if I prefer, so that I can decide faster.',
+          'As the person settling a conflict, I want a plain-language explanation of why two systems disagree, in Chinese if I prefer, so that I can decide faster.',
         acceptance: [
           'Given a conflict, when I ask for an explanation, then it appears in my language, labelled as advice that needs my decision.',
           'Given a field above Internal, when the prompt is built, then its values never reach the model.',
@@ -597,13 +704,14 @@ export const EPICS = [
         story:
           'As the team, we want the assistants to run on a real model through the same gateway, so that the demo shows production behaviour and real costs.',
         acceptance: [
-          'Given LLM_PROVIDER=bedrock, when a proposal is requested, then the same contract is met and the usage record carries the real token counts.',
+          'Given LLM_PROVIDER=bedrock, when an assistant is asked, then the same contract is met and the usage record carries the real token counts.',
           'Given malformed model output, when it arrives, then it is rejected as AI_OUTPUT_INVALID and nothing is saved.',
+          'Given client data, when the client has not given written permission, then the assistants stay on the mock provider (GRS R-09).',
         ],
       },
       {
         key: 'E-5',
-        title: 'No employee identifiers sent to an AI service',
+        title: 'No personal identifiers sent to an AI service',
         sprint: 1,
         points: 2,
         priority: 'must',
@@ -611,233 +719,254 @@ export const EPICS = [
         deliveredBy: 'fix/area1-ai-no-identifiers',
         labels: ['req: M2 GRS by design'],
         story:
-          'As the client, we want no employee identifier or sensitive HR value sent to an outside AI service without our written permission, so that using AI never becomes a data transfer we did not agree to.',
+          'As the client, we want no identifier or personal value sent to an outside AI service without our written permission, so that using AI never becomes a data transfer we did not agree to.',
         acceptance: [
-          'Given a conflict, when the explainer prompt is built, then it holds no employee number, name, email or phone number, and no value above INTERNAL.',
+          'Given a conflict, when the explainer prompt is built, then it holds no identifier, name, email or phone number, and no value above INTERNAL.',
           'Given the mapping assistant, when its prompt is built, then it holds headers and category codes only, never a personal value.',
           'Given the rule, when anyone reads CLAUDE.md or the GRS register, then it is written there.',
+        ],
+      },
+      {
+        key: 'E-6',
+        title: 'Mapping assistant for TMS exports and agency layouts',
+        sprint: 6,
+        points: 5,
+        priority: 'should',
+        story:
+          "As an operations executive, I want the mapping assistant to propose how a TMS export maps to HuiTong and how HuiTong's results fill an agency's layout, so that a new export or a changed layout needs a mapping, not a release.",
+        acceptance: [
+          'Given a TMS export sample, when it is uploaded, then the wizard proposes a mapping to trainees, courses and runs, with a confidence and a rationale for each column, for approval (E-1, E-2).',
+          "Given an agency's layout (its headers and a dummy row), when it is uploaded, then the wizard proposes how HuiTong's result fields fill it, for approval.",
+          'Given a proposal, when it is approved, then a new mapping version is saved; the AI never writes anything itself.',
+          "Given another provider's TMS export, when it is mapped, then the time from upload to approved mapping is recorded (SM-06).",
         ],
       },
     ],
   },
   {
     key: 'C',
-    title: 'Onboarding and approval workflows',
+    title: 'Assessment capture and verification',
     area: AREA[2],
     labels: ['req: M4 best practices'],
-    goal: "One new-hire entry onboards into SAP and INFO-TECH in the order the rules require, with intranet access only after the SAP record, and claims and payments above a threshold get HQ Treasury's approval, with nobody re-keying data.",
+    goal: 'Assessors record each result once, on a tablet, during the assessment, even where there is no signal; each run moves from planned to submitted through a state machine; operations verify every result before it leaves HuiTong and correct one only with a reason.',
     stories: [
       {
-        key: 'C-1',
-        title: 'Start onboarding from one new-hire entry',
-        sprint: 8,
-        points: 5,
-        priority: 'must',
-        story:
-          "As an HR executive, I want to enter a new hire once, prefilled from the intranet's approval where one arrives, so that onboarding starts the same day without re-keying.",
-        acceptance: [
-          'Given an `oa.approval.completed` event for a hire, when it is handled, then one onboarding entry is prepared, even if the event arrives twice.',
-          "Given HR's entry, when it is saved, then a draft (PRE_HIRE) record exists in the master and the onboarding workflow starts (B-6).",
-          'Given a rejected approval, when the event arrives, then nothing starts and the outcome is recorded.',
-        ],
-      },
-      {
         key: 'C-2',
-        title: 'Workflow state machine from hire to day one',
+        title: 'Workflow state machine',
         sprint: 8,
         points: 8,
         priority: 'must',
         labels: ['req: M4 best practices'],
         story:
-          'As an HR executive, I want each hire to move through clear stages with retries, so that onboarding never stalls silently.',
+          'As an operations executive, I want each workflow to move through clear stages with retries, so that no run stalls silently. The state machine itself came with #147 (`feat/area2-state-machine`); retries, auditing and publishing remain.',
         acceptance: [
-          'Given a workflow, when a step fails, then it is retried with backoff and, after the last attempt, flagged for a person.',
-          'Given an invalid transition, when it is requested, then it is refused by the state machine.',
+          'Given an invalid transition, when it is requested, then the state machine refuses it.',
+          'Given a step that fails, when it is retried with backoff and the last attempt fails too, then it is flagged for a person.',
+          'Given a transition, when it happens, then it is audited and published as a domain event.',
           'Given the state machine, when its unit tests run, then line coverage is at least 80%.',
         ],
       },
       {
-        key: 'C-3',
-        title: 'Write the new hire to SAP and INFO-TECH',
+        key: 'C-9',
+        title: 'Record a run on the tablet checklist',
+        sprint: 9,
+        points: 8,
+        priority: 'must',
+        story:
+          "As an assessor, I want to record each trainee's criteria on a tablet checklist during the assessment, so that I record each result once and never re-type it (HMW-16).",
+        acceptance: [
+          'Given my run on a tablet, when I open it, then I see its trainees and the checklist of the rule version the run started with (assumption A-75).',
+          'Given a trainee with a critical item unmarked, when I try to finish them, then the checklist refuses and shows the item (HMW-17).',
+          'Given the checklist, when it is used on a tablet, then every touch target is at least 44 px and every string is in English and 中文.',
+          'Given a run that is not mine, when I try to open it, then it is refused.',
+        ],
+      },
+      {
+        key: 'C-10',
+        title: 'Keep capturing through a dropped connection, and sync afterwards',
+        sprint: 10,
+        points: 8,
+        priority: 'must',
+        labels: ['req: M2 GRS by design'],
+        story:
+          'As an assessor in a plant with no signal, I want the checklist to keep every record on the tablet and sync when the connection returns, so that a dropped connection never costs a result.',
+        acceptance: [
+          'Given no connection, when I record results, then they are kept on the tablet, encrypted, and the screen shows they are waiting to sync (assumption A-82, GR-10).',
+          'Given the connection returns, when the tablet syncs, then each record reaches HuiTong exactly once, even if the sync is retried (SM-19, GR-06).',
+          'Given a record changed in HuiTong while the tablet was offline, when it syncs, then the conflict is shown for a person to settle and nothing is overwritten silently (GRS R-26).',
+          'Given a run that has synced, when it is complete, then its data is cleared from the tablet.',
+        ],
+      },
+      {
+        key: 'C-11',
+        title: "The run's lifecycle from planned to submitted",
+        sprint: 8,
+        points: 5,
+        priority: 'must',
+        story:
+          'As an operations executive, I want each run to move through clear states from planned to submitted, so that I always know where a run stands and no step is skipped.',
+        acceptance: [
+          'Given a run, when it moves, then it follows planned, in assessment, captured, verified, in the TMS, submitted and closed (assumption A-73), and any other transition is refused.',
+          'Given the lifecycle, when it is built, then it is a definition run by the workflow state machine (C-2), whose code it does not change.',
+          'Given a correction after verification, when it is saved, then the result goes back to verification, and the move is audited.',
+          'Given the lifecycle, when its unit tests run, then every transition and guard is covered, with at least 80% line coverage.',
+        ],
+      },
+      {
+        key: 'C-12',
+        title: 'Verification queue with the evidence beside each result',
         sprint: 9,
         points: 5,
         priority: 'must',
         story:
-          "As an HR executive, I want the new hire written to SAP and INFO-TECH from the one entry, each write approved by that system's data steward, so that nobody types the hire again.",
+          'As an operations executive, I want a queue of captured runs with each result beside its checklist, so that I verify a run in minutes instead of checking paper (HMW-20).',
         acceptance: [
-          'Given a confirmed hire, when the step runs, then a draft (PRE_HIRE) record appears in the master with the workflow as the change source (B-6).',
-          "Given the SAP and INFO-TECH mocks, when each write is approved by that system's data steward after a preview, then the call is idempotent, audited and labelled as a write-back to a mock.",
+          'Given the queue, when it loads, then each captured run shows its course, assessor, trainees, calculated outcomes and how long it has waited.',
+          'Given a run, when I verify it, then each result is marked verified by me, the run moves on, and the decision is audited.',
+          'Given a result not yet verified, when anyone tries to send it to the TMS or an agency, then it is refused (assumption A-74).',
+          'Given an assessor, when they try to verify a run, then it is refused (GRS section 2.1).',
         ],
       },
       {
-        key: 'C-4',
-        title: 'Admin preparation tasks with SLA reminders',
-        sprint: 9,
+        key: 'C-13',
+        title: 'Correct a result with a reason, keeping the original',
+        sprint: 10,
+        points: 3,
+        priority: 'must',
+        labels: ['req: M2 GRS by design'],
+        story:
+          'As an operations executive, I want to correct a result only with a reason, keeping the original, so that every change can be explained to an auditor.',
+        acceptance: [
+          'Given a result, when I correct it without a reason, then the correction is refused.',
+          'Given a correction, when it is saved, then the original value, the new value, the reason, who and when are kept and audited, and the original is never overwritten (GRS R-29).',
+          'Given a result already in the TMS or submitted, when it is corrected, then the run is flagged so that the TMS and the agencies receive the correction.',
+        ],
+      },
+      {
+        key: 'C-14',
+        title: 'SLA reminders and notifications',
+        sprint: 11,
         points: 5,
         priority: 'should',
         story:
-          'As an admin operations officer, I want laptop, desk and account tasks assigned to me with due dates, so that the new hire is ready on day one.',
+          "As an operations executive, I want reminders before a run's results are due at an agency, so that no submission misses its deadline.",
         acceptance: [
-          'Given a hire, when onboarding starts, then admin tasks are created for ADMIN_OPS with due dates.',
-          'Given an overdue task, when its SLA passes, then a reminder and then an escalation are sent.',
+          "Given an agency's deadline, when a run's results are not submitted by the reminder point, then a reminder and then an escalation are sent, counted from the assessment date (assumption A-77).",
+          'Given a captured run waiting for verification, when its SLA passes, then operations are reminded.',
+          'Given a reminder that is retried, when it is sent again, then nobody receives it twice.',
+          'Given the SLA rules, when they are tested, then fake timers cover each threshold.',
         ],
       },
       {
-        key: 'C-5',
-        title: 'Notify people in Lark/Feishu or DingTalk (mocked)',
-        sprint: 10,
-        points: 3,
-        priority: 'could',
-        story:
-          'As a hiring manager, I want status updates where I already work, so that I do not have to check HuiTong.',
-        acceptance: [
-          'Given a workflow step, when it completes, then a message is sent to the mocked Lark or DingTalk channel for the entity.',
-          'Given a failed delivery, when it is retried, then the same message is not sent twice.',
-        ],
-      },
-      {
-        key: 'C-6',
-        title: 'Workflow board',
-        sprint: 10,
+        key: 'C-15',
+        title: 'Verification assistant: flag unusual records for review',
+        sprint: 11,
         points: 5,
-        priority: 'must',
+        priority: 'should',
+        labels: ['req: M3 AI-assisted coding', 'req: M2 GRS by design'],
         story:
-          'As an HR executive, I want a board of every hire by stage, so that I see where each one stands.',
+          'As an operations executive, I want unusual records flagged with a reason, so that I look twice at the few that matter (HMW-21). Proposed to area 2 in ADR 0023, for its owner to accept.',
         acceptance: [
-          'Given the board, when it loads, then each workflow appears in its stage with its next action and owner.',
-          'Given a task assigned to me, when I complete it, then the workflow moves on and the change is audited.',
-        ],
-      },
-      {
-        key: 'C-7',
-        title: 'Intranet access only after the SAP record exists',
-        sprint: 9,
-        points: 3,
-        priority: 'must',
-        labels: ['req: M2 GRS by design'],
-        story:
-          "As HQ IT, we want a new hire's intranet access requested only once their SAP record exists, so that the rule holds without anyone having to remember it.",
-        acceptance: [
-          'Given a new hire whose SAP record is not confirmed, when the workflow reaches the intranet step, then it waits and shows what it is waiting for.',
-          "Given the SAP connector's confirmation, when it arrives, then intranet access is requested once, idempotently, and audited.",
-          'Given every hire, when success metric SM-10 is computed, then it reports whether the SAP record came first (GRS risk R-22).',
-        ],
-      },
-      {
-        key: 'C-8',
-        title: 'HQ Treasury approval above a configurable threshold',
-        sprint: 9,
-        points: 5,
-        priority: 'must',
-        labels: ['req: M2 GRS by design'],
-        story:
-          'As HQ Treasury, I want every claim or payment above the threshold routed to me before it is paid, so that the extra approval the group requires is never skipped.',
-        acceptance: [
-          'Given a claim event from the intranet, when its amount is above the configured threshold, then a Treasury approval step follows the usual approvals; at or below it, none does.',
-          'Given a claim waiting for Treasury, when anyone views it, then its step and owner show on the board, and it is not marked payable.',
-          'Given the threshold, when an authorised role changes it, then the change is audited, and claims already routed keep their step.',
-          'Given a replayed event, when it arrives, then no second approval step or decision is created (GRS risk R-21).',
+          'Given a captured run, when the assistant reviews it, then unusual records (for example every criterion marked the same, or a run recorded much faster than usual) are flagged with a reason and a confidence, labelled "Requires review".',
+          "Given a flag, when operations look at it, then they decide; the assistant never changes a result or a run's state (GR-01).",
+          'Given the assistant, when it runs, then it works on features computed inside HuiTong, sends no trainee identifier or result to a third-party AI service, and every model call is recorded by AiUsageTracker.',
         ],
       },
     ],
   },
   {
     key: 'D',
-    title: 'Single view, dashboards and insights',
+    title: 'Competency, submissions and insights',
     area: AREA[3],
     labels: ['req: M4 best practices'],
-    goal: 'Management sees one current view across the systems, with dashboards and insights; leave from Singapore and HQ consolidates into the company template automatically, with exceptions explained, as one part of it.',
+    goal: "Each course's rules are versioned configuration that a training manager approves; competency is calculated from them automatically; each agency's submission file is rendered from its template; management and operations see where every run and submission stands.",
     stories: [
       {
-        key: 'D-1',
-        title: 'Ingest attendance and leave from INFO-TECH and SAP',
+        key: 'D-8',
+        title: 'Course rules as versioned configuration',
+        sprint: 8,
+        points: 8,
+        priority: 'must',
+        labels: ['req: M2 GRS by design'],
+        story:
+          "As a training manager, I want each course's criteria, critical items and outcome rule held as a version I approve, so that a rule change needs no code change and each run keeps the version it started with (HMW-18).",
+        acceptance: [
+          'Given a course, when its rules are defined, then they hold criteria grouped by competency unit, critical items and an outcome rule (assumption A-70).',
+          'Given a new version, when it is saved, then it stays a draft until a training manager approves it, and the approval is audited.',
+          'Given a run in progress, when a new version is approved, then the run keeps the version it started with (assumption A-75, GRS R-24).',
+          'Given a version in use, when anyone tries to edit it, then the edit is refused; a change makes a new version.',
+        ],
+      },
+      {
+        key: 'D-9',
+        title: 'Calculate competency automatically from the rules',
         sprint: 8,
         points: 5,
         priority: 'must',
         story:
-          "As a Singapore HR executive, I want a month's attendance and leave pulled from both systems, so that I stop exporting and merging CSV files.",
+          "As an assessor, I want each trainee's outcome calculated from the course's rules as I record, so that I never work it out by hand.",
         acceptance: [
-          'Given a month, when ingestion runs, then records from both systems are stored with their source category.',
-          'Given a record for an unknown employee, when it is read, then it is reported as an exception, not dropped.',
+          "Given a trainee's recorded criteria, when the outcome is calculated, then it follows the run's rule version (SM-14).",
+          'Given a critical item not satisfied, when the outcome is calculated, then it is not competent, whatever the other criteria say.',
+          'Given an outcome, when it is shown, then it names the rule version and the criteria that decided it.',
+          'Given the calculation, when its unit tests run, then every kind of rule and edge case is covered, with at least 80% line coverage.',
         ],
       },
       {
-        key: 'D-2',
-        title: 'Map leave categories between systems',
-        sprint: 8,
-        points: 5,
+        key: 'D-10',
+        title: "Rule-drafting assistant: draft a course's rules from its assessment plan",
+        sprint: 10,
+        points: 8,
         priority: 'must',
+        labels: ['req: M3 AI-assisted coding', 'req: M2 GRS by design'],
         story:
-          'As an HR executive, I want rules that map 年假 to Annual Leave, 病假 to Sick Leave and 调休 to time off in lieu, so that both systems count the same way.',
+          "As a training manager, I want the AI to draft a new course's rules from its assessment plan, with a confidence and a rationale for each rule, so that a course is set up in an afternoon while I stay in control (HMW-19).",
         acceptance: [
-          "Given CN HQ's 年假, 病假 and 调休, when records are consolidated, then they become Annual Leave, Sick Leave and time off in lieu.",
-          'Given a category with an approved rule, when records are consolidated, then they carry the canonical category.',
-          'Given a category with no rule, when it appears, then it is listed for HR to map, and nothing is guessed.',
+          'Given an assessment plan, when I upload it, then the assistant proposes criteria, critical items and an outcome rule, each with a confidence and a rationale, labelled "Requires approval", and "Mock AI" with the mock provider.',
+          'Given the draft, when I edit and approve it, then it becomes a new rule version; until then nothing uses it (GR-01, SM-09).',
+          'Given the prompt, when it is built, then it carries the assessment plan only, never trainee data, and the call goes through the LlmGateway and is recorded by AiUsageTracker.',
+          'Given E2E #2, when the next run of the course starts, then it uses the approved rules with no code change.',
         ],
       },
       {
-        key: 'D-3',
-        title: 'Validate and report exceptions',
+        key: 'D-11',
+        title: 'Render agency submission files from templates',
         sprint: 9,
-        points: 3,
-        priority: 'must',
-        story:
-          'As an HR executive, I want overlaps, missing days and impossible values flagged, so that I fix them before the report goes out.',
-        acceptance: [
-          'Given overlapping leave, when validation runs, then the overlap is reported with both records.',
-          'Given the exception report, when I open it, then each exception explains what is wrong and where it came from.',
-        ],
-      },
-      {
-        key: 'D-4',
-        title: 'Render the company template and export .xlsx',
-        sprint: 10,
         points: 8,
         priority: 'must',
         story:
-          'As an HR executive, I want the month in the company reporting template as an Excel file, so that I can send it without reformatting.',
+          "As an operations executive, I want each agency's file rendered from its template with the verified results and checked before delivery, so that I never build a file by hand and the agency accepts it the first time (HMW-22).",
         acceptance: [
-          'Given a consolidated month, when I export, then the .xlsx follows the template layout exactly.',
-          'Given a destination such as HQ, when it exports, then the file holds only the fields on its allowlist (B-7), and the export is audited.',
+          "Given verified results and an agency's template, when the file is rendered, then it follows the agency's column order, codes and date format (assumption A-66).",
+          "Given the file, when it is rendered, then it holds only the fields the agency's allowlist shares (B-9), and the internal trainee ID until the client decides how national ID numbers are added (assumption A-69).",
+          "Given a file that breaks the agency's known rules, when it is rendered, then each problem is listed for operations before delivery.",
+          "Given the renderers, when they are tested, then a golden-file test checks each agency's output.",
         ],
       },
       {
-        key: 'D-5',
-        title: 'Management reports from several sources',
+        key: 'D-12',
+        title: 'Dashboards for operations and management',
         sprint: 11,
         points: 5,
         priority: 'should',
         story:
-          'As a manager, I want headcount, leave and attendance reports that combine both entities, so that I see the whole operation.',
+          'As a manager, I want to see runs, verification, the TMS writes and the submissions by course and agency, so that I see where every run stands and catch a rejection before its deadline (HMW-23).',
         acceptance: [
-          'Given the reports page, when it loads, then each figure names the systems it was drawn from.',
-          'Given the MANAGEMENT role, when it opens a report, then it is read-only and shows no restricted fields.',
+          'Given the dashboards, when they load, then they show runs by state, submissions by agency and status, and those near their deadline.',
+          "Given the MANAGEMENT role, when it opens a dashboard, then it is read-only and shows aggregates, never one trainee's personal data.",
+          'Given each figure, when it is shown, then it says when it was computed and from which records.',
         ],
       },
       {
-        key: 'D-6',
-        title: 'Single view with dashboards',
-        sprint: 10,
-        points: 8,
-        priority: 'must',
-        story:
-          'As a manager, I want one current view across INFO-TECH, SAP and the intranet, with dashboards for headcount, joiners and leavers, and leave and payroll summaries, so that I decide from one set of numbers.',
-        acceptance: [
-          'Given the single view, when it loads, then each figure names the systems it was drawn from and when.',
-          'Given figures that span entities, when they are shown, then they are aggregates with small counts suppressed (assumption A-39).',
-          'Given the MANAGEMENT role, when it opens a dashboard, then it is read-only and shows no restricted fields.',
-        ],
-      },
-      {
-        key: 'D-7',
-        title: 'Data-consistency and duplicate-entry insights',
+        key: 'D-13',
+        title: 'Insights: effort saved, first-time acceptance and rework',
         sprint: 11,
         points: 3,
         priority: 'should',
         story:
-          'As the HR lead, I want to see how consistent the systems are and how much duplicate entry HuiTong has removed, so that the benefit is measured, not claimed.',
+          "As management, we want the effort HuiTong removes and the share of submissions accepted the first time measured from HuiTong's own records, so that the benefit is measured, not claimed.",
         acceptance: [
-          "Given the insights panel, when it loads, then it shows the share of consistent records (SM-02) and how many times each new-hire field was typed (SM-05), from HuiTong's own records.",
+          'Given the insights panel, when it loads, then it shows SM-12, SM-17 and SM-18, labelled as lab estimates on synthetic data.',
           'Given a measure with too little data, when it is shown, then it says so instead of showing a number.',
         ],
       },
@@ -848,7 +977,7 @@ export const EPICS = [
     title: 'Governance and compliance',
     area: AREA[4],
     labels: ['req: M2 GRS by design'],
-    goal: 'Access, audit, classification, cross-border transfers and retention are visible and administered, in line with PDPA and PIPL.',
+    goal: "Access, audit, classification, each agency's allowlist and retention are visible and administered, so that ASPRI-IPI is ready for an agency's check and trainees' data is handled under the PDPA.",
     stories: [
       {
         key: 'F-1',
@@ -860,7 +989,8 @@ export const EPICS = [
           'As a system administrator, I want to see and change what each role may see, so that access follows policy without code changes.',
         acceptance: [
           'Given the access screen, when I change a clearance rule, then masking follows on the next request and the change is audited.',
-          'Given separation of duties, when an administrator tries to resolve an HR conflict, then it is refused.',
+          "Given the six roles, when the matrix is shown, then each role's permissions and limits match GRS section 2.1.",
+          'Given separation of duties, when a system administrator tries to approve a rule, verify a result or submit, then it is refused.',
         ],
       },
       {
@@ -870,10 +1000,11 @@ export const EPICS = [
         points: 5,
         priority: 'must',
         story:
-          'As an auditor, I want to search the audit log by record, person and action, so that I can trace any change.',
+          'As an auditor, I want to search the audit trail by record, person and action, so that I can trace any result from capture to submission.',
         acceptance: [
-          'Given `/governance/audit?entityType=Employee&entityId=E100030`, when it opens, then every event for that record is listed.',
+          "Given a result's audit trail, when it opens, then every event is listed: captured, calculated, verified, corrected, written to the TMS and submitted.",
           'Given the audit chain, when it is checked, then any altered event is detected.',
+          'Given the AUDITOR role, when it opens the viewer, then nothing in it can be changed.',
         ],
       },
       {
@@ -883,23 +1014,9 @@ export const EPICS = [
         points: 3,
         priority: 'should',
         story:
-          'As a data protection officer, I want every field classified with its reason, so that masking and transfers follow a published register.',
+          'As a data protection officer, I want every field classified with its reason, so that masking and submissions follow a published register.',
         acceptance: [
-          'Given the register, when it loads, then every canonical field shows its classification and who may see it.',
-        ],
-      },
-      {
-        key: 'F-4',
-        title: 'Cross-border transfer register (PDPA and PIPL)',
-        sprint: 10,
-        points: 5,
-        priority: 'must',
-        story:
-          'As a system administrator, I want each cross-border flow recorded with its legal basis and approval, so that no personal data leaves Singapore without one.',
-        acceptance: [
-          'Given a pending transfer, when it is approved, then the fields it covers become visible to HQ roles, and the approval is audited.',
-          'Given a field with no approved transfer, when HQ reads it, then it is masked as not approved.',
-          'Given a change to the fields a transfer covers, when it is saved, then the policy version goes up and the change is audited with who made it.',
+          'Given the register, when it loads, then every trainee and result field shows its classification, the reason and who may see it.',
         ],
       },
       {
@@ -907,11 +1024,12 @@ export const EPICS = [
         title: 'Retention settings and purge',
         sprint: 11,
         points: 3,
-        priority: 'could',
+        priority: 'should',
         story:
           'As a data protection officer, I want retention periods per data type with a scheduled purge, so that we keep data no longer than needed.',
         acceptance: [
           'Given a retention period, when data passes it, then the purge job removes or anonymises it and records what it did.',
+          'Given assessment records, when their period is set, then it covers the time in which an agency may check them (assumption A-80).',
         ],
       },
       {
@@ -925,6 +1043,46 @@ export const EPICS = [
           'As the team, we want each OWASP risk checked against our controls with evidence, so that we can show security by design at the technical review.',
         acceptance: [
           'Given the checklist, when it is read, then each OWASP category links to the control, the code and a test or scan result.',
+        ],
+      },
+      {
+        key: 'F-7',
+        title: "Administer each agency's field allowlist",
+        sprint: 10,
+        points: 5,
+        priority: 'must',
+        story:
+          "As ASPRI-IPI's data protection officer, I want to record, for each agency, the fields it may receive and why, so that every submission follows an approved list (assumption A-81).",
+        acceptance: [
+          'Given an agency, when I add or change an allowlist entry, then its version goes up, the change is audited with who made it, and enforcement follows at once (B-9).',
+          'Given an entry, when it is recorded, then it names the agency, the fields, the purpose and who approved it.',
+          'Given a field with no ACTIVE entry, when a submission is built, then the field is withheld.',
+        ],
+      },
+      {
+        key: 'F-8',
+        title: 'Audit readiness: the evidence for a run in one place',
+        sprint: 11,
+        points: 5,
+        priority: 'should',
+        story:
+          "As an auditor, I want one view of a run's evidence (the checklist, the rule version, the outcomes, who assessed, who verified, the corrections and the submissions), so that an agency's check takes minutes (HMW-24).",
+        acceptance: [
+          'Given a run, when an auditor opens its evidence, then the checklist, the rule version, each outcome, who assessed and who verified it, every correction with its reason and every submission with its acknowledgement are shown, each linked to its audit events.',
+          'Given the evidence, when it is exported, then the export is audited and holds no field the auditor may not see.',
+        ],
+      },
+      {
+        key: 'F-9',
+        title: "PDPA: find a trainee's data for an access request",
+        sprint: 11,
+        points: 3,
+        priority: 'could',
+        story:
+          "As ASPRI-IPI's data protection officer, I want to find everything HuiTong holds about a trainee, so that an access or correction request under the PDPA is answered quickly.",
+        acceptance: [
+          'Given a TMS trainee ID, when I search, then every record HuiTong holds about the trainee is listed, with the agencies it was sent to.',
+          'Given the search, when it runs, then it is audited.',
         ],
       },
     ],
@@ -956,7 +1114,7 @@ export const EPICS = [
         points: 5,
         priority: 'must',
         story:
-          'As the product team, we want to see how HR uses each screen, with their consent, so that we improve what matters.',
+          'As the product team, we want to see how people use each screen, with their consent, so that we improve what matters.',
         acceptance: [
           'Given no consent, when a user navigates, then no event is recorded.',
           'Given consent, when a user navigates, then the route pattern, never the concrete URL, is recorded and shown on the analytics dashboard.',
@@ -1018,26 +1176,26 @@ export const EPICS = [
         priority: 'must',
         type: 'type: task',
         story:
-          'As the team, we want each of areas 2 to 4 to have one owner, so that every member owns, writes and explains distinct code.',
+          "As the team, we want each area's owner and backup owner recorded and CODEOWNERS filled in, so that every pull request asks the right reviewer.",
         acceptance: [
-          'Given the team agreement, when it is recorded, then docs/team/module-ownership.md names the owner and the backup owner of each area.',
+          'Given the owners (Richie, Azri, Iok Teck and Angelyn for areas 1 to 4), when the backups are agreed, then docs/team/module-ownership.md names the owner and the backup owner of each area.',
           'Given CODEOWNERS, when a pull request touches an area, then its owner is asked to review.',
         ],
       },
       {
         key: 'T-2',
-        title: 'Briefing call with LESSO Solar (week of 2 Nov)',
+        title: 'Briefing call with ASPRI-IPI (week of 2 Nov)',
         sprint: 3,
         points: 3,
         priority: 'must',
         type: 'type: task',
         labels: ['status: needs client input'],
         story:
-          'As the team, we want the open questions answered by LESSO Solar, so that our assumptions become facts.',
+          'As the team, we want our open questions answered by ASPRI-IPI, so that our assumptions become facts.',
         acceptance: [
-          'Given the three sample packs in docs/client/questions-for-client.md, when the session is arranged, then they are requested first.',
-          'Given docs/client/questions-for-client.md, when the session ends, then each question has an answer or a follow-up.',
-          'Given the answers, when they are recorded, then the affected assumptions are confirmed or changed.',
+          'Given the three items to request in docs/client/questions-for-client.md (the checklists and rules of two or three courses, a TMS export, and one submission example per agency), when the call is arranged, then they are requested first.',
+          'Given docs/client/questions-for-client.md, when the call ends, then each question has an answer or a follow-up.',
+          "Given the answers, when they are recorded, then the affected assumptions are confirmed or changed, and any sample data stays in the team's data folder, never in git.",
         ],
       },
       {
@@ -1061,9 +1219,9 @@ export const EPICS = [
         priority: 'must',
         type: 'type: task',
         story:
-          'As the team, we want a clickable prototype of every area, so that the client can react before we build.',
+          'As the team, we want a clickable prototype of every area, the tablet checklist first, so that the client can react before we build.',
         acceptance: [
-          'Given the prototype, when the client walks through it, then each journey from the journey maps can be followed.',
+          'Given the prototype, when the client walks through it, then each journey from the journey maps can be followed, and the checklist can be tried on a tablet.',
         ],
       },
       {
@@ -1126,7 +1284,7 @@ export const EPICS = [
         priority: 'should',
         type: 'type: task',
         story:
-          'As the team, we want to hand over what we built with its documentation, so that LESSO Solar can take it further.',
+          'As the team, we want to hand over what we built with its documentation, so that ASPRI-IPI can take it further.',
         acceptance: [
           'Given the handover, when it is done, then the client has the repository guide, the architecture and the open questions.',
         ],
@@ -1134,3 +1292,34 @@ export const EPICS = [
     ],
   },
 ];
+
+/**
+ * Story keys dropped from the plan, which are never reused. The seed closes
+ * any of their issues still open as not planned, with a comment linking the
+ * decision; the stories themselves stay in the tag the decision names.
+ */
+export const RETIRED = {
+  decision: 'docs/adr/0023-retarget-ps5-aspri-ipi.md',
+  keys: [
+    'A-9',
+    'A-10',
+    'A-11',
+    'A-12',
+    'B-6',
+    'C-1',
+    'C-3',
+    'C-4',
+    'C-5',
+    'C-6',
+    'C-7',
+    'C-8',
+    'D-1',
+    'D-2',
+    'D-3',
+    'D-4',
+    'D-5',
+    'D-6',
+    'D-7',
+    'F-4',
+  ],
+};
