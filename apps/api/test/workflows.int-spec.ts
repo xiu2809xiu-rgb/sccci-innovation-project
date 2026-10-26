@@ -122,7 +122,7 @@ describe('Workflows (integration, area 2 head start)', () => {
       .expect(403);
   });
 
-  // Area 2 turns these into real tests as it replaces the sample (docs/team/area-2-workflow-automation.md).
+  // Area 2 turns these into real tests as it replaces the sample (docs/team/area-2-capture-and-verification.md).
   it.todo(
     'starts exactly one instance for an approved mock-oa manpower request, even if delivered twice (C-1)',
   );
