@@ -21,6 +21,7 @@
     "diagrams:check": "node scripts/build-diagrams.mjs --check",
     "slides:build": "node scripts/build-slides.mjs",
     "slides:check": "node scripts/build-slides.mjs --check",
+    "samples:check": "node scripts/check-samples.mjs",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "prepare": "husky",
