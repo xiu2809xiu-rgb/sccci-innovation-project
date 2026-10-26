@@ -201,7 +201,10 @@
     "HIRING_MANAGER": "Hiring manager",
     "ADMIN_OPS": "Admin operations",
     "MANAGEMENT": "Management",
-    "AUDITOR": "Auditor"
+    "AUDITOR": "Auditor",
+    "ASSESSOR": "Assessor",
+    "OPERATIONS": "Operations",
+    "TRAINING_MANAGER": "Training manager"
   },
   "entities": {
     "SG01": "Singapore",

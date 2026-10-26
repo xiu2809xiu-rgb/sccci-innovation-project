@@ -201,7 +201,10 @@
     "HIRING_MANAGER": "招聘经理",
     "ADMIN_OPS": "行政运营",
     "MANAGEMENT": "管理层",
-    "AUDITOR": "审计员"
+    "AUDITOR": "审计员",
+    "ASSESSOR": "评估员",
+    "OPERATIONS": "运营人员",
+    "TRAINING_MANAGER": "培训经理"
   },
   "entities": {
     "SG01": "新加坡",
