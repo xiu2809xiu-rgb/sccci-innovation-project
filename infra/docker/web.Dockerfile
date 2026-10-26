@@ -17,10 +17,11 @@ RUN --mount=type=cache,id=pnpm-store,target=/pnpm-store \
 RUN pnpm --filter "@huitong/web..." build
 
 FROM nginxinc/nginx-unprivileged:1.30.6-alpine3.24@sha256:f5116ed4606f3eb015dd4a8e28cb9b351476dc0ad4bc6e9f93b19cec130cdf03 AS runtime
-# The pinned base still ships brotli-libs 1.2.0-r1 (CVE-2026-111497); Alpine 3.24 has the fix,
-# 1.2.1-r0. Upgrade only that package, and drop this once a rebuilt base includes it.
+# The pinned base still ships brotli-libs 1.2.0-r1 (CVE-2026-111497) and curl and libcurl
+# 8.22.0-r0 (CVE-2026-92392); Alpine 3.24 has the fixes, 1.2.1-r0 and 8.23.0-r0. Upgrade only
+# those packages, and drop this once a rebuilt base includes them.
 USER root
-RUN apk upgrade --no-cache brotli-libs
+RUN apk upgrade --no-cache brotli-libs curl libcurl
 # The api upstream is substituted into the server block when the container starts.
 ENV API_UPSTREAM=http://api:3000
 COPY infra/docker/nginx/security-headers.conf /etc/nginx/snippets/security-headers.conf
