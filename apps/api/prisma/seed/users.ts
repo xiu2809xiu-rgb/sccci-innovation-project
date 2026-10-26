@@ -12,11 +12,16 @@ interface DemoUser {
   displayNameZh: string | null;
   role: Role;
   homeEntityCode: EntityCode;
-  employeeNo: string;
+  employeeNo: string | null;
   locale: 'en' | 'zh-CN';
 }
 
-/** One demo account per role; each is also a person in the synthetic workforce. */
+/**
+ * One demo account per role. The earlier statement's are people in its synthetic
+ * workforce; the #5 roles' users are the personas of docs/design-thinking, linked
+ * to the workforce person of the same name where there is one, until step 4
+ * of prompt 005 replaces the synthetic data.
+ */
 export const DEMO_USERS: readonly DemoUser[] = [
   {
     email: 'farhan.ismail@orge.example',
@@ -79,6 +84,33 @@ export const DEMO_USERS: readonly DemoUser[] = [
     role: 'AUDITOR',
     homeEntityCode: 'SG01',
     employeeNo: 'E100009',
+    locale: 'en',
+  },
+  {
+    email: 'hafiz.rahman@orge.example',
+    displayName: 'Hafiz Rahman',
+    displayNameZh: null,
+    role: 'ASSESSOR',
+    homeEntityCode: 'SG01',
+    employeeNo: 'E100071',
+    locale: 'en',
+  },
+  {
+    email: 'joanne.lim@orge.example',
+    displayName: 'Joanne Lim',
+    displayNameZh: null,
+    role: 'OPERATIONS',
+    homeEntityCode: 'SG01',
+    employeeNo: null,
+    locale: 'en',
+  },
+  {
+    email: 'priya.nair@orge.example',
+    displayName: 'Priya Nair',
+    displayNameZh: null,
+    role: 'TRAINING_MANAGER',
+    homeEntityCode: 'SG01',
+    employeeNo: 'E100012',
     locale: 'en',
   },
 ];
