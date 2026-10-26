@@ -132,7 +132,7 @@ describe('Attendance and leave (integration, area 3 head start)', () => {
       .expect(501);
   });
 
-  // Area 3 turns these into real tests as it builds the engine (docs/team/area-3-attendance-leave-reporting.md).
+  // Area 3 turns these into real tests as it builds the engine (docs/team/area-3-competency-and-submissions.md).
   it.todo('consolidates one month of SG and CN data into the company template (D-1 to D-4)');
   it.todo('lists every unmapped source category as an exception, and maps nothing by guess (D-2)');
   it.todo('refuses an invalid mapping rule with 400, and audits an approved one (D-2)');

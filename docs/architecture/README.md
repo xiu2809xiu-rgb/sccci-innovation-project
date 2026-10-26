@@ -91,7 +91,7 @@ Receiving the approval is built: the webhook's signature and timestamp are verif
 
 ![Sequence: HR starts a run for a month, the consolidation job fetches attendance and leave from both HR systems, maps each system's leave codes to the group categories, raises exceptions for HR to settle, and HR previews and exports the company template with the withheld fields left out](../diagrams/sequence-attendance-leave.svg)
 
-Area 3 builds the run on the same five-step pattern as the sync. Each system's leave codes (年假, 病假, 调休 and their Singapore equivalents) map to the group's categories by rules HR approves, and anything without a rule is an exception, never a guess. The screens exist on sample data today ([area 3's guide](../team/area-3-attendance-leave-reporting.md#the-recommended-design)).
+Area 3 builds the run on the same five-step pattern as the sync. Each system's leave codes (年假, 病假, 调休 and their Singapore equivalents) map to the group's categories by rules HR approves, and anything without a rule is an exception, never a guess. The screens exist on sample data today ([area 3's guide](../team/area-3-competency-and-submissions.md#the-recommended-design)).
 
 ## Data flow, trust boundaries and controls
 
