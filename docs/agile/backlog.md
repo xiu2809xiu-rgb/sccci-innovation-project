@@ -343,7 +343,7 @@ As another training provider, we want to join through a configuration of our nam
 
 **Acceptance criteria**
 
-- Given a tenant configuration, when it is loaded, then its name, connector set, field mappings, course rules and theme tokens apply without code changes.
+- Given a tenant configuration, when it is loaded, then its name, connector set, field mappings and theme tokens apply without code changes, and its course rules arrive as draft rule versions for a training manager to approve (D-8).
 - Given a tenant's theme tokens, when the UI renders, then its colours follow and still meet the contrast rules.
 - Given the default tenant, when the app starts, then it carries HuiTong's own identity; no client's brand is added without that client's permission (Q-62).
 
@@ -839,6 +839,7 @@ As the team, we want HuiTong deployed on AWS with logs and alarms in CloudWatch,
 
 - Given the deployment guide, when it is followed, then the web, API and mocks run on AWS behind HTTPS.
 - Given an unhealthy service, when CloudWatch detects it, then an alarm fires.
+- Given a deployment rehearsal, when it runs, then area 4's backup owner takes part, so the AWS setup is never known by one person only.
 
 ### G-5: DAST against the deployed demo
 

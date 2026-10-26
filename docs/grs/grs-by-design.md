@@ -189,7 +189,7 @@ stateDiagram-v2
 
 ### 2.6 AI governance
 
-HuiTong uses AI in three places (capability E): the rule-drafting assistant, the mapping assistant and the verification assistant.
+HuiTong uses AI in three places for #5 (capability E): the rule-drafting assistant, the mapping assistant and the verification assistant. The discrepancy explainer, carried over from the earlier statement, follows the same rules: no identifiers in its prompt, and advice that never changes a record.
 
 | Principle                      | How HuiTong applies it                                                                                                                                                                                                                                                                                                                               |
 | ------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |

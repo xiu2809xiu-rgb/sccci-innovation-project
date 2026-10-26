@@ -6,7 +6,7 @@ This guide explains how area 1 works, the design patterns it uses, what it gives
 | --------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | A Connector hub | One adapter per external system behind `SystemConnector`, built by a factory from configuration: the TMS (its API and its CSV exports), each agency's API, and the delivery of agency files to their portals, with the status of every submission; the sync job; signed webhooks; the tenant configuration |
 | B Master data   | Trainees, assessors, courses and course runs, with a source of truth and provenance for every field, change history, and conflicts for a person to settle; trainees matched on the TMS trainee ID only; each agency's allowlist enforced                                                                   |
-| E AI assistance | The `LlmGateway` that every assistant uses, the mapping assistant for TMS exports and agency layouts, and the discrepancy explainer, all advice that a person must approve                                                                                                                                 |
+| E AI assistance | The `LlmGateway` that every assistant uses, the mapping assistant for TMS exports and agency layouts, and the discrepancy explainer carried over from the earlier statement, all advice that a person must approve                                                                                         |
 
 Everything external is mocked until the client's interfaces are known ([A-84](../assumptions.md)), and every mock is labelled. The rules that shape the design are in the [GRS document](../grs/grs-by-design.md) and the ADRs, above all [0002](../adr/0002-integration-layer-hub-and-spoke.md) (hub and spoke), [0008](../adr/0008-jobs-events-realtime.md) (jobs, events and live updates), [0011](../adr/0011-ai-gateway-human-in-the-loop.md) (AI with a human in the loop) and [0023](../adr/0023-retarget-ps5-aspri-ipi.md) (the retarget to #5).
 
@@ -27,6 +27,8 @@ Until those land, the sections below name today's adapters where they describe t
 
 ## The architecture at a glance
 
+The design for #5. Dashed parts are planned (A-14 to A-19, B-8, B-9, C-9 and C-10); the adapters, the sync job, the mapping engine, master data, the field allowlist, the gateway and the webhooks exist today, built around the earlier statement's systems.
+
 ```mermaid
 flowchart LR
   subgraph Field["Training environment"]
@@ -46,15 +48,17 @@ flowchart LR
     API["Agency with an API<br/>acknowledges later"]
     PORTAL["Agency portal<br/>takes files, returns a report"]
   end
-  TMS --> ADP --> JOB --> MAP --> MASTER
-  MASTER --> TAB
-  TAB -->|verified results| ADP
-  ADP -->|after an approved preview| TMS
-  ADP --> ALLOW
-  ALLOW --> API
-  ALLOW --> PORTAL
-  API --> HOOK
+  TMS -.-> ADP --> JOB --> MAP --> MASTER
+  MASTER -.-> TAB
+  TAB -.->|verified results| ADP
+  ADP -.->|after an approved preview| TMS
+  ADP -.-> ALLOW
+  ALLOW -.-> API
+  ALLOW -.-> PORTAL
+  API -.-> HOOK
   AI --> MAP
+  classDef planned stroke-dasharray: 5 5
+  class TAB,TMS,API,PORTAL planned
 ```
 
 The code lives in five API modules and three web features:
@@ -144,7 +148,7 @@ Today the destinations are the earlier statement's entities. With B-9 each agenc
 
 ## AI assistance
 
-Every model call goes through [`LlmGateway`](../../apps/api/src/infrastructure/llm/llm.gateway.ts), which picks the configured provider (Strategy) and records the call, failed ones included, through [`AiUsageTracker`](../../apps/api/src/infrastructure/llm/ai-usage.tracker.ts): tokens in and out, model, latency, estimated cost ([A-52](../assumptions.md)), feature, user and outcome. The gateway never writes to a system of record. Area 3's rule-drafting assistant and area 2's verification assistant use the same gateway.
+Every model call goes through [`LlmGateway`](../../apps/api/src/infrastructure/llm/llm.gateway.ts), which picks the configured provider (Strategy) and records the call, failed ones included, through [`AiUsageTracker`](../../apps/api/src/infrastructure/llm/ai-usage.tracker.ts): tokens in and out, model, latency, estimated cost ([A-52](../assumptions.md)), feature, user and outcome. The gateway never writes to a system of record. Area 3's rule-drafting assistant (D-10) will use the same gateway, and so will area 2's verification assistant (C-15) if Azri accepts it (ADR 0023).
 
 | Provider                                                                                        | When                                                                                                                     |
 | ----------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------ |
@@ -152,7 +156,7 @@ Every model call goes through [`LlmGateway`](../../apps/api/src/infrastructure/l
 | [`BedrockLlmProvider`](../../apps/api/src/infrastructure/llm/providers/bedrock-llm.provider.ts) | `LLM_PROVIDER=bedrock`: AWS Bedrock through the Converse API, in `ap-southeast-1` by default                             |
 | [`OpenAiLlmProvider`](../../apps/api/src/infrastructure/llm/providers/openai-llm.provider.ts)   | `LLM_PROVIDER=openai` with `OPENAI_API_KEY`                                                                              |
 
-**The mapping assistant.** A sample export (CSV or Excel, up to 1 MB) is uploaded in the mapping wizard. [`SampleFileReader`](../../apps/api/src/modules/mapping/proposals/sample-file-reader.ts) reads the headers and at most 20 rows, evaluates nothing and stores nothing. It decodes a CSV file as UTF-8 (with or without a byte-order mark) or GB18030; when both readings are plausible, the wizard shows the header row both ways and the user chooses ([`text-encoding.ts`](../../apps/api/src/modules/mapping/proposals/text-encoding.ts), [dates, time zones and encodings](../architecture/data-formats.md)). [`buildMappingRequest`](../../apps/api/src/modules/mapping/proposals/mapping-request.builder.ts) tells the model each column's header and the shape of its values. For a category column whose values repeat, it also sends the distinct codes (at most eight), so that the model can propose a value map. A header that names a person is never a category column, and a value shaped like an identifier is never sent. It never sends a personal value ([A-17](../assumptions.md), [ADR 0011](../adr/0011-ai-gateway-human-in-the-loop.md#amendment-21-oct-2026-category-codes-in-the-mapping-prompt)), and columns that hold national ID numbers or gender are left out of the prompt entirely, not even their headers ([`prohibited-columns.ts`](../../apps/api/src/modules/mapping/proposals/prohibited-columns.ts)). [`SchemaMappingAssistant`](../../apps/api/src/modules/ai/schema-mapping/schema-mapping.assistant.ts) re-checks the answer on the server. The proposal shows each column's target, transform, confidence and reasons, labelled "Requires approval". Only an approval by someone with `mappings:approve` saves a new mapping version ([`MappingProposalsService`](../../apps/api/src/modules/mapping/proposals/mapping-proposals.service.ts)); a mapping that reads a national ID column is never saved. With E-6 it will propose mappings for TMS exports and agency layouts.
+**The mapping assistant.** A sample export (CSV or Excel, up to 1 MB) is uploaded in the mapping wizard. [`SampleFileReader`](../../apps/api/src/modules/mapping/proposals/sample-file-reader.ts) reads the headers and at most 20 rows, evaluates nothing and stores nothing. It decodes a CSV file as UTF-8 (with or without a byte-order mark) or GB18030; when both readings are plausible, the wizard shows the header row both ways and the user chooses ([`text-encoding.ts`](../../apps/api/src/modules/mapping/proposals/text-encoding.ts), [dates, time zones and encodings](../architecture/data-formats.md)). [`buildMappingRequest`](../../apps/api/src/modules/mapping/proposals/mapping-request.builder.ts) tells the model each column's header and the shape of its values. For a category column whose values repeat, it also sends the distinct codes (at most eight), so that the model can propose a value map. A header that names a person is never a category column, and a value shaped like an identifier is never sent. It never sends a personal value (assumption [A-17](../assumptions.md), [ADR 0011](../adr/0011-ai-gateway-human-in-the-loop.md#amendment-21-oct-2026-category-codes-in-the-mapping-prompt)), and columns that hold national ID numbers or gender are left out of the prompt entirely, not even their headers ([`prohibited-columns.ts`](../../apps/api/src/modules/mapping/proposals/prohibited-columns.ts)). [`SchemaMappingAssistant`](../../apps/api/src/modules/ai/schema-mapping/schema-mapping.assistant.ts) re-checks the answer on the server. The proposal shows each column's target, transform, confidence and reasons, labelled "Requires approval". Only an approval by someone with `mappings:approve` (with the #5 roles, operations) saves a new mapping version ([`MappingProposalsService`](../../apps/api/src/modules/mapping/proposals/mapping-proposals.service.ts)); a mapping that reads a national ID column is never saved. With E-6 it will propose mappings for TMS exports and agency layouts.
 
 **The discrepancy explainer.** [`DiscrepancyExplainer`](../../apps/api/src/modules/ai/discrepancy/discrepancy-explainer.ts) explains a conflict in English or 中文 for a person to read before deciding. The model learns the field and each system's value, but never who the record belongs to. Values above `INTERNAL`, and values that identify a person, are withheld ([ADR 0011](../adr/0011-ai-gateway-human-in-the-loop.md#amendment-21-oct-2026-no-employee-identifiers-in-any-prompt)). The answer is advice only: it never changes a record.
 
@@ -208,13 +212,13 @@ Each one, and the platform's, is described with its files in [patterns.md](../ar
 | To                                           | Do this                                                                                                                                                                                                                                                                                                                                                           |
 | -------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Replace a mock with the client's real system | Change the adapter's base URL and credentials through the environment, and set the connector's `isMock` to false so the "Mock" badge goes. If the vendor's API differs, write a new class that implements `SystemConnector`, add a case to `ConnectorFactory`, and give it a mapping version. Writes to the client's real systems wait for the client's approval. |
-| Connect another training provider            | Give it a tenant configuration (A-20): its name, connectors, field mappings, course rules and theme tokens; upload its TMS export in the mapping wizard and approve the proposal; then stage the whole export on the connector's page and sync it.                                                                                                                |
+| Connect another training provider            | Give it a tenant configuration (A-20): its name, connectors, field mappings and theme tokens, with its course rules sent to area 3 as draft versions for a training manager to approve (D-8); upload its TMS export in the mapping wizard and approve the proposal; then stage the whole export on the connector's page and sync it.                              |
 | Add an agency or change its format           | Add its connector (API or file delivery), its allowlist entry (area 4) and its template and renderer (area 3); a changed layout needs a new mapping version.                                                                                                                                                                                                      |
 | Add a canonical field                        | Add it to the shared classification map and canonical schema, a Prisma migration, the masking classification and both locale files; then map it in each system's mapping.                                                                                                                                                                                         |
 | Add a transform                              | Add a `kind` to `transformSpecSchema`, one Strategy class in `transformers/`, register it, and add its unit test.                                                                                                                                                                                                                                                 |
 | Use a real model                             | Set `LLM_PROVIDER` (and `LLM_MODEL`) and the provider's credentials; the prompts already mark uploaded content as untrusted.                                                                                                                                                                                                                                      |
 | Change who owns a field                      | Change its `FieldSourcePolicy` row. Conflicts on that field stop opening once it has an owner.                                                                                                                                                                                                                                                                    |
-| Schedule syncs                               | Add a repeatable BullMQ job that starts a preview and an apply as the system user, once the client says how often the TMS's runs change.                                                                                                                                                                                                                          |
+| Schedule syncs                               | Add a repeatable BullMQ job that starts a preview on a schedule, once the client says how often the TMS's runs change. The apply still waits for a named person's approval of that preview, unless the client agrees an exception for fields the TMS owns, recorded in the GRS.                                                                                   |
 
 Open questions for the client are listed in [questions-for-client.md](../client/questions-for-client.md), led by the three items to request: checklists with their rules, a TMS export and one submission example per agency.
 
