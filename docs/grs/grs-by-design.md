@@ -320,6 +320,7 @@ Inherent: 18 High, 6 Medium. Residual: 13 Medium, 11 Low. The remaining Medium r
 - Hardening: helmet with a strict CSP, a CORS allow-list, rate limits, zod validation, parameterised queries only (Prisma), and a checklist against the OWASP Top 10 and OWASP API Security Top 10.
 - Secrets in environment variables locally and in AWS Secrets Manager in production; TLS in transit; RDS and S3 encryption at rest with KMS.
 - A dependency audit and image scans in CI.
+- Client samples never in the repository: the client sends anonymised samples, which are tried from the git-ignored `samples/` folder on a throwaway stack that only the developer's machine can reach. The pre-commit and pre-push hooks refuse a file there, CI fails a pull request in which any commit holds one, and Docker builds leave the folder out ([trying a client's sample](../data-formats.md#trying-a-clients-sample)).
 
 **Detect (area 4):** alerts on failed sign-in spikes, refresh-token reuse, bursts of permission-denied responses and unusual export volumes, from structured logs and metrics (CloudWatch in AWS).
 
@@ -331,6 +332,8 @@ Inherent: 18 High, 6 Medium. Residual: 13 Medium, 11 Low. The remaining Medium r
 | Assess             | Reasonably and expeditiously                                      | Audit and export logs show which records were touched, by whom and when |
 | Notify the PDPC    | Within 3 calendar days of assessing that the breach is notifiable | An incident summary from the audit log                                  |
 | Notify individuals | Where significant harm is likely                                  | The affected trainees listed from the audit trail                       |
+
+**A client sample pushed to GitHub.** The repository is public, so a sample in a pushed commit is a breach from the moment of the push. The team lead tells the client the same day and contains it: every branch that holds the file is rewritten and force-pushed (for `main`, an admin lifts the ruleset's non-fast-forward rule for that one push); GitHub Support is asked to remove cached views and the pull requests' references to the old commits, which a force-push leaves reachable by id; forks and local copies are found and deleted. Assessing and notifying then follow the table above.
 
 #### Tablets and offline capture (R-25, R-26)
 
