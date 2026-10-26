@@ -6,6 +6,7 @@ import {
   errorEnvelopeSchema,
   listEnvelopeSchema,
   retentionPolicySchema,
+  ROLES,
   transferEntrySchema,
 } from '@huitong/shared';
 import request from 'supertest';
@@ -59,7 +60,7 @@ describe('Governance (integration, area 4 head start)', () => {
       (await auditor.agent.get('/api/v1/governance/access').expect(200)).body,
     );
     expect(body.meta).toBeUndefined();
-    expect(body.data.roles).toHaveLength(7);
+    expect(body.data.roles).toHaveLength(ROLES.length);
     const admin = body.data.roles.find((row) => row.role === 'SYSTEM_ADMIN');
     // Separation of duties: administrators configure the platform but never resolve HR conflicts.
     expect(admin?.permissions).toContain('governance:manage');

@@ -1,6 +1,11 @@
 import { z } from 'zod';
 
-/** The seven RBAC roles from CLAUDE.md section 4. */
+/**
+ * The RBAC roles. CLAUDE.md section 4 names six: SYSTEM_ADMIN, ASSESSOR,
+ * OPERATIONS, TRAINING_MANAGER, MANAGEMENT and AUDITOR. The earlier statement's
+ * HR_SG, HR_HQ, HIRING_MANAGER and ADMIN_OPS stay until no area uses them (ADR
+ * 0023). New roles are appended, as PostgreSQL appends them to its enum.
+ */
 export const ROLES = [
   'SYSTEM_ADMIN',
   'HR_SG',
@@ -9,6 +14,9 @@ export const ROLES = [
   'ADMIN_OPS',
   'MANAGEMENT',
   'AUDITOR',
+  'ASSESSOR',
+  'OPERATIONS',
+  'TRAINING_MANAGER',
 ] as const;
 
 export const roleSchema = z.enum(ROLES);

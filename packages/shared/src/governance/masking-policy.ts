@@ -31,6 +31,14 @@ export type ClearanceRule = z.infer<typeof clearanceRuleSchema>;
  * Baseline clearance (facts sheet section 6): HR sees restricted data only for
  * its own entity. HQ HR is capped at CONFIDENTIAL for Singapore records until a
  * cross-border transfer entry covers them.
+ *
+ * The #5 roles follow GRS section 2.1 as far as today's fields allow. Operations
+ * stop at CONFIDENTIAL: the RESTRICTED value they need is a trainee's date of
+ * birth for a submission, which arrives with master data (B-8), while today's
+ * RESTRICTED fields are the earlier statement's pay data, which no #5 job needs.
+ * An assessor's CONFIDENTIAL clearance covers only the trainees of their own
+ * runs, which needs the run scope B-8 brings, so until then an assessor sees
+ * INTERNAL only.
  */
 export const DEFAULT_CLEARANCE_RULES: readonly ClearanceRule[] = [
   { role: 'SYSTEM_ADMIN', entityCode: null, maxLevel: 'CONFIDENTIAL' },
@@ -47,6 +55,9 @@ export const DEFAULT_CLEARANCE_RULES: readonly ClearanceRule[] = [
   { role: 'ADMIN_OPS', entityCode: null, maxLevel: 'INTERNAL' },
   { role: 'MANAGEMENT', entityCode: null, maxLevel: 'INTERNAL' },
   { role: 'AUDITOR', entityCode: null, maxLevel: 'INTERNAL' },
+  { role: 'ASSESSOR', entityCode: null, maxLevel: 'INTERNAL' },
+  { role: 'OPERATIONS', entityCode: null, maxLevel: 'CONFIDENTIAL' },
+  { role: 'TRAINING_MANAGER', entityCode: null, maxLevel: 'INTERNAL' },
 ];
 
 export type MaskDecision = { visible: true } | { visible: false; reason: MaskReason };

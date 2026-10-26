@@ -18,10 +18,20 @@ describe('permissions', () => {
     }
   });
 
-  it('separates duties: administrators cannot approve mappings or resolve HR conflicts', () => {
+  it('separates duties: administrators cannot approve mappings or resolve conflicts', () => {
     expect(roleHasPermission('SYSTEM_ADMIN', 'mappings:approve')).toBe(false);
     expect(roleHasPermission('SYSTEM_ADMIN', 'conflicts:resolve')).toBe(false);
+    expect(roleHasPermission('OPERATIONS', 'mappings:approve')).toBe(true);
     expect(roleHasPermission('HR_SG', 'mappings:approve')).toBe(true);
+  });
+
+  it('keeps assessors and training managers away from the data steward duties', () => {
+    for (const role of ['ASSESSOR', 'TRAINING_MANAGER'] as const) {
+      expect(roleHasPermission(role, 'mappings:approve')).toBe(false);
+      expect(roleHasPermission(role, 'conflicts:resolve')).toBe(false);
+      expect(roleHasPermission(role, 'employees:sync')).toBe(false);
+      expect(roleHasPermission(role, 'users:manage')).toBe(false);
+    }
   });
 
   it('keeps read-only roles away from every write permission', () => {

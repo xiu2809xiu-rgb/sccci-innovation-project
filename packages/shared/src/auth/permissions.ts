@@ -58,7 +58,11 @@ const HR_PERMISSIONS: readonly Permission[] = [
 /**
  * Baseline role-permission matrix, seeded into the database and administered by
  * area 4. Separation of duties: system administrators configure the platform
- * but cannot approve mappings or resolve HR data conflicts.
+ * but cannot approve mappings or resolve data conflicts.
+ *
+ * The #5 roles start from the permissions that exist today. The permissions to
+ * capture, verify, approve rules and submit arrive with the stories whose routes
+ * check them (C-9, C-12, D-8, A-17), so no role holds a permission nothing checks.
  */
 export const DEFAULT_ROLE_PERMISSIONS: Readonly<Record<Role, readonly Permission[]>> = {
   SYSTEM_ADMIN: [
@@ -100,6 +104,24 @@ export const DEFAULT_ROLE_PERMISSIONS: Readonly<Record<Role, readonly Permission
     'analytics:read',
     'ai-usage:read',
   ],
+  ASSESSOR: ['workflows:read', 'workflows:tasks'],
+  // Operations verify and submit results, and look after the data on the way:
+  // syncs, the conflicts they open and the mappings they read through.
+  OPERATIONS: [
+    'employees:read',
+    'employees:sync',
+    'conflicts:resolve',
+    'connectors:read',
+    'mappings:propose',
+    'mappings:approve',
+    'workflows:read',
+    'workflows:manage',
+    'workflows:tasks',
+    'reports:read',
+    'reports:export',
+    'governance:read',
+  ],
+  TRAINING_MANAGER: ['workflows:read', 'reports:read'],
 };
 
 /** True when the role holds the permission in the given matrix (defaults to the baseline). */

@@ -15,6 +15,9 @@ datasource db {
 
 // ─── Identity and access (area 1 baseline; administered by area 4) ──────────
 
+/// The roles of statement #5 were added after the earlier statement's, which leave
+/// once no area uses them (ADR 0023). PostgreSQL appends enum values, so the
+/// new ones are listed last here too.
 enum Role {
   SYSTEM_ADMIN
   HR_SG
@@ -23,6 +26,9 @@ enum Role {
   ADMIN_OPS
   MANAGEMENT
   AUDITOR
+  ASSESSOR
+  OPERATIONS
+  TRAINING_MANAGER
 }
 
 enum DataClassificationLevel {
