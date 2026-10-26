@@ -1,5 +1,7 @@
 # Never commit the React Bits licence key: it belongs only in git-ignored .env.local files.
 node scripts/check-licence-key.mjs
+# The client's samples stay in the git-ignored samples/ folder, never in a commit.
+node scripts/check-samples.mjs
 # lint-staged splits file lists to fit the 8191-character cmd.exe limit, but the .CMD shims
 # that run eslint and prettier on Windows add their own paths, so leave headroom.
 pnpm exec lint-staged --max-arg-length 4096
