@@ -84,3 +84,7 @@ A new area namespace goes into `LAZY_NAMESPACES`, unless the shell needs it at f
 ## Amendment, 24 Oct 2026: statement #5
 
 Under statement #5 ([ADR 0023](0023-retarget-ps5-aspri-ipi.md)) English and 中文 stay until the briefing call confirms which languages ASPRI-IPI's staff need. The users the context above describes are statement #7's.
+
+## Amendment, 27 Oct 2026: statement #11
+
+Under statement #11 ([ADR 0024](0024-final-statement-11-spectra.md)) English comes first. The i18n framework and the 中文 strings already written stay, switchable at runtime, but a second language is not claimed as a client need until the briefing call confirms one. The users the context above describes are statement #7's.
