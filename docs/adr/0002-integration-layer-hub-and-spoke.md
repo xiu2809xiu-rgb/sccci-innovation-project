@@ -106,3 +106,7 @@ Adopted from Azri's integrated plan (prompt 002). Point 3 above named work email
 ## Amendment, 24 Oct 2026: statement #5
 
 Statement #5 ([ADR 0023](0023-retarget-ps5-aspri-ipi.md)) keeps the hub and its spokes and changes what sits at the centre. Trainees, assessors, courses and course runs replace the canonical employee model, each field still with its source of truth and its history, and trainees are matched on the TMS trainee ID, never on names alone, instead of HQ's employee number. The spokes become the TMS and each agency, through its API or a delivered file. The context above describes statement #7's systems, which the tag `archive/ps7-lesso-solar` keeps.
+
+## Amendment, 27 Oct 2026: statement #11
+
+Statement #11 ([ADR 0024](0024-final-statement-11-spectra.md)) supersedes the amendment of 24 Oct and keeps the hub and its spokes. The canonical order and its documents sit at the centre. Customers, vendors, items (part numbers), price lists and stock are read from Navision, each field with its source and its history, and a document read into an order keeps, for each field, its confidence and a link to its source. Customers, vendors and items are matched on their Navision numbers, never on names alone. The spokes become Navision and the client's mailbox. Staff keep posting into Navision, so a write-back (amendment of 21 Oct) still needs a preview and an audited approval, and goes only to the mock until the client agrees.

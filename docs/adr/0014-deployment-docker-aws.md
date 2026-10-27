@@ -69,3 +69,7 @@ The infrastructure-as-code tool is area 4's choice, recorded in its own ADR. The
 ## Amendment, 24 Oct 2026: statement #5
 
 Under statement #5 ([ADR 0023](0023-retarget-ps5-aspri-ipi.md)) the client, its trainees and the agencies are all in Singapore, so point 4 (China-side data) no longer applies. A production deployment in AWS's Singapore region keeps trainees' data in Singapore; a service outside it falls under the PDPA's Transfer Limitation Obligation.
+
+## Amendment, 27 Oct 2026: statement #11
+
+Under statement #11 ([ADR 0024](0024-final-statement-11-spectra.md)) the client is in Singapore and its customers are in South Asia and the Middle East. A production deployment in AWS's Singapore region keeps the client's data in Singapore. A service outside Singapore, an AI service included, falls under the PDPA's Transfer Limitation Obligation, and receives no customer or pricing data without the client's written permission. Point 4 (China-side data) still does not apply.

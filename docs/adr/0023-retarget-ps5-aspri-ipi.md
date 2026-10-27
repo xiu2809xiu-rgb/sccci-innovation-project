@@ -1,6 +1,6 @@
 # ADR 0023: Retarget to Problem Statement #5, ASPRI-IPI
 
-- **Status:** Accepted
+- **Status:** Superseded by [ADR 0024](0024-final-statement-11-spectra.md): statement #11 was allocated on 26 Oct 2026
 - **Date:** 2026-10-24
 - **Traceability:** M1 (design thinking) · M2 (GRS by design) · capabilities A to G
 

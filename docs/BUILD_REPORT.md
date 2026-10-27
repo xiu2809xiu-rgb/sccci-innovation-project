@@ -1,6 +1,6 @@
 # Build report
 
-Status of the platform-base build ([prompt 001](ai/prompts/001-platform-base.md)) and of the ideas adopted from Azri's integrated plan ([prompt 002](ai/prompts/002-adopt-azri-plan.md)). Each task reaches `main` through its own pull request. The checklists are kept current as work lands; the sections after them summarise the verification evidence.
+Status of the platform-base build ([prompt 001](ai/prompts/001-platform-base.md)) and of the ideas adopted from Azri's integrated plan ([prompt 002](ai/prompts/002-adopt-azri-plan.md)), then of the retargets to each statement in turn: #7 (prompt 003, cancelled), #5 (prompt 005, stopped) and the final #11 (prompt 006, with prompt 007). Each task reaches `main` through its own pull request. The checklists are kept current as work lands; the sections after them summarise the verification evidence.
 
 ## Phase checklist
 
@@ -152,6 +152,8 @@ On 22 Oct 2026 the team was allocated Problem Statement #7, LESSO Solar, which r
 
 ## Prompt 005 checklist: Problem Statement #5, ASPRI-IPI
 
+**Stopped on 27 Oct 2026.** The allocation on 26 Oct gave the team #11, Spectra Innovations, so [prompt 006](ai/prompts/006-final-ps11-spectra.md) stopped this prompt where it was ([ADR 0024](adr/0024-final-statement-11-spectra.md)). The items below record how far it got. `main` as it stood is tagged `archive/ps5-aspri-ipi`, and the unmerged branches `archive/ps5-docs/ps5-areas` (#186, closed without merging), `archive/ps5-docs/area2-ps5-guide`, `archive/ps5-docs/area3-ps5-guide`, `archive/ps5-docs/area4-ps5-guide` and `archive/ps5-feat/area1-ps5-roles`. The 28 stories created for #5 (#154 to #181) were closed as not planned, and the wiki was never published.
+
 LESSO Solar withdrew on 23 Oct 2026. The team resubmitted its choices with #5 ASPRI-IPI first, and the allocation is announced on 26 Oct, so #5 is written as the team's first choice until then. [Prompt 005](ai/prompts/005-retarget-ps5-aspri-ipi.md) retargets the project by editing what exists, and [ADR 0023](adr/0023-retarget-ps5-aspri-ipi.md) records the decisions. Before step 1, the team lead's review of Azri's #147 (the workflow state machine) was done and the pull request merged, and `main` was tagged `archive/ps7-lesso-solar`. One pull request per step, the bigger steps split; the assumptions and client questions (step 8) move up to follow step 1, and the backlog (step 9) comes before the area guides that name its stories. Legend as above.
 
 - [x] **1. Archive, decide and reframe.** The tag `archive/ps7-lesso-solar` on `main` after #147. ADR 0023 (the withdrawal, why #5, what carries over and what changes, what prompt 003 leaves behind, the order of the work), with ADR 0022 superseded. The README, CLAUDE.md sections 1, 3 and 4 (and section 8's audience and tablet-first lines), and the problem statement rewritten for #5, with no appendix about earlier statements.
@@ -166,6 +168,25 @@ LESSO Solar withdrew on 23 Oct 2026. The team resubmitted its choices with #5 AS
 - [ ] **10. CI and Docker.**
 - [ ] **11. Slides, diagrams and screenshots.**
 - [ ] **12. Team setup.**
+- [ ] **Finish.** Stopped with the prompt; prompt 006 finishes in its place.
+
+## Prompt 006 checklist: the final statement #11, Spectra Innovations
+
+The allocation was announced on 26 Oct 2026: the team has Problem Statement #11, Spectra Innovations, and the allocation is final. [Prompt 006](ai/prompts/006-final-ps11-spectra.md) retargets the project by editing what exists, and [ADR 0024](adr/0024-final-statement-11-spectra.md) records the decisions. [Prompt 007](ai/prompts/007-adopt-angelyn-orderpilot.md) adopts the best of Angelyn's OrderPilot proposal while 006 is carried out: the product is OrderPilot (HuiTong 汇通 stays the platform's codename), MVP first with MoSCoW priorities, the contracts between the areas, the open business rules as configuration, where AI is used and where it is not, and success measures with tests. One pull request per step, the bigger steps split; the assumptions and client questions (step 9) follow step 1, and the backlog (step 10) comes before the area documents and guides (steps 3 and 7). Legend as above.
+
+- [x] **0. Settle #5 and #7.** `main` tagged `archive/ps5-aspri-ipi` and each unmerged #5 branch `archive/ps5-<branch>`, all checked on GitHub, and those branches deleted. #186 closed without merging, and the 28 issues that only #5 needed (#154 to #181) closed as not planned, each with one comment linking ADR 0024; none was deleted. T-2 (#56) now names the briefing call with Spectra. The guard that keeps client samples out of commits, pushes and Docker builds came to `main` on its own (#188), and its branch is kept as the tag `archive/ps7-data-formats`. `feat/foundation`, Azri's branches and Dependabot's are untouched.
+- [x] **1. ADR 0024 and the reframe.** ADR 0024 (the allocation, why prompt 005 stopped, what step 0 archived and closed, what carries over and what changes, and prompt 007's points), with ADR 0023 superseded and dated amendments to ADRs 0002, 0010, 0011, 0013, 0014 and 0015. The README, CLAUDE.md sections 1, 3 and 4 (with section 5's mocks note, section 7's examples and section 8's audience) and the problem statement are rewritten for #11 and OrderPilot, with no appendix about earlier statements. Prompts 006 (the approver named by role) and 007 and the lead's `AGENTS.md` are committed.
+- [~] **2. Product scope.** CLAUDE.md section 4's capabilities A to G, the nine roles and the data rules are rewritten with step 1. Still to do: the roles in code.
+- [~] **3. The areas.** CLAUDE.md's ownership table and the contracts between the areas came with step 1. Still to do: module ownership, the renamed guides, the module and feature renames, the labels, the board's Area field and the GitHub forms.
+- [ ] **4. Mocks and synthetic documents.**
+- [ ] **5. CI and Docker.**
+- [ ] **6. Area 1 in code.**
+- [ ] **7. Areas 2 to 4.**
+- [ ] **8. Hero journey and tests.**
+- [ ] **9. Design thinking, GRS, assumptions and client questions.**
+- [ ] **10. GitHub.**
+- [ ] **11. Slides, diagrams and screenshots.**
+- [~] **12. Team setup.** `AGENTS.md` came with step 1, as the lead wrote it. Still to do: check it against the repository, then prompt 004.
 - [ ] **Finish.** Every check, the traceability matrix, the AI usage log and this report, with a summary per step.
 
 ## Verification log

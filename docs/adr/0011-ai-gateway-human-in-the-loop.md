@@ -98,3 +98,17 @@ Forces:
 - The explainer cannot say whose record it explains. HR reads its advice beside the record, so nothing is lost.
 - A mapping for a column like "Department Head" gets no value map from the model; HR maps it by hand.
 - The decision bullet about `employeeNo` above no longer applies. The rule is written in CLAUDE.md and in the GRS register (R-09).
+
+## Amendment, 27 Oct 2026: statement #11, documents read by the AI
+
+**Context.** Under statement #11 ([ADR 0024](0024-final-statement-11-spectra.md)) the AI's main job is to read documents: it classifies each customer's and vendor's document and extracts its fields. A model can only extract what it is shown, so these prompts must carry the document itself, not only headers and profiles (decision 3 above).
+
+**Decision.**
+
+- **The mapping assistant keeps its rule.** Its prompts still carry only headers, computed profiles and the distinct codes of category columns.
+- **Synthetic documents first.** Classification and extraction prompts carry the document's text. In the PoC only synthetic documents reach a provider other than the deterministic `mock`.
+- **Written permission for the client's documents.** A client's document reaches a third-party AI service only with the client's written permission, in an approved region (AWS Bedrock in Singapore, without cross-region inference), after a new GRS assessment. Until then, the client's samples are tried only on the local throwaway stack with the `mock` provider ([data-formats.md](../data-formats.md#trying-a-clients-sample)).
+- **The explainer still names nobody.** An explanation of a mismatch carries the fields, the kind of mismatch and the difference computed inside OrderPilot (a quantity, or a price difference as a percentage), never a customer's name or contact, a price or bank details.
+- **People decide.** Each extracted field keeps its confidence and a link to its source, a person confirms anything below the threshold, and the AI never approves, posts to Navision, releases goods or pays.
+
+**Consequences.** Real extraction for a pilot waits for the client's permission (question Q-42 in the client questions). Until then, extraction accuracy is measured on the synthetic test set, and the mock provider gives the demos the same results every time. The rule is written in CLAUDE.md section 4 and in the GRS register (R-09).

@@ -96,3 +96,7 @@ The amendment above says that connecting MY01 (story A-5) includes its register 
 ## Amendment, 24 Oct 2026: statement #5
 
 Statement #5 ([ADR 0023](0023-retarget-ps5-aspri-ipi.md)) keeps the sessions, RBAC and masking, and changes the roles. `ASSESSOR`, `OPERATIONS`, `TRAINING_MANAGER`, `MANAGEMENT`, `AUDITOR` and `SYSTEM_ADMIN` replace the seven HR roles: the new roles are added first, and the HR roles and their entity scopes leave once no area uses them. The per-destination allowlist (amendment of 21 Oct) becomes a per-agency allowlist: an agency receives only the fields that an ACTIVE entry shares with it.
+
+## Amendment, 27 Oct 2026: statement #11
+
+Statement #11 ([ADR 0024](0024-final-statement-11-spectra.md)) supersedes the amendment of 24 Oct and keeps the sessions, RBAC and masking. `PRODUCT_MANAGER`, `APPROVER`, `SUPPORT`, `WAREHOUSE`, `FINANCE`, `LOGISTICS`, `MANAGEMENT`, `AUDITOR` and `SYSTEM_ADMIN` replace the #5 and HR roles: the new roles are added first, and the old roles and their entity scopes leave once no area uses them. Masking covers bank details and prices by role. Who may approve what, within which limit, and segregation of duties become area 4's authorisation policy, which every endpoint calls through area 1's generic guard, so rights are enforced on the server and not only hidden in the UI (adopted from Angelyn's OrderPilot proposal). The per-destination allowlist (amendment of 21 Oct) stays for anything that leaves for another system.
