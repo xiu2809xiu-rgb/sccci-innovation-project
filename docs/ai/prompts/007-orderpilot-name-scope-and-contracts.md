@@ -1,18 +1,24 @@
-# Prompt 007: Adopt the best of Angelyn's OrderPilot proposal
+# Prompt 007: OrderPilot: the name, the scope and the contracts between areas
 
-Angelyn wrote a draft proposal for #11, "OrderPilot" (26 Oct 2026). The team reviewed it against prompt 006.
+The team reviewed prompt 006 and settled the points below.
 
 - **What stays:** prompt 006's structure, areas and owners.
 - **What changes:** apply the points below **while you carry out prompt 006**. Where the two differ, this prompt wins. If a step of 006 is already merged, change it in a follow-up pull request.
-- **Credit:** credit Angelyn wherever a point is used ("Adopted from Angelyn's OrderPilot proposal"), as prompt 002 did for Azri.
-- **Public repository:** don't commit her PDF. It restates Spectra's process slides, so summarise it instead.
+- **No attribution:** don't credit any person or document as the source of these points. If you have already added a line such as "Adopted from Angelyn's OrderPilot proposal", remove it.
+- **This file's name:** commit it as `docs/ai/prompts/007-orderpilot-name-scope-and-contracts.md`. If it is already committed under its old name, rename it in your next pull request.
 
-## Adopt
+## Changes to make
 
-1. **The name and the tagline.**
-   - The product is **OrderPilot**, everywhere a reader sees a name: the UI title, the README, CLAUDE.md, `AGENTS.md`, the slides, the diagrams and the docs.
-   - Keep the repository name and the `@huitong/*` package names. Say once, in ADR 0024, that HuiTong is the platform's codename and OrderPilot the product for Spectra.
-   - The tagline is **"AI reads, rules decide, people approve."** It sits beside Spectra's own principle.
+1. **The name, in the code too.** The product is **OrderPilot**, and the code takes the name as well. Rename HuiTong everywhere it is current, in one pull request of its own, before any other code changes:
+   - the package names (`@huitong/*` becomes `@orderpilot/*`) and every import, `--filter` and script that uses them, in the root `package.json`, CI and the Dockerfiles;
+   - the Docker Compose project, service and image names (`huitong-*` becomes `orderpilot-*`), and the database name and user in compose, `.env.example` and CI;
+   - the UI title and app name, the i18n strings, Swagger's title, and the telemetry and logger service names;
+   - the README, CLAUDE.md, CONTRIBUTING.md, SECURITY.md, `AGENTS.md`, the wiki, the slides and the diagrams;
+   - the GitHub board: rename the existing **HuiTong delivery** project to **OrderPilot delivery** (rename it; never create a second board), and update `scripts/github/project-board.mjs` to match.
+
+   Leave the history as it is: the earlier ADRs, the build report's earlier sections, the AI usage log's rows, prompts 001 to 005 and the archive tags. ADR 0024 says once that the project was called HuiTong for #7. Tell Richie that everyone must run `pnpm install`, then `pnpm db:migrate && pnpm db:seed`, after the rename, because the local database gets a new name.
+
+   **The tagline** is **"AI reads, rules decide, people approve."** It sits beside Spectra's own principle.
 
 2. **MVP first, with MoSCoW.** Encode this in `scripts/github/backlog.mjs` as priorities and sprint goals (006 step 10), and in the problem statement.
    - **Must: the sales pilot, for the W4 prototype and the W5 proposal.**
@@ -107,8 +113,8 @@ Angelyn wrote a draft proposal for #11, "OrderPilot" (26 Oct 2026). The team rev
 
    Note in the backlog that the priority questions go to Spectra before the call.
 
-10. **Personas.** Start the personas from her role table: each role, what it does today, and what would help it.
+10. **Personas.** Start the personas from a role table: each role, what it does today, and what would help it.
 
 ## Unchanged
 
-The areas and owners in 006 stand: area 1 Richie, area 2 Azri, area 3 Iok Teck and area 4 Angelyn. Log this prompt in the AI usage log, and record the adopted points in ADR 0024 or a short ADR of their own.
+The areas and owners in 006 stand: area 1 Richie, area 2 Azri, area 3 Iok Teck and area 4 Angelyn. Log this prompt in the AI usage log, and record these points in ADR 0024 or a short ADR of their own.

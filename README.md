@@ -2,7 +2,7 @@
 
 AI-assisted order automation beside Navision for Spectra Innovations, a Singapore distributor of IT products and computer peripherals: customer and vendor documents read once, checked against each other, routed for approval across six teams, and followed on one order tracker, with human approvals and financial controls kept in place (IT2134 IT Innovation Project, SCCCI x NYP AI Innovation Challenge, Problem Statement #11).
 
-**AI reads, rules decide, people approve.** OrderPilot is built on HuiTong 汇通 ("converge and connect"), the platform's codename, which the repository and the `@huitong/*` packages keep.
+**AI reads, rules decide, people approve.**
 
 > The project is being retargeted from earlier statements pull request by pull request ([ADR 0024](docs/adr/0024-final-statement-11-spectra.md)), so until that work reaches them, the mock systems, the seed data and some screens still show an earlier statement's HR domain. All data in this repository is synthetic.
 

@@ -75,9 +75,9 @@ The client has flagged the order of steps 3 to 6 to confirm: when the PI goes to
 
 **The problem in one sentence.** Spectra's order data arrives in customer and vendor documents that no system reads, so six teams re-type it into Navision, check it against the other documents by eye and chase each approval, payment and shipping paper by hand; every hand-off adds delay and a chance of error, and nobody sees an order's whole status in one place.
 
-**Our response.** OrderPilot, built on the HuiTong 汇通 platform, works to one line: **AI reads, rules decide, people approve.** (The name and the tagline are adopted from Angelyn's OrderPilot proposal.) It reads each document once and carries its data to every team and system that needs it. Documents arrive by email or upload; the AI tells each one's type and extracts its fields through an approved mapping of its layout, and every field keeps its confidence and a link to its source, with anything uncertain waiting for a person. The documents are checked against each other, against the order and against Navision's stock and prices, and each mismatch goes to an exceptions queue with an explanation. The sales and purchase workflows route each approval and task to the right team, within the approval limits, with reminders and escalations. One order tracker shows where each order stands, who has it, what is still to do and what has gone wrong. Staff keep posting into Navision; a write-back from OrderPilot comes later, only if Spectra wants it, and would need a preview and an audited approval. The financial controls stay: segregation of duties, approval limits, a hold on any payment whose bank details have changed, masking of bank details and prices, and a tamper-evident audit trail. The AI reads, suggests and drafts; it never posts to Navision, approves, releases goods or pays. Capabilities A to G are defined in [CLAUDE.md](../CLAUDE.md) section 4 and summarised in [2.5 Scope](#25-scope).
+**Our response.** OrderPilot works to one line: **AI reads, rules decide, people approve.** It reads each document once and carries its data to every team and system that needs it. Documents arrive by email or upload; the AI tells each one's type and extracts its fields through an approved mapping of its layout, and every field keeps its confidence and a link to its source, with anything uncertain waiting for a person. The documents are checked against each other, against the order and against Navision's stock and prices, and each mismatch goes to an exceptions queue with an explanation. The sales and purchase workflows route each approval and task to the right team, within the approval limits, with reminders and escalations. One order tracker shows where each order stands, who has it, what is still to do and what has gone wrong. Staff keep posting into Navision; a write-back from OrderPilot comes later, only if Spectra wants it, and would need a preview and an audited approval. The financial controls stay: segregation of duties, approval limits, a hold on any payment whose bank details have changed, masking of bank details and prices, and a tamper-evident audit trail. The AI reads, suggests and drafts; it never posts to Navision, approves, releases goods or pays. Capabilities A to G are defined in [CLAUDE.md](../CLAUDE.md) section 4 and summarised in [2.5 Scope](#25-scope).
 
-**Where we use AI, and where we don't** (adopted from Angelyn's OrderPilot proposal):
+**Where we use AI, and where we don't:**
 
 | Task                                                       | Approach                                              |
 | ---------------------------------------------------------- | ----------------------------------------------------- |
@@ -195,7 +195,7 @@ Each point in the brief, translated into what it costs someone on an ordinary wo
 | Money and totals                   | Prices are quoted in USD, and freight, rounding and totals differ between documents                                                 | Money as a value object with its currency; checks of totals and currency with stated tolerances                                                                 |
 | Email as a channel                 | Documents arrive by email, perhaps twice, forwarded or with several attachments                                                     | A mailbox connector with an HMAC-signed "new mail" webhook; duplicates found by message and document hash                                                       |
 | Systems of record must stay stable | A bad write to Navision damages the books people trust, and a duplicate posting is hard to undo                                     | A preview before any write-back, idempotency keys, an audited approval, and the mock only until the client agrees                                               |
-| Business rules not yet confirmed   | The SPR trigger in sales, the PI sequence, the approvers and their limits, and delegation while the approver is away are still open | Each is configuration, never hard-coded, until Spectra confirms it (adopted from Angelyn's OrderPilot proposal)                                                 |
+| Business rules not yet confirmed   | The SPR trigger in sales, the PI sequence, the approvers and their limits, and delegation while the approver is away are still open | Each is configuration, never hard-coded, until Spectra confirms it                                                                                              |
 | Volumes                            | The numbers of orders and documents a month are unknown                                                                             | Queued, idempotent jobs; pagination and indexes on every list                                                                                                   |
 
 #### Organisational
@@ -218,7 +218,7 @@ Each point in the brief, translated into what it costs someone on an ordinary wo
 
 ### 2.5 Scope
 
-MVP first, with MoSCoW priorities (adopted from Angelyn's OrderPilot proposal): one workflow works end to end before the next one starts. The backlog carries the same priorities ([agile/backlog.md](agile/backlog.md)).
+MVP first, with MoSCoW priorities: one workflow works end to end before the next one starts. The backlog carries the same priorities ([agile/backlog.md](agile/backlog.md)).
 
 #### Must: the sales pilot, for the W4 prototype and the W5 proposal
 
@@ -280,7 +280,7 @@ Real Navision integration, write-back with controls, and forwarder tracking.
 
 ### 2.6 Success metrics
 
-Two sets of measures. The client's own five come first; the brief gives no baselines, so they are laboratory estimates on synthetic data until the client gives real ones. Beside them are measures with a test and a target that the prototype can prove now (adopted from Angelyn's OrderPilot proposal), with the controls that the GRS design needs.
+Two sets of measures. The client's own five come first; the brief gives no baselines, so they are laboratory estimates on synthetic data until the client gives real ones. Beside them are measures with a test and a target that the prototype can prove now, with the controls that the GRS design needs.
 
 **The client's measures** (lab estimates until the client gives baselines)
 
