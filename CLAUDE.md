@@ -8,11 +8,13 @@
 
 ## 1. What this project is
 
-**HuiTong 汇通** (working name: "converge and connect") is an **assessment capture and integration layer** for ASPRI-IPI, the training arm of the Association of Process Industry in Singapore. Assessors record a practical assessment once, on a tablet; HuiTong calculates each trainee's competency from the course's rules and carries the verified results into the Training Management System (TMS) and on to the government portals, through an agency's API where one exists and as an agency-specific submission file where it does not.
+**OrderPilot** is our product for Spectra Innovations, a Singapore distributor of IT products and computer peripherals: an **AI-assisted order-automation layer** beside its Navision ERP. **AI reads, rules decide, people approve.** It reads customer and vendor documents (purchase orders, proforma invoices, invoices, packing lists and shipping documents), checks them against each other, routes approvals and tasks across six teams, and shows every order on one tracker. Human approvals and financial controls stay in place: staff keep posting into Navision, and AI never approves, posts, releases goods or pays.
+
+**HuiTong 汇通** (working name: "converge and connect") is the platform's codename, so the repository and the `@huitong/*` packages keep that name. The product name and the tagline are adopted from Angelyn's OrderPilot proposal.
 
 - **Module:** IT2134 IT Innovation Project, Diploma in IT, Nanyang Polytechnic, AY2026 Semester 2 (19 Oct 2026 to Feb 2027)
 - **Theme:** SCCCI x NYP AI Innovation Challenge
-- **Client:** ASPRI-IPI, Problem Statement **#5**, the team's first choice after statement #7 was withdrawn on 23 Oct 2026. The final allocation is announced on 26 Oct; until then, write that #5 is the first choice, not that it was allocated (`docs/adr/0023-retarget-ps5-aspri-ipi.md`). The tag `archive/ps7-lesso-solar` keeps the repository as it stood under #7.
+- **Client:** Spectra Innovations, Problem Statement **#11**, allocated in W2 (26 Oct 2026) and final (`docs/adr/0024-final-statement-11-spectra.md`). The tags `archive/ps7-lesso-solar` and `archive/ps5-aspri-ipi` keep the repository as it stood under the two earlier statements.
 - **Team:** 4 Year-2 students: Richie (team lead, area 1), Azri (area 2), Iok Teck (area 3) and Angelyn (area 4). Ownership areas are at the end of section 4.
 
 ### Assessment (this shapes how we build)
@@ -28,7 +30,7 @@
 
 ### Schedule anchors
 
-W2 (26 Oct) problem allocation · W3 (week of 2 Nov) briefing call with ASPRI-IPI · W3 project plan · W4 UI prototype · W5 proposal · W8–12 AI-assisted coding · W13 technical review · W14 observability · W15 clickstream analytics · W16 AI token usage tracking · W18 final presentation · W19 client check-in.
+W2 (26 Oct) problem allocation · W3 (week of 2 Nov) briefing call with Spectra Innovations · W3 project plan · W4 UI prototype · W5 proposal · W8–12 AI-assisted coding · W13 technical review · W14 observability · W15 clickstream analytics · W16 AI token usage tracking · W18 final presentation · W19 client check-in.
 
 ---
 
@@ -50,26 +52,30 @@ The module's AI coding tool is AWS Kiro (used here as the IDE). Students "own ev
 
 ## 3. The problem (summary; the analysis is in `docs/problem-statement.md`)
 
-**Users:** the assessors who observe practical assessments in real training environments, and the operations staff who verify the results and submit them to the agencies.
+**Users:** Spectra's order teams: Product Managers, the approver, Support, Warehouse, Finance and Logistics, and the management that oversees them.
 
 **The client today**
-- About 40 assessment runs a week, more than 30 trainers and assessors, and 2,000 to 2,400 trainees assessed a month. About 80% of the courses are WSQ (half of those MOM-regulated) and 20% are ITE courses.
-- Assessors tick paper checklists, work out each trainee's competency by hand from the detailed criteria, and re-type the results into the **Training Management System (TMS)**.
-- Operations staff check the TMS entries against the paper, then submit the results to the government portals: **MOM (AMS)**, **SSG/WSDA** and **ITE (STEP)**. Some portals have no API.
+- A Singapore distributor of IT products and computer peripherals, and the master distributor for some brands. Its customers are in South Asia (India, Sri Lanka, Bangladesh and Pakistan) and the Middle East, and most pay before their goods are shipped. Its ERP is **Microsoft Dynamics Navision**.
+- Every purchase and sales order is handled by hand and passed between the six teams.
+- Staff key the same data again from customer purchase orders (POs), proforma invoices (PIs), invoices, packing lists and shipping documents (AWB/BL), and spend their time chasing approvals, payments and shipping papers.
 
-**Where the effort goes:** consolidation and TMS entry take about 60% of the post-assessment effort, portal submissions 20%, verification 10%, rework 5% and filing 5%. At about one hour per run, that is roughly 2,000 assessor hours a year before verification and submission.
+**The two flows** (the client's process, in our words):
+- **Sales:** the customer's PO (part number, quantity, USD unit price) → a stock check and the SPR (Sales Purchase Requisition) process, its trigger still to confirm → Support generates a PI from Navision with the bank details → once the customer pays, the PI goes to the warehouse for packing → invoice and packing list → the PI to the customer with the shipment date → the goods released to the forwarder under the shipping terms → shipping details to the customer → follow-up of the AWB/BL and the import permit.
+- **Purchase:** a Product Manager raises an SPR → the approver reviews and approves it → Support creates the vendor PO in Navision → the vendor sends a PI with our PO number and their bank details → a forwarder is arranged under the shipping terms → the warehouse checks the goods against the invoice, packing list and AWB/BL → the goods are received into Navision from the vendor's invoice → the customer is told → Finance pays the vendor on the due date.
 
-**Root cause:** the assessment is captured on paper, and the rules that turn it into a result exist only as documents, so every later step re-keys and re-checks it.
+**Root cause:** each order's facts arrive in documents that no system reads, and the rules that tie them together (who approves what, up to which limit, in which order, and what must match) live in people's heads and inboxes. So every hand-off re-types, re-checks and chases.
 
-**What success looks like** (from the brief):
-- Assessors record results on tablet-based digital checklists during the assessment.
-- Competency is calculated automatically from each course's assessment rules.
-- Results flow straight into the TMS, which becomes the single source of truth.
-- Submissions go through an agency's API where one exists, and otherwise as agency-specific submission files.
+**What success looks like** (the brief's four asks, in our words):
+- It pulls the part numbers, quantities, prices and shipping details out of the documents that customers and vendors send.
+- It compares those documents with one another, and raises any disagreement for a person to look at.
+- It sends each approval and task to the team that owns it, and reminds people when something is late.
+- It puts every order on one dashboard: where it stands, who has it, what is still to do and what has gone wrong.
 
-**Priorities:** capture, the competency rules and the TMS output first, because that is where most of the time is lost. Generated submission files are the safer route where a portal has no API.
+**The client's own proposal:** four capabilities (AI document processing, an AI workflow agent, Navision integration and an order dashboard), on one principle: the AI reads documents and handles what varies, while a workflow engine enforces the business rules, approval limits and the order of steps, and the AI makes no unrestricted decisions. Our tagline, "AI reads, rules decide, people approve.", sits beside it. Its measures: order-processing time, manual touches per order, data-entry error rate, approval turnaround and overdue orders.
 
-**Unknowns:** the TMS product, its API and its export formats; each agency's channel (an API or a file) and its format; how checklists and course rules are written today; the verification steps; which trainee identifier each agency requires; the tablets and the connectivity in the training environments; the volumes per agency. Until the client's samples arrive through the team's data folder, everything external is **mocked**, and every assumption is logged in `docs/assumptions.md`. The brief and any client sample data are never committed.
+**Priorities:** one workflow first, as the brief suggests: MVP first, with MoSCoW priorities (adopted from Angelyn's OrderPilot proposal). The sales pilot, from the customer's PO to the order tracker, is the Must for the W4 prototype and the W5 proposal; the Should items follow by W13; the purchase flow is phase 2, built in W8 to W12 for the W18 final; real Navision integration and write-back wait until Spectra wants them. Staff keep posting into Navision, and money stays under their control. The list is in `docs/problem-statement.md` section 2.5 and in the backlog.
+
+**Unknowns:** whether and how Navision can be integrated (its version, cloud or on-premise, and its interfaces); how orders and documents arrive, and how many a month; whether the pilot is the sales flow, the purchase flow or both; when an SPR is raised in a sales order; the PI sequence the client flagged (when the PI goes to the warehouse and when to the customer); the approvers, their limits and who decides while the approver is away; how payment is confirmed and how a vendor's bank details are checked; what counts as a mismatch (price tolerance, partial shipments, substitutions); the forwarders, the AWB/BL formats and each country's import permits; the costliest errors today and baselines for the five measures; the channels staff use (email, Teams, WhatsApp, Excel) and whether OrderPilot may send messages or only draft them; permission to use an AI service, in which region, and whether bank details and contacts are off-limits to it; and who signs off the results. Until the client's samples arrive through the team's data folder, everything external is **mocked**, and every assumption is logged in `docs/assumptions.md`. The brief, the client's proposal and slides, and any client sample are never committed.
 
 ---
 
@@ -79,51 +85,63 @@ The module's AI coding tool is AWS Kiro (used here as the IDE). Students "own ev
 
 | Role | Access |
 |---|---|
-| `SYSTEM_ADMIN` | Full system administration |
-| `ASSESSOR` | Records the assessments of their own runs on a tablet; sees those runs' trainees and checklists |
-| `OPERATIONS` | Verifies results, corrects them with a reason, sends them to the TMS and the agencies, and tracks the submissions |
-| `TRAINING_MANAGER` | Owns the courses and their assessment rules; approves rules, AI drafts included |
-| `MANAGEMENT` | Dashboards and reports, read-only |
+| `SYSTEM_ADMIN` | Full system administration; never approves, posts or pays |
+| `PRODUCT_MANAGER` | Raises SPRs for their brands and follows their orders and stock |
+| `APPROVER` | Approves or rejects SPRs and other requests within their approval limit |
+| `SUPPORT` | Captures and confirms documents, keeps orders up to date, generates PIs, invoices and packing lists, and sends customer updates |
+| `WAREHOUSE` | Checks goods against invoices, packing lists and AWB/BL, then packs and releases them |
+| `FINANCE` | Confirms customers' payments, pays vendors, and clears payment holds with a second approver |
+| `LOGISTICS` | Arranges forwarders, and follows shipment dates, AWB/BL and import permits |
+| `MANAGEMENT` | The order tracker, dashboards and reports, read-only |
 | `AUDITOR` | Audit trail, read-only |
 
-These replace the earlier statement's HR roles additively: the new roles come first, and the HR roles leave once no area uses them (ADR 0023).
+These replace the earlier statements' roles additively: the new roles come first, and the old ones leave once no area uses them (ADR 0024).
 
 ### Capabilities
 
 | # | Capability | Summary |
 |---|---|---|
-| A | Connector hub | One adapter per external system behind a common `SystemConnector` interface. The TMS (`mock-tms`: courses, runs, trainees and results through an API and CSV exports); each agency through its API where it has one (a mock with asynchronous acknowledgement), and otherwise through a generated file delivered to its portal (a mock that validates the MOM and ITE files and returns a report), with every submission's status tracked; and Excel/CSV import through the mapping engine. Another training provider joins through a tenant configuration: its name, connector set, field mappings, course rules and theme tokens. |
-| B | Master data | Trainees, assessors, courses and course runs, with a source of truth for each field and its change history. |
-| C | Assessment capture and verification | The tablet checklist, which keeps working through a dropped connection and syncs afterwards; the run's lifecycle from planned to submitted; operations' verification queue; corrections with a reason; SLA reminders. Idempotent, retried and audited. |
-| D | Competency, submissions and insights | Course-specific rules (criteria, critical items, outcomes) as versioned configuration; automatic competency calculation; agency submission files rendered from templates; dashboards and insights for management and operations. |
-| E | AI assistance (human in the loop) | **Rule-drafting assistant:** drafts a course's rules from its assessment plan, with a confidence and a rationale, for a training manager to approve (the mapping assistant's pattern). **Mapping assistant:** proposes mappings for TMS exports and agency layouts. **Verification assistant:** flags unusual records for operations to review. AI never changes a result. |
-| F | Governance and compliance | RBAC, field-level masking, a tamper-evident audit trail of every result, correction and submission, data-classification tags, PDPA for trainee data, retention settings, and a per-agency field allowlist that denies by default (the cross-entity allowlist mechanism, reused). |
-| G | Monitoring and analytics | Observability (structured logs, traces, metrics, health checks), first-party clickstream analytics, and AI token usage and cost tracking, each with an in-app dashboard. |
+| A | Document intake and AI extraction | Documents arrive by email (the mailbox connector) or upload, as PDFs, scans or Excel. The AI classifies each document's type and extracts its fields. Each customer's and vendor's layout is a mapping version, proposed by the AI mapping assistant and approved before use. Every extracted field carries a confidence score and a link to its source document, and anything uncertain waits for a person. |
+| B | Master data and Navision | One adapter per external system behind a common `SystemConnector` interface. Customers, vendors, items (part numbers), price lists and stock are read from Navision (`mock-navision`, an OData-style API), each field with its source and its change history. Staff keep posting into Navision. A write-back comes later, only if Spectra wants it; it needs a preview and an audited approval, and goes only to the mock until the client agrees. |
+| C | Order workflows and approvals | The sales and purchase workflows run on the state machine, with tasks routed to the six teams' roles: SPR approval within approval limits, an SPR raised from a sales order's shortage, SLA reminders and escalations, generated documents (PI, invoice, packing list) and notifications. |
+| D | Cross-document checks, the order tracker and insights | The PO against the PI, invoice, packing list and AWB/BL, plus stock and price checks; an exceptions queue; one order tracker with each order's full trail; and the client's own measures as KPIs. |
+| E | AI assistance (human in the loop) | Classification, extraction, layout mapping, an explainer for each mismatch (the logs stay the source of truth), and drafts of customer and vendor emails that a person approves and sends. Comparisons, routing and limits are fixed rules, not AI ("Where we use AI, and where we don't" in `docs/problem-statement.md`). AI never posts to Navision, approves, releases goods or pays. |
+| F | Financial controls and governance | RBAC and segregation of duties (a requester never approves their own SPR); approval limits; bank-detail change control, where a PI whose bank details differ from the vendor master puts the payment on hold until Finance and a second approver clear it; masking of bank details and prices by role; a tamper-evident audit trail; retention; and no customer or pricing data sent to a third-party AI service without the client's written permission. |
+| G | Monitoring and analytics | Observability (structured logs, traces, metrics, health checks), first-party clickstream analytics, and AI token usage and cost tracking, with the AI cost per document, each with an in-app dashboard. |
 
 ### Data rules
 
-- **Synthetic data only.** All data is synthetic. Label it "Synthetic demo data" in the UI.
-- **No national ID numbers.** Never store NRIC/FIN numbers; use internal trainee IDs. Real submissions need trainees' ID numbers, so how an agency file gets one is an assumption and a client question; until it is answered, generated files carry the internal trainee ID.
-- **Masking.** Mask sensitive fields (contact details, date of birth, and results outside a user's own runs) by role.
-- **Identity matching.** Match trainees on the TMS trainee ID, never on names alone. A look-alike name is a possible match, shown for review and never merged.
-- **Verified before it leaves.** A result reaches the TMS and the agencies only after operations verify it. A correction needs a reason, keeps the original value, and is audited. AI never changes a result.
-- **Rules are versioned.** A run is assessed against the version of the course rules it started with. A new version needs a training manager's approval and no code change.
-- **No identifiers to AI.** Trainee identifiers, results and other personal data are never sent to a third-party AI service without the client's written permission. The rule-drafting assistant reads a course's assessment plan, not trainee data. Prompts carry headers, value shapes and category codes; values above INTERNAL or that identify a person are withheld.
-- **Default deny per agency.** An agency receives only the fields that an ACTIVE entry in its allowlist shares; everything else is withheld, in the API and in files. A change to an entry raises its version and is audited.
-- **Write-back needs approval.** A write to the TMS or a submission to an agency needs an explicit, audited approval by operations after a preview. Against the client's real systems it is out of scope until the client approves it; the mocks may demonstrate it, labelled as mocks.
-- **Bilingual UI.** The UI is bilingual (English and 简体中文), switchable at runtime, to be confirmed at the briefing call. No hard-coded user-facing strings.
+- **Synthetic data only.** Synthetic companies, fictional brands and synthetic documents. Label them "Synthetic demo data" in the UI.
+- **Fake bank details.** Every bank detail is synthetic and obviously fake, never a real account.
+- **Prices in USD.** Prices are in US dollars, as the client quotes them.
+- **Masking.** Mask bank details and prices by role, with a "why is this hidden" reason.
+- **Provenance.** Every extracted field keeps its confidence and a link to the document it came from. A person confirms anything uncertain before it is used.
+- **Identity matching.** Match customers, vendors and items on their Navision numbers (customer, vendor and part numbers), never on names alone. A look-alike name is a possible match, shown for review and never merged.
+- **Staff keep posting in Navision.** A write-back needs a preview and an explicit, audited approval. Against the client's real Navision it is out of scope until the client approves it; the mock may demonstrate it, labelled as a mock.
+- **Human approvals stay.** AI reads, suggests and drafts. It never posts to Navision, approves, releases goods or pays: a person does, and the action is audited. Rights are enforced on the server through area 4's authorisation policy, never only hidden in the UI.
+- **Open business rules are configuration.** The SPR trigger in sales, the PI sequence, the approvers and their limits, and delegation while the approver is away are configurable, never hard-coded, until Spectra confirms them (adopted from Angelyn's OrderPilot proposal).
+- **Segregation of duties.** A requester never approves their own SPR or releases a payment they asked for. A changed bank detail puts the payment on hold until Finance and a second approver clear it.
+- **No client document to a third-party AI without permission.** Classification and extraction must show a model the document itself, so a client's document reaches a third-party AI service only with the client's written permission, in an approved region (for example AWS Bedrock in Singapore), after a GRS assessment. Until then, the client's samples are tried only on the local throwaway stack with the deterministic `mock` provider, and only synthetic documents reach any other provider. The mapping assistant keeps to headers, field shapes and codes, and the explainer works from the fields and the differences computed inside OrderPilot, never a customer's name or contact, a price or bank details. The `mock` provider stays the default (ADR 0011, amendment of 27 Oct 2026).
+- **English first.** The UI keeps its i18n framework and the 中文 strings already written, switchable at runtime, with no hard-coded user-facing strings. A second language is not claimed as a client need until the briefing call confirms one.
 
 ### Ownership areas (each is deep enough to earn an A)
 
 | Area | Owner | Scope |
 |---|---|---|
-| 1. Integration core and platform | Richie | **Platform:** architecture, monorepo, design system and app shell, auth/RBAC baseline, CI/CD, Docker, mock systems, the tenant configuration (another training provider joins by configuration). **Integration:** connector framework (Adapter + Factory) with connectors for the TMS, the agency APIs and the delivery of agency files with their submission status; master data (trainees, assessors, courses, runs) with provenance; mapping engine (Strategy transformers) for TMS exports and agency templates, with its AI assistant; the per-agency allowlist's enforcement; 3D integration map. |
-| 2. Assessment capture and verification | Azri | The tablet checklist with offline sync; the run's state machine, with Azri's workflow state machine at its core; the verification queue, with the verification assistant (proposed in ADR 0023); corrections with a reason; SLA reminders and notifications; the capture and verification screens. |
-| 3. Competency, submissions and insights | Iok Teck | Course rules (criteria, critical items, outcomes); competency calculation; the rule-drafting assistant (through the `LlmGateway`); agency submission files rendered from templates; dashboards and insights for management and operations. |
-| 4. Governance, security and monitoring | Angelyn | RBAC and field-masking administration, the audit-log viewer and audit readiness, data classification, PDPA and retention, the per-agency allowlist's administration; OpenTelemetry tracing and metrics, clickstream analytics, AI token usage and cost dashboards, AWS deployment with CloudWatch. |
+| 1. Document AI and integration core | Richie | **Document AI:** the whole AI pipeline (intake, document classification, extraction, the confidence scores and their thresholds, and the review screen), the mapping of each layout, and the canonical order and its documents with provenance. **Integration:** the connector framework (Adapter + Factory) with the Navision and mailbox connectors, master data synced from Navision, and write-back behind approval. **Platform:** architecture, monorepo, design system and app shell, auth/RBAC baseline and the generic guard that calls area 4's authorisation policy, CI/CD, Docker, mock systems, the shared template engine, and the 3D integration map. |
+| 2. Order workflows and approvals | Azri | The sales and purchase workflows on Azri's state machine, which alone holds each order's status; task routing, SPR approval within limits, SPRs from shortages, the payment gate, SLA reminders and escalations, generated documents and notifications. |
+| 3. Cross-document checks, order tracker and insights | Iok Teck | The checks engine (tolerances, currency, PO references, totals, stock), the check results and the exceptions queue with an AI explanation for each mismatch, the order tracker with each order's full trail, and the KPIs and insights. |
+| 4. Financial controls, security and monitoring | Angelyn | The authorisation policy (who may approve what, the approval limits and segregation of duties), bank-detail controls, masking, audit (the AI's decisions included), retention, AI governance (what data may go to an AI service), observability, clickstream, AI cost and the AWS deployment with CloudWatch. |
+
+**How the areas connect** (adopted from Angelyn's OrderPilot proposal)
+- **Order status lives only in area 2's state machine.** Area 1 owns the order's data and its documents (`orders`, `documents`); area 3 reads the status through agreed APIs and keeps no status logic of its own.
+- **Area 3 owns the check results and the exceptions.** It reports pass or fail to area 2, and area 2's state machine decides what a failure blocks.
+- **Area 4 owns the authorisation policy:** who may approve what, the limits and segregation of duties. Endpoints call that policy, so rights are enforced on the server, and tests prove it with direct API calls. Area 1 keeps the generic guard that calls it.
+- **Area 1 owns the whole AI pipeline:** document classification, extraction, the confidence scores and their thresholds (which confidence needs a person, and which fields always do), and the review screen. Area 4 audits the AI's decisions and sets what data may go to an AI service.
+- **The shared order and event contract** is agreed by the team in W3, and every owner reviews it.
 
 **Rules**
-- **Area 1 is the shared base.** Shared platform code (auth, layout, design system, API client, queues, logging, health, AI usage recording) belongs to area 1.
+- **Area 1 is the shared base.** Shared platform code (auth, layout, design system, API client, queues, logging, health, AI usage recording, the template engine) belongs to area 1.
 - **Owners write their own domain logic.** Azri, Iok Teck and Angelyn write the core logic of areas 2 to 4. A change in their folders is a pull request the owner reviews (`docs/team/module-ownership.md`). Area 1 keeps each area's implementation guide in `docs/team/` current and makes additive changes to the shared contracts, each in a pull request the owner reviews; it reworks an area's head start (scaffolding, data models, the area's API contracts, typed sample data, screens and test skeletons) only when the owner asks.
 
 ---
@@ -160,7 +178,7 @@ Small Express + TypeScript apps with deliberately different schemas:
 | `mock-cn-hq` | Chinese keys, `YYYY/MM/DD` dates, SAP-like codes |
 | `mock-oa` | Approval workflows plus an HMAC-signed webhook emitter |
 
-These three are the previous statement's mocks, still running while the code is retargeted. Prompt 005 step 4 replaces them with `mock-tms`, an agency API mock and an agency portal mock (section 4, capability A; ADR 0023).
+These three are an earlier statement's mocks, still running while the code is retargeted. Prompt 006 step 4 replaces them with `mock-navision` (Navision's items and stock, customers, vendors, price lists, orders, PIs, invoices, payments and goods receipts, behind an OData-style API) and `mock-mailbox` (inbound emails with attachments, and an HMAC-signed "new mail" webhook) (section 4, capabilities A and B; ADR 0024).
 
 **Shared (`packages/shared`)**
 - Canonical types, zod schemas, enums and i18n keys shared by web and api.
@@ -247,7 +265,7 @@ These three are the previous statement's mocks, still running while the code is 
 - NestJS modules and controllers (thin).
 - Services (use cases).
 - Repositories (the only place Prisma is called).
-- Domain classes and value objects that hold the invariants (`Employee`, `EmployeeId`, `LeaveType`, `DateRange`, ...).
+- Domain classes and value objects that hold the invariants (`Order`, `PartNumber`, `Money`, `DateRange`, ...).
 
 **Patterns, used only where they earn their place**
 
@@ -255,7 +273,7 @@ These three are the previous statement's mocks, still running while the code is 
 |---|---|
 | Adapter | Each external system sits behind `SystemConnector` |
 | Factory | Creates connectors from configuration |
-| Strategy | Field transformers, leave-category mappers, report renderers |
+| Strategy | Field transformers, document extractors, check rules, document and report renderers |
 | Template Method | Base sync job: extract → map → validate → load → audit |
 | Observer / domain events | Workflow triggers |
 | Repository | Data access |
@@ -319,7 +337,7 @@ Document each pattern in `docs/architecture/patterns.md`, with file references.
 
 ## 8. UI and design rules (strict)
 
-The audience is assessors recording practical assessments on tablets in real training environments, and operations staff doing data-heavy work every day. The product must feel calm, trustworthy and premium: Linear or Stripe-dashboard quality, never a generic template.
+The audience is the order teams that use OrderPilot (Support, Product Managers, the approver, Finance and Logistics), who do data-heavy work at their desks every day, the warehouse staff who check goods on the floor, and the management that follows the orders. The product must feel calm, trustworthy and premium: Linear or Stripe-dashboard quality, never a generic template.
 
 ### Visual system
 
@@ -331,7 +349,7 @@ The audience is assessors recording practical assessments on tablets in real tra
 - **Typography:**
   - Geist for Latin text and Noto Sans SC for Chinese, with matched sizing.
   - Tabular numerals in tables and KPIs; at most 7 type sizes; 60–80 characters per line for prose.
-- **Layout:** an 8-pt spacing grid and a 12-column responsive grid. Every page follows the same anatomy: page header → filters/actions → content. Desktop-first for operations and management, fully usable at 1024 px; the assessor's checklist is tablet-first, with touch targets of at least 44 px, and keeps working offline.
+- **Layout:** an 8-pt spacing grid and a 12-column responsive grid. Every page follows the same anatomy: page header → filters/actions → content. Desktop-first for the order teams and management, fully usable at 1024 px; the screens the warehouse uses on the floor (the goods check) also work on a tablet, with touch targets of at least 44 px.
 
 ### Behaviour
 

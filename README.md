@@ -1,8 +1,10 @@
-# HuiTong 汇通
+# OrderPilot
 
-Assessment capture and integration layer for ASPRI-IPI, the training arm of the Association of Process Industry: practical assessments recorded once on a tablet, competency calculated from each course's rules, and the verified results carried into the Training Management System and on to the government portals (IT2134 IT Innovation Project, SCCCI x NYP AI Innovation Challenge, Problem Statement #5).
+AI-assisted order automation beside Navision for Spectra Innovations, a Singapore distributor of IT products and computer peripherals: customer and vendor documents read once, checked against each other, routed for approval across six teams, and followed on one order tracker, with human approvals and financial controls kept in place (IT2134 IT Innovation Project, SCCCI x NYP AI Innovation Challenge, Problem Statement #11).
 
-> #5 is the team's first choice; the allocation is announced on 26 Oct 2026. The project is being retargeted from the previous statement pull request by pull request ([ADR 0023](docs/adr/0023-retarget-ps5-aspri-ipi.md)), so until that work reaches them, the mock systems, the seed data and some screens still show the previous statement's HR domain. All data in this repository is synthetic.
+**AI reads, rules decide, people approve.** OrderPilot is built on HuiTong 汇通 ("converge and connect"), the platform's codename, which the repository and the `@huitong/*` packages keep.
+
+> The project is being retargeted from earlier statements pull request by pull request ([ADR 0024](docs/adr/0024-final-statement-11-spectra.md)), so until that work reaches them, the mock systems, the seed data and some screens still show an earlier statement's HR domain. All data in this repository is synthetic.
 
 ## Quick start (Docker)
 
@@ -37,7 +39,7 @@ pnpm dev                              # web, api, mocks and shared in watch mode
 
 Override host ports for PostgreSQL and Redis with `POSTGRES_PORT` and `REDIS_PORT` in a root `.env` (see `.env.example`).
 
-The three mock systems above belong to the previous statement. They are being replaced by a TMS mock and two agency mocks, an API with asynchronous acknowledgements and a portal that validates submission files, which stand in for ASPRI-IPI's real systems until the client's samples arrive. The app shows a "Mock" badge on every connector they back, and a "Mock AI" badge on output from the default `mock` AI provider. To demonstrate a real model, see [switching the AI provider](docs/team/area-1-integration-core.md#switching-the-ai-provider-for-a-demo).
+The three mock systems above belong to an earlier statement. They are being replaced by `mock-navision`, an OData-style stand-in for Spectra's Navision ERP, and `mock-mailbox`, inbound emails with attachments and a signed "new mail" webhook, which stand in for the client's real systems until the client's samples arrive. The app shows a "Mock" badge on every connector they back, and a "Mock AI" badge on output from the default `mock` AI provider. To demonstrate a real model, see [switching the AI provider](docs/team/area-1-integration-core.md#switching-the-ai-provider-for-a-demo).
 
 ## Scripts
 
