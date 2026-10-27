@@ -1,6 +1,6 @@
 # Architecture decision records
 
-This folder records the significant technical decisions behind OrderPilot, the AI-assisted order-automation layer for Spectra Innovations (Problem Statement #11), and behind HuiTong 汇通, the platform it is built on. The project worked on statements #17, #7 and #5 before #11 was allocated (ADRs 0022 to 0024). Each record gives the context, the decision, its consequences and the options we rejected. That way any team member can explain _why_ the platform is built the way it is, at the mock interview (week 7), the technical review (week 13) and the final presentation (week 18).
+This folder records the significant technical decisions behind OrderPilot, the AI-assisted order-automation layer for Spectra Innovations (Problem Statement #11). The project worked on statements #17, #7 and #5 before #11 was allocated (ADRs 0022 to 0024). Each record gives the context, the decision, its consequences and the options we rejected. That way any team member can explain _why_ the platform is built the way it is, at the mock interview (week 7), the technical review (week 13) and the final presentation (week 18).
 
 [`CLAUDE.md`](../../CLAUDE.md) section 5 lists _what_ was decided, and these records explain _why_. A pull request that changes a decision updates both.
 
