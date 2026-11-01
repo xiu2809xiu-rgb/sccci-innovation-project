@@ -16,7 +16,7 @@ RUN --mount=type=cache,id=pnpm-store,target=/pnpm-store \
     pnpm install --frozen-lockfile --offline --store-dir /pnpm-store --filter "@huitong/web..."
 RUN pnpm --filter "@huitong/web..." build
 
-FROM nginxinc/nginx-unprivileged:1.30.6-alpine3.24@sha256:f5116ed4606f3eb015dd4a8e28cb9b351476dc0ad4bc6e9f93b19cec130cdf03 AS runtime
+FROM nginxinc/nginx-unprivileged:1.31.7-alpine3.24@sha256:b5047b9b76845eac124358373c6852377c52e4b05834a47647e955dd91cb8f1e AS runtime
 # The pinned base still ships brotli-libs 1.2.0-r1 (CVE-2026-111497) and curl and libcurl
 # 8.22.0-r0 (CVE-2026-92392); Alpine 3.24 has the fixes, 1.2.1-r0 and 8.23.0-r0. Upgrade only
 # those packages, and drop this once a rebuilt base includes them.
