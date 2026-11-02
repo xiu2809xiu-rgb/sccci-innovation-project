@@ -97,6 +97,7 @@
     "instance.started": "Workflow started from the OA approval",
     "task.created": "Task opened: {{step}}",
     "task.completed": "Done: {{step}}",
+    "task.rejected": "Rejected and returned for correction: {{step}}",
     "task.blocked": "Blocked: {{step}}",
     "sla.reminder": "Reminder sent: {{step}}",
     "sla.escalation": "Escalated, past its due time: {{step}}",
