@@ -55,3 +55,14 @@ export const completeWorkflowTaskSchema = z.object({
 });
 
 export type CompleteWorkflowTask = z.infer<typeof completeWorkflowTaskSchema>;
+
+/**
+ * Body of the reject command for a task whose step can be rejected, such as an
+ * approval. The reason is required, so the person who corrects the work knows
+ * what to fix; a blank one is a 400 at the boundary, before the state machine.
+ */
+export const rejectWorkflowTaskSchema = z.object({
+  reason: z.string().trim().min(1).max(500),
+});
+
+export type RejectWorkflowTask = z.infer<typeof rejectWorkflowTaskSchema>;

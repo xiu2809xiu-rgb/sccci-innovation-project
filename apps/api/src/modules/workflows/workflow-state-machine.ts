@@ -19,7 +19,14 @@ export interface WorkflowTaskSnapshot {
   readonly completedBy: string | null;
   /** Why the task is blocked, so the person it is flagged for knows what to do. */
   readonly blockedReason: string | null;
+  /** How a DONE task ended; null while it is open or once it is skipped. */
+  readonly outcome: WorkflowTaskOutcome | null;
+  /** Why it was rejected, so the person who corrects the work knows what to fix. */
+  readonly rejectionReason: string | null;
 }
+
+/** COMPLETED moves the work forward; REJECTED returns it to an earlier step. */
+export type WorkflowTaskOutcome = 'COMPLETED' | 'REJECTED';
 
 /** An instance as the state machine sees it: no ids, no Prisma, nothing to save. */
 export interface WorkflowInstanceSnapshot {
@@ -28,7 +35,7 @@ export interface WorkflowInstanceSnapshot {
   readonly status: WorkflowInstanceStatus;
   /** The step waiting for someone; null once the instance has finished. */
   readonly currentStepKey: string | null;
-  /** One per step that has started, in step order. */
+  /** One each time a step starts, oldest first; a step a rejection returns to gets a new one. */
   readonly tasks: readonly WorkflowTaskSnapshot[];
   readonly completedAt: Date | null;
 }
@@ -42,6 +49,7 @@ export type WorkflowTransitionType =
   | 'instance.cancelled'
   | 'task.created'
   | 'task.completed'
+  | 'task.rejected'
   | 'task.blocked'
   | 'task.skipped';
 
@@ -104,6 +112,18 @@ export class WorkflowStateMachine {
         definition: `${definition.key}@${definition.version}`,
       });
     }
+    definition.steps.forEach((step, index) => {
+      if (!step.onReject) return;
+      const returnIndex = definition.steps.findIndex((s) => s.key === step.onReject?.returnTo);
+      // Only backwards: a rejection that went forward, or nowhere, would skip the correction.
+      if (returnIndex < 0 || returnIndex >= index) {
+        throw new ConflictError('A rejection must return to an earlier step of the definition', {
+          definition: `${definition.key}@${definition.version}`,
+          stepKey: step.key,
+          returnTo: step.onReject.returnTo,
+        });
+      }
+    });
   }
 
   /** Starts an instance at the definition's first step. */
@@ -137,23 +157,17 @@ export class WorkflowStateMachine {
     completedBy: string,
     at: Date,
   ): WorkflowTransitionResult {
-    this.assertSameVersion(state);
-    if (state.status !== 'RUNNING') {
-      throw new ConflictError(`A ${state.status} workflow cannot complete a task`, {
-        status: state.status,
-      });
-    }
-    this.assertCurrentStep(state, stepKey);
-    const task = state.tasks.find((t) => t.stepKey === stepKey);
-    if (!task || !COMPLETABLE_TASK_STATUSES.includes(task.status)) {
-      throw new ConflictError('The task cannot be completed from its current status', {
-        stepKey,
-        status: task?.status ?? null,
-      });
-    }
-
+    const task = this.decidableTask(state, stepKey, 'complete');
     const tasks = state.tasks.map((t) =>
-      t === task ? { ...t, status: 'DONE' as const, completedAt: at, completedBy } : t,
+      t === task
+        ? {
+            ...t,
+            status: 'DONE' as const,
+            completedAt: at,
+            completedBy,
+            outcome: 'COMPLETED' as const,
+          }
+        : t,
     );
     const transitions = [transition('task.completed', stepKey, at)];
 
@@ -174,6 +188,58 @@ export class WorkflowStateMachine {
     return {
       state: { ...state, tasks: [...tasks, this.newTask(next, at)], currentStepKey: next.key },
       transitions,
+    };
+  }
+
+  /**
+   * Rejects the current step's task and returns the work to the earlier step
+   * its definition names (`onReject.returnTo`), which starts again with a new
+   * task and a new SLA clock. The work then runs forward through every step
+   * after it again, so a corrected request is checked and approved afresh.
+   * Only a step with a return rule can be rejected, and only with a reason.
+   */
+  reject(
+    state: WorkflowInstanceSnapshot,
+    stepKey: string,
+    rejectedBy: string,
+    at: Date,
+    reason: string,
+  ): WorkflowTransitionResult {
+    const task = this.decidableTask(state, stepKey, 'reject');
+    const returnTo = this.definition.steps.find((s) => s.key === stepKey)?.onReject?.returnTo;
+    const returnStep = this.definition.steps.find((s) => s.key === returnTo);
+    if (!returnStep) {
+      throw new ConflictError('This step cannot be rejected: it has no step to return to', {
+        stepKey,
+      });
+    }
+    const why = reason.trim();
+    if (!why) {
+      throw new ConflictError('A rejection needs a reason', { stepKey });
+    }
+
+    const tasks = state.tasks.map((t) =>
+      t === task
+        ? {
+            ...t,
+            status: 'DONE' as const,
+            completedAt: at,
+            completedBy: rejectedBy,
+            outcome: 'REJECTED' as const,
+            rejectionReason: why,
+          }
+        : t,
+    );
+    return {
+      state: {
+        ...state,
+        tasks: [...tasks, this.newTask(returnStep, at)],
+        currentStepKey: returnStep.key,
+      },
+      transitions: [
+        transition('task.rejected', stepKey, at, why),
+        transition('task.created', returnStep.key, at),
+      ],
     };
   }
 
@@ -262,11 +328,38 @@ export class WorkflowStateMachine {
 
   private assertCurrentStep(state: WorkflowInstanceSnapshot, stepKey: string): void {
     if (stepKey !== state.currentStepKey) {
-      throw new ConflictError('Only the current step can be completed or failed', {
+      throw new ConflictError('Only the current step can be completed, rejected or failed', {
         stepKey,
         currentStepKey: state.currentStepKey,
       });
     }
+  }
+
+  /**
+   * The current step's open task, when a person may decide it now: the
+   * instance is running and the task is not blocked. A step that a rejection
+   * returned to has older, closed tasks too, so this finds the open one.
+   */
+  private decidableTask(
+    state: WorkflowInstanceSnapshot,
+    stepKey: string,
+    verb: 'complete' | 'reject',
+  ): WorkflowTaskSnapshot {
+    this.assertSameVersion(state);
+    if (state.status !== 'RUNNING') {
+      throw new ConflictError(`A ${state.status} workflow cannot ${verb} a task`, {
+        status: state.status,
+      });
+    }
+    this.assertCurrentStep(state, stepKey);
+    const task = state.tasks.findLast((t) => t.stepKey === stepKey);
+    if (!task || !COMPLETABLE_TASK_STATUSES.includes(task.status)) {
+      throw new ConflictError(`The task cannot be ${verb}d from its current status`, {
+        stepKey,
+        status: task?.status ?? null,
+      });
+    }
+    return task;
   }
 
   /** An instance keeps the definition version it started on; running it on another is a bug. */
@@ -296,6 +389,8 @@ export class WorkflowStateMachine {
       completedAt: null,
       completedBy: null,
       blockedReason: null,
+      outcome: null,
+      rejectionReason: null,
     };
   }
 }

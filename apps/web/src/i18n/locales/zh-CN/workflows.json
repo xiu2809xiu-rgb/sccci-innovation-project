@@ -97,6 +97,7 @@
     "instance.started": "根据 OA 审批启动工作流",
     "task.created": "已创建任务：{{step}}",
     "task.completed": "已完成：{{step}}",
+    "task.rejected": "已驳回并退回修改：{{step}}",
     "task.blocked": "受阻：{{step}}",
     "sla.reminder": "已发送提醒：{{step}}",
     "sla.escalation": "已逾期并升级处理：{{step}}",

@@ -10,6 +10,12 @@ export const workflowStepDefinitionSchema = z.object({
   assigneeRole: roleSchema,
   /** Time allowed for the step; area 2's SLA rules decide when the clock starts. */
   slaHours: z.number().int().min(1),
+  /**
+   * Set on a step that can be rejected, such as an approval: a rejection
+   * returns the work to this earlier step for correction. A step without it
+   * can only be completed.
+   */
+  onReject: z.object({ returnTo: z.string() }).optional(),
 });
 
 export type WorkflowStepDefinition = z.infer<typeof workflowStepDefinitionSchema>;

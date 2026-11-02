@@ -11,6 +11,7 @@ export const WORKFLOW_TIMELINE_TYPES = [
   'instance.started',
   'task.created',
   'task.completed',
+  'task.rejected',
   'task.blocked',
   'sla.reminder',
   'sla.escalation',
@@ -36,6 +37,8 @@ export const workflowTimelineItemSchema = z.object({
   actor: z.object({ name: z.string(), role: roleSchema }).nullable(),
   /** Where a notification went. */
   channel: notificationChannelSchema.nullable(),
+  /** Why it happened, when someone said: why a step was rejected, failed or paused. */
+  reason: z.string().nullable().optional(),
 });
 
 export type WorkflowTimelineItem = z.infer<typeof workflowTimelineItemSchema>;

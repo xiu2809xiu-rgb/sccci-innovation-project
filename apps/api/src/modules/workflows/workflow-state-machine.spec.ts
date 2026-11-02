@@ -109,6 +109,8 @@ describe('WorkflowStateMachine (C-2, area 2)', () => {
       completedAt: null,
       completedBy: null,
       blockedReason: null,
+      outcome: null,
+      rejectionReason: null,
     });
   });
 
@@ -306,6 +308,271 @@ describe('WorkflowStateMachine (C-2, area 2)', () => {
   it.todo('writes an audit event for every transition, with the actor and the trace id');
   it.todo('publishes the lifecycle events only after the transaction commits');
   it.todo('never makes the employee record active: activation is area 1’s rule (B-6)');
+});
+
+/**
+ * Rejecting a step and returning the work for correction (OP-WF-04). The
+ * approval step names the earlier step its rejections return to.
+ */
+const APPROVAL: WorkflowDefinitionView = {
+  key: 'test-approval',
+  version: 1,
+  name: 'Test approval',
+  nameZh: '测试审批',
+  steps: [
+    { key: 'prepare', title: 'Prepare', titleZh: '准备', assigneeRole: 'HR_SG', slaHours: 24 },
+    { key: 'check', title: 'Check', titleZh: '核对', assigneeRole: 'HR_SG', slaHours: 4 },
+    {
+      key: 'approve',
+      title: 'Approve',
+      titleZh: '审批',
+      assigneeRole: 'HIRING_MANAGER',
+      slaHours: 8,
+      onReject: { returnTo: 'prepare' },
+    },
+    { key: 'notify', title: 'Notify', titleZh: '通知', assigneeRole: 'HR_SG', slaHours: 2 },
+  ],
+};
+
+const approvals = new WorkflowStateMachine(APPROVAL);
+
+/** An instance waiting at the approval step. */
+function atApproval(): WorkflowInstanceSnapshot {
+  let state = approvals.start(T0).state;
+  state = approvals.completeTask(state, 'prepare', 'user-hr', T0).state;
+  return approvals.completeTask(state, 'check', 'user-hr', T1).state;
+}
+
+describe('Rejecting a step (OP-WF-04, area 2)', () => {
+  it('closes the task as rejected and reopens the step it returns to, with a new due time', () => {
+    const { state, transitions } = approvals.reject(
+      atApproval(),
+      'approve',
+      'user-approver',
+      T2,
+      'Unit price differs from the price list',
+    );
+
+    expect(state).toMatchObject({ status: 'RUNNING', currentStepKey: 'prepare' });
+    expect(state.tasks.map((t) => [t.stepKey, t.status, t.outcome])).toEqual([
+      ['prepare', 'DONE', 'COMPLETED'],
+      ['check', 'DONE', 'COMPLETED'],
+      ['approve', 'DONE', 'REJECTED'],
+      ['prepare', 'PENDING', null],
+    ]);
+    expect(state.tasks[2]).toMatchObject({
+      completedAt: T2,
+      completedBy: 'user-approver',
+      rejectionReason: 'Unit price differs from the price list',
+    });
+    expect(state.tasks[3]!.dueAt).toEqual(new Date('2026-11-04T09:30:00.000Z'));
+    expect(transitions).toEqual([
+      {
+        type: 'task.rejected',
+        stepKey: 'approve',
+        at: T2,
+        reason: 'Unit price differs from the price list',
+      },
+      { type: 'task.created', stepKey: 'prepare', at: T2, reason: null },
+    ]);
+  });
+
+  it('runs the returned work forward again, through the steps between, to a new approval', () => {
+    const state = approvals.reject(
+      atApproval(),
+      'approve',
+      'user-approver',
+      T2,
+      'Wrong quantity',
+    ).state;
+    const prepared = approvals.completeTask(state, 'prepare', 'user-hr', T3);
+    expect(prepared.state.currentStepKey).toBe('check');
+    expect(prepared.transitions.map((t) => [t.type, t.stepKey])).toEqual([
+      ['task.completed', 'prepare'],
+      ['task.created', 'check'],
+    ]);
+    const checked = approvals.completeTask(prepared.state, 'check', 'user-hr', T3);
+    expect(checked.state.currentStepKey).toBe('approve');
+    // The second round's approval gets its own SLA clock, counted from when it started again.
+    expect(checked.state.tasks.at(-1)).toMatchObject({
+      stepKey: 'approve',
+      status: 'PENDING',
+      dueAt: new Date('2026-11-04T10:00:00.000Z'),
+    });
+
+    const { state: approved } = approvals.completeTask(
+      checked.state,
+      'approve',
+      'user-approver',
+      T3,
+    );
+
+    expect(approved.currentStepKey).toBe('notify');
+    expect(approved.tasks.filter((t) => t.stepKey === 'approve').map((t) => t.outcome)).toEqual([
+      'REJECTED',
+      'COMPLETED',
+    ]);
+  });
+
+  it('refuses a rejection on a step that names no step to return to (409 CONFLICT)', () => {
+    let state = approvals.start(T0).state;
+    state = approvals.completeTask(state, 'prepare', 'user-hr', T0).state;
+
+    expect(() => approvals.reject(state, 'check', 'user-hr', T1, 'Not ready')).toThrow(
+      expect.objectContaining({ status: 409, code: 'CONFLICT' }),
+    );
+  });
+
+  it('refuses a rejection without a reason, so the person who corrects it knows what to fix', () => {
+    expect(() => approvals.reject(atApproval(), 'approve', 'user-approver', T2, '')).toThrow(
+      ConflictError,
+    );
+    expect(() => approvals.reject(atApproval(), 'approve', 'user-approver', T2, '   ')).toThrow(
+      ConflictError,
+    );
+  });
+
+  it('refuses a rejection of a step that is not current', () => {
+    const state = approvals.completeTask(atApproval(), 'approve', 'user-approver', T2).state;
+
+    expect(() => approvals.reject(state, 'approve', 'user-approver', T3, 'Too late')).toThrow(
+      ConflictError,
+    );
+  });
+
+  it('refuses a rejection while WAITING or after the workflow has completed, failed or been cancelled', () => {
+    const waiting = approvals.pause(atApproval(), T2).state;
+    const failed = approvals.fail(atApproval(), 'approve', T2).state;
+    const cancelled = approvals.cancel(atApproval(), T2).state;
+    const approved = approvals.completeTask(atApproval(), 'approve', 'user-approver', T2).state;
+    const completed = approvals.completeTask(approved, 'notify', 'user-hr', T2).state;
+    expect(completed.status).toBe('COMPLETED');
+
+    for (const state of [waiting, failed, cancelled, completed]) {
+      expect(() => approvals.reject(state, 'approve', 'user-approver', T3, 'No')).toThrow(
+        ConflictError,
+      );
+    }
+  });
+
+  it('returns to the step the definition names, not simply the first step', () => {
+    const toCheck = new WorkflowStateMachine({
+      ...APPROVAL,
+      steps: APPROVAL.steps.map((s) =>
+        s.key === 'approve' ? { ...s, onReject: { returnTo: 'check' } } : s,
+      ),
+    });
+    let state = toCheck.start(T0).state;
+    state = toCheck.completeTask(state, 'prepare', 'user-hr', T0).state;
+    state = toCheck.completeTask(state, 'check', 'user-hr', T1).state;
+
+    const { state: returned } = toCheck.reject(state, 'approve', 'user-approver', T2, 'Recheck');
+
+    expect(returned.currentStepKey).toBe('check');
+    expect(returned.tasks.map((t) => t.stepKey)).toEqual(['prepare', 'check', 'approve', 'check']);
+    expect(returned.tasks.at(-1)).toMatchObject({
+      status: 'PENDING',
+      dueAt: new Date('2026-11-03T13:30:00.000Z'),
+    });
+  });
+
+  it('keeps every rejection when a step is rejected twice', () => {
+    let state = approvals.reject(
+      atApproval(),
+      'approve',
+      'user-approver',
+      T1,
+      'First reason',
+    ).state;
+    state = approvals.completeTask(state, 'prepare', 'user-hr', T2).state;
+    state = approvals.completeTask(state, 'check', 'user-hr', T2).state;
+
+    const { state: twice } = approvals.reject(state, 'approve', 'user-approver', T3, 'Second');
+
+    expect(
+      twice.tasks.filter((t) => t.stepKey === 'approve').map((t) => [t.outcome, t.rejectionReason]),
+    ).toEqual([
+      ['REJECTED', 'First reason'],
+      ['REJECTED', 'Second'],
+    ]);
+    expect(twice.tasks.at(-1)).toMatchObject({ stepKey: 'prepare', status: 'PENDING' });
+    expect(twice.currentStepKey).toBe('prepare');
+  });
+
+  it('stores the reason without its surrounding spaces', () => {
+    const { state, transitions } = approvals.reject(
+      atApproval(),
+      'approve',
+      'user-approver',
+      T2,
+      '  Wrong quantity  ',
+    );
+
+    expect(state.tasks[2]!.rejectionReason).toBe('Wrong quantity');
+    expect(transitions[0]!.reason).toBe('Wrong quantity');
+  });
+
+  it('leaves the earlier rounds alone when the returned work later fails or is cancelled', () => {
+    let state = approvals.reject(
+      atApproval(),
+      'approve',
+      'user-approver',
+      T2,
+      'Wrong quantity',
+    ).state;
+    state = approvals.completeTask(state, 'prepare', 'user-hr', T3).state;
+    const history = state.tasks.slice(0, 4);
+
+    const failed = approvals.fail(state, 'check', T3, 'Retries exhausted');
+    expect(failed.state.tasks.slice(0, 4)).toEqual(history);
+    expect(failed.state.tasks.at(-1)).toMatchObject({ stepKey: 'check', status: 'BLOCKED' });
+    expect(failed.transitions.filter((t) => t.type === 'task.blocked')).toHaveLength(1);
+
+    const cancelled = approvals.cancel(state, T3, 'Order cancelled');
+    expect(cancelled.state.tasks.slice(0, 4)).toEqual(history);
+    expect(cancelled.state.tasks.at(-1)).toMatchObject({ stepKey: 'check', status: 'SKIPPED' });
+    expect(cancelled.transitions.filter((t) => t.type === 'task.skipped')).toHaveLength(1);
+  });
+
+  it('refuses a rejection of a blocked task until it is unblocked', () => {
+    const state = atApproval();
+    const blocked: WorkflowInstanceSnapshot = {
+      ...state,
+      tasks: state.tasks.map((t) => (t.stepKey === 'approve' ? { ...t, status: 'BLOCKED' } : t)),
+    };
+
+    expect(() => approvals.reject(blocked, 'approve', 'user-approver', T2, 'No')).toThrow(
+      ConflictError,
+    );
+  });
+
+  it('never changes the state it is given', () => {
+    const state = deepFreeze(atApproval());
+
+    expect(() =>
+      approvals.reject(state, 'approve', 'user-approver', T2, 'Wrong quantity'),
+    ).not.toThrow();
+  });
+
+  it('refuses a definition whose rejection returns to the step itself, a later step or no step', () => {
+    const withReturn = (returnTo: string): WorkflowDefinitionView => ({
+      ...APPROVAL,
+      steps: APPROVAL.steps.map((s) =>
+        s.key === 'approve' ? { ...s, onReject: { returnTo } } : s,
+      ),
+    });
+
+    expect(() => new WorkflowStateMachine(withReturn('approve'))).toThrow(ConflictError);
+    expect(() => new WorkflowStateMachine(withReturn('notify'))).toThrow(ConflictError);
+    expect(() => new WorkflowStateMachine(withReturn('no-such-step'))).toThrow(ConflictError);
+  });
+
+  it('records a completed task’s outcome as COMPLETED', () => {
+    const [prepare] = approvals.completeTask(approvals.start(T0).state, 'prepare', 'user-hr', T1)
+      .state.tasks;
+
+    expect(prepare).toMatchObject({ status: 'DONE', outcome: 'COMPLETED', rejectionReason: null });
+  });
 });
 
 describe('Completing a task (C-6, area 2)', () => {
